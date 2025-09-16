@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import type React from 'react'
 import { useState } from 'react'
 import { FiActivity, FiStar, FiTarget, FiZap, FiBattery, FiDroplet, FiBluetooth } from 'react-icons/fi'

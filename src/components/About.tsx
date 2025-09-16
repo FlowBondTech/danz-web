@@ -1,5 +1,5 @@
 'use client'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { FiDollarSign, FiSmartphone, FiWatch } from 'react-icons/fi'
 
 const companyPillars = [
@@ -79,17 +79,13 @@ export default function About() {
                   className={`absolute inset-0 bg-gradient-to-br ${pillar.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
                 />
 
-                <motion.div
-                  className="relative z-10"
-                  whileHover={{ scale: 1.1, rotate: 360 }}
-                  transition={{ type: 'spring', stiffness: 400 }}
-                >
+                <div className="relative z-10">
                   <div
                     className={`flex items-center justify-center w-16 h-16 bg-gradient-to-br ${pillar.gradient} rounded-xl mb-6 shadow-lg`}
                   >
                     <pillar.icon className="w-8 h-8 text-white" />
                   </div>
-                </motion.div>
+                </div>
 
                 <h3 className="text-2xl font-semibold mb-2 relative z-10">{pillar.title}</h3>
                 <h4 className="text-lg text-neon-purple mb-4 relative z-10">{pillar.subtitle}</h4>

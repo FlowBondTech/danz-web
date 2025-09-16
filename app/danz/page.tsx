@@ -3,7 +3,7 @@
 import Footer from '@/src/components/Footer'
 import Layout from '@/src/components/Layout'
 import Navbar from '@/src/components/Navbar'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import Link from 'next/link'
 
 export default function DanzPage() {

@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { FiCalendar, FiDollarSign, FiGlobe, FiStar, FiTrendingUp, FiUsers } from 'react-icons/fi'
 
 const hostBenefits = [

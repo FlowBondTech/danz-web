@@ -1,5 +1,5 @@
 'use client'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 
 const hostFeatures = [
   {
@@ -153,30 +153,32 @@ export default function ForHosts() {
                 Join our exclusive host program and unlock powerful tools to grow your dance community
               </p>
 
-              <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto mb-10">
-                <div className="flex items-center justify-center md:justify-start gap-3 text-left">
-                  <div className="w-8 h-8 bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm">✓</span>
+              <div className="flex justify-center mb-10">
+                <div className="grid md:grid-cols-2 gap-4 max-w-2xl w-full">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm">✓</span>
+                    </div>
+                    <span className="text-text-primary text-left">Free event promotion platform</span>
                   </div>
-                  <span className="text-text-primary">Free event promotion platform</span>
-                </div>
-                <div className="flex items-center justify-center md:justify-start gap-3 text-left">
-                  <div className="w-8 h-8 bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm">✓</span>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm">✓</span>
+                    </div>
+                    <span className="text-text-primary text-left">Global dancer network access</span>
                   </div>
-                  <span className="text-text-primary">Global dancer network access</span>
-                </div>
-                <div className="flex items-center justify-center md:justify-start gap-3 text-left">
-                  <div className="w-8 h-8 bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm">✓</span>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm">✓</span>
+                    </div>
+                    <span className="text-text-primary text-left">Professional management tools</span>
                   </div>
-                  <span className="text-text-primary">Professional management tools</span>
-                </div>
-                <div className="flex items-center justify-center md:justify-start gap-3 text-left">
-                  <div className="w-8 h-8 bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm">✓</span>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm">✓</span>
+                    </div>
+                    <span className="text-text-primary text-left">Priority support & training</span>
                   </div>
-                  <span className="text-text-primary">Priority support & training</span>
                 </div>
               </div>
 
