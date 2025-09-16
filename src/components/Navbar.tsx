@@ -135,6 +135,28 @@ export default function Navbar() {
             mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
+          {/* Close Button */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(false)}
+            className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+            aria-label="Close menu"
+          >
+            <svg
+              className="w-6 h-6 text-text-primary"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+
           <div className="p-8 pt-24">
             <ul className="flex flex-col gap-6">
               <li>
