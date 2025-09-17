@@ -71,7 +71,7 @@ export function useScrollIndicator() {
     const handleScroll = () => {
       const windowHeight = document.documentElement.scrollHeight - window.innerHeight
       const scrolled = (window.scrollY / windowHeight) * 100
-      scrollIndicator.style.width = scrolled + '%'
+      scrollIndicator.style.width = `${scrolled}%`
     }
 
     window.addEventListener('scroll', handleScroll)
@@ -106,19 +106,19 @@ export function useMagneticButtons() {
     // Small delay to ensure buttons are rendered
     const timer = setTimeout(() => {
       const buttons = document.querySelectorAll('.btn')
-      buttons.forEach(button => {
+      for (const button of buttons) {
         button.addEventListener('mousemove', handleMouseMove as EventListener)
         button.addEventListener('mouseleave', handleMouseLeave as EventListener)
-      })
+      }
     }, 100)
 
     return () => {
       clearTimeout(timer)
       const buttons = document.querySelectorAll('.btn')
-      buttons.forEach(button => {
+      for (const button of buttons) {
         button.removeEventListener('mousemove', handleMouseMove as EventListener)
         button.removeEventListener('mouseleave', handleMouseLeave as EventListener)
-      })
+      }
     }
   }, [])
 }
@@ -150,14 +150,14 @@ export function useGlowEffects() {
     }
 
     const glowElements = document.querySelectorAll('.process-card, .utility-card, .faq-card')
-    glowElements.forEach(element => {
+    for (const element of glowElements) {
       element.addEventListener('mouseenter', handleMouseEnter as EventListener)
-    })
+    }
 
     return () => {
-      glowElements.forEach(element => {
+      for (const element of glowElements) {
         element.removeEventListener('mouseenter', handleMouseEnter as EventListener)
-      })
+      }
     }
   }, [])
 }
@@ -232,11 +232,11 @@ export function useCounters(counterRefs: MutableRefObject<(HTMLElement | null)[]
   useEffect(() => {
     const observers: IntersectionObserver[] = []
 
-    counterRefs.current.forEach(counter => {
+    for (const counter of counterRefs.current) {
       if (!counter) return
 
       const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
+        for (const entry of entries) {
           if (entry.isIntersecting) {
             const target = Number.parseInt(counter.dataset.target || '0')
             const duration = 2000
@@ -258,12 +258,12 @@ export function useCounters(counterRefs: MutableRefObject<(HTMLElement | null)[]
 
             observer.unobserve(entry.target)
           }
-        })
+        }
       })
 
       observer.observe(counter)
       observers.push(observer)
-    })
+    }
 
     // Add completion animation
     const style = document.createElement('style')
@@ -277,7 +277,9 @@ export function useCounters(counterRefs: MutableRefObject<(HTMLElement | null)[]
     document.head.appendChild(style)
 
     return () => {
-      observers.forEach(observer => observer.disconnect())
+      for (const observer of observers) {
+        observer.disconnect()
+      }
       style.remove()
     }
   }, [counterRefs])
@@ -294,19 +296,21 @@ export function useRevealAnimations() {
     }
 
     const observer = new IntersectionObserver(entries => {
-      entries.forEach((entry, index) => {
+      let index = 0
+      for (const entry of entries) {
         if (entry.isIntersecting) {
           setTimeout(() => {
             entry.target.classList.add('fade-in')
           }, index * 50)
           observer.unobserve(entry.target)
         }
-      })
+        index++
+      }
     }, observerOptions)
 
-    animatedElements.forEach(el => {
+    for (const el of animatedElements) {
       observer.observe(el)
-    })
+    }
 
     return () => {
       observer.disconnect()

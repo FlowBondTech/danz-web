@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false)
-  const { ready, authenticated, login } = usePrivy()
+  const { authenticated, login } = usePrivy()
   const router = useRouter()
 
   useEffect(() => {

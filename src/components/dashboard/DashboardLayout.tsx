@@ -115,10 +115,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   src={profileData.me.avatar_url}
                   alt={profileData.me.display_name || profileData.me.username || 'User'}
                   className="w-10 h-10 rounded-full object-cover border-2 border-neon-purple/30 transition-all duration-200 hover:border-neon-purple/60"
-                  onError={(e) => {
+                  onError={e => {
                     // Fallback if image fails to load
-                    e.currentTarget.style.display = 'none';
-                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                    e.currentTarget.style.display = 'none'
+                    e.currentTarget.nextElementSibling?.classList.remove('hidden')
                   }}
                 />
                 <div className="hidden w-10 h-10 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white font-bold">
@@ -177,10 +177,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <div
           className="lg:hidden fixed inset-0 z-40 bg-black/50"
           onClick={() => setMobileMenuOpen(false)}
+          onKeyDown={e => e.key === 'Escape' && setMobileMenuOpen(false)}
+          role="presentation"
+          tabIndex={-1}
+          aria-hidden="true"
         >
           <div
             className="absolute left-0 top-0 h-full w-64 bg-bg-secondary"
             onClick={e => e.stopPropagation()}
+            onKeyDown={e => e.stopPropagation()}
+            role="presentation"
           >
             <div className="pt-20 p-4">
               <nav>
@@ -213,10 +219,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                         src={profileData.me.avatar_url}
                         alt={profileData.me.display_name || profileData.me.username || 'User'}
                         className="w-10 h-10 rounded-full object-cover border-2 border-neon-purple/30"
-                        onError={(e) => {
+                        onError={e => {
                           // Fallback if image fails to load
-                          e.currentTarget.style.display = 'none';
-                          e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                          e.currentTarget.style.display = 'none'
+                          e.currentTarget.nextElementSibling?.classList.remove('hidden')
                         }}
                       />
                       <div className="hidden w-10 h-10 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white font-bold">
@@ -259,7 +265,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        <main className="flex-1 p-4 lg:p-8 pt-20 lg:pt-8">{children}</main>
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8">{children}</main>
       </div>
     </div>
   )

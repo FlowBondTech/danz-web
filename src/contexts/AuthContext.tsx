@@ -3,7 +3,7 @@
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import type React from 'react'
-import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from 'react'
+import { type ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react'
 import type { User } from '../generated/graphql'
 import { useGetMyProfileQuery, useUpdateProfileMutation } from '../generated/graphql'
 
@@ -24,13 +24,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 // Provider Component
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const router = useRouter()
-  const {
-    login: privyLogin,
-    logout: privyLogout,
-    authenticated,
-    ready,
-    user: privyUser
-  } = usePrivy()
+  const { login: privyLogin, logout: privyLogout, authenticated, ready } = usePrivy()
 
   const [hasCheckedProfile, setHasCheckedProfile] = useState(false)
 
@@ -47,12 +41,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   })
 
   const [updateProfileMutation] = useUpdateProfileMutation({
-    onCompleted: (data) => {
+    onCompleted: data => {
       if (data?.updateProfile) {
         refetchProfile()
       }
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Profile update failed:', error)
     },
   })

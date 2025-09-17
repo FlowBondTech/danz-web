@@ -183,8 +183,11 @@ export const RegisterForm = () => {
 
       <form onSubmit={handleProfileSubmit} className="space-y-6">
         <div>
-          <label className="block text-white mb-2">Username *</label>
+          <label htmlFor="username" className="block text-white mb-2">
+            Username *
+          </label>
           <input
+            id="username"
             type="text"
             value={formData.username}
             onChange={e => {
@@ -199,8 +202,11 @@ export const RegisterForm = () => {
         </div>
 
         <div>
-          <label className="block text-white mb-2">Display Name</label>
+          <label htmlFor="displayName" className="block text-white mb-2">
+            Display Name
+          </label>
           <input
+            id="displayName"
             type="text"
             value={formData.displayName}
             onChange={e => setFormData({ ...formData, displayName: e.target.value })}
@@ -210,8 +216,11 @@ export const RegisterForm = () => {
         </div>
 
         <div>
-          <label className="block text-white mb-2">Bio</label>
+          <label htmlFor="bio" className="block text-white mb-2">
+            Bio
+          </label>
           <textarea
+            id="bio"
             value={formData.bio}
             onChange={e => setFormData({ ...formData, bio: e.target.value })}
             className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-lg text-white focus:border-purple-500 focus:outline-none"
@@ -221,7 +230,7 @@ export const RegisterForm = () => {
         </div>
 
         <div>
-          <label className="block text-white mb-2">Dance Styles</label>
+          <div className="block text-white mb-2">Dance Styles</div>
           <div className="grid grid-cols-3 gap-2">
             {danceStyleOptions.map(style => (
               <label key={style} className="flex items-center space-x-2">
@@ -250,8 +259,11 @@ export const RegisterForm = () => {
         </div>
 
         <div>
-          <label className="block text-white mb-2">Skill Level</label>
+          <label htmlFor="skillLevel" className="block text-white mb-2">
+            Skill Level
+          </label>
           <select
+            id="skillLevel"
             value={formData.skillLevel}
             onChange={e => setFormData({ ...formData, skillLevel: e.target.value })}
             className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-lg text-white focus:border-purple-500 focus:outline-none"

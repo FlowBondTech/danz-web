@@ -42,14 +42,16 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-text-primary mb-8">Dashboard Overview</h1>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-6 sm:mb-8">
+          Dashboard Overview
+        </h1>
 
         {profile ? (
           <>
             {/* Primary Stats Grid */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
+            <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4 mb-6 sm:mb-8">
+              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
                   <FiAward className="text-neon-purple" size={24} />
                   <span className="text-xs text-text-secondary uppercase tracking-wider">
@@ -60,7 +62,7 @@ export default function DashboardPage() {
                 <p className="text-sm text-text-secondary mt-1">Dance Level</p>
               </div>
 
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
+              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
                   <FiTarget className="text-neon-pink" size={24} />
                   <span className="text-xs text-text-secondary uppercase tracking-wider">XP</span>
@@ -69,7 +71,7 @@ export default function DashboardPage() {
                 <p className="text-sm text-text-secondary mt-1">Experience Points</p>
               </div>
 
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
+              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
                   <FiMusic className="text-blue-400" size={24} />
                   <span className="text-xs text-text-secondary uppercase tracking-wider">
@@ -82,7 +84,7 @@ export default function DashboardPage() {
                 <p className="text-sm text-text-secondary mt-1">Events Attended</p>
               </div>
 
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
+              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
                   <FiAward className="text-yellow-400" size={24} />
                   <span className="text-xs text-text-secondary uppercase tracking-wider">
@@ -97,8 +99,8 @@ export default function DashboardPage() {
             </div>
 
             {/* Secondary Stats Grid */}
-            <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-5 mb-8">
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4">
+            <div className="grid gap-4 sm:gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mb-6 sm:mb-8">
+              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs text-text-secondary uppercase tracking-wider">
                     Sessions
@@ -108,7 +110,7 @@ export default function DashboardPage() {
                 <p className="text-xs text-text-secondary">Total Sessions</p>
               </div>
 
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4">
+              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs text-text-secondary uppercase tracking-wider">
                     Created
@@ -120,7 +122,7 @@ export default function DashboardPage() {
                 <p className="text-xs text-text-secondary">Events Created</p>
               </div>
 
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4">
+              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs text-text-secondary uppercase tracking-wider">
                     Upcoming
@@ -132,7 +134,7 @@ export default function DashboardPage() {
                 <p className="text-xs text-text-secondary">Future Events</p>
               </div>
 
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4">
+              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs text-text-secondary uppercase tracking-wider">
                     Achievements
@@ -144,7 +146,7 @@ export default function DashboardPage() {
                 <p className="text-xs text-text-secondary">Unlocked</p>
               </div>
 
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4">
+              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs text-text-secondary uppercase tracking-wider">
                     Bonds
@@ -158,9 +160,9 @@ export default function DashboardPage() {
             </div>
 
             {/* Profile Info */}
-            <div className="grid gap-6 lg:grid-cols-3">
-              <div className="lg:col-span-2 space-y-6">
-                <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
+            <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
+              <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+                <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
                   <h2 className="text-xl font-bold text-text-primary mb-4">Profile Information</h2>
                   <div className="space-y-4">
                     <div className="flex items-center gap-4">
@@ -214,7 +216,7 @@ export default function DashboardPage() {
                 </div>
 
                 {profile.dance_styles && profile.dance_styles.length > 0 && (
-                  <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
+                  <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
                     <h2 className="text-xl font-bold text-text-primary mb-4">Dance Styles</h2>
                     <div className="flex flex-wrap gap-2">
                       {profile.dance_styles.map((style: string) => (
@@ -230,7 +232,7 @@ export default function DashboardPage() {
                 )}
 
                 {/* Social Media & Additional Info */}
-                <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
+                <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
                   <h2 className="text-xl font-bold text-text-primary mb-4">Additional Info</h2>
                   <div className="space-y-3">
                     {profile.age && (
@@ -326,8 +328,8 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="space-y-6">
-                <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
+              <div className="space-y-4 sm:space-y-6">
+                <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
                   <h2 className="text-xl font-bold text-text-primary mb-4">Quick Actions</h2>
                   <div className="space-y-3">
                     <button
@@ -340,7 +342,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
+                <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
                   <h2 className="text-xl font-bold text-text-primary mb-4">Account Info</h2>
                   <div className="space-y-3 text-sm">
                     <div>

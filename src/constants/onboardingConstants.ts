@@ -30,26 +30,26 @@ export const DANCE_STYLES = [
 
 export const DANCE_STYLE_EMOJIS: Record<string, string> = {
   'Hip Hop': '🎤',
-  'Ecstatic': '🌀',
-  'Contact': '🤝',
-  'Ballet': '🩰',
-  'Contemporary': '💃',
-  'Jazz': '🎺',
-  'Salsa': '🌶️',
-  'Bachata': '🌹',
-  'Breaking': '🔥',
-  'Popping': '🤖',
-  'Locking': '🔒',
-  'Afrobeats': '🥁',
-  'Dancehall': '🎵',
-  'Tap': '👞',
-  'Ballroom': '🎩',
-  'Latin': '💃',
-  'Voguing': '✨',
-  'House': '🏠',
-  'Waacking': '💫',
-  'Krump': '⚡',
-  'Reggaeton': '🔥',
+  Ecstatic: '🌀',
+  Contact: '🤝',
+  Ballet: '🩰',
+  Contemporary: '💃',
+  Jazz: '🎺',
+  Salsa: '🌶️',
+  Bachata: '🌹',
+  Breaking: '🔥',
+  Popping: '🤖',
+  Locking: '🔒',
+  Afrobeats: '🥁',
+  Dancehall: '🎵',
+  Tap: '👞',
+  Ballroom: '🎩',
+  Latin: '💃',
+  Voguing: '✨',
+  House: '🏠',
+  Waacking: '💫',
+  Krump: '⚡',
+  Reggaeton: '🔥',
   'K-Pop': '🌟',
 }
 
@@ -74,6 +74,6 @@ export const SKILL_LEVEL_DISPLAY = {
   advanced: 'Advanced',
 } as const
 
-export type DanceStyle = typeof DANCE_STYLES[number]
-export type EventType = typeof EVENT_TYPES[number]
-export type SkillLevel = typeof SKILL_LEVELS[number]
+export type DanceStyle = (typeof DANCE_STYLES)[number]
+export type EventType = (typeof EVENT_TYPES)[number]
+export type SkillLevel = (typeof SKILL_LEVELS)[number]

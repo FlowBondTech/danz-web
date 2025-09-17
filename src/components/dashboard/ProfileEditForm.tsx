@@ -217,8 +217,11 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
         <h3 className="text-xl font-bold text-text-primary mb-6">Profile Images</h3>
         <div className="grid gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-text-secondary text-sm mb-2">Avatar URL</label>
+            <label htmlFor="avatar-url" className="block text-text-secondary text-sm mb-2">
+              Avatar URL
+            </label>
             <input
+              id="avatar-url"
               type="url"
               placeholder="https://example.com/avatar.jpg"
               value={formData.avatar_url}
@@ -240,8 +243,11 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
           </div>
 
           <div>
-            <label className="block text-text-secondary text-sm mb-2">Cover Image URL</label>
+            <label htmlFor="cover-image-url" className="block text-text-secondary text-sm mb-2">
+              Cover Image URL
+            </label>
             <input
+              id="cover-image-url"
               type="url"
               placeholder="https://example.com/cover.jpg"
               value={formData.cover_image_url}
@@ -269,10 +275,13 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
         <h3 className="text-xl font-bold text-text-primary mb-6">Basic Information</h3>
         <div className="grid gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-text-secondary text-sm mb-2">Username</label>
+            <label htmlFor="username" className="block text-text-secondary text-sm mb-2">
+              Username
+            </label>
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">@</div>
               <input
+                id="username"
                 type="text"
                 value={formData.username}
                 disabled
@@ -283,10 +292,13 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
           </div>
 
           <div>
-            <label className="block text-text-secondary text-sm mb-2">Display Name</label>
+            <label htmlFor="display-name" className="block text-text-secondary text-sm mb-2">
+              Display Name
+            </label>
             <div className="relative">
               <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
               <input
+                id="display-name"
                 type="text"
                 value={formData.display_name}
                 onChange={e => setFormData(prev => ({ ...prev, display_name: e.target.value }))}
@@ -297,8 +309,11 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-text-secondary text-sm mb-2">Bio</label>
+            <label htmlFor="bio-field" className="block text-text-secondary text-sm mb-2">
+              Bio
+            </label>
             <textarea
+              id="bio-field"
               value={formData.bio}
               onChange={e => setFormData(prev => ({ ...prev, bio: e.target.value }))}
               className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text-primary focus:outline-none focus:border-neon-purple transition-colors resize-none"
@@ -308,8 +323,11 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
           </div>
 
           <div>
-            <label className="block text-text-secondary text-sm mb-2">Pronouns</label>
+            <label htmlFor="pronouns" className="block text-text-secondary text-sm mb-2">
+              Pronouns
+            </label>
             <input
+              id="pronouns"
               type="text"
               value={formData.pronouns}
               onChange={e => setFormData(prev => ({ ...prev, pronouns: e.target.value }))}
@@ -319,8 +337,11 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
           </div>
 
           <div>
-            <label className="block text-text-secondary text-sm mb-2">Skill Level</label>
+            <label htmlFor="skill-level" className="block text-text-secondary text-sm mb-2">
+              Skill Level
+            </label>
             <select
+              id="skill-level"
               value={formData.skill_level}
               onChange={e => setFormData(prev => ({ ...prev, skill_level: e.target.value }))}
               className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text-primary focus:outline-none focus:border-neon-purple transition-colors"
@@ -341,10 +362,13 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
         <h3 className="text-xl font-bold text-text-primary mb-6">Location</h3>
         <div className="grid gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-text-secondary text-sm mb-2">City</label>
+            <label htmlFor="city" className="block text-text-secondary text-sm mb-2">
+              City
+            </label>
             <div className="relative">
               <FiMapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
               <input
+                id="city"
                 type="text"
                 value={formData.city}
                 onChange={e => setFormData(prev => ({ ...prev, city: e.target.value }))}
@@ -355,8 +379,11 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
           </div>
 
           <div>
-            <label className="block text-text-secondary text-sm mb-2">Location</label>
+            <label htmlFor="location" className="block text-text-secondary text-sm mb-2">
+              Location
+            </label>
             <input
+              id="location"
               type="text"
               value={formData.location}
               onChange={e => setFormData(prev => ({ ...prev, location: e.target.value }))}
@@ -372,10 +399,13 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
         <h3 className="text-xl font-bold text-text-primary mb-6">Social Links</h3>
         <div className="grid gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-text-secondary text-sm mb-2">Website</label>
+            <label htmlFor="website" className="block text-text-secondary text-sm mb-2">
+              Website
+            </label>
             <div className="relative">
               <FiLink className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
               <input
+                id="website"
                 type="url"
                 value={formData.website}
                 onChange={e => setFormData(prev => ({ ...prev, website: e.target.value }))}
@@ -386,10 +416,13 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
           </div>
 
           <div>
-            <label className="block text-text-secondary text-sm mb-2">Instagram</label>
+            <label htmlFor="instagram" className="block text-text-secondary text-sm mb-2">
+              Instagram
+            </label>
             <div className="relative">
               <FiInstagram className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
               <input
+                id="instagram"
                 type="text"
                 value={formData.instagram}
                 onChange={e => setFormData(prev => ({ ...prev, instagram: e.target.value }))}
@@ -400,10 +433,13 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
           </div>
 
           <div>
-            <label className="block text-text-secondary text-sm mb-2">TikTok</label>
+            <label htmlFor="tiktok" className="block text-text-secondary text-sm mb-2">
+              TikTok
+            </label>
             <div className="relative">
               <FaTiktok className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
               <input
+                id="tiktok"
                 type="text"
                 value={formData.tiktok}
                 onChange={e => setFormData(prev => ({ ...prev, tiktok: e.target.value }))}
@@ -414,10 +450,13 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
           </div>
 
           <div>
-            <label className="block text-text-secondary text-sm mb-2">YouTube</label>
+            <label htmlFor="youtube" className="block text-text-secondary text-sm mb-2">
+              YouTube
+            </label>
             <div className="relative">
               <FiYoutube className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
               <input
+                id="youtube"
                 type="text"
                 value={formData.youtube}
                 onChange={e => setFormData(prev => ({ ...prev, youtube: e.target.value }))}
@@ -428,10 +467,13 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
           </div>
 
           <div>
-            <label className="block text-text-secondary text-sm mb-2">Twitter</label>
+            <label htmlFor="twitter" className="block text-text-secondary text-sm mb-2">
+              Twitter
+            </label>
             <div className="relative">
               <FiTwitter className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
               <input
+                id="twitter"
                 type="text"
                 value={formData.twitter}
                 onChange={e => setFormData(prev => ({ ...prev, twitter: e.target.value }))}

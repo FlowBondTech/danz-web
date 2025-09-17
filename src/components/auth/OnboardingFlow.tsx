@@ -12,7 +12,6 @@ import {
   FiCamera,
   FiCheck,
   FiChevronRight,
-  FiImage,
   FiLoader,
   FiMail,
   FiMusic,
@@ -21,16 +20,16 @@ import {
   FiUpload,
   FiUser,
   FiUsers,
-  FiX
+  FiX,
 } from 'react-icons/fi'
-import { useAuth } from '../../contexts/AuthContext'
 import {
   DANCE_STYLES,
   DANCE_STYLE_EMOJIS,
   EVENT_TYPES,
   SKILL_LEVELS,
-  SKILL_LEVEL_DISPLAY
+  SKILL_LEVEL_DISPLAY,
 } from '../../constants/onboardingConstants'
+import { useAuth } from '../../contexts/AuthContext'
 
 // GraphQL queries and mutations
 const ME_QUERY = gql`
@@ -90,7 +89,15 @@ const UPDATE_PROFILE = gql`
   }
 `
 
-type OnboardingStep = 'welcome' | 'role' | 'username' | 'photo' | 'about' | 'styles' | 'social' | 'organization'
+type OnboardingStep =
+  | 'welcome'
+  | 'role'
+  | 'username'
+  | 'photo'
+  | 'about'
+  | 'styles'
+  | 'social'
+  | 'organization'
 
 interface OnboardingFlowProps {
   initialStep?: OnboardingStep
@@ -327,9 +334,9 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
 
       // Add all fields first (order matters for S3)
       if (typeof presignedData.fields === 'object') {
-        Object.entries(presignedData.fields).forEach(([key, value]) => {
+        for (const [key, value] of Object.entries(presignedData.fields)) {
           formData.append(key, value as string)
-        })
+        }
       }
 
       // Add file last
@@ -373,8 +380,24 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
   }
 
   const handleNext = async () => {
-    const attendeeSteps: OnboardingStep[] = ['welcome', 'role', 'username', 'photo', 'about', 'styles', 'social']
-    const organizerSteps: OnboardingStep[] = ['welcome', 'role', 'username', 'photo', 'about', 'styles', 'organization']
+    const attendeeSteps: OnboardingStep[] = [
+      'welcome',
+      'role',
+      'username',
+      'photo',
+      'about',
+      'styles',
+      'social',
+    ]
+    const organizerSteps: OnboardingStep[] = [
+      'welcome',
+      'role',
+      'username',
+      'photo',
+      'about',
+      'styles',
+      'organization',
+    ]
 
     const stepOrder = userRole === 'organizer' ? organizerSteps : attendeeSteps
     const currentIndex = stepOrder.indexOf(currentStep)
@@ -487,8 +510,24 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
   }
 
   const handleBack = () => {
-    const attendeeSteps: OnboardingStep[] = ['welcome', 'role', 'username', 'photo', 'about', 'styles', 'social']
-    const organizerSteps: OnboardingStep[] = ['welcome', 'role', 'username', 'photo', 'about', 'styles', 'organization']
+    const attendeeSteps: OnboardingStep[] = [
+      'welcome',
+      'role',
+      'username',
+      'photo',
+      'about',
+      'styles',
+      'social',
+    ]
+    const organizerSteps: OnboardingStep[] = [
+      'welcome',
+      'role',
+      'username',
+      'photo',
+      'about',
+      'styles',
+      'organization',
+    ]
 
     const actualFlow = userRole === 'organizer' ? organizerSteps : attendeeSteps
     const currentIndex = actualFlow.indexOf(currentStep)
@@ -519,13 +558,13 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
             className="space-y-6"
           >
             <div className="text-center space-y-4">
-              <div className="w-24 h-24 mx-auto bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
-                <span className="text-4xl">💃</span>
+              <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
+                <span className="text-3xl sm:text-4xl">💃</span>
               </div>
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
                 Welcome to DANZ
               </h2>
-              <p className="text-gray-300 text-base max-w-md mx-auto">
+              <p className="text-gray-300 text-sm sm:text-base max-w-md mx-auto px-4 sm:px-0">
                 Your journey to discovering amazing dance events and connecting with the dance
                 community starts here!
               </p>
@@ -536,7 +575,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                 <div className="flex items-center space-x-3">
                   <FiMail className="text-purple-400" />
                   <div>
-                    <p className="text-sm text-gray-400">Signing up with</p>
+                    <p className="text-xs sm:text-sm text-gray-400">Signing up with</p>
                     <p className="text-white font-medium">
                       {privyUser.email?.address || privyUser.wallet?.address || 'Connected Account'}
                     </p>
@@ -556,7 +595,9 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
                     <FiShield className="text-purple-400 text-sm" />
-                    <span className="text-white text-sm">I agree to the Terms & Privacy Policy</span>
+                    <span className="text-white text-sm">
+                      I agree to the Terms & Privacy Policy
+                    </span>
                   </div>
                 </div>
               </label>
@@ -589,25 +630,29 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
             className="space-y-6"
           >
             <div className="text-center">
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
                 How will you use DANZ?
               </h2>
-              <p className="text-gray-400 mt-2">Choose your role to get started</p>
+              <p className="text-sm sm:text-base text-gray-400 mt-2">
+                Choose your role to get started
+              </p>
             </div>
 
             <div className="space-y-4">
               <button
                 type="button"
                 onClick={() => setUserRole('attendee')}
-                className={`w-full p-6 rounded-xl border-2 transition-all ${
+                className={`w-full p-4 sm:p-6 rounded-xl border-2 transition-all ${
                   userRole === 'attendee'
                     ? 'bg-purple-600/20 border-purple-500'
                     : 'bg-black/30 border-purple-500/30 hover:border-purple-500/50'
                 }`}
               >
-                <FiUsers className="w-8 h-8 mx-auto mb-3 text-purple-400" />
-                <h3 className="text-lg font-semibold text-white mb-2">I'm a Dancer</h3>
-                <p className="text-sm text-gray-400">
+                <FiUsers className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 sm:mb-3 text-purple-400" />
+                <h3 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">
+                  I'm a Dancer
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-400">
                   Join events, connect with dancers, and share your journey
                 </p>
               </button>
@@ -615,15 +660,17 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
               <button
                 type="button"
                 onClick={() => setUserRole('organizer')}
-                className={`w-full p-6 rounded-xl border-2 transition-all ${
+                className={`w-full p-4 sm:p-6 rounded-xl border-2 transition-all ${
                   userRole === 'organizer'
                     ? 'bg-purple-600/20 border-purple-500'
                     : 'bg-black/30 border-purple-500/30 hover:border-purple-500/50'
                 }`}
               >
-                <FiCalendar className="w-8 h-8 mx-auto mb-3 text-purple-400" />
-                <h3 className="text-lg font-semibold text-white mb-2">I'm an Organizer</h3>
-                <p className="text-sm text-gray-400">
+                <FiCalendar className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 sm:mb-3 text-purple-400" />
+                <h3 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">
+                  I'm an Organizer
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-400">
                   Create events, manage registrations, and grow your community
                 </p>
               </button>
@@ -641,7 +688,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
             className="space-y-6"
           >
             <div className="text-center">
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
                 Choose your username
               </h2>
               <p className="text-gray-400 mt-2">This can only be set once, choose wisely!</p>
@@ -649,13 +696,15 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
 
             <div className="space-y-4">
               <div>
-                <div className={`relative rounded-xl border-2 transition-all ${
-                  usernameError
-                    ? 'border-red-500 bg-red-500/10'
-                    : usernameAvailable
-                      ? 'border-green-500 bg-green-500/10'
-                      : 'border-purple-500/30 bg-black/50'
-                }`}>
+                <div
+                  className={`relative rounded-xl border-2 transition-all ${
+                    usernameError
+                      ? 'border-red-500 bg-red-500/10'
+                      : usernameAvailable
+                        ? 'border-green-500 bg-green-500/10'
+                        : 'border-purple-500/30 bg-black/50'
+                  }`}
+                >
                   <span className="absolute left-4 top-3.5 text-gray-400">@</span>
                   <input
                     type="text"
@@ -681,15 +730,18 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                         <FiCheck className="text-white text-sm" />
                       </motion.div>
                     )}
-                    {!isCheckingUsername && usernameChecked && !usernameAvailable && formData.username && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center"
-                      >
-                        <FiX className="text-white text-sm" />
-                      </motion.div>
-                    )}
+                    {!isCheckingUsername &&
+                      usernameChecked &&
+                      !usernameAvailable &&
+                      formData.username && (
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center"
+                        >
+                          <FiX className="text-white text-sm" />
+                        </motion.div>
+                      )}
                   </div>
                 </div>
 
@@ -714,7 +766,9 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                       className="flex items-center space-x-2 mt-2"
                     >
                       <FiCheck className="text-green-400 text-sm" />
-                      <span className="text-sm text-green-400">Great! This username is available</span>
+                      <span className="text-sm text-green-400">
+                        Great! This username is available
+                      </span>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -746,7 +800,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
             className="space-y-6"
           >
             <div className="text-center">
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
                 Add your photo
               </h2>
               <p className="text-gray-400 mt-2">Let the community see your amazing moves</p>
@@ -754,12 +808,16 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
 
             <div className="flex justify-center">
               <div className="relative">
-                <div className="w-32 h-32 rounded-full overflow-hidden bg-black/30 border-2 border-purple-500/30">
+                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden bg-black/30 border-2 border-purple-500/30">
                   {localAvatarPreview ? (
-                    <img src={localAvatarPreview} alt="Avatar" className="w-full h-full object-cover" />
+                    <img
+                      src={localAvatarPreview}
+                      alt="Avatar"
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <FiCamera className="w-12 h-12 text-purple-400" />
+                      <FiCamera className="w-8 h-8 sm:w-12 sm:h-12 text-purple-400" />
                     </div>
                   )}
                 </div>
@@ -779,9 +837,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
 
             {localAvatarFile && (
               <div className="text-center">
-                <p className="text-sm text-gray-400">
-                  Selected: {localAvatarFile.name}
-                </p>
+                <p className="text-xs sm:text-sm text-gray-400">Selected: {localAvatarFile.name}</p>
               </div>
             )}
 
@@ -801,7 +857,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
             className="space-y-6"
           >
             <div className="text-center">
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
                 Tell us about yourself
               </h2>
               <p className="text-gray-400 mt-2">Help the community get to know you</p>
@@ -840,7 +896,9 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                 <input
                   type="text"
                   value={formData.pronouns}
-                  onChange={e => setFormData({ ...formData, pronouns: e.target.value.toLowerCase() })}
+                  onChange={e =>
+                    setFormData({ ...formData, pronouns: e.target.value.toLowerCase() })
+                  }
                   className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-white focus:border-purple-500 focus:outline-none"
                   placeholder="he/him, she/her, they/them"
                   autoCapitalize="none"
@@ -861,7 +919,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
             className="space-y-6"
           >
             <div className="text-center">
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
                 Your dance styles
               </h2>
               <p className="text-gray-400 mt-2">Select all that apply</p>
@@ -872,7 +930,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                 <label className="block text-white mb-3 text-sm">
                   Dance Styles <span className="text-purple-400">*</span>
                 </label>
-                <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
+                <div className="grid grid-cols-2 gap-2 max-h-48 sm:max-h-64 overflow-y-auto">
                   {DANCE_STYLES.map(style => (
                     <button
                       key={style}
@@ -938,7 +996,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
             className="space-y-6"
           >
             <div className="text-center">
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
                 Connect your socials
               </h2>
               <p className="text-gray-400 mt-2">Optional - share your other platforms</p>
@@ -1006,7 +1064,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
             className="space-y-6"
           >
             <div className="text-center">
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
                 Organizer Information
               </h2>
               <p className="text-gray-400 mt-2">Tell us about your events and organization</p>
@@ -1066,12 +1124,16 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                 </label>
                 <textarea
                   value={formData.organizerBio}
-                  onChange={e => setFormData({ ...formData, organizerBio: e.target.value.slice(0, 500) })}
+                  onChange={e =>
+                    setFormData({ ...formData, organizerBio: e.target.value.slice(0, 500) })
+                  }
                   className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-white focus:border-purple-500 focus:outline-none resize-none"
                   rows={4}
                   placeholder="Describe your events, experience, and what makes them special..."
                 />
-                <p className="text-xs text-gray-400 mt-1">{formData.organizerBio.length}/500 characters</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  {formData.organizerBio.length}/500 characters
+                </p>
               </div>
 
               <div>
@@ -1100,8 +1162,8 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
 
             <div className="bg-purple-900/20 rounded-xl p-4 border border-purple-500/20">
               <p className="text-sm text-purple-300">
-                <strong>Note:</strong> Your organizer application will be reviewed within 24-48 hours.
-                You'll receive a notification once approved.
+                <strong>Note:</strong> Your organizer application will be reviewed within 24-48
+                hours. You'll receive a notification once approved.
               </p>
             </div>
           </motion.div>
@@ -1134,7 +1196,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-purple-900/20 to-black flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-black via-purple-900/20 to-black flex items-center justify-center p-4 py-8 sm:py-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -1146,7 +1208,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
           className="bg-black/50 backdrop-blur-md rounded-2xl border border-purple-500/20 overflow-hidden"
         >
           {/* Progress Bar */}
-          <div className="p-8 pb-4">
+          <div className="p-4 sm:p-8 pb-4">
             <div className="flex items-center justify-between mb-6">
               {steps.map((step, index) => {
                 const isCompleted = completedSteps.includes(step.id)
@@ -1207,7 +1269,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
           </div>
 
           {/* Content */}
-          <div className="px-8 pb-8">
+          <div className="px-4 sm:px-8 pb-6 sm:pb-8">
             <AnimatePresence mode="wait">{renderStepContent()}</AnimatePresence>
 
             {/* Navigation Buttons */}
@@ -1216,7 +1278,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                 <button
                   onClick={handleBack}
                   disabled={isLoading || uploadingAvatar}
-                  className="px-6 py-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50"
+                  className="px-4 sm:px-6 py-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50 text-sm sm:text-base"
                 >
                   Back
                 </button>
@@ -1234,18 +1296,22 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                 }
                 className={`${
                   currentStep === 'welcome' ? 'w-full' : 'ml-auto'
-                } px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-xl hover:from-pink-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center space-x-2`}
+                } px-6 sm:px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-xl hover:from-pink-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center space-x-2 text-sm sm:text-base`}
               >
                 <span>
                   {isLoading || uploadingAvatar
                     ? 'Loading...'
                     : currentStep === 'welcome'
-                      ? isAuthenticated ? 'Continue' : 'Get Started'
+                      ? isAuthenticated
+                        ? 'Continue'
+                        : 'Get Started'
                       : (userRole === 'organizer' && currentStep === 'organization') ||
-                        (userRole === 'attendee' && currentStep === 'social')
+                          (userRole === 'attendee' && currentStep === 'social')
                         ? "Let's Dance!"
                         : currentStep === 'photo'
-                          ? localAvatarFile ? 'Continue' : 'Skip for now'
+                          ? localAvatarFile
+                            ? 'Continue'
+                            : 'Skip for now'
                           : 'Continue'}
                 </span>
                 {!isLoading && !uploadingAvatar && <FiChevronRight />}
