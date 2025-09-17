@@ -28,7 +28,8 @@ const REGISTER_USER = gql`
 export const RegisterForm = () => {
   const { login, ready, authenticated, user } = usePrivy()
   const router = useRouter()
-  const [step, setStep] = useState<'auth' | 'profile'>('auth')
+  // Start with profile step if already authenticated
+  const [step, setStep] = useState<'auth' | 'profile'>(authenticated ? 'profile' : 'auth')
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     username: '',
@@ -45,7 +46,7 @@ export const RegisterForm = () => {
   })
 
   useEffect(() => {
-    if (authenticated && !user) {
+    if (authenticated && user) {
       setStep('profile')
     }
   }, [authenticated, user])
@@ -156,9 +157,13 @@ export const RegisterForm = () => {
         <div className="mt-6 text-center">
           <p className="text-gray-400">
             Already have an account?{' '}
-            <a href="/login" className="text-purple-400 hover:text-purple-300 transition-colors">
+            <button
+              type="button"
+              onClick={() => login()}
+              className="text-purple-400 hover:text-purple-300 transition-colors"
+            >
               Login
-            </a>
+            </button>
           </p>
         </div>
       </motion.div>

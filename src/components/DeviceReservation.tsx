@@ -1,8 +1,8 @@
 'use client'
 
+import { usePrivy } from '@privy-io/react-auth'
 import { motion } from 'motion/react'
-import type React from 'react'
-import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   FiActivity,
   FiBattery,
@@ -47,17 +47,14 @@ const features = [
 ]
 
 export default function DeviceReservation() {
-  const [email, setEmail] = useState('')
-  const [reserved, setReserved] = useState(false)
+  const { authenticated, login } = usePrivy()
+  const router = useRouter()
 
-  const handleReserve = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (email) {
-      setReserved(true)
-      setTimeout(() => {
-        setEmail('')
-        setReserved(false)
-      }, 3000)
+  const handleJoinCommunity = () => {
+    if (authenticated) {
+      router.push('/dashboard')
+    } else {
+      login()
     }
   }
 
@@ -166,9 +163,10 @@ export default function DeviceReservation() {
                   type="button"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={handleJoinCommunity}
                   className="bg-gradient-neon text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-neon-purple/50 transition-all"
                 >
-                  Join Waitlist
+                  {authenticated ? 'Reserve Your Device' : 'Join the Community'}
                 </motion.button>
               </div>
             </motion.div>

@@ -11,12 +11,14 @@ export const PrivyProvider: React.FC<PrivyProviderProps> = ({ children }) => {
   return (
     <PrivyProviderBase
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''}
+      clientId={process.env.NEXT_PUBLIC_PRIVY_CLIENT_ID || ''}
       config={{
-        loginMethods: ['email', 'wallet', 'google', 'apple'],
+        // Only allow email and Google login
+        loginMethods: ['email', 'google'],
         appearance: {
           theme: 'dark',
-          accentColor: '#ff6ec7',
-          logo: '/logo.png',
+          accentColor: '#B967FF', // DANZ purple color
+          logo: '/danz-icon-white.png', // Use DANZ white logo
           showWalletLoginFirst: false,
         },
       }}

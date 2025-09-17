@@ -1,12 +1,19 @@
 'use client'
+import { usePrivy } from '@privy-io/react-auth'
 import { motion } from 'motion/react'
+import { useRouter } from 'next/navigation'
 
 export default function CTA() {
-  const handleJoinWaitlist = (e: React.MouseEvent) => {
+  const { authenticated, login } = usePrivy()
+  const router = useRouter()
+
+  const handleJoinCommunity = (e: React.MouseEvent) => {
     e.preventDefault()
-    // Trigger waitlist modal
-    const event = new CustomEvent('openWaitlist')
-    window.dispatchEvent(event)
+    if (authenticated) {
+      router.push('/dashboard')
+    } else {
+      login()
+    }
   }
 
   return (
@@ -29,8 +36,8 @@ export default function CTA() {
             Join thousands of dancers earning rewards for doing what they love.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <button onClick={handleJoinWaitlist} className="btn btn-primary text-lg px-8 py-4">
-              Join Waitlist
+            <button onClick={handleJoinCommunity} className="btn btn-primary text-lg px-8 py-4">
+              {authenticated ? 'Go to Dashboard' : 'Join the Community'}
             </button>
             <button className="btn btn-secondary text-lg px-8 py-4">Partner With Us</button>
           </div>

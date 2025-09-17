@@ -1,11 +1,15 @@
 'use client'
 
+import { usePrivy } from '@privy-io/react-auth'
 import { motion } from 'motion/react'
+import { useRouter } from 'next/navigation'
 import type React from 'react'
 import { useEffect, useState } from 'react'
 
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false)
+  const { ready, authenticated, login } = usePrivy()
+  const router = useRouter()
 
   useEffect(() => {
     setIsVisible(true)
@@ -21,8 +25,11 @@ export default function Hero() {
 
   const handleJoinMovement = (e: React.MouseEvent) => {
     e.preventDefault()
-    // Simple waitlist action
-    alert('Join waitlist functionality coming soon!')
+    if (authenticated) {
+      router.push('/dashboard')
+    } else {
+      login()
+    }
   }
 
   return (
@@ -103,7 +110,7 @@ export default function Hero() {
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
           <button onClick={handleJoinMovement} className="btn btn-primary">
-            Join the Waitlist
+            {authenticated ? 'Go to Dashboard' : 'Join the Community'}
           </button>
           <button onClick={handleLearnMore} className="btn btn-secondary">
             Learn More

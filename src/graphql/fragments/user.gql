@@ -18,35 +18,45 @@ fragment UserFullInfo on User {
   role
   location
   city
-  country
-  phone
+  latitude
+  longitude
   website
   website_url
   instagram
-  instagram_handle
   tiktok
   youtube
   twitter
-  twitter_handle
   pronouns
   dance_styles
   skill_level
+  favorite_music
+  age
+  is_public
+  allow_messages
+  show_location
+  notification_preferences
+  xp
+  level
+  subscription_tier
+  total_dance_time
+  total_sessions
+  longest_streak
   is_organizer_approved
+  organizer_approved_by
+  organizer_approved_at
   company_name
   organizer_bio
   event_types
   invited_by
-  created_at
-  updated_at
-  last_active
-  total_xp
-  lifetime_danz_earned
-  referral_count
-  referred_by
-  # Statistics
+  social_media_links
+  organizer_requested_at
+  organizer_rejection_reason
   total_events_attended
   total_events_created
   upcoming_events_count
   total_achievements
   dance_bonds_count
+  created_at
+  updated_at
+  last_active_at
 }

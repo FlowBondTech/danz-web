@@ -5,9 +5,3 @@ mutation UpdateProfile($input: UpdateProfileInput!) {
     ...UserFullInfo
   }
 }
-
-mutation RegisterUser($input: RegisterUserInput!) {
-  registerUser(input: $input) {
-    ...UserFullInfo
-  }
-}

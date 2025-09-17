@@ -23,7 +23,7 @@ const faqs = [
   {
     question: 'When does it launch?',
     answer:
-      "We're launching in Q4 2025. Join our waitlist to get early access and exclusive launch bonuses.",
+      "We're launching in Q4 2025. Join our community to get early access and exclusive launch bonuses.",
   },
 ]
 

@@ -1,6 +1,8 @@
 'use client'
 
+import { usePrivy } from '@privy-io/react-auth'
 import { motion } from 'motion/react'
+import { useRouter } from 'next/navigation'
 import { FiCheck } from 'react-icons/fi'
 
 const plans = [
@@ -36,6 +38,16 @@ const plans = [
 ]
 
 export default function SubscriptionSection() {
+  const { authenticated, login } = usePrivy()
+  const router = useRouter()
+
+  const handleSelectPlan = () => {
+    if (authenticated) {
+      router.push('/dashboard')
+    } else {
+      login()
+    }
+  }
   return (
     <section className="section bg-gradient-to-b from-bg-primary via-bg-secondary/30 to-bg-primary relative overflow-hidden">
       {/* Background effects */}
@@ -123,13 +135,14 @@ export default function SubscriptionSection() {
                     type="button"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
+                    onClick={handleSelectPlan}
                     className={`w-full py-3 px-6 rounded-xl font-medium transition-all ${
                       plan.highlighted
                         ? 'bg-gradient-neon text-white shadow-lg hover:shadow-neon-purple/50'
                         : 'bg-gradient-to-r from-neon-purple/20 to-neon-pink/20 text-white border border-white/10 hover:border-white/20'
                     }`}
                   >
-                    Notify Me
+                    {authenticated ? 'Select Plan' : 'Join to Select'}
                   </motion.button>
                 </div>
               </motion.div>
