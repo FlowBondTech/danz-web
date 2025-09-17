@@ -150,7 +150,8 @@ export default function ForHosts() {
               </h3>
 
               <p className="text-xl text-text-secondary mb-8 max-w-2xl mx-auto">
-                Join our exclusive host program and unlock powerful tools to grow your dance community
+                Join our exclusive host program and unlock powerful tools to grow your dance
+                community
               </p>
 
               <div className="flex justify-center mb-10">
@@ -159,19 +160,25 @@ export default function ForHosts() {
                     <div className="w-8 h-8 bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 rounded-full flex items-center justify-center flex-shrink-0">
                       <span className="text-sm">✓</span>
                     </div>
-                    <span className="text-text-primary text-left">Free event promotion platform</span>
+                    <span className="text-text-primary text-left">
+                      Free event promotion platform
+                    </span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 rounded-full flex items-center justify-center flex-shrink-0">
                       <span className="text-sm">✓</span>
                     </div>
-                    <span className="text-text-primary text-left">Global dancer network access</span>
+                    <span className="text-text-primary text-left">
+                      Global dancer network access
+                    </span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 rounded-full flex items-center justify-center flex-shrink-0">
                       <span className="text-sm">✓</span>
                     </div>
-                    <span className="text-text-primary text-left">Professional management tools</span>
+                    <span className="text-text-primary text-left">
+                      Professional management tools
+                    </span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 rounded-full flex items-center justify-center flex-shrink-0">

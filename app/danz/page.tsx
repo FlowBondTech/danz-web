@@ -45,9 +45,9 @@ export default function DanzPage() {
               </p>
 
               <p className="text-lg md:text-xl text-text-secondary max-w-4xl mx-auto leading-relaxed">
-                $DANZ is the official movement token of the FlowBond ecosystem — a decentralized token
-                that rewards dancers, movers, and flow-activators for doing what they love: showing up,
-                moving their bodies, and generating high-vibe energy with others.
+                $DANZ is the official movement token of the FlowBond ecosystem — a decentralized
+                token that rewards dancers, movers, and flow-activators for doing what they love:
+                showing up, moving their bodies, and generating high-vibe energy with others.
               </p>
             </motion.section>
 
@@ -59,15 +59,17 @@ export default function DanzPage() {
               className="mb-32"
             >
               <h2 className="text-4xl md:text-5xl font-display font-bold mb-12">
-                <span className="text-text-muted">{'>'}</span> What is <span className="gradient-text">$DANZ</span>?
+                <span className="text-text-muted">{'>'}</span> What is{' '}
+                <span className="gradient-text">$DANZ</span>?
               </h2>
 
               <div className="bg-bg-card/50 backdrop-blur-sm border border-white/10 rounded-2xl p-8 md:p-12">
                 <p className="text-lg md:text-xl text-text-secondary leading-relaxed">
-                  $DANZ is a utility and rewards token designed to power a dance-based economy. It lives at
-                  the intersection of dance culture, Web3 technology, and biometric flow states. Through the
-                  FlowBond wearable and ecosystem, every dance session, group sync, and flow activation
-                  generates real, measurable value — and $DANZ is how that value is distributed.
+                  $DANZ is a utility and rewards token designed to power a dance-based economy. It
+                  lives at the intersection of dance culture, Web3 technology, and biometric flow
+                  states. Through the FlowBond wearable and ecosystem, every dance session, group
+                  sync, and flow activation generates real, measurable value — and $DANZ is how that
+                  value is distributed.
                 </p>
               </div>
             </motion.section>
@@ -123,8 +125,8 @@ export default function DanzPage() {
                 >
                   <h3 className="text-2xl font-bold mb-4 text-neon-purple">Proof of Movement</h3>
                   <p className="text-text-secondary leading-relaxed">
-                    On-chain verification that you're not just watching — you're dancing,
-                    leading, and co-creating the rhythm.
+                    On-chain verification that you're not just watching — you're dancing, leading,
+                    and co-creating the rhythm.
                   </p>
                 </motion.div>
 
@@ -134,8 +136,8 @@ export default function DanzPage() {
                 >
                   <h3 className="text-2xl font-bold mb-4 text-neon-purple">Collective Rewards</h3>
                   <p className="text-text-secondary leading-relaxed">
-                    Teams, dance crews, and communities can pool their movement
-                    for amplified rewards.
+                    Teams, dance crews, and communities can pool their movement for amplified
+                    rewards.
                   </p>
                 </motion.div>
 
@@ -143,10 +145,12 @@ export default function DanzPage() {
                   whileHover={{ y: -5 }}
                   className="bg-bg-card/50 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:border-neon-purple/50 transition-all"
                 >
-                  <h3 className="text-2xl font-bold mb-4 text-neon-purple">Bridge Between Body & Blockchain</h3>
+                  <h3 className="text-2xl font-bold mb-4 text-neon-purple">
+                    Bridge Between Body & Blockchain
+                  </h3>
                   <p className="text-text-secondary leading-relaxed">
-                    $DANZ links the biointelligence of the body with the smart contracts of
-                    Web3, offering a new form of embodied economy.
+                    $DANZ links the biointelligence of the body with the smart contracts of Web3,
+                    offering a new form of embodied economy.
                   </p>
                 </motion.div>
               </div>
@@ -167,14 +171,13 @@ export default function DanzPage() {
                 <p className="text-lg md:text-xl text-text-secondary leading-relaxed">
                   $DANZ is more than a token — it's a cultural catalyst for regenerative joy and
                   embodied connection. As the FlowBond network grows, $DANZ will become the
-                  energetic fuel for a new kind of decentralized movement economy — one where
-                  those who move the most, feel the most, and connect the most are the ones who
-                  thrive.
+                  energetic fuel for a new kind of decentralized movement economy — one where those
+                  who move the most, feel the most, and connect the most are the ones who thrive.
                 </p>
 
                 <p className="text-xl md:text-2xl text-center font-semibold">
-                  In a world where attention is monetized, $DANZ offers a new
-                  paradigm: <span className="text-neon-purple">presence as value</span>.
+                  In a world where attention is monetized, $DANZ offers a new paradigm:{' '}
+                  <span className="text-neon-purple">presence as value</span>.
                 </p>
               </div>
             </motion.section>

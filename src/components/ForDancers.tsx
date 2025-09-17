@@ -186,7 +186,9 @@ export default function ForDancers() {
                     {stat.number.toLocaleString()}
                     {stat.label.includes('%') ? '' : '+'}
                   </div>
-                  <div className="text-text-muted text-sm uppercase tracking-wider">{stat.label}</div>
+                  <div className="text-text-muted text-sm uppercase tracking-wider">
+                    {stat.label}
+                  </div>
                 </motion.div>
               ))}
             </div>

@@ -1,0 +1,52 @@
+fragment UserBasicInfo on User {
+  privy_id
+  username
+  display_name
+  avatar_url
+  cover_image_url
+  bio
+  role
+}
+
+fragment UserFullInfo on User {
+  privy_id
+  username
+  display_name
+  avatar_url
+  cover_image_url
+  bio
+  role
+  location
+  city
+  country
+  phone
+  website
+  website_url
+  instagram
+  instagram_handle
+  tiktok
+  youtube
+  twitter
+  twitter_handle
+  pronouns
+  dance_styles
+  skill_level
+  is_organizer_approved
+  company_name
+  organizer_bio
+  event_types
+  invited_by
+  created_at
+  updated_at
+  last_active
+  total_xp
+  lifetime_danz_earned
+  referral_count
+  referred_by
+  # Statistics
+  total_events_attended
+  total_events_created
+  upcoming_events_count
+  total_achievements
+  dance_bonds_count
+}

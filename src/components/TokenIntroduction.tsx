@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'motion/react'
-import { FiTrendingUp, FiCalendar, FiClock } from 'react-icons/fi'
+import { FiCalendar, FiClock, FiTrendingUp } from 'react-icons/fi'
 
 const tokenFeatures = [
   {
@@ -56,7 +56,8 @@ export default function TokenIntroduction() {
             </h2>
 
             <p className="text-lg md:text-xl text-text-secondary mb-10 leading-relaxed">
-              The world's first dance-based reward token. Turn your rhythm into real rewards - no crypto knowledge required.
+              The world's first dance-based reward token. Turn your rhythm into real rewards - no
+              crypto knowledge required.
             </p>
 
             {/* Features */}
@@ -130,7 +131,7 @@ export default function TokenIntroduction() {
                     duration: 5 + ring * 2,
                     repeat: Number.POSITIVE_INFINITY,
                     delay: ring * 0.5,
-                    ease: "easeInOut",
+                    ease: 'easeInOut',
                   }}
                 />
               ))}
@@ -163,9 +164,7 @@ export default function TokenIntroduction() {
                     <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
 
                     {/* Token text */}
-                    <div className="text-6xl font-bold text-white transform -rotate-12">
-                      $DANZ
-                    </div>
+                    <div className="text-6xl font-bold text-white transform -rotate-12">$DANZ</div>
 
                     {/* Sparkle effects */}
                     {[0, 1, 2, 3].map(i => (
@@ -219,4 +218,3 @@ export default function TokenIntroduction() {
     </section>
   )
 }
-

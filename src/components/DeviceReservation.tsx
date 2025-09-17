@@ -3,7 +3,15 @@
 import { motion } from 'motion/react'
 import type React from 'react'
 import { useState } from 'react'
-import { FiActivity, FiStar, FiTarget, FiZap, FiBattery, FiDroplet, FiBluetooth } from 'react-icons/fi'
+import {
+  FiActivity,
+  FiBattery,
+  FiBluetooth,
+  FiDroplet,
+  FiStar,
+  FiTarget,
+  FiZap,
+} from 'react-icons/fi'
 
 const specs = [
   { icon: FiDroplet, label: 'Water Resistant', value: 'IPX7 Rating' },
@@ -54,7 +62,10 @@ export default function DeviceReservation() {
   }
 
   return (
-    <section id="device" className="section bg-gradient-to-b from-bg-primary via-bg-secondary/30 to-bg-primary relative overflow-hidden">
+    <section
+      id="device"
+      className="section bg-gradient-to-b from-bg-primary via-bg-secondary/30 to-bg-primary relative overflow-hidden"
+    >
       {/* Background decoration */}
       <div className="absolute inset-0">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-gradient-to-br from-neon-purple/10 to-neon-pink/10 rounded-full blur-3xl" />
@@ -106,7 +117,9 @@ export default function DeviceReservation() {
                   className="bg-bg-card/30 backdrop-blur-sm border border-white/10 rounded-2xl p-4 text-center hover:bg-bg-card/50 transition-all"
                 >
                   <spec.icon className="w-6 h-6 text-neon-purple mx-auto mb-2" />
-                  <div className="text-xs text-text-muted uppercase tracking-wider mb-1">{spec.label}</div>
+                  <div className="text-xs text-text-muted uppercase tracking-wider mb-1">
+                    {spec.label}
+                  </div>
                   <div className="text-sm font-semibold text-white">{spec.value}</div>
                 </motion.div>
               ))}
@@ -123,11 +136,15 @@ export default function DeviceReservation() {
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   className="bg-bg-card/30 backdrop-blur-sm border border-white/10 rounded-2xl p-5 hover:bg-bg-card/50 hover:border-white/20 transition-all group"
                 >
-                  <div className={`w-12 h-12 bg-gradient-to-br ${feature.gradient} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                  <div
+                    className={`w-12 h-12 bg-gradient-to-br ${feature.gradient} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
+                  >
                     <feature.icon className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="font-semibold mb-2 text-white">{feature.title}</h3>
-                  <p className="text-text-secondary text-sm leading-relaxed">{feature.description}</p>
+                  <p className="text-text-secondary text-sm leading-relaxed">
+                    {feature.description}
+                  </p>
                 </motion.div>
               ))}
             </div>
@@ -185,7 +202,7 @@ export default function DeviceReservation() {
                     duration: 4 + ring,
                     repeat: Number.POSITIVE_INFINITY,
                     delay: ring * 0.7,
-                    ease: "easeInOut",
+                    ease: 'easeInOut',
                   }}
                 />
               ))}

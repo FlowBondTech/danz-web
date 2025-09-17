@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { FaInstagram, FaTiktok, FaDiscord, FaXTwitter } from 'react-icons/fa6'
+import { FaDiscord, FaInstagram, FaTiktok, FaXTwitter } from 'react-icons/fa6'
 
 export default function Footer() {
   return (
@@ -63,20 +63,31 @@ export default function Footer() {
 
           {/* Product Column */}
           <div>
-            <h3 className="text-text-muted text-sm font-semibold uppercase tracking-wider mb-4">Product</h3>
+            <h3 className="text-text-muted text-sm font-semibold uppercase tracking-wider mb-4">
+              Product
+            </h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/how-it-works" className="text-text-secondary hover:text-text-primary transition-colors">
+                <Link
+                  href="/how-it-works"
+                  className="text-text-secondary hover:text-text-primary transition-colors"
+                >
                   How It Works
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" className="text-text-secondary hover:text-text-primary transition-colors">
+                <Link
+                  href="/pricing"
+                  className="text-text-secondary hover:text-text-primary transition-colors"
+                >
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link href="/danz" className="text-text-secondary hover:text-text-primary transition-colors">
+                <Link
+                  href="/danz"
+                  className="text-text-secondary hover:text-text-primary transition-colors"
+                >
                   $DANZ Token
                 </Link>
               </li>
@@ -85,15 +96,23 @@ export default function Footer() {
 
           {/* Community Column */}
           <div>
-            <h3 className="text-text-muted text-sm font-semibold uppercase tracking-wider mb-4">Community</h3>
+            <h3 className="text-text-muted text-sm font-semibold uppercase tracking-wider mb-4">
+              Community
+            </h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/apply-to-host" className="text-text-secondary hover:text-text-primary transition-colors">
+                <Link
+                  href="/apply-to-host"
+                  className="text-text-secondary hover:text-text-primary transition-colors"
+                >
                   Apply to Host
                 </Link>
               </li>
               <li>
-                <Link href="/join-movement" className="text-text-secondary hover:text-text-primary transition-colors">
+                <Link
+                  href="/join-movement"
+                  className="text-text-secondary hover:text-text-primary transition-colors"
+                >
                   Join Movement
                 </Link>
               </li>
@@ -102,20 +121,31 @@ export default function Footer() {
 
           {/* Resources Column */}
           <div>
-            <h3 className="text-text-muted text-sm font-semibold uppercase tracking-wider mb-4">Resources</h3>
+            <h3 className="text-text-muted text-sm font-semibold uppercase tracking-wider mb-4">
+              Resources
+            </h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/support" className="text-text-secondary hover:text-text-primary transition-colors">
+                <Link
+                  href="/support"
+                  className="text-text-secondary hover:text-text-primary transition-colors"
+                >
                   Support
                 </Link>
               </li>
               <li>
-                <Link href="/privacy-policy" className="text-text-secondary hover:text-text-primary transition-colors">
+                <Link
+                  href="/privacy-policy"
+                  className="text-text-secondary hover:text-text-primary transition-colors"
+                >
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms-of-service" className="text-text-secondary hover:text-text-primary transition-colors">
+                <Link
+                  href="/terms-of-service"
+                  className="text-text-secondary hover:text-text-primary transition-colors"
+                >
                   Terms of Service
                 </Link>
               </li>
@@ -124,20 +154,31 @@ export default function Footer() {
 
           {/* Contact Column */}
           <div>
-            <h3 className="text-text-muted text-sm font-semibold uppercase tracking-wider mb-4">Contact</h3>
+            <h3 className="text-text-muted text-sm font-semibold uppercase tracking-wider mb-4">
+              Contact
+            </h3>
             <ul className="space-y-3">
               <li>
-                <a href="mailto:info@danz.now" className="text-text-secondary hover:text-text-primary transition-colors">
+                <a
+                  href="mailto:info@danz.now"
+                  className="text-text-secondary hover:text-text-primary transition-colors"
+                >
                   Email
                 </a>
               </li>
               <li>
-                <Link href="/press-kit" className="text-text-secondary hover:text-text-primary transition-colors">
+                <Link
+                  href="/press-kit"
+                  className="text-text-secondary hover:text-text-primary transition-colors"
+                >
                   Press Kit
                 </Link>
               </li>
               <li>
-                <Link href="/partnerships" className="text-text-secondary hover:text-text-primary transition-colors">
+                <Link
+                  href="/partnerships"
+                  className="text-text-secondary hover:text-text-primary transition-colors"
+                >
                   Partnerships
                 </Link>
               </li>
@@ -153,15 +194,24 @@ export default function Footer() {
               <p className="mt-1">Contact: info@danz.now</p>
             </div>
             <div className="flex gap-6 text-sm">
-              <Link href="/privacy-policy" className="text-text-muted hover:text-text-primary transition-colors">
+              <Link
+                href="/privacy-policy"
+                className="text-text-muted hover:text-text-primary transition-colors"
+              >
                 Privacy Policy
               </Link>
               <span className="text-text-muted">•</span>
-              <Link href="/terms-of-service" className="text-text-muted hover:text-text-primary transition-colors">
+              <Link
+                href="/terms-of-service"
+                className="text-text-muted hover:text-text-primary transition-colors"
+              >
                 Terms of Service
               </Link>
               <span className="text-text-muted">•</span>
-              <Link href="/whitepaper" className="text-text-muted hover:text-text-primary transition-colors">
+              <Link
+                href="/whitepaper"
+                className="text-text-muted hover:text-text-primary transition-colors"
+              >
                 Whitepaper
               </Link>
             </div>

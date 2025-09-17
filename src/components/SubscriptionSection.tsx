@@ -88,11 +88,13 @@ export default function SubscriptionSection() {
                   </div>
                 )}
 
-                <div className={`bg-bg-card/30 backdrop-blur-sm border rounded-3xl p-8 h-full relative overflow-hidden transition-all duration-300 ${
-                  plan.highlighted
-                    ? 'border-neon-purple/50 shadow-xl shadow-neon-purple/10'
-                    : 'border-white/10 hover:border-white/20'
-                }`}>
+                <div
+                  className={`bg-bg-card/30 backdrop-blur-sm border rounded-3xl p-8 h-full relative overflow-hidden transition-all duration-300 ${
+                    plan.highlighted
+                      ? 'border-neon-purple/50 shadow-xl shadow-neon-purple/10'
+                      : 'border-white/10 hover:border-white/20'
+                  }`}
+                >
                   {/* Plan Name */}
                   <h3 className="text-2xl font-bold text-center mb-8">{plan.name}</h3>
 
@@ -143,7 +145,8 @@ export default function SubscriptionSection() {
             className="text-center"
           >
             <p className="text-text-secondary text-lg">
-              Start with a free account to explore basic features, then upgrade when you're ready to unlock the full FlowBond experience.
+              Start with a free account to explore basic features, then upgrade when you're ready to
+              unlock the full FlowBond experience.
             </p>
           </motion.div>
         </div>
@@ -151,4 +154,3 @@ export default function SubscriptionSection() {
     </section>
   )
 }
-

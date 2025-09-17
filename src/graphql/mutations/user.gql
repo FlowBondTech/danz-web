@@ -1,0 +1,13 @@
+# import "../fragments/user.gql"
+
+mutation UpdateProfile($input: UpdateProfileInput!) {
+  updateProfile(input: $input) {
+    ...UserFullInfo
+  }
+}
+
+mutation RegisterUser($input: RegisterUserInput!) {
+  registerUser(input: $input) {
+    ...UserFullInfo
+  }
+}

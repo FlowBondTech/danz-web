@@ -80,7 +80,9 @@ export default function HowItWorks() {
               <div className="bg-bg-card/30 backdrop-blur-sm border border-white/10 rounded-3xl p-8 h-full text-center relative overflow-hidden group hover:border-white/20 hover:bg-bg-card/40 transition-all duration-300">
                 {/* Step number - positioned at top left */}
                 <div className="absolute top-6 left-6">
-                  <span className={`text-2xl font-bold bg-gradient-to-br ${step.gradient} bg-clip-text text-transparent`}>
+                  <span
+                    className={`text-2xl font-bold bg-gradient-to-br ${step.gradient} bg-clip-text text-transparent`}
+                  >
                     {step.number}
                   </span>
                 </div>
@@ -150,4 +152,3 @@ export default function HowItWorks() {
     </section>
   )
 }
-
