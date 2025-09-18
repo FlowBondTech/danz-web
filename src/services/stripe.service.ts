@@ -18,6 +18,12 @@ export const stripeService = {
   ): Promise<CheckoutSessionResponse> {
     const token = await getAccessToken()
 
+    console.log('api_url', API_URL)
+
+    console.log('plan', plan)
+
+    console.log('priceId', priceId)
+
     const response = await fetch(`${API_URL}/api/stripe/create-checkout-session`, {
       method: 'POST',
       headers: {
@@ -56,6 +62,6 @@ export const stripeService = {
 }
 
 export const STRIPE_PRICE_IDS = {
-  MONTHLY: process.env.STRIPE_MONTHLY_PRICE_ID || '',
-  YEARLY: process.env.STRIPE_YEARLY_PRICE_ID || '',
+  MONTHLY: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID || '',
+  YEARLY: process.env.NEXT_PUBLIC_STRIPE_YEARLY_PRICE_ID || '',
 }
