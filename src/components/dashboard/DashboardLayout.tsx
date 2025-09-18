@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import {
   FiChevronLeft,
   FiChevronRight,
+  FiCreditCard,
   FiGrid,
   FiLogOut,
   FiMenu,
@@ -48,6 +49,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       name: 'Profile',
       icon: FiUser,
       href: '/dashboard/profile',
+    },
+    {
+      name: 'Subscription',
+      icon: FiCreditCard,
+      href: '/dashboard/subscription',
     },
   ]
 

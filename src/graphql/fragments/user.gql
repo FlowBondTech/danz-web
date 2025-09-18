@@ -38,6 +38,14 @@ fragment UserFullInfo on User {
   xp
   level
   subscription_tier
+  is_premium
+  stripe_customer_id
+  stripe_subscription_id
+  subscription_status
+  subscription_plan
+  subscription_start_date
+  subscription_end_date
+  subscription_cancelled_at
   total_dance_time
   total_sessions
   longest_streak

@@ -3,7 +3,7 @@
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import { useGetMyProfileQuery } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { FaTiktok } from 'react-icons/fa'
 import { FiAward, FiInstagram, FiMusic, FiTarget, FiTwitter, FiYoutube } from 'react-icons/fi'
@@ -11,8 +11,9 @@ import { FiAward, FiInstagram, FiMusic, FiTarget, FiTwitter, FiYoutube } from 'r
 export default function DashboardPage() {
   const { authenticated, ready, user } = usePrivy()
   const router = useRouter()
+  const searchParams = useSearchParams()
 
-  const { data, loading, error } = useGetMyProfileQuery({
+  const { data, loading, error, refetch } = useGetMyProfileQuery({
     skip: !authenticated,
   })
 
@@ -21,6 +22,17 @@ export default function DashboardPage() {
       router.push('/')
     }
   }, [ready, authenticated, router])
+
+  useEffect(() => {
+    // Refetch user data if coming back from Stripe checkout
+    if (
+      searchParams.get('session_id') ||
+      searchParams.get('success') ||
+      searchParams.get('session')
+    ) {
+      refetch()
+    }
+  }, [searchParams])
 
   if (!ready || loading) {
     return (
@@ -43,9 +55,14 @@ export default function DashboardPage() {
   return (
     <DashboardLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-6 sm:mb-8">
-          Dashboard Overview
-        </h1>
+        <div className="flex items-center justify-between mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">Dashboard Overview</h1>
+          {profile?.is_premium === 'active' && (
+            <div className="bg-gradient-neon px-4 py-2 rounded-full">
+              <span className="text-white font-medium text-sm">✨ Premium Member</span>
+            </div>
+          )}
+        </div>
 
         {profile ? (
           <>

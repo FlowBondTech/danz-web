@@ -517,6 +517,7 @@ export type User = {
   instagram?: Maybe<Scalars['String']['output']>
   invited_by?: Maybe<Scalars['String']['output']>
   is_organizer_approved?: Maybe<Scalars['Boolean']['output']>
+  is_premium?: Maybe<Scalars['String']['output']>
   is_public?: Maybe<Scalars['Boolean']['output']>
   last_active_at?: Maybe<Scalars['DateTime']['output']>
   latitude?: Maybe<Scalars['Float']['output']>
@@ -536,6 +537,13 @@ export type User = {
   show_location?: Maybe<Scalars['Boolean']['output']>
   skill_level?: Maybe<SkillLevel>
   social_media_links?: Maybe<Scalars['JSON']['output']>
+  stripe_customer_id?: Maybe<Scalars['String']['output']>
+  stripe_subscription_id?: Maybe<Scalars['String']['output']>
+  subscription_cancelled_at?: Maybe<Scalars['DateTime']['output']>
+  subscription_end_date?: Maybe<Scalars['DateTime']['output']>
+  subscription_plan?: Maybe<Scalars['String']['output']>
+  subscription_start_date?: Maybe<Scalars['DateTime']['output']>
+  subscription_status?: Maybe<Scalars['String']['output']>
   subscription_tier?: Maybe<Scalars['String']['output']>
   tiktok?: Maybe<Scalars['String']['output']>
   total_achievements?: Maybe<Scalars['Int']['output']>
@@ -617,6 +625,14 @@ export type UserFullInfoFragment = {
   xp?: number | null
   level?: number | null
   subscription_tier?: string | null
+  is_premium?: string | null
+  stripe_customer_id?: string | null
+  stripe_subscription_id?: string | null
+  subscription_status?: string | null
+  subscription_plan?: string | null
+  subscription_start_date?: any | null
+  subscription_end_date?: any | null
+  subscription_cancelled_at?: any | null
   total_dance_time?: number | null
   total_sessions?: number | null
   longest_streak?: number | null
@@ -677,6 +693,14 @@ export type UpdateProfileMutation = {
     xp?: number | null
     level?: number | null
     subscription_tier?: string | null
+    is_premium?: string | null
+    stripe_customer_id?: string | null
+    stripe_subscription_id?: string | null
+    subscription_status?: string | null
+    subscription_plan?: string | null
+    subscription_start_date?: any | null
+    subscription_end_date?: any | null
+    subscription_cancelled_at?: any | null
     total_dance_time?: number | null
     total_sessions?: number | null
     longest_streak?: number | null
@@ -736,6 +760,14 @@ export type GetMyProfileQuery = {
     xp?: number | null
     level?: number | null
     subscription_tier?: string | null
+    is_premium?: string | null
+    stripe_customer_id?: string | null
+    stripe_subscription_id?: string | null
+    subscription_status?: string | null
+    subscription_plan?: string | null
+    subscription_start_date?: any | null
+    subscription_end_date?: any | null
+    subscription_cancelled_at?: any | null
     total_dance_time?: number | null
     total_sessions?: number | null
     longest_streak?: number | null
@@ -797,6 +829,14 @@ export type GetUserByIdQuery = {
     xp?: number | null
     level?: number | null
     subscription_tier?: string | null
+    is_premium?: string | null
+    stripe_customer_id?: string | null
+    stripe_subscription_id?: string | null
+    subscription_status?: string | null
+    subscription_plan?: string | null
+    subscription_start_date?: any | null
+    subscription_end_date?: any | null
+    subscription_cancelled_at?: any | null
     total_dance_time?: number | null
     total_sessions?: number | null
     longest_streak?: number | null
@@ -869,6 +909,14 @@ export const UserFullInfoFragmentDoc = gql`
   xp
   level
   subscription_tier
+  is_premium
+  stripe_customer_id
+  stripe_subscription_id
+  subscription_status
+  subscription_plan
+  subscription_start_date
+  subscription_end_date
+  subscription_cancelled_at
   total_dance_time
   total_sessions
   longest_streak

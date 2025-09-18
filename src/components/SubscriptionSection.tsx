@@ -3,13 +3,18 @@
 import { usePrivy } from '@privy-io/react-auth'
 import { motion } from 'motion/react'
 import { useRouter } from 'next/navigation'
-import { FiCheck } from 'react-icons/fi'
+import { useState } from 'react'
+import { FiCheck, FiCreditCard } from 'react-icons/fi'
+import { useGetMyProfileQuery } from '@/src/generated/graphql'
+import { STRIPE_PRICE_IDS, stripeService } from '@/src/services/stripe.service'
 
 const plans = [
   {
+    id: 'monthly',
     name: 'Monthly Flow',
     price: '$9.99',
     period: '/month',
+    priceId: STRIPE_PRICE_IDS.MONTHLY,
     features: [
       'Unlimited event matching',
       'Priority access to popular events',
@@ -21,9 +26,11 @@ const plans = [
     highlighted: false,
   },
   {
+    id: 'yearly',
     name: 'Annual Flow',
     price: '$99',
     period: '/year',
+    priceId: STRIPE_PRICE_IDS.YEARLY,
     features: [
       'Unlimited event matching',
       'Priority access to popular events',
@@ -40,12 +47,40 @@ const plans = [
 export default function SubscriptionSection() {
   const { authenticated, login } = usePrivy()
   const router = useRouter()
+  const [loading, setLoading] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSelectPlan = () => {
-    if (authenticated) {
-      router.push('/dashboard')
-    } else {
+  const { data: profileData } = useGetMyProfileQuery({
+    skip: !authenticated,
+  })
+
+  const user = profileData?.me
+  const isPremium = user?.is_premium === 'active'
+  const currentPlan = user?.subscription_plan
+
+  const handleSelectPlan = async (plan: typeof plans[0]) => {
+    if (!authenticated) {
       login()
+      return
+    }
+
+    // Don't allow selecting if user already has a subscription
+    if (isPremium) {
+      return
+    }
+
+    setLoading(plan.id)
+    setError(null)
+
+    try {
+      const { url } = await stripeService.createCheckoutSession(plan.priceId, plan.id as 'monthly' | 'yearly')
+      if (url) {
+        window.location.href = url
+      }
+    } catch (err) {
+      console.error('Failed to create checkout session:', err)
+      setError('Failed to start checkout. Please try again.')
+      setLoading(null)
     }
   }
   return (
@@ -77,11 +112,27 @@ export default function SubscriptionSection() {
               <p className="text-xl text-text-secondary max-w-3xl mx-auto">
                 Connect with your vibe through our premium matching system
               </p>
+
+              {/* Current Plan Status */}
+              {isPremium && (
+                <div className="mt-8">
+                  <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-neon-purple/20 to-neon-pink/20 backdrop-blur-sm border border-neon-purple/30 rounded-full mb-4">
+                    <FiCreditCard className="text-neon-purple" size={20} />
+                    <span className="text-white font-medium">
+                      You're on the {currentPlan === 'yearly' ? 'Annual' : 'Monthly'} Flow plan
+                    </span>
+                  </div>
+                  <p className="text-text-secondary">
+                    Visit your dashboard to manage your subscription
+                  </p>
+                </div>
+              )}
             </motion.div>
           </div>
 
-          {/* Pricing Cards */}
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
+          {/* Pricing Cards - Only show if user doesn't have premium */}
+          {!isPremium && (
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
             {plans.map((plan, index) => (
               <motion.div
                 key={index}
@@ -135,19 +186,32 @@ export default function SubscriptionSection() {
                     type="button"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={handleSelectPlan}
+                    onClick={() => handleSelectPlan(plan)}
+                    disabled={loading === plan.id}
                     className={`w-full py-3 px-6 rounded-xl font-medium transition-all ${
                       plan.highlighted
                         ? 'bg-gradient-neon text-white shadow-lg hover:shadow-neon-purple/50'
                         : 'bg-gradient-to-r from-neon-purple/20 to-neon-pink/20 text-white border border-white/10 hover:border-white/20'
-                    }`}
+                    } ${loading === plan.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
-                    {authenticated ? 'Select Plan' : 'Join to Select'}
+                    {loading === plan.id
+                      ? 'Processing...'
+                      : authenticated
+                        ? 'Select Plan'
+                        : 'Join to Select'}
                   </motion.button>
                 </div>
               </motion.div>
             ))}
-          </div>
+            </div>
+          )}
+
+          {/* Error Message */}
+          {error && (
+            <div className="text-center mb-8">
+              <p className="text-red-500">{error}</p>
+            </div>
+          )}
 
           {/* Bottom Text */}
           <motion.div
