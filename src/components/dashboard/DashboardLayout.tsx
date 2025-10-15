@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import {
+  FiCalendar,
   FiChevronLeft,
   FiChevronRight,
   FiCreditCard,
@@ -49,6 +50,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       name: 'Profile',
       icon: FiUser,
       href: '/dashboard/profile',
+    },
+    {
+      name: 'Events',
+      icon: FiCalendar,
+      href: '/dashboard/events',
     },
     {
       name: 'Subscription',

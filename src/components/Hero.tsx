@@ -122,14 +122,14 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 30 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="grid grid-cols-3 gap-8 mt-20 max-w-2xl mx-auto"
+          className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 max-w-4xl mx-auto"
         >
           <div className="text-center">
             <div className="text-3xl md:text-4xl mb-2">🌴</div>
             <div className="text-xl font-bold text-text-primary">Bali</div>
             <div className="text-text-muted mt-1">Indonesia</div>
           </div>
-          <div className="text-center border-x border-white/10">
+          <div className="text-center md:border-x border-white/10">
             <div className="text-3xl md:text-4xl mb-2">🎸</div>
             <div className="text-xl font-bold text-text-primary">Austin</div>
             <div className="text-text-muted mt-1">Texas, USA</div>
@@ -138,6 +138,11 @@ export default function Hero() {
             <div className="text-3xl md:text-4xl mb-2">🏝️</div>
             <div className="text-xl font-bold text-text-primary">Tulum</div>
             <div className="text-text-muted mt-1">Mexico</div>
+          </div>
+          <div className="text-center md:border-l border-white/10">
+            <div className="text-3xl md:text-4xl mb-2">🏔️</div>
+            <div className="text-xl font-bold text-text-primary">Neuquén</div>
+            <div className="text-text-muted mt-1">Argentina</div>
           </div>
         </motion.div>
 

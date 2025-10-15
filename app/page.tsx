@@ -12,6 +12,7 @@ import Layout from '@/src/components/Layout'
 import Navbar from '@/src/components/Navbar'
 import SubscriptionSection from '@/src/components/SubscriptionSection'
 import TokenIntroduction from '@/src/components/TokenIntroduction'
+import UpcomingEvents from '@/src/components/UpcomingEvents'
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
       <Navbar />
       <main className="pt-20">
         <Hero />
+        <UpcomingEvents />
         <HowItWorks />
         <ForDancers />
         <ForHosts />
