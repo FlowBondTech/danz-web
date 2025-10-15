@@ -141,7 +141,7 @@ export default function Hero() {
           </div>
           <div className="text-center md:border-l border-white/10">
             <div className="text-3xl md:text-4xl mb-2">🏔️</div>
-            <div className="text-xl font-bold text-text-primary">Neuquén</div>
+            <div className="text-xl font-bold text-text-primary">Buenos Aires</div>
             <div className="text-text-muted mt-1">Argentina</div>
           </div>
         </motion.div>
