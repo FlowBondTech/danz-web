@@ -57,14 +57,6 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
     }
   }, [ready, authenticated, data, loading, error, router, pathname])
 
-  // Show loading state while checking auth
-  if (!ready || (authenticated && loading)) {
-    return (
-      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-neon-purple border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
-  }
-
+  // Don't block rendering with loading state - let Navbar handle it
   return <>{children}</>
 }

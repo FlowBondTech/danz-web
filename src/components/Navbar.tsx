@@ -122,7 +122,10 @@ export default function Navbar() {
         {/* Desktop Auth Section */}
         <div className="hidden lg:flex items-center gap-4">
           {isLoading ? (
-            <div className="w-32 h-10 bg-white/10 animate-pulse rounded-lg" />
+            <div className="flex items-center gap-2 px-3 py-2">
+              <div className="w-8 h-8 bg-white/10 animate-pulse rounded-full" />
+              <div className="w-20 h-4 bg-white/10 animate-pulse rounded" />
+            </div>
           ) : isAuthenticated && user ? (
             <div className="relative" ref={dropdownRef}>
               <button
@@ -298,7 +301,13 @@ export default function Navbar() {
               </li>
               <li className="mt-8">
                 {isLoading ? (
-                  <div className="w-full h-12 bg-white/10 animate-pulse rounded-lg" />
+                  <div className="flex items-center gap-3 p-3 bg-white/10 rounded-lg">
+                    <div className="w-10 h-10 bg-white/20 animate-pulse rounded-full" />
+                    <div className="flex-1">
+                      <div className="w-24 h-4 bg-white/20 animate-pulse rounded mb-2" />
+                      <div className="w-16 h-3 bg-white/20 animate-pulse rounded" />
+                    </div>
+                  </div>
                 ) : isAuthenticated && user ? (
                   <div className="space-y-4">
                     <div className="flex items-center gap-3 p-3 bg-white/10 rounded-lg">
