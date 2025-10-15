@@ -39,6 +39,21 @@ const UPDATE_PROFILE = gql`
       is_public
       allow_messages
       show_location
+      role
+      xp
+      level
+      subscription_tier
+      is_premium
+      total_dance_time
+      total_sessions
+      longest_streak
+      total_events_attended
+      total_events_created
+      upcoming_events_count
+      total_achievements
+      dance_bonds_count
+      created_at
+      updated_at
     }
   }
 `
@@ -105,6 +120,18 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
   const [updateProfile, { loading: saving }] = useMutation(UPDATE_PROFILE, {
+    update(cache, { data }) {
+      if (data?.updateProfile) {
+        // Update the me query cache with the new profile data
+        cache.modify({
+          fields: {
+            me() {
+              return data.updateProfile
+            },
+          },
+        })
+      }
+    },
     onCompleted: () => {
       setHasChanges(false)
       if (onSave) onSave()

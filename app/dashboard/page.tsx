@@ -36,17 +36,21 @@ export default function DashboardPage() {
 
   if (!ready || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-purple-900/20 to-black flex items-center justify-center">
-        <div className="text-white text-2xl">Loading...</div>
-      </div>
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-white text-2xl">Loading...</div>
+        </div>
+      </DashboardLayout>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-purple-900/20 to-black flex items-center justify-center">
-        <div className="text-red-400 text-xl">Error loading profile</div>
-      </div>
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-red-400 text-xl">Error loading profile</div>
+        </div>
+      </DashboardLayout>
     )
   }
 

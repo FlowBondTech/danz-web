@@ -69,12 +69,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-bg-primary flex">
+    <div className="h-screen bg-bg-primary flex overflow-hidden">
       {/* Desktop Sidebar */}
       <div
         className={`hidden lg:flex flex-col bg-bg-secondary border-r border-neon-purple/20 transition-all duration-300 ${
           sidebarOpen ? 'w-64' : 'w-20'
-        }`}
+        } h-full`}
       >
         {/* Sidebar Header */}
         <div className="p-6 border-b border-white/10">
@@ -276,8 +276,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8">{children}</main>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8 overflow-y-auto">{children}</main>
       </div>
     </div>
   )

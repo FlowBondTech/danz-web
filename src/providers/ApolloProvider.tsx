@@ -18,6 +18,11 @@ const cache = new InMemoryCache({
   typePolicies: {
     Query: {
       fields: {
+        me: {
+          read(existing) {
+            return existing
+          },
+        },
         events: {
           keyArgs: ['filter', 'sortBy', 'organizerId'],
           merge(existing, incoming, { args }) {
@@ -141,7 +146,8 @@ export const ApolloProvider: React.FC<ApolloProviderProps> = ({ children }) => {
       cache,
       defaultOptions: {
         watchQuery: {
-          fetchPolicy: 'cache-and-network',
+          fetchPolicy: 'cache-first',
+          nextFetchPolicy: 'cache-first',
           errorPolicy: 'all',
         },
         query: {
