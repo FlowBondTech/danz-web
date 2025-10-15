@@ -36,12 +36,6 @@ const benefits = [
   'Get discovered by event hosts and choreographers',
 ]
 
-const stats = [
-  { number: 10000, label: 'Active Dancers' },
-  { number: 50000, label: '$DANZ Earned Daily' },
-  { number: 95, label: '% User Satisfaction' },
-]
-
 export default function ForDancers() {
   return (
     <section id="dancers" className="section bg-bg-secondary/50 relative overflow-hidden">
@@ -146,52 +140,29 @@ export default function ForDancers() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="bg-bg-card/50 backdrop-blur-sm border border-white/10 rounded-3xl p-8 md:p-12 max-w-7xl mx-auto"
+          className="bg-bg-card/50 backdrop-blur-sm border border-white/10 rounded-3xl p-8 md:p-12 max-w-4xl mx-auto"
         >
-          <div className="grid lg:grid-cols-[1.5fr,1fr] gap-8 md:gap-12 items-center">
-            <div>
-              <h3 className="text-2xl md:text-3xl font-bold mb-8">
-                Why Dancers Love <span className="gradient-text">DANZ.NOW</span>
-              </h3>
-              <ul className="space-y-4">
-                {benefits.map((benefit, index) => (
-                  <motion.li
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="flex items-start gap-3"
-                  >
-                    <div className="flex-shrink-0 w-6 h-6 bg-gradient-neon rounded-full flex items-center justify-center mt-0.5">
-                      <FiCheck className="w-3 h-3 text-white" />
-                    </div>
-                    <span className="text-text-secondary leading-relaxed">{benefit}</span>
-                  </motion.li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="space-y-6">
-              {stats.map((stat, index) => (
-                <motion.div
+          <div className="text-center">
+            <h3 className="text-2xl md:text-3xl font-bold mb-12">
+              Why Dancers Love <span className="gradient-text">DANZ.NOW</span>
+            </h3>
+            <ul className="space-y-6 max-w-2xl mx-auto">
+              {benefits.map((benefit, index) => (
+                <motion.li
                   key={index}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="text-left"
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="flex items-start gap-4 text-left"
                 >
-                  <div className="text-4xl md:text-5xl font-bold gradient-text mb-1">
-                    {stat.number.toLocaleString()}
-                    {stat.label.includes('%') ? '' : '+'}
+                  <div className="flex-shrink-0 w-6 h-6 bg-gradient-neon rounded-full flex items-center justify-center mt-0.5">
+                    <FiCheck className="w-4 h-4 text-white" />
                   </div>
-                  <div className="text-text-muted text-sm uppercase tracking-wider">
-                    {stat.label}
-                  </div>
-                </motion.div>
+                  <span className="text-text-secondary leading-relaxed text-lg">{benefit}</span>
+                </motion.li>
               ))}
-            </div>
+            </ul>
           </div>
         </motion.div>
       </div>
