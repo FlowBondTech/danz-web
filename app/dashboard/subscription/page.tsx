@@ -4,7 +4,7 @@ import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import { useGetMyProfileQuery } from '@/src/generated/graphql'
 import { STRIPE_PRICE_IDS, stripeService } from '@/src/services/stripe.service'
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { FiCheck, FiCreditCard, FiX } from 'react-icons/fi'
 
 const plans = [
@@ -41,7 +41,7 @@ const plans = [
   },
 ]
 
-export default function SubscriptionPage() {
+function SubscriptionContent() {
   const { data, loading, refetch } = useGetMyProfileQuery()
   const searchParams = useSearchParams()
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly')
@@ -268,5 +268,21 @@ export default function SubscriptionPage() {
         </div>
       </div>
     </DashboardLayout>
+  )
+}
+
+export default function SubscriptionPage() {
+  return (
+    <Suspense
+      fallback={
+        <DashboardLayout>
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="text-white text-2xl">Loading...</div>
+          </div>
+        </DashboardLayout>
+      }
+    >
+      <SubscriptionContent />
+    </Suspense>
   )
 }

@@ -4,11 +4,11 @@ import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import { useGetMyProfileQuery } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { FaTiktok } from 'react-icons/fa'
 import { FiAward, FiInstagram, FiMusic, FiTarget, FiTwitter, FiYoutube } from 'react-icons/fi'
 
-export default function DashboardPage() {
+function DashboardContent() {
   const { authenticated, ready, user } = usePrivy()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -32,7 +32,7 @@ export default function DashboardPage() {
     ) {
       refetch()
     }
-  }, [searchParams])
+  }, [searchParams, refetch])
 
   if (!ready || loading) {
     return (
@@ -405,5 +405,21 @@ export default function DashboardPage() {
         )}
       </div>
     </DashboardLayout>
+  )
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense
+      fallback={
+        <DashboardLayout>
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="text-white text-2xl">Loading...</div>
+          </div>
+        </DashboardLayout>
+      }
+    >
+      <DashboardContent />
+    </Suspense>
   )
 }
