@@ -14,11 +14,6 @@ const UPCOMING_EVENTS: LumaEvent[] = [
     eventId: 'evt-AnQDBwnz36mhqSN',
     title: 'DANZ Community Event',
   },
-  {
-    id: '2',
-    eventId: 'evt-QOwHgFdS60C9UZB',
-    title: 'DANZ Workshop',
-  },
 ]
 
 interface UpcomingEventsGridProps {
