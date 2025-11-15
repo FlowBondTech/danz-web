@@ -16,6 +16,7 @@ fragment UserFullInfo on User {
   cover_image_url
   bio
   role
+  is_admin
   location
   city
   latitude

@@ -1,6 +1,11 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
+import {
+  useGetMyReferralCodeQuery,
+  useGetMyReferralStatsQuery,
+  useGetMyReferralsQuery,
+} from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
@@ -21,19 +26,35 @@ function ReferralsContent() {
   const [copiedShareUrl, setCopiedShareUrl] = useState(false)
   const [copiedCode, setCopiedCode] = useState(false)
 
-  // Mock data - will be replaced with actual GraphQL queries after migrations
-  const referralCode = 'username123'
-  const shareUrl = `https://danz.now/i/${referralCode}`
+  // Fetch actual referral data
+  const { data: codeData, loading: codeLoading, error: codeError } = useGetMyReferralCodeQuery({
+    skip: !authenticated,
+  })
+  const { data: statsData, loading: statsLoading, error: statsError } = useGetMyReferralStatsQuery({
+    skip: !authenticated,
+  })
+  const { data: referralsData, loading: referralsLoading, error: referralsError } = useGetMyReferralsQuery({
+    variables: { limit: 10 },
+    skip: !authenticated,
+  })
+
+  // Log errors for debugging
+  if (codeError) console.error('Referral code error:', codeError)
+  if (statsError) console.error('Referral stats error:', statsError)
+  if (referralsError) console.error('Referrals error:', referralsError)
+
+  const referralCode = codeData?.myReferralCode?.referral_code || 'loading...'
+  const shareUrl = codeData?.myReferralCode?.share_url || `https://danz.now/i/${referralCode}`
   const stats = {
-    totalClicks: 0,
-    totalSignups: 0,
-    totalCompleted: 0,
-    totalPointsEarned: 0,
-    conversionRate: 0,
-    pendingReferrals: 0,
-    completedReferrals: 0,
+    totalClicks: statsData?.myReferralStats?.total_clicks || 0,
+    totalSignups: statsData?.myReferralStats?.total_signups || 0,
+    totalCompleted: statsData?.myReferralStats?.total_completed || 0,
+    totalPointsEarned: statsData?.myReferralStats?.total_points_earned || 0,
+    conversionRate: statsData?.myReferralStats?.conversion_rate || 0,
+    pendingReferrals: statsData?.myReferralStats?.pending_referrals || 0,
+    completedReferrals: statsData?.myReferralStats?.completed_referrals || 0,
   }
-  const recentReferrals: any[] = []
+  const recentReferrals = referralsData?.myReferrals || []
 
   useEffect(() => {
     if (ready && !authenticated) {
@@ -66,7 +87,7 @@ function ReferralsContent() {
     window.location.href = `sms:?&body=${message}`
   }
 
-  if (!ready) {
+  if (!ready || codeLoading || statsLoading) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">

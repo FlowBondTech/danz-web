@@ -13,7 +13,9 @@ import {
   FiGrid,
   FiLogOut,
   FiMenu,
+  FiSettings,
   FiUser,
+  FiUserPlus,
   FiX,
 } from 'react-icons/fi'
 import { useGetMyProfileQuery } from '../../generated/graphql'
@@ -40,7 +42,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     }
   }, [ready, authenticated, profileData, profileLoading, router])
 
-  const menuItems = [
+  const baseMenuItems = [
     {
       name: 'Overview',
       icon: FiGrid,
@@ -57,11 +59,28 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       href: '/dashboard/events',
     },
     {
+      name: 'Referrals',
+      icon: FiUserPlus,
+      href: '/dashboard/referrals',
+    },
+    {
       name: 'Subscription',
       icon: FiCreditCard,
       href: '/dashboard/subscription',
     },
   ]
+
+  const adminMenuItems = [
+    {
+      name: 'Admin',
+      icon: FiSettings,
+      href: '/dashboard/admin',
+    },
+  ]
+
+  const menuItems = profileData?.me?.is_admin
+    ? [...baseMenuItems, ...adminMenuItems]
+    : baseMenuItems
 
   const handleLogout = async () => {
     await logout()
