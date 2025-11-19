@@ -8,21 +8,31 @@ interface PrivyProviderProps {
 }
 
 export const PrivyProvider: React.FC<PrivyProviderProps> = ({ children }) => {
+  const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''
+  const clientId = process.env.NEXT_PUBLIC_PRIVY_CLIENT_ID
+
+  // Only pass clientId if it's defined and not empty
+  const privyConfig: any = {
+    appId,
+    config: {
+      // Only allow email and Google login
+      loginMethods: ['email', 'google'],
+      appearance: {
+        theme: 'dark',
+        accentColor: '#B967FF', // DANZ purple color
+        logo: '/danz-icon-white.png', // Use DANZ white logo
+        showWalletLoginFirst: false,
+      },
+    },
+  }
+
+  // Only add clientId if it exists and is not empty
+  if (clientId && clientId.trim() !== '') {
+    privyConfig.clientId = clientId
+  }
+
   return (
-    <PrivyProviderBase
-      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''}
-      clientId={process.env.NEXT_PUBLIC_PRIVY_CLIENT_ID || ''}
-      config={{
-        // Only allow email and Google login
-        loginMethods: ['email', 'google'],
-        appearance: {
-          theme: 'dark',
-          accentColor: '#B967FF', // DANZ purple color
-          logo: '/danz-icon-white.png', // Use DANZ white logo
-          showWalletLoginFirst: false,
-        },
-      }}
-    >
+    <PrivyProviderBase {...privyConfig}>
       {children}
     </PrivyProviderBase>
   )
