@@ -3,7 +3,6 @@
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import {
   PointActionCategory,
-  useCreatePointActionMutation,
   useGetAllPointActionsQuery,
   useGetMyProfileQuery,
   useTogglePointActionMutation,
@@ -12,40 +11,15 @@ import {
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { FiCheck, FiEdit2, FiInfo, FiPlus, FiX } from 'react-icons/fi'
-
-interface PointActionForm {
-  action_key: string
-  action_name: string
-  description: string
-  points_value: number
-  category: PointActionCategory
-  is_active: boolean
-  requires_verification: boolean
-  max_per_day: number | null
-  max_per_week: number | null
-  max_per_month: number | null
-}
+import { FiCheck, FiX } from 'react-icons/fi'
 
 export default function PointActionsPage() {
   const { authenticated, ready } = usePrivy()
   const router = useRouter()
 
   const [selectedCategory, setSelectedCategory] = useState<PointActionCategory | undefined>()
-  const [showForm, setShowForm] = useState(false)
-  const [editingAction, setEditingAction] = useState<string | null>(null)
-  const [formData, setFormData] = useState<PointActionForm>({
-    action_key: '',
-    action_name: '',
-    description: '',
-    points_value: 0,
-    category: PointActionCategory.Activity,
-    is_active: true,
-    requires_verification: false,
-    max_per_day: null,
-    max_per_week: null,
-    max_per_month: null,
-  })
+  const [editingPoints, setEditingPoints] = useState<{ [key: string]: number }>({})
+  const [editingLimits, setEditingLimits] = useState<{ [key: string]: { max_per_day: number | null; max_per_week: number | null; max_per_month: number | null } }>({})
 
   const { data: profileData, loading: profileLoading } = useGetMyProfileQuery({
     skip: !authenticated,
@@ -58,7 +32,6 @@ export default function PointActionsPage() {
     skip: !authenticated || !profileData?.me?.is_admin,
   })
 
-  const [createPointAction, { loading: creating }] = useCreatePointActionMutation()
   const [updatePointAction, { loading: updating }] = useUpdatePointActionMutation()
   const [togglePointAction] = useTogglePointActionMutation()
 
@@ -94,82 +67,42 @@ export default function PointActionsPage() {
     )
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
+  const handlePointsChange = async (action_key: string, newPoints: number) => {
     try {
-      if (editingAction) {
-        await updatePointAction({
-          variables: {
-            input: {
-              action_key: formData.action_key,
-              action_name: formData.action_name,
-              description: formData.description || null,
-              points_value: formData.points_value,
-              category: formData.category,
-              is_active: formData.is_active,
-              requires_verification: formData.requires_verification,
-              max_per_day: formData.max_per_day,
-              max_per_week: formData.max_per_week,
-              max_per_month: formData.max_per_month,
-            },
+      await updatePointAction({
+        variables: {
+          input: {
+            action_key,
+            points_value: newPoints,
           },
-        })
-      } else {
-        await createPointAction({
-          variables: {
-            input: {
-              action_key: formData.action_key,
-              action_name: formData.action_name,
-              description: formData.description || null,
-              points_value: formData.points_value,
-              category: formData.category,
-              is_active: formData.is_active,
-              requires_verification: formData.requires_verification,
-              max_per_day: formData.max_per_day,
-              max_per_week: formData.max_per_week,
-              max_per_month: formData.max_per_month,
-            },
-          },
-        })
-      }
-
-      refetch()
-      setShowForm(false)
-      setEditingAction(null)
-      setFormData({
-        action_key: '',
-        action_name: '',
-        description: '',
-        points_value: 0,
-        category: PointActionCategory.Activity,
-        is_active: true,
-        requires_verification: false,
-        max_per_day: null,
-        max_per_week: null,
-        max_per_month: null,
+        },
       })
+      refetch()
+      setEditingPoints({ ...editingPoints, [action_key]: undefined })
     } catch (error) {
-      console.error('Error saving point action:', error)
-      alert('Failed to save point action')
+      console.error('Error updating points:', error)
+      alert('Failed to update points')
     }
   }
 
-  const handleEdit = (action: any) => {
-    setEditingAction(action.action_key)
-    setFormData({
-      action_key: action.action_key,
-      action_name: action.action_name,
-      description: action.description || '',
-      points_value: action.points_value,
-      category: action.category,
-      is_active: action.is_active,
-      requires_verification: action.requires_verification,
-      max_per_day: action.max_per_day,
-      max_per_week: action.max_per_week,
-      max_per_month: action.max_per_month,
-    })
-    setShowForm(true)
+  const handleLimitsChange = async (action_key: string, limits: { max_per_day: number | null; max_per_week: number | null; max_per_month: number | null }) => {
+    try {
+      await updatePointAction({
+        variables: {
+          input: {
+            action_key,
+            max_per_day: limits.max_per_day,
+            max_per_week: limits.max_per_week,
+            max_per_month: limits.max_per_month,
+          },
+        },
+      })
+      refetch()
+      setEditingLimits({ ...editingLimits, [action_key]: undefined })
+    } catch (error) {
+      console.error('Error updating limits:', error)
+      alert('Failed to update limits')
+    }
   }
 
   const handleToggle = async (action_key: string) => {
@@ -204,42 +137,7 @@ export default function PointActionsPage() {
             <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">
               Point Actions Configuration
             </h1>
-            <p className="text-text-secondary mt-1">Manage point values and reward actions</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                setEditingAction(null)
-                setFormData({
-                  action_key: '',
-                  action_name: '',
-                  description: '',
-                  points_value: 0,
-                  category: PointActionCategory.Activity,
-                  is_active: true,
-                  requires_verification: false,
-                  max_per_day: null,
-                  max_per_week: null,
-                  max_per_month: null,
-                })
-                setShowForm(true)
-              }}
-              className="btn btn-primary flex items-center gap-2"
-            >
-              <FiPlus size={20} />
-              <span className="hidden sm:inline">New Action</span>
-            </button>
-            <div className="group relative">
-              <FiInfo
-                size={20}
-                className="text-text-secondary hover:text-neon-purple cursor-help transition-colors"
-              />
-              <div className="absolute right-0 top-full mt-2 w-72 bg-bg-primary border border-neon-purple/20 rounded-lg p-3 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
-                <p className="text-xs text-text-secondary leading-relaxed">
-                  Create new point reward actions for various user activities. Configure points value, rate limits, and requirements to incentivize desired behaviors.
-                </p>
-              </div>
-            </div>
+            <p className="text-text-secondary mt-1">Adjust point values and rate limits for each action</p>
           </div>
         </div>
 
@@ -261,207 +159,6 @@ export default function PointActionsPage() {
             ))}
           </div>
         </div>
-
-        {/* Form Modal */}
-        {showForm && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-text-primary">
-                  {editingAction ? 'Edit Point Action' : 'Create Point Action'}
-                </h2>
-                <button
-                  onClick={() => {
-                    setShowForm(false)
-                    setEditingAction(null)
-                  }}
-                  className="text-text-secondary hover:text-text-primary"
-                >
-                  <FiX size={24} />
-                </button>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-2">
-                      Action Key *
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.action_key}
-                      onChange={e => setFormData({ ...formData, action_key: e.target.value })}
-                      disabled={!!editingAction}
-                      className="w-full px-4 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-2">
-                      Action Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.action_name}
-                      onChange={e => setFormData({ ...formData, action_name: e.target.value })}
-                      className="w-full px-4 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text-secondary mb-2">
-                    Description
-                  </label>
-                  <textarea
-                    value={formData.description}
-                    onChange={e => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-4 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary"
-                    rows={3}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-2">
-                      Points Value *
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.points_value}
-                      onChange={e =>
-                        setFormData({ ...formData, points_value: parseInt(e.target.value) })
-                      }
-                      className="w-full px-4 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-2">
-                      Category *
-                    </label>
-                    <select
-                      value={formData.category}
-                      onChange={e =>
-                        setFormData({ ...formData, category: e.target.value as PointActionCategory })
-                      }
-                      className="w-full px-4 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary"
-                      required
-                    >
-                      <option value={PointActionCategory.Social}>Social</option>
-                      <option value={PointActionCategory.Activity}>Activity</option>
-                      <option value={PointActionCategory.Event}>Event</option>
-                      <option value={PointActionCategory.Referral}>Referral</option>
-                      <option value={PointActionCategory.Achievement}>Achievement</option>
-                      <option value={PointActionCategory.Special}>Special</option>
-                      <option value={PointActionCategory.Admin}>Admin</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-2">
-                      Max Per Day
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.max_per_day || ''}
-                      onChange={e =>
-                        setFormData({
-                          ...formData,
-                          max_per_day: e.target.value ? parseInt(e.target.value) : null,
-                        })
-                      }
-                      className="w-full px-4 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-2">
-                      Max Per Week
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.max_per_week || ''}
-                      onChange={e =>
-                        setFormData({
-                          ...formData,
-                          max_per_week: e.target.value ? parseInt(e.target.value) : null,
-                        })
-                      }
-                      className="w-full px-4 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-2">
-                      Max Per Month
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.max_per_month || ''}
-                      onChange={e =>
-                        setFormData({
-                          ...formData,
-                          max_per_month: e.target.value ? parseInt(e.target.value) : null,
-                        })
-                      }
-                      className="w-full px-4 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-6">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.is_active}
-                      onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
-                      className="w-4 h-4"
-                    />
-                    <span className="text-sm text-text-secondary">Active</span>
-                  </label>
-
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.requires_verification}
-                      onChange={e =>
-                        setFormData({ ...formData, requires_verification: e.target.checked })
-                      }
-                      className="w-4 h-4"
-                    />
-                    <span className="text-sm text-text-secondary">Requires Verification</span>
-                  </label>
-                </div>
-
-                <div className="flex gap-3 pt-4">
-                  <button
-                    type="submit"
-                    disabled={creating || updating}
-                    className="btn btn-primary flex-1"
-                  >
-                    {creating || updating ? 'Saving...' : editingAction ? 'Update' : 'Create'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowForm(false)
-                      setEditingAction(null)
-                    }}
-                    className="btn btn-outline flex-1"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
 
         {/* Actions List */}
         {loading ? (
@@ -495,47 +192,99 @@ export default function PointActionsPage() {
                       </span>
                     </div>
                     <p className="text-text-secondary text-sm mb-3">{action.description}</p>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div>
-                        <p className="text-text-secondary">Points</p>
-                        <p className="text-text-primary font-semibold">{action.points_value}</p>
+                        <p className="text-text-secondary text-xs mb-1">Points Value</p>
+                        <input
+                          type="number"
+                          value={editingPoints[action.action_key] ?? action.points_value}
+                          onChange={e => setEditingPoints({ ...editingPoints, [action.action_key]: parseInt(e.target.value) || 0 })}
+                          onBlur={() => {
+                            if (editingPoints[action.action_key] !== undefined && editingPoints[action.action_key] !== action.points_value) {
+                              handlePointsChange(action.action_key, editingPoints[action.action_key])
+                            }
+                          }}
+                          className="w-full px-3 py-1.5 bg-bg-primary border border-white/10 rounded text-text-primary font-semibold focus:border-neon-purple focus:outline-none"
+                        />
                       </div>
-                      {action.max_per_day && (
-                        <div>
-                          <p className="text-text-secondary">Max/Day</p>
-                          <p className="text-text-primary font-semibold">{action.max_per_day}</p>
-                        </div>
-                      )}
-                      {action.max_per_week && (
-                        <div>
-                          <p className="text-text-secondary">Max/Week</p>
-                          <p className="text-text-primary font-semibold">{action.max_per_week}</p>
-                        </div>
-                      )}
-                      {action.max_per_month && (
-                        <div>
-                          <p className="text-text-secondary">Max/Month</p>
-                          <p className="text-text-primary font-semibold">{action.max_per_month}</p>
-                        </div>
-                      )}
-                      {action.total_transactions !== null && (
-                        <div>
-                          <p className="text-text-secondary">Total Uses</p>
-                          <p className="text-text-primary font-semibold">
-                            {action.total_transactions}
-                          </p>
-                        </div>
-                      )}
+                      <div>
+                        <p className="text-text-secondary text-xs mb-1">Max/Day</p>
+                        <input
+                          type="number"
+                          value={editingLimits[action.action_key]?.max_per_day ?? action.max_per_day ?? ''}
+                          onChange={e => setEditingLimits({
+                            ...editingLimits,
+                            [action.action_key]: {
+                              ...editingLimits[action.action_key],
+                              max_per_day: e.target.value ? parseInt(e.target.value) : null,
+                              max_per_week: editingLimits[action.action_key]?.max_per_week ?? action.max_per_week,
+                              max_per_month: editingLimits[action.action_key]?.max_per_month ?? action.max_per_month,
+                            }
+                          })}
+                          onBlur={() => {
+                            if (editingLimits[action.action_key]) {
+                              handleLimitsChange(action.action_key, editingLimits[action.action_key])
+                            }
+                          }}
+                          placeholder="No limit"
+                          className="w-full px-3 py-1.5 bg-bg-primary border border-white/10 rounded text-text-primary font-semibold focus:border-neon-purple focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <p className="text-text-secondary text-xs mb-1">Max/Week</p>
+                        <input
+                          type="number"
+                          value={editingLimits[action.action_key]?.max_per_week ?? action.max_per_week ?? ''}
+                          onChange={e => setEditingLimits({
+                            ...editingLimits,
+                            [action.action_key]: {
+                              ...editingLimits[action.action_key],
+                              max_per_day: editingLimits[action.action_key]?.max_per_day ?? action.max_per_day,
+                              max_per_week: e.target.value ? parseInt(e.target.value) : null,
+                              max_per_month: editingLimits[action.action_key]?.max_per_month ?? action.max_per_month,
+                            }
+                          })}
+                          onBlur={() => {
+                            if (editingLimits[action.action_key]) {
+                              handleLimitsChange(action.action_key, editingLimits[action.action_key])
+                            }
+                          }}
+                          placeholder="No limit"
+                          className="w-full px-3 py-1.5 bg-bg-primary border border-white/10 rounded text-text-primary font-semibold focus:border-neon-purple focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <p className="text-text-secondary text-xs mb-1">Max/Month</p>
+                        <input
+                          type="number"
+                          value={editingLimits[action.action_key]?.max_per_month ?? action.max_per_month ?? ''}
+                          onChange={e => setEditingLimits({
+                            ...editingLimits,
+                            [action.action_key]: {
+                              ...editingLimits[action.action_key],
+                              max_per_day: editingLimits[action.action_key]?.max_per_day ?? action.max_per_day,
+                              max_per_week: editingLimits[action.action_key]?.max_per_week ?? action.max_per_week,
+                              max_per_month: e.target.value ? parseInt(e.target.value) : null,
+                            }
+                          })}
+                          onBlur={() => {
+                            if (editingLimits[action.action_key]) {
+                              handleLimitsChange(action.action_key, editingLimits[action.action_key])
+                            }
+                          }}
+                          placeholder="No limit"
+                          className="w-full px-3 py-1.5 bg-bg-primary border border-white/10 rounded text-text-primary font-semibold focus:border-neon-purple focus:outline-none"
+                        />
+                      </div>
                     </div>
+                    {action.total_transactions !== null && (
+                      <div className="mt-3 text-sm">
+                        <span className="text-text-secondary">Total Uses: </span>
+                        <span className="text-text-primary font-semibold">{action.total_transactions}</span>
+                      </div>
+                    )}
                   </div>
                   <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEdit(action)}
-                      className="p-2 text-text-secondary hover:text-neon-purple transition-colors"
-                      title="Edit"
-                    >
-                      <FiEdit2 size={20} />
-                    </button>
                     <button
                       onClick={() => handleToggle(action.action_key)}
                       className={`p-2 transition-colors ${
