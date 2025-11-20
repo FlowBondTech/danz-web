@@ -127,6 +127,8 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
   const [isCheckingUsername, setIsCheckingUsername] = useState(false)
   const [completedSteps, setCompletedSteps] = useState<string[]>([])
   const [userRole, setUserRole] = useState<'attendee' | 'organizer' | null>(null)
+  const [isDancer, setIsDancer] = useState(true) // Everyone is a dancer by default
+  const [isOrganizer, setIsOrganizer] = useState(false)
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [emailNotifications, setEmailNotifications] = useState(true)
 
@@ -450,7 +452,14 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
     }
 
     if (currentStep === 'role') {
-      if (!userRole) return
+      // At least one role must be selected (dancer is checked by default)
+      if (!isDancer && !isOrganizer) return
+
+      // Set userRole based on selection
+      // If organizer is selected, role = 'organizer', otherwise role = 'attendee'
+      const role = isOrganizer ? 'organizer' : 'attendee'
+      setUserRole(role)
+
       setCompletedSteps([...completedSteps, currentStep])
       setCurrentStep('username')
       return
@@ -674,48 +683,66 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
           >
             <div className="text-center">
               <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
-                How will you use DANZ?
+                Join DANZ
               </h2>
               <p className="text-sm sm:text-base text-gray-400 mt-2">
-                Choose your role to get started
+                Select all that apply
               </p>
             </div>
 
             <div className="space-y-4">
               <button
                 type="button"
-                onClick={() => setUserRole('attendee')}
+                onClick={() => setIsDancer(!isDancer)}
                 className={`w-full p-4 sm:p-6 rounded-xl border-2 transition-all ${
-                  userRole === 'attendee'
+                  isDancer
                     ? 'bg-purple-600/20 border-purple-500'
                     : 'bg-black/30 border-purple-500/30 hover:border-purple-500/50'
                 }`}
               >
-                <FiUsers className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 sm:mb-3 text-purple-400" />
-                <h3 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">
-                  I'm a Dancer
-                </h3>
-                <p className="text-xs sm:text-sm text-gray-400">
-                  Join events, connect with dancers, and share your journey
-                </p>
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
+                    isDancer ? 'bg-purple-500 border-purple-500' : 'border-purple-500/50'
+                  }`}>
+                    {isDancer && <FiCheck className="text-white text-sm" />}
+                  </div>
+                  <div className="flex-1 text-left">
+                    <FiUsers className="w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-3 text-purple-400" />
+                    <h3 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">
+                      I'm a Dancer
+                    </h3>
+                    <p className="text-xs sm:text-sm text-gray-400">
+                      Join events, connect with dancers, and share your journey
+                    </p>
+                  </div>
+                </div>
               </button>
 
               <button
                 type="button"
-                onClick={() => setUserRole('organizer')}
+                onClick={() => setIsOrganizer(!isOrganizer)}
                 className={`w-full p-4 sm:p-6 rounded-xl border-2 transition-all ${
-                  userRole === 'organizer'
+                  isOrganizer
                     ? 'bg-purple-600/20 border-purple-500'
                     : 'bg-black/30 border-purple-500/30 hover:border-purple-500/50'
                 }`}
               >
-                <FiCalendar className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 sm:mb-3 text-purple-400" />
-                <h3 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">
-                  I'm an Organizer
-                </h3>
-                <p className="text-xs sm:text-sm text-gray-400">
-                  Create events, manage registrations, and grow your community
-                </p>
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
+                    isOrganizer ? 'bg-purple-500 border-purple-500' : 'border-purple-500/50'
+                  }`}>
+                    {isOrganizer && <FiCheck className="text-white text-sm" />}
+                  </div>
+                  <div className="flex-1 text-left">
+                    <FiCalendar className="w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-3 text-purple-400" />
+                    <h3 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">
+                      I'm an Organizer
+                    </h3>
+                    <p className="text-xs sm:text-sm text-gray-400">
+                      Create events, manage registrations, and grow your community
+                    </p>
+                  </div>
+                </div>
               </button>
             </div>
           </motion.div>
@@ -970,9 +997,26 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
 
             <div className="space-y-4">
               <div>
-                <label className="block text-white mb-3 text-sm">
-                  Dance Styles <span className="text-purple-400">*</span>
-                </label>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-white text-sm">
+                    Dance Styles <span className="text-purple-400">*</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (formData.danceStyles.length === DANCE_STYLES.length) {
+                        // Deselect all
+                        setFormData({ ...formData, danceStyles: [] })
+                      } else {
+                        // Select all
+                        setFormData({ ...formData, danceStyles: [...DANCE_STYLES] })
+                      }
+                    }}
+                    className="text-xs sm:text-sm text-purple-400 hover:text-purple-300 transition-colors font-medium"
+                  >
+                    {formData.danceStyles.length === DANCE_STYLES.length ? 'Deselect All' : 'Select All'}
+                  </button>
+                </div>
                 <div className="grid grid-cols-2 gap-2 max-h-48 sm:max-h-64 overflow-y-auto">
                   {DANCE_STYLES.map(style => (
                     <button
@@ -1334,7 +1378,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                   uploadingAvatar ||
                   isCheckingUsername ||
                   (currentStep === 'welcome' && !agreedToTerms) ||
-                  (currentStep === 'role' && !userRole) ||
+                  (currentStep === 'role' && !isDancer && !isOrganizer) ||
                   !validateCurrentStep()
                 }
                 className={`${
