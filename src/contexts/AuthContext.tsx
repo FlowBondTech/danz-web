@@ -5,7 +5,11 @@ import { useRouter } from 'next/navigation'
 import type React from 'react'
 import { type ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react'
 import type { User } from '../generated/graphql'
-import { useGetMyProfileQuery, useUpdateProfileMutation } from '../generated/graphql'
+import {
+  useGetMyProfileQuery,
+  useUpdateProfileMutation,
+  useTrackAppOpenMutation,
+} from '../generated/graphql'
 
 // Auth context type
 interface AuthContextType {
@@ -51,6 +55,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     },
   })
 
+  // Track daily app open for points
+  const [trackAppOpen] = useTrackAppOpenMutation({
+    onError: error => {
+      // Silently fail if already awarded today
+      if (!error.message.includes('already awarded')) {
+        console.error('Failed to track daily login:', error)
+      }
+    },
+  })
+
   // Compute user object from profile data
   const user = useMemo(() => {
     if (!profileData?.me) {
@@ -68,6 +82,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         // Refetch to ensure we have latest data
         const result = await refetchProfile()
         const data = result.data
+
+        // Track daily login for points (if user exists)
+        if (data?.me?.privy_id) {
+          try {
+            await trackAppOpen({
+              variables: { user_id: data.me.privy_id },
+            })
+            console.log('Daily login tracked')
+          } catch (error) {
+            // Already handled in mutation error callback
+          }
+        }
 
         // Get current path
         const currentPath = window.location.pathname
@@ -91,7 +117,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     checkProfileAndRedirect()
-  }, [authenticated, ready, profileLoading, hasCheckedProfile, refetchProfile, router])
+  }, [authenticated, ready, profileLoading, hasCheckedProfile, refetchProfile, router, trackAppOpen])
 
   const login = async () => {
     try {
