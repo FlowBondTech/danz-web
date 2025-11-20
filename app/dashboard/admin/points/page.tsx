@@ -78,7 +78,9 @@ export default function PointActionsPage() {
         },
       })
       refetch()
-      setEditingPoints({ ...editingPoints, [action_key]: undefined })
+      const newEditingPoints = { ...editingPoints }
+      delete newEditingPoints[action_key]
+      setEditingPoints(newEditingPoints)
     } catch (error) {
       console.error('Error updating points:', error)
       alert('Failed to update points')
@@ -98,7 +100,9 @@ export default function PointActionsPage() {
         },
       })
       refetch()
-      setEditingLimits({ ...editingLimits, [action_key]: undefined })
+      const newEditingLimits = { ...editingLimits }
+      delete newEditingLimits[action_key]
+      setEditingLimits(newEditingLimits)
     } catch (error) {
       console.error('Error updating limits:', error)
       alert('Failed to update limits')
