@@ -99,7 +99,7 @@ export const ApolloProvider: React.FC<ApolloProviderProps> = ({ children }) => {
   const client = useMemo(() => {
     // HTTP link for GraphQL endpoint
     const httpLink = createHttpLink({
-      uri: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/graphql`,
+      uri: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/graphql`,
     })
 
     // Authentication link
