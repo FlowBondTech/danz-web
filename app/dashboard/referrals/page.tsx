@@ -39,9 +39,20 @@ function ReferralsContent() {
   })
 
   // Log errors for debugging
-  if (codeError) console.error('Referral code error:', codeError)
-  if (statsError) console.error('Referral stats error:', statsError)
-  if (referralsError) console.error('Referrals error:', referralsError)
+  if (codeError) {
+    console.error('Referral code error:', codeError)
+    console.error('GraphQL errors:', codeError.graphQLErrors)
+    console.error('Network error:', codeError.networkError)
+  }
+  if (statsError) {
+    console.error('Referral stats error:', statsError)
+    console.error('GraphQL errors:', statsError.graphQLErrors)
+  }
+  if (referralsError) {
+    console.error('Referrals error:', referralsError)
+    console.error('GraphQL errors:', referralsError.graphQLErrors)
+    console.error('Network error:', referralsError.networkError)
+  }
 
   const referralCode = codeData?.myReferralCode?.referral_code || 'loading...'
   const shareUrl = codeData?.myReferralCode?.share_url || `https://danz.now/i/${referralCode}`
