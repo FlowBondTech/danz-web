@@ -216,10 +216,12 @@ export default function ReferralLandingPage() {
                  deviceType === 'android' ? 'Get it on Play Store' :
                  'Download Mobile App'}
               </button>
-              <p className="text-xs text-pink-200/70">
-                <FiSmartphone className="inline mr-1" />
-                Mobile app coming soon
-              </p>
+              <div className="flex items-center justify-center gap-2 animate-pulse">
+                <FiSmartphone className="text-pink-300" />
+                <p className="text-sm font-medium text-pink-300">
+                  Mobile app coming soon
+                </p>
+              </div>
             </div>
           </div>
 
