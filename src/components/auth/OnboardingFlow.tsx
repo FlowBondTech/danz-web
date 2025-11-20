@@ -527,7 +527,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
         const referralCode = localStorage.getItem('referral_code')
         if (referralCode && result.data?.updateProfile?.privy_id) {
           try {
-            await completeReferral({
+            const referralResult = await completeReferral({
               variables: {
                 input: {
                   referral_code: referralCode,
@@ -535,11 +535,23 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                 },
               },
             })
-            console.log('Referral completed successfully')
-            // Clear the referral code from localStorage
-            localStorage.removeItem('referral_code')
-          } catch (referralError) {
-            console.error('Failed to complete referral:', referralError)
+
+            if (referralResult.data) {
+              console.log('Referral completed successfully:', referralResult.data)
+              // Clear the referral code from localStorage
+              localStorage.removeItem('referral_code')
+            }
+          } catch (referralError: any) {
+            // Check if it's a duplicate referral error (already completed)
+            const isDuplicate = referralError?.message?.includes('already completed') ||
+                               referralError?.graphQLErrors?.[0]?.extensions?.code === 'DUPLICATE_REFERRAL'
+
+            if (isDuplicate) {
+              console.log('Referral was already completed previously')
+              localStorage.removeItem('referral_code')
+            } else {
+              console.error('Failed to complete referral:', referralError)
+            }
             // Don't block registration if referral fails
           }
         }
