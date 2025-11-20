@@ -12,7 +12,7 @@ import {
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { FiCheck, FiEdit2, FiPlus, FiX } from 'react-icons/fi'
+import { FiCheck, FiEdit2, FiInfo, FiPlus, FiX } from 'react-icons/fi'
 
 interface PointActionForm {
   action_key: string
@@ -206,28 +206,41 @@ export default function PointActionsPage() {
             </h1>
             <p className="text-text-secondary mt-1">Manage point values and reward actions</p>
           </div>
-          <button
-            onClick={() => {
-              setEditingAction(null)
-              setFormData({
-                action_key: '',
-                action_name: '',
-                description: '',
-                points_value: 0,
-                category: PointActionCategory.Activity,
-                is_active: true,
-                requires_verification: false,
-                max_per_day: null,
-                max_per_week: null,
-                max_per_month: null,
-              })
-              setShowForm(true)
-            }}
-            className="btn btn-primary flex items-center gap-2"
-          >
-            <FiPlus size={20} />
-            <span className="hidden sm:inline">New Action</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                setEditingAction(null)
+                setFormData({
+                  action_key: '',
+                  action_name: '',
+                  description: '',
+                  points_value: 0,
+                  category: PointActionCategory.Activity,
+                  is_active: true,
+                  requires_verification: false,
+                  max_per_day: null,
+                  max_per_week: null,
+                  max_per_month: null,
+                })
+                setShowForm(true)
+              }}
+              className="btn btn-primary flex items-center gap-2"
+            >
+              <FiPlus size={20} />
+              <span className="hidden sm:inline">New Action</span>
+            </button>
+            <div className="group relative">
+              <FiInfo
+                size={20}
+                className="text-text-secondary hover:text-neon-purple cursor-help transition-colors"
+              />
+              <div className="absolute right-0 top-full mt-2 w-72 bg-bg-primary border border-neon-purple/20 rounded-lg p-3 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                <p className="text-xs text-text-secondary leading-relaxed">
+                  Create new point reward actions for various user activities. Configure points value, rate limits, and requirements to incentivize desired behaviors.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Category Filter */}
