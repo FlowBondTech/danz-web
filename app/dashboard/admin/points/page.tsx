@@ -216,15 +216,20 @@ export default function PointActionsPage() {
                         <input
                           type="number"
                           value={editingLimits[action.action_key]?.max_per_day ?? action.max_per_day ?? ''}
-                          onChange={e => setEditingLimits({
-                            ...editingLimits,
-                            [action.action_key]: {
-                              ...editingLimits[action.action_key],
-                              max_per_day: e.target.value ? parseInt(e.target.value) : null,
-                              max_per_week: editingLimits[action.action_key]?.max_per_week ?? action.max_per_week,
-                              max_per_month: editingLimits[action.action_key]?.max_per_month ?? action.max_per_month,
+                          onChange={e => {
+                            const currentLimits = editingLimits[action.action_key] ?? {
+                              max_per_day: action.max_per_day,
+                              max_per_week: action.max_per_week,
+                              max_per_month: action.max_per_month,
                             }
-                          })}
+                            setEditingLimits({
+                              ...editingLimits,
+                              [action.action_key]: {
+                                ...currentLimits,
+                                max_per_day: e.target.value ? parseInt(e.target.value) : null,
+                              }
+                            })
+                          }}
                           onBlur={() => {
                             if (editingLimits[action.action_key]) {
                               handleLimitsChange(action.action_key, editingLimits[action.action_key])
@@ -239,15 +244,20 @@ export default function PointActionsPage() {
                         <input
                           type="number"
                           value={editingLimits[action.action_key]?.max_per_week ?? action.max_per_week ?? ''}
-                          onChange={e => setEditingLimits({
-                            ...editingLimits,
-                            [action.action_key]: {
-                              ...editingLimits[action.action_key],
-                              max_per_day: editingLimits[action.action_key]?.max_per_day ?? action.max_per_day,
-                              max_per_week: e.target.value ? parseInt(e.target.value) : null,
-                              max_per_month: editingLimits[action.action_key]?.max_per_month ?? action.max_per_month,
+                          onChange={e => {
+                            const currentLimits = editingLimits[action.action_key] ?? {
+                              max_per_day: action.max_per_day,
+                              max_per_week: action.max_per_week,
+                              max_per_month: action.max_per_month,
                             }
-                          })}
+                            setEditingLimits({
+                              ...editingLimits,
+                              [action.action_key]: {
+                                ...currentLimits,
+                                max_per_week: e.target.value ? parseInt(e.target.value) : null,
+                              }
+                            })
+                          }}
                           onBlur={() => {
                             if (editingLimits[action.action_key]) {
                               handleLimitsChange(action.action_key, editingLimits[action.action_key])
@@ -262,15 +272,20 @@ export default function PointActionsPage() {
                         <input
                           type="number"
                           value={editingLimits[action.action_key]?.max_per_month ?? action.max_per_month ?? ''}
-                          onChange={e => setEditingLimits({
-                            ...editingLimits,
-                            [action.action_key]: {
-                              ...editingLimits[action.action_key],
-                              max_per_day: editingLimits[action.action_key]?.max_per_day ?? action.max_per_day,
-                              max_per_week: editingLimits[action.action_key]?.max_per_week ?? action.max_per_week,
-                              max_per_month: e.target.value ? parseInt(e.target.value) : null,
+                          onChange={e => {
+                            const currentLimits = editingLimits[action.action_key] ?? {
+                              max_per_day: action.max_per_day,
+                              max_per_week: action.max_per_week,
+                              max_per_month: action.max_per_month,
                             }
-                          })}
+                            setEditingLimits({
+                              ...editingLimits,
+                              [action.action_key]: {
+                                ...currentLimits,
+                                max_per_month: e.target.value ? parseInt(e.target.value) : null,
+                              }
+                            })
+                          }}
                           onBlur={() => {
                             if (editingLimits[action.action_key]) {
                               handleLimitsChange(action.action_key, editingLimits[action.action_key])
