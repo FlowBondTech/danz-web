@@ -23,7 +23,8 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
   useEffect(() => {
     // Skip checks for public pages and register page
     const publicPaths = ['/', '/danz', '/register']
-    if (publicPaths.includes(pathname)) {
+    const isInvitePage = pathname?.startsWith('/i/')
+    if (publicPaths.includes(pathname) || isInvitePage) {
       return
     }
 
