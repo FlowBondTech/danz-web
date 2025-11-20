@@ -206,21 +206,24 @@ export default function ReferralLandingPage() {
             </button>
 
             {/* Secondary CTA - Mobile App Download */}
-            <div className="pt-4 space-y-2">
-              <button
-                onClick={handleDownload}
-                className="w-full max-w-md mx-auto flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-full text-sm transition-all border border-white/20"
-              >
-                <FiDownload className="text-lg" />
-                {deviceType === 'ios' ? 'Download on App Store' :
-                 deviceType === 'android' ? 'Get it on Play Store' :
-                 'Download Mobile App'}
-              </button>
-              <div className="flex items-center justify-center gap-2 animate-pulse">
-                <FiSmartphone className="text-pink-300" />
-                <p className="text-sm font-medium text-pink-300">
-                  Mobile app coming soon
-                </p>
+            <div className="pt-4">
+              <div className="relative w-full max-w-md mx-auto">
+                {/* Coming Soon Badge */}
+                <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 z-10">
+                  <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg animate-pulse">
+                    Coming Soon
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleDownload}
+                  className="w-full flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white/70 font-semibold py-3 px-6 rounded-full text-sm transition-all border border-white/20 mt-2"
+                >
+                  <FiDownload className="text-lg" />
+                  {deviceType === 'ios' ? 'Download on App Store' :
+                   deviceType === 'android' ? 'Get it on Play Store' :
+                   'Download Mobile App'}
+                </button>
               </div>
             </div>
           </div>
