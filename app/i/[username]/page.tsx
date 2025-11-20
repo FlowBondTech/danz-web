@@ -41,10 +41,10 @@ export default function ReferralLandingPage() {
   const fetchReferrerInfo = async () => {
     try {
       // TODO: Replace with GraphQL query when backend is ready
-      // For now, use mock data
+      // For now, use the username exactly as provided (case-sensitive)
       setReferrerInfo({
         username: username,
-        displayName: username.charAt(0).toUpperCase() + username.slice(1),
+        displayName: username, // Keep exact case from URL
         avatarUrl: undefined
       })
       setLoading(false)
@@ -73,6 +73,16 @@ export default function ReferralLandingPage() {
     } catch (error) {
       console.error('Failed to track click:', error)
     }
+  }
+
+  const handleSignUp = () => {
+    // Store referral code in localStorage for registration
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('referral_code', username)
+    }
+
+    // Redirect to registration page
+    router.push('/register')
   }
 
   const handleDownload = () => {
@@ -186,22 +196,31 @@ export default function ReferralLandingPage() {
 
           {/* CTA Buttons */}
           <div className="space-y-4 pt-6">
+            {/* Primary CTA - Web Signup */}
             <button
-              onClick={handleDownload}
+              onClick={handleSignUp}
               className="w-full max-w-md mx-auto flex items-center justify-center gap-3 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white font-bold py-4 px-8 rounded-full text-xl transition-all transform hover:scale-105 shadow-lg"
             >
-              <FiDownload className="text-2xl" />
-              {deviceType === 'ios' ? 'Download on App Store' :
-               deviceType === 'android' ? 'Get it on Play Store' :
-               'Download DANZ'}
+              <FiCheck className="text-2xl" />
+              Sign Up Now
             </button>
 
-            {deviceType === 'desktop' && (
-              <p className="text-sm text-pink-200">
-                <FiSmartphone className="inline mr-2" />
-                Visit this link on your phone for the best experience
+            {/* Secondary CTA - Mobile App Download */}
+            <div className="pt-4 space-y-2">
+              <button
+                onClick={handleDownload}
+                className="w-full max-w-md mx-auto flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-full text-sm transition-all border border-white/20"
+              >
+                <FiDownload className="text-lg" />
+                {deviceType === 'ios' ? 'Download on App Store' :
+                 deviceType === 'android' ? 'Get it on Play Store' :
+                 'Download Mobile App'}
+              </button>
+              <p className="text-xs text-pink-200/70">
+                <FiSmartphone className="inline mr-1" />
+                Mobile app coming soon
               </p>
-            )}
+            </div>
           </div>
 
           {/* Social Proof */}

@@ -89,6 +89,16 @@ const UPDATE_PROFILE = gql`
   }
 `
 
+const COMPLETE_REFERRAL = gql`
+  mutation CompleteReferral($input: CompleteReferralInput!) {
+    completeReferral(input: $input) {
+      id
+      referral_code
+      status
+    }
+  }
+`
+
 type OnboardingStep =
   | 'welcome'
   | 'role'
@@ -152,6 +162,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   const [updateProfile] = useMutation(UPDATE_PROFILE)
+  const [completeReferral] = useMutation(COMPLETE_REFERRAL)
   const { refetch: checkUsername } = useQuery(CHECK_USERNAME, {
     skip: true,
   })
@@ -167,6 +178,17 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
       return
     }
   }, [meData, router])
+
+  // Load referral code from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const referralCode = localStorage.getItem('referral_code')
+      if (referralCode) {
+        console.log('Found referral code in localStorage:', referralCode)
+        setFormData(prev => ({ ...prev, invitedBy: referralCode }))
+      }
+    }
+  }, [])
 
   // Determine which steps to show based on role
   const getSteps = () => {
@@ -486,11 +508,32 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
         if (formData.youtube) registrationInput.youtube = formData.youtube
         if (formData.twitter) registrationInput.twitter = formData.twitter
 
-        await updateProfile({
+        const result = await updateProfile({
           variables: {
             input: registrationInput,
           },
         })
+
+        // Complete referral if user signed up via referral link
+        const referralCode = localStorage.getItem('referral_code')
+        if (referralCode && result.data?.updateProfile?.privy_id) {
+          try {
+            await completeReferral({
+              variables: {
+                input: {
+                  referral_code: referralCode,
+                  referee_user_id: result.data.updateProfile.privy_id,
+                },
+              },
+            })
+            console.log('Referral completed successfully')
+            // Clear the referral code from localStorage
+            localStorage.removeItem('referral_code')
+          } catch (referralError) {
+            console.error('Failed to complete referral:', referralError)
+            // Don't block registration if referral fails
+          }
+        }
 
         router.push('/dashboard')
       } catch (error) {
