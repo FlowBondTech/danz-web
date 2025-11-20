@@ -673,6 +673,7 @@ export type Query = {
   getReferralByCode?: Maybe<Referral>
   getReferralClickStats: Array<ReferralClickTracking>
   getUploadUrl: UploadUrl
+  getUserByUsername?: Maybe<User>
   getUserDailyActivity: Array<DailyActivity>
   getUserEventAttendance: Array<EventAttendance>
   getUserPointsSummaries: Array<UserPointsSummary>
@@ -752,6 +753,10 @@ export type QueryGetUploadUrlArgs = {
   fileName: Scalars['String']['input']
   mimeType: MimeType
   uploadType: UploadType
+}
+
+export type QueryGetUserByUsernameArgs = {
+  username: Scalars['String']['input']
 }
 
 export type QueryGetUserDailyActivityArgs = {
@@ -2070,6 +2075,76 @@ export type GetUserByIdQueryVariables = Exact<{
 export type GetUserByIdQuery = {
   __typename?: 'Query'
   user?: {
+    __typename?: 'User'
+    privy_id: string
+    username?: string | null
+    display_name?: string | null
+    avatar_url?: string | null
+    cover_image_url?: string | null
+    bio?: string | null
+    role?: UserRole | null
+    is_admin?: boolean | null
+    location?: string | null
+    city?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    website?: string | null
+    website_url?: string | null
+    instagram?: string | null
+    tiktok?: string | null
+    youtube?: string | null
+    twitter?: string | null
+    pronouns?: string | null
+    dance_styles?: Array<string> | null
+    skill_level?: SkillLevel | null
+    favorite_music?: Array<string> | null
+    age?: number | null
+    is_public?: boolean | null
+    allow_messages?: boolean | null
+    show_location?: boolean | null
+    notification_preferences?: any | null
+    xp?: number | null
+    level?: number | null
+    subscription_tier?: string | null
+    is_premium?: string | null
+    stripe_customer_id?: string | null
+    stripe_subscription_id?: string | null
+    subscription_status?: string | null
+    subscription_plan?: string | null
+    subscription_start_date?: any | null
+    subscription_end_date?: any | null
+    subscription_cancelled_at?: any | null
+    total_dance_time?: number | null
+    total_sessions?: number | null
+    longest_streak?: number | null
+    is_organizer_approved?: boolean | null
+    organizer_approved_by?: string | null
+    organizer_approved_at?: any | null
+    company_name?: string | null
+    organizer_bio?: string | null
+    event_types?: Array<string> | null
+    invited_by?: string | null
+    social_media_links?: any | null
+    organizer_requested_at?: any | null
+    organizer_rejection_reason?: string | null
+    total_events_attended?: number | null
+    total_events_created?: number | null
+    upcoming_events_count?: number | null
+    total_achievements?: number | null
+    dance_bonds_count?: number | null
+    created_at?: any | null
+    updated_at?: any | null
+    last_active_at?: any | null
+  } | null
+}
+
+export type GetUserByUsernameQueryVariables = Exact<{
+  username: Scalars['String']['input']
+}>
+
+export type GetUserByUsernameQuery = {
+  __typename?: 'Query'
+  getUserByUsername?: {
     __typename?: 'User'
     privy_id: string
     username?: string | null
@@ -4426,6 +4501,73 @@ export type GetUserByIdQueryHookResult = ReturnType<typeof useGetUserByIdQuery>
 export type GetUserByIdLazyQueryHookResult = ReturnType<typeof useGetUserByIdLazyQuery>
 export type GetUserByIdSuspenseQueryHookResult = ReturnType<typeof useGetUserByIdSuspenseQuery>
 export type GetUserByIdQueryResult = Apollo.QueryResult<GetUserByIdQuery, GetUserByIdQueryVariables>
+export const GetUserByUsernameDocument = gql`
+    query GetUserByUsername($username: String!) {
+  getUserByUsername(username: $username) {
+    ...UserFullInfo
+  }
+}
+    ${UserFullInfoFragmentDoc}`
+
+/**
+ * __useGetUserByUsernameQuery__
+ *
+ * To run a query within a React component, call `useGetUserByUsernameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserByUsernameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserByUsernameQuery({
+ *   variables: {
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useGetUserByUsernameQuery(
+  baseOptions: Apollo.QueryHookOptions<GetUserByUsernameQuery, GetUserByUsernameQueryVariables> &
+    ({ variables: GetUserByUsernameQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetUserByUsernameQuery, GetUserByUsernameQueryVariables>(
+    GetUserByUsernameDocument,
+    options,
+  )
+}
+export function useGetUserByUsernameLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetUserByUsernameQuery,
+    GetUserByUsernameQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetUserByUsernameQuery, GetUserByUsernameQueryVariables>(
+    GetUserByUsernameDocument,
+    options,
+  )
+}
+export function useGetUserByUsernameSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetUserByUsernameQuery, GetUserByUsernameQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetUserByUsernameQuery, GetUserByUsernameQueryVariables>(
+    GetUserByUsernameDocument,
+    options,
+  )
+}
+export type GetUserByUsernameQueryHookResult = ReturnType<typeof useGetUserByUsernameQuery>
+export type GetUserByUsernameLazyQueryHookResult = ReturnType<typeof useGetUserByUsernameLazyQuery>
+export type GetUserByUsernameSuspenseQueryHookResult = ReturnType<
+  typeof useGetUserByUsernameSuspenseQuery
+>
+export type GetUserByUsernameQueryResult = Apollo.QueryResult<
+  GetUserByUsernameQuery,
+  GetUserByUsernameQueryVariables
+>
 export const CheckUsernameDocument = gql`
     query CheckUsername($username: String!) {
   checkUsername(username: $username)

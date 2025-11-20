@@ -3,19 +3,22 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { FiDownload, FiSmartphone, FiCheck } from 'react-icons/fi'
+import { useGetUserByUsernameQuery } from '@/src/generated/graphql'
 
 export default function ReferralLandingPage() {
   const params = useParams()
   const router = useRouter()
   const username = params.username as string
 
-  const [loading, setLoading] = useState(true)
-  const [referrerInfo, setReferrerInfo] = useState<{
-    username: string
-    displayName: string
-    avatarUrl?: string
-  } | null>(null)
   const [deviceType, setDeviceType] = useState<'ios' | 'android' | 'desktop'>('desktop')
+
+  // Fetch user data by username
+  const { data, loading, error } = useGetUserByUsernameQuery({
+    variables: { username },
+    skip: !username,
+  })
+
+  const referrerInfo = data?.getUserByUsername
 
   useEffect(() => {
     // Detect device type
@@ -31,28 +34,9 @@ export default function ReferralLandingPage() {
       setDeviceType('desktop')
     }
 
-    // Fetch referrer information
-    fetchReferrerInfo()
-
     // Track referral click
     trackReferralClick()
   }, [username])
-
-  const fetchReferrerInfo = async () => {
-    try {
-      // TODO: Replace with GraphQL query when backend is ready
-      // For now, use the username exactly as provided (case-sensitive)
-      setReferrerInfo({
-        username: username,
-        displayName: username, // Keep exact case from URL
-        avatarUrl: undefined
-      })
-      setLoading(false)
-    } catch (error) {
-      console.error('Failed to fetch referrer info:', error)
-      setLoading(false)
-    }
-  }
 
   const trackReferralClick = async () => {
     try {
@@ -137,21 +121,21 @@ export default function ReferralLandingPage() {
         <div className="text-center space-y-8">
           {/* Referrer Info */}
           <div className="space-y-4">
-            {referrerInfo?.avatarUrl ? (
+            {referrerInfo?.avatar_url ? (
               <img
-                src={referrerInfo.avatarUrl}
-                alt={referrerInfo.displayName}
-                className="w-24 h-24 rounded-full mx-auto border-4 border-pink-400"
+                src={referrerInfo.avatar_url}
+                alt={referrerInfo.display_name || referrerInfo.username || 'User'}
+                className="w-24 h-24 rounded-full mx-auto border-4 border-pink-400 object-cover"
               />
             ) : (
               <div className="w-24 h-24 rounded-full mx-auto border-4 border-pink-400 bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center text-4xl font-bold">
-                {referrerInfo?.displayName.charAt(0)}
+                {(referrerInfo?.display_name || referrerInfo?.username || 'U').charAt(0).toUpperCase()}
               </div>
             )}
 
             <div>
               <h2 className="text-4xl font-bold mb-2">
-                {referrerInfo?.displayName} invited you to DANZ!
+                {referrerInfo?.display_name || referrerInfo?.username || username} invited you to DANZ!
               </h2>
               <p className="text-xl text-pink-200">
                 Join the movement. Earn rewards. Dance your way to fitness.
@@ -187,7 +171,7 @@ export default function ReferralLandingPage() {
               <h3 className="text-2xl font-bold">Special Bonus!</h3>
             </div>
             <p className="text-lg">
-              Sign up through this link and {referrerInfo?.displayName} gets <span className="font-bold text-yellow-300">20 bonus points</span>
+              Sign up through this link and {referrerInfo?.display_name || referrerInfo?.username || username} gets <span className="font-bold text-yellow-300">20 bonus points</span>
             </p>
             <p className="text-sm text-pink-100 mt-2">
               You'll also receive a welcome bonus when you complete your first dance session!

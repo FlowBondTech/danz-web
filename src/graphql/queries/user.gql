@@ -12,6 +12,12 @@ query GetUserById($id: String!) {
   }
 }
 
+query GetUserByUsername($username: String!) {
+  getUserByUsername(username: $username) {
+    ...UserFullInfo
+  }
+}
+
 query CheckUsername($username: String!) {
   checkUsername(username: $username)
 }
