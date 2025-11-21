@@ -666,11 +666,14 @@ export type Query = {
   friendsDanceSessions: Array<DanceSession>
   getAllPointActions: Array<PointAction>
   getAllTransactions: TransactionHistory
+  getAllUsers: Array<User>
   getEventAttendance: Array<EventAttendance>
   getEventAttendanceSummaries: Array<EventAttendanceSummary>
+  getMyReferrals: Array<UserReferralInfo>
   getPointAction?: Maybe<PointAction>
   getPointsOverview: PointsOverview
   getReferralByCode?: Maybe<Referral>
+  getReferralChain: Array<ReferralChainNode>
   getReferralClickStats: Array<ReferralClickTracking>
   getUploadUrl: UploadUrl
   getUserByUsername?: Maybe<User>
@@ -743,6 +746,10 @@ export type QueryGetPointActionArgs = {
 
 export type QueryGetReferralByCodeArgs = {
   code: Scalars['String']['input']
+}
+
+export type QueryGetReferralChainArgs = {
+  userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type QueryGetReferralClickStatsArgs = {
@@ -839,6 +846,14 @@ export type Referral = {
   signup_completed_at?: Maybe<Scalars['DateTime']['output']>
   status: ReferralStatus
   user_agent?: Maybe<Scalars['String']['output']>
+}
+
+export type ReferralChainNode = {
+  __typename?: 'ReferralChainNode'
+  depth: Scalars['Int']['output']
+  invited_by?: Maybe<Scalars['String']['output']>
+  user_id: Scalars['String']['output']
+  username?: Maybe<Scalars['String']['output']>
 }
 
 export type ReferralClickTracking = {
@@ -1082,6 +1097,8 @@ export type User = {
   organizer_requested_at?: Maybe<Scalars['DateTime']['output']>
   privy_id: Scalars['String']['output']
   pronouns?: Maybe<Scalars['String']['output']>
+  referral_count?: Maybe<Scalars['Int']['output']>
+  referral_points_earned?: Maybe<Scalars['Int']['output']>
   role?: Maybe<UserRole>
   show_location?: Maybe<Scalars['Boolean']['output']>
   skill_level?: Maybe<SkillLevel>
@@ -1139,6 +1156,16 @@ export type UserPointsSummary = {
   unique_actions: Scalars['Int']['output']
   username?: Maybe<Scalars['String']['output']>
   xp: Scalars['Int']['output']
+}
+
+export type UserReferralInfo = {
+  __typename?: 'UserReferralInfo'
+  avatar_url?: Maybe<Scalars['String']['output']>
+  created_at: Scalars['DateTime']['output']
+  display_name?: Maybe<Scalars['String']['output']>
+  invited_by?: Maybe<Scalars['String']['output']>
+  privy_id: Scalars['String']['output']
+  username?: Maybe<Scalars['String']['output']>
 }
 
 export enum UserRole {
@@ -1479,6 +1506,63 @@ export type TrackAppOpenMutation = {
     app_opened_at?: any | null
     points_earned_today: number
     streak_day: number
+  }
+}
+
+export type UpdateUserRoleMutationVariables = Exact<{
+  userId: Scalars['String']['input']
+  role: UserRole
+}>
+
+export type UpdateUserRoleMutation = {
+  __typename?: 'Mutation'
+  updateUserRole: {
+    __typename?: 'User'
+    privy_id: string
+    username?: string | null
+    display_name?: string | null
+    role?: UserRole | null
+    xp?: number | null
+    level?: number | null
+    is_organizer_approved?: boolean | null
+    updated_at?: any | null
+  }
+}
+
+export type ApproveOrganizerMutationVariables = Exact<{
+  userId: Scalars['String']['input']
+  approved: Scalars['Boolean']['input']
+}>
+
+export type ApproveOrganizerMutation = {
+  __typename?: 'Mutation'
+  approveOrganizer: {
+    __typename?: 'User'
+    privy_id: string
+    username?: string | null
+    display_name?: string | null
+    role?: UserRole | null
+    is_organizer_approved?: boolean | null
+    organizer_approved_at?: any | null
+    organizer_approved_by?: string | null
+    organizer_rejection_reason?: string | null
+    updated_at?: any | null
+  }
+}
+
+export type FeatureEventMutationVariables = Exact<{
+  eventId: Scalars['ID']['input']
+  featured: Scalars['Boolean']['input']
+}>
+
+export type FeatureEventMutation = {
+  __typename?: 'Mutation'
+  featureEvent: {
+    __typename?: 'Event'
+    id: string
+    title: string
+    is_featured?: boolean | null
+    updated_at: any
   }
 }
 
@@ -1917,6 +2001,72 @@ export type GetEventAttendanceSummariesQuery = {
     total_points_awarded: number
     avg_points_per_attendee?: number | null
   }>
+}
+
+export type GetAllUsersQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetAllUsersQuery = {
+  __typename?: 'Query'
+  getAllUsers: Array<{
+    __typename?: 'User'
+    privy_id: string
+    username?: string | null
+    display_name?: string | null
+    role?: UserRole | null
+    xp?: number | null
+    level?: number | null
+    referral_count?: number | null
+    referral_points_earned?: number | null
+    total_sessions?: number | null
+    invited_by?: string | null
+    is_organizer_approved?: boolean | null
+    created_at?: any | null
+    updated_at?: any | null
+  }>
+}
+
+export type GetAdminStatsQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetAdminStatsQuery = {
+  __typename?: 'Query'
+  adminStats: {
+    __typename?: 'AdminStats'
+    totalUsers: number
+    totalEvents: number
+    totalRevenue: number
+    activeUsers: number
+    upcomingEvents: number
+    newUsersThisMonth: number
+    eventsThisMonth: number
+  }
+}
+
+export type GetPendingOrganizersQueryVariables = Exact<{
+  pagination?: InputMaybe<PaginationInput>
+}>
+
+export type GetPendingOrganizersQuery = {
+  __typename?: 'Query'
+  pendingOrganizers: {
+    __typename?: 'UserConnection'
+    totalCount: number
+    users: Array<{
+      __typename?: 'User'
+      privy_id: string
+      username?: string | null
+      display_name?: string | null
+      role?: UserRole | null
+      is_organizer_approved?: boolean | null
+      created_at?: any | null
+    }>
+    pageInfo: {
+      __typename?: 'PageInfo'
+      hasNextPage: boolean
+      hasPreviousPage: boolean
+      startCursor?: string | null
+      endCursor?: string | null
+    }
+  }
 }
 
 export type GetReferralByCodeQueryVariables = Exact<{
@@ -2964,6 +3114,162 @@ export type TrackAppOpenMutationResult = Apollo.MutationResult<TrackAppOpenMutat
 export type TrackAppOpenMutationOptions = Apollo.BaseMutationOptions<
   TrackAppOpenMutation,
   TrackAppOpenMutationVariables
+>
+export const UpdateUserRoleDocument = gql`
+    mutation UpdateUserRole($userId: String!, $role: UserRole!) {
+  updateUserRole(userId: $userId, role: $role) {
+    privy_id
+    username
+    display_name
+    role
+    xp
+    level
+    is_organizer_approved
+    updated_at
+  }
+}
+    `
+export type UpdateUserRoleMutationFn = Apollo.MutationFunction<
+  UpdateUserRoleMutation,
+  UpdateUserRoleMutationVariables
+>
+
+/**
+ * __useUpdateUserRoleMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserRoleMutation, { data, loading, error }] = useUpdateUserRoleMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      role: // value for 'role'
+ *   },
+ * });
+ */
+export function useUpdateUserRoleMutation(
+  baseOptions?: Apollo.MutationHookOptions<UpdateUserRoleMutation, UpdateUserRoleMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<UpdateUserRoleMutation, UpdateUserRoleMutationVariables>(
+    UpdateUserRoleDocument,
+    options,
+  )
+}
+export type UpdateUserRoleMutationHookResult = ReturnType<typeof useUpdateUserRoleMutation>
+export type UpdateUserRoleMutationResult = Apollo.MutationResult<UpdateUserRoleMutation>
+export type UpdateUserRoleMutationOptions = Apollo.BaseMutationOptions<
+  UpdateUserRoleMutation,
+  UpdateUserRoleMutationVariables
+>
+export const ApproveOrganizerDocument = gql`
+    mutation ApproveOrganizer($userId: String!, $approved: Boolean!) {
+  approveOrganizer(userId: $userId, approved: $approved) {
+    privy_id
+    username
+    display_name
+    role
+    is_organizer_approved
+    organizer_approved_at
+    organizer_approved_by
+    organizer_rejection_reason
+    updated_at
+  }
+}
+    `
+export type ApproveOrganizerMutationFn = Apollo.MutationFunction<
+  ApproveOrganizerMutation,
+  ApproveOrganizerMutationVariables
+>
+
+/**
+ * __useApproveOrganizerMutation__
+ *
+ * To run a mutation, you first call `useApproveOrganizerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useApproveOrganizerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [approveOrganizerMutation, { data, loading, error }] = useApproveOrganizerMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      approved: // value for 'approved'
+ *   },
+ * });
+ */
+export function useApproveOrganizerMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ApproveOrganizerMutation,
+    ApproveOrganizerMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<ApproveOrganizerMutation, ApproveOrganizerMutationVariables>(
+    ApproveOrganizerDocument,
+    options,
+  )
+}
+export type ApproveOrganizerMutationHookResult = ReturnType<typeof useApproveOrganizerMutation>
+export type ApproveOrganizerMutationResult = Apollo.MutationResult<ApproveOrganizerMutation>
+export type ApproveOrganizerMutationOptions = Apollo.BaseMutationOptions<
+  ApproveOrganizerMutation,
+  ApproveOrganizerMutationVariables
+>
+export const FeatureEventDocument = gql`
+    mutation FeatureEvent($eventId: ID!, $featured: Boolean!) {
+  featureEvent(eventId: $eventId, featured: $featured) {
+    id
+    title
+    is_featured
+    updated_at
+  }
+}
+    `
+export type FeatureEventMutationFn = Apollo.MutationFunction<
+  FeatureEventMutation,
+  FeatureEventMutationVariables
+>
+
+/**
+ * __useFeatureEventMutation__
+ *
+ * To run a mutation, you first call `useFeatureEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useFeatureEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [featureEventMutation, { data, loading, error }] = useFeatureEventMutation({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *      featured: // value for 'featured'
+ *   },
+ * });
+ */
+export function useFeatureEventMutation(
+  baseOptions?: Apollo.MutationHookOptions<FeatureEventMutation, FeatureEventMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<FeatureEventMutation, FeatureEventMutationVariables>(
+    FeatureEventDocument,
+    options,
+  )
+}
+export type FeatureEventMutationHookResult = ReturnType<typeof useFeatureEventMutation>
+export type FeatureEventMutationResult = Apollo.MutationResult<FeatureEventMutation>
+export type FeatureEventMutationOptions = Apollo.BaseMutationOptions<
+  FeatureEventMutation,
+  FeatureEventMutationVariables
 >
 export const TrackReferralClickDocument = gql`
     mutation TrackReferralClick($input: TrackReferralClickInput!) {
@@ -4087,6 +4393,226 @@ export type GetEventAttendanceSummariesSuspenseQueryHookResult = ReturnType<
 export type GetEventAttendanceSummariesQueryResult = Apollo.QueryResult<
   GetEventAttendanceSummariesQuery,
   GetEventAttendanceSummariesQueryVariables
+>
+export const GetAllUsersDocument = gql`
+    query GetAllUsers {
+  getAllUsers {
+    privy_id
+    username
+    display_name
+    role
+    xp
+    level
+    referral_count
+    referral_points_earned
+    total_sessions
+    invited_by
+    is_organizer_approved
+    created_at
+    updated_at
+  }
+}
+    `
+
+/**
+ * __useGetAllUsersQuery__
+ *
+ * To run a query within a React component, call `useGetAllUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllUsersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllUsersQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetAllUsersQuery, GetAllUsersQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetAllUsersQuery, GetAllUsersQueryVariables>(GetAllUsersDocument, options)
+}
+export function useGetAllUsersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetAllUsersQuery, GetAllUsersQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetAllUsersQuery, GetAllUsersQueryVariables>(
+    GetAllUsersDocument,
+    options,
+  )
+}
+export function useGetAllUsersSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetAllUsersQuery, GetAllUsersQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetAllUsersQuery, GetAllUsersQueryVariables>(
+    GetAllUsersDocument,
+    options,
+  )
+}
+export type GetAllUsersQueryHookResult = ReturnType<typeof useGetAllUsersQuery>
+export type GetAllUsersLazyQueryHookResult = ReturnType<typeof useGetAllUsersLazyQuery>
+export type GetAllUsersSuspenseQueryHookResult = ReturnType<typeof useGetAllUsersSuspenseQuery>
+export type GetAllUsersQueryResult = Apollo.QueryResult<GetAllUsersQuery, GetAllUsersQueryVariables>
+export const GetAdminStatsDocument = gql`
+    query GetAdminStats {
+  adminStats {
+    totalUsers
+    totalEvents
+    totalRevenue
+    activeUsers
+    upcomingEvents
+    newUsersThisMonth
+    eventsThisMonth
+  }
+}
+    `
+
+/**
+ * __useGetAdminStatsQuery__
+ *
+ * To run a query within a React component, call `useGetAdminStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAdminStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAdminStatsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAdminStatsQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetAdminStatsQuery, GetAdminStatsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetAdminStatsQuery, GetAdminStatsQueryVariables>(
+    GetAdminStatsDocument,
+    options,
+  )
+}
+export function useGetAdminStatsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetAdminStatsQuery, GetAdminStatsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetAdminStatsQuery, GetAdminStatsQueryVariables>(
+    GetAdminStatsDocument,
+    options,
+  )
+}
+export function useGetAdminStatsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetAdminStatsQuery, GetAdminStatsQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetAdminStatsQuery, GetAdminStatsQueryVariables>(
+    GetAdminStatsDocument,
+    options,
+  )
+}
+export type GetAdminStatsQueryHookResult = ReturnType<typeof useGetAdminStatsQuery>
+export type GetAdminStatsLazyQueryHookResult = ReturnType<typeof useGetAdminStatsLazyQuery>
+export type GetAdminStatsSuspenseQueryHookResult = ReturnType<typeof useGetAdminStatsSuspenseQuery>
+export type GetAdminStatsQueryResult = Apollo.QueryResult<
+  GetAdminStatsQuery,
+  GetAdminStatsQueryVariables
+>
+export const GetPendingOrganizersDocument = gql`
+    query GetPendingOrganizers($pagination: PaginationInput) {
+  pendingOrganizers(pagination: $pagination) {
+    users {
+      privy_id
+      username
+      display_name
+      role
+      is_organizer_approved
+      created_at
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}
+    `
+
+/**
+ * __useGetPendingOrganizersQuery__
+ *
+ * To run a query within a React component, call `useGetPendingOrganizersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPendingOrganizersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPendingOrganizersQuery({
+ *   variables: {
+ *      pagination: // value for 'pagination'
+ *   },
+ * });
+ */
+export function useGetPendingOrganizersQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetPendingOrganizersQuery,
+    GetPendingOrganizersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetPendingOrganizersQuery, GetPendingOrganizersQueryVariables>(
+    GetPendingOrganizersDocument,
+    options,
+  )
+}
+export function useGetPendingOrganizersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetPendingOrganizersQuery,
+    GetPendingOrganizersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetPendingOrganizersQuery, GetPendingOrganizersQueryVariables>(
+    GetPendingOrganizersDocument,
+    options,
+  )
+}
+export function useGetPendingOrganizersSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetPendingOrganizersQuery,
+        GetPendingOrganizersQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetPendingOrganizersQuery, GetPendingOrganizersQueryVariables>(
+    GetPendingOrganizersDocument,
+    options,
+  )
+}
+export type GetPendingOrganizersQueryHookResult = ReturnType<typeof useGetPendingOrganizersQuery>
+export type GetPendingOrganizersLazyQueryHookResult = ReturnType<
+  typeof useGetPendingOrganizersLazyQuery
+>
+export type GetPendingOrganizersSuspenseQueryHookResult = ReturnType<
+  typeof useGetPendingOrganizersSuspenseQuery
+>
+export type GetPendingOrganizersQueryResult = Apollo.QueryResult<
+  GetPendingOrganizersQuery,
+  GetPendingOrganizersQueryVariables
 >
 export const GetReferralByCodeDocument = gql`
     query GetReferralByCode($code: String!) {
