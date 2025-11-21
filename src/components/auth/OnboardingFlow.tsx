@@ -427,10 +427,6 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
     const currentIndex = stepOrder.indexOf(currentStep)
 
     if (currentStep === 'welcome') {
-      if (!agreedToTerms) {
-        return
-      }
-
       // If already authenticated, just move to next step
       if (isAuthenticated) {
         setCompletedSteps(['welcome'])
@@ -442,7 +438,9 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
       try {
         setIsLoading(true)
         await login()
-        // Don't automatically advance - let user click continue after login
+        // After successful login, automatically advance to role step
+        setCompletedSteps(['welcome'])
+        setCurrentStep('role')
       } catch (error) {
         console.error('Auth failed:', error)
       } finally {
@@ -454,6 +452,9 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
     if (currentStep === 'role') {
       // At least one role must be selected (dancer is checked by default)
       if (!isDancer && !isOrganizer) return
+
+      // Terms must be agreed to
+      if (!agreedToTerms) return
 
       // Set userRole based on selection
       // If organizer is selected, role = 'organizer', otherwise role = 'attendee'
@@ -648,39 +649,6 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
               </div>
             )}
 
-            <div className="space-y-4">
-              <label className="flex items-start space-x-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={agreedToTerms}
-                  onChange={e => setAgreedToTerms(e.target.checked)}
-                  className="mt-1 w-4 h-4 text-purple-600 bg-black/50 border-purple-500/30 rounded focus:ring-purple-500"
-                />
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2">
-                    <FiShield className="text-purple-400 text-sm" />
-                    <span className="text-white text-sm">
-                      I agree to the Terms & Privacy Policy
-                    </span>
-                  </div>
-                </div>
-              </label>
-
-              <label className="flex items-start space-x-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={emailNotifications}
-                  onChange={e => setEmailNotifications(e.target.checked)}
-                  className="mt-1 w-4 h-4 text-purple-600 bg-black/50 border-purple-500/30 rounded focus:ring-purple-500"
-                />
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2">
-                    <FiBell className="text-purple-400 text-sm" />
-                    <span className="text-white text-sm">Email me when the app launches</span>
-                  </div>
-                </div>
-              </label>
-            </div>
           </motion.div>
         )
 
@@ -756,6 +724,41 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                   </div>
                 </div>
               </button>
+            </div>
+
+            {/* Terms and Notifications - moved here after authentication */}
+            <div className="space-y-3 mt-6 pt-6 border-t border-purple-500/20">
+              <label className="flex items-start space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={agreedToTerms}
+                  onChange={e => setAgreedToTerms(e.target.checked)}
+                  className="mt-1 w-4 h-4 text-purple-600 bg-black/50 border-purple-500/30 rounded focus:ring-purple-500"
+                />
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2">
+                    <FiShield className="text-purple-400 text-sm" />
+                    <span className="text-white text-sm">
+                      I agree to the Terms & Privacy Policy
+                    </span>
+                  </div>
+                </div>
+              </label>
+
+              <label className="flex items-start space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={emailNotifications}
+                  onChange={e => setEmailNotifications(e.target.checked)}
+                  className="mt-1 w-4 h-4 text-purple-600 bg-black/50 border-purple-500/30 rounded focus:ring-purple-500"
+                />
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2">
+                    <FiBell className="text-purple-400 text-sm" />
+                    <span className="text-white text-sm">Email me about new features and events</span>
+                  </div>
+                </div>
+              </label>
             </div>
           </motion.div>
         )
@@ -1389,8 +1392,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                   isLoading ||
                   uploadingAvatar ||
                   isCheckingUsername ||
-                  (currentStep === 'welcome' && !agreedToTerms) ||
-                  (currentStep === 'role' && !isDancer && !isOrganizer) ||
+                  (currentStep === 'role' && (!isDancer && !isOrganizer || !agreedToTerms)) ||
                   !validateCurrentStep()
                 }
                 className={`${
