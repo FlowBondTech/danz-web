@@ -89,6 +89,9 @@ export default function EnhancedPointsPage() {
   const [selectedCategory, setSelectedCategory] = useState<PointActionCategory | undefined>()
   const [showBondingSection, setShowBondingSection] = useState(false)
   const [showWearableSection, setShowWearableSection] = useState(false)
+  const [editMode, setEditMode] = useState(false)
+  const [editingPoints, setEditingPoints] = useState<{ [key: string]: number }>({})
+  const [editingLimits, setEditingLimits] = useState<{ [key: string]: { max_per_day: number | null; max_per_week: number | null; max_per_month: number | null } }>({})
 
   const { data: profileData, loading: profileLoading } = useGetMyProfileQuery({
     skip: !authenticated,
@@ -102,8 +105,23 @@ export default function EnhancedPointsPage() {
   })
 
   const [createPointAction] = useCreatePointActionMutation()
-  const [updatePointAction] = useUpdatePointActionMutation()
+  const [updatePointAction, { loading: updating }] = useUpdatePointActionMutation()
   const [togglePointAction] = useTogglePointActionMutation()
+
+  // Custom action form state
+  const [showCustomForm, setShowCustomForm] = useState(false)
+  const [customAction, setCustomAction] = useState({
+    action_key: '',
+    action_name: '',
+    description: '',
+    points_value: 10,
+    category: 'activity' as PointActionCategory,
+    is_active: true,
+    requires_verification: false,
+    max_per_day: null as number | null,
+    max_per_week: null as number | null,
+    max_per_month: null as number | null,
+  })
 
   useEffect(() => {
     if (ready && !authenticated) {
@@ -121,36 +139,126 @@ export default function EnhancedPointsPage() {
     if (selectedTemplate) {
       const template = POINT_TEMPLATES[selectedTemplate]
 
-      // Create all actions from the template
-      for (const action of template.actions) {
-        await createPointAction({
-          variables: {
-            input: {
-              action_key: action.action_key,
-              action_name: action.action_name,
-              description: action.description,
-              points_value: action.points_value,
-              category: action.category,
-              is_active: true,
-              requires_verification: false,
+      try {
+        // Create all actions from the template
+        for (const action of template.actions) {
+          await createPointAction({
+            variables: {
+              input: {
+                action_key: action.action_key,
+                action_name: action.action_name,
+                description: action.description,
+                points_value: action.points_value,
+                category: action.category,
+                is_active: true,
+                requires_verification: false,
+              }
             }
-          }
-        })
-      }
+          })
+        }
 
-      setShowSetupWizard(false)
-      setSelectedTemplate(null)
+        setShowSetupWizard(false)
+        setSelectedTemplate(null)
+        refetch()
+      } catch (error) {
+        console.error('Error applying template:', error)
+        alert('Some actions may already exist or there was an error creating them')
+      }
+    }
+  }
+
+  const handleCreateCustomAction = async () => {
+    try {
+      await createPointAction({
+        variables: {
+          input: {
+            action_key: customAction.action_key,
+            action_name: customAction.action_name,
+            description: customAction.description,
+            points_value: customAction.points_value,
+            category: customAction.category,
+            is_active: customAction.is_active,
+            requires_verification: customAction.requires_verification,
+            max_per_day: customAction.max_per_day,
+            max_per_week: customAction.max_per_week,
+            max_per_month: customAction.max_per_month,
+          }
+        }
+      })
+
+      setShowCustomForm(false)
+      setCustomAction({
+        action_key: '',
+        action_name: '',
+        description: '',
+        points_value: 10,
+        category: 'activity' as PointActionCategory,
+        is_active: true,
+        requires_verification: false,
+        max_per_day: null,
+        max_per_week: null,
+        max_per_month: null,
+      })
       refetch()
+    } catch (error) {
+      console.error('Error creating action:', error)
+      alert('Failed to create action. The action key may already exist.')
+    }
+  }
+
+  const handlePointsChange = async (action_key: string, newPoints: number) => {
+    try {
+      await updatePointAction({
+        variables: {
+          input: {
+            action_key,
+            points_value: newPoints,
+          },
+        },
+      })
+      refetch()
+      const newEditingPoints = { ...editingPoints }
+      delete newEditingPoints[action_key]
+      setEditingPoints(newEditingPoints)
+    } catch (error) {
+      console.error('Error updating points:', error)
+      alert('Failed to update points')
+    }
+  }
+
+  const handleLimitsChange = async (action_key: string, limits: { max_per_day: number | null; max_per_week: number | null; max_per_month: number | null }) => {
+    try {
+      await updatePointAction({
+        variables: {
+          input: {
+            action_key,
+            max_per_day: limits.max_per_day,
+            max_per_week: limits.max_per_week,
+            max_per_month: limits.max_per_month,
+          },
+        },
+      })
+      refetch()
+      const newEditingLimits = { ...editingLimits }
+      delete newEditingLimits[action_key]
+      setEditingLimits(newEditingLimits)
+    } catch (error) {
+      console.error('Error updating limits:', error)
+      alert('Failed to update limits')
     }
   }
 
   const handleToggle = async (action_key: string) => {
-    await togglePointAction({
-      variables: {
-        action_key,
-      },
-    })
-    refetch()
+    try {
+      await togglePointAction({
+        variables: {
+          action_key,
+        },
+      })
+      refetch()
+    } catch (error) {
+      console.error('Error toggling action:', error)
+    }
   }
 
   if (!ready || profileLoading || loading) {
@@ -187,13 +295,31 @@ export default function EnhancedPointsPage() {
               Configure rewards, bonding mechanisms, and wearable integration
             </p>
           </div>
-          <button
-            onClick={() => setShowSetupWizard(!showSetupWizard)}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-blue rounded-lg hover:opacity-90 transition-opacity"
-          >
-            <FiZap size={20} />
-            Guided Setup
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setEditMode(!editMode)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-opacity ${
+                editMode ? 'bg-green-500' : 'bg-gray-600'
+              } hover:opacity-90`}
+            >
+              {editMode ? <FiCheck size={20} /> : <FiActivity size={20} />}
+              {editMode ? 'View Mode' : 'Edit Mode'}
+            </button>
+            <button
+              onClick={() => setShowCustomForm(!showCustomForm)}
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 rounded-lg hover:opacity-90 transition-opacity"
+            >
+              <FiPlus size={20} />
+              Create Action
+            </button>
+            <button
+              onClick={() => setShowSetupWizard(!showSetupWizard)}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-blue rounded-lg hover:opacity-90 transition-opacity"
+            >
+              <FiZap size={20} />
+              Templates
+            </button>
+          </div>
         </div>
 
         {/* Quick Stats */}
@@ -308,6 +434,162 @@ export default function EnhancedPointsPage() {
                   }`}
                 >
                   Apply Template
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Custom Action Form */}
+        <AnimatePresence>
+          {showCustomForm && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mb-8 bg-bg-secondary rounded-xl border border-neon-purple/20 p-6"
+            >
+              <h2 className="text-xl font-bold text-text-primary mb-4">
+                ✨ Create Custom Point Action
+              </h2>
+
+              <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+                <div>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">Action Key (unique ID)</label>
+                  <input
+                    type="text"
+                    value={customAction.action_key}
+                    onChange={(e) => setCustomAction({ ...customAction, action_key: e.target.value.toLowerCase().replace(/\s+/g, '_') })}
+                    placeholder="e.g., daily_login"
+                    className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">Action Name</label>
+                  <input
+                    type="text"
+                    value={customAction.action_name}
+                    onChange={(e) => setCustomAction({ ...customAction, action_name: e.target.value })}
+                    placeholder="e.g., Daily Login"
+                    className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-text-secondary mb-1">Description</label>
+                  <input
+                    type="text"
+                    value={customAction.description}
+                    onChange={(e) => setCustomAction({ ...customAction, description: e.target.value })}
+                    placeholder="e.g., Reward users for logging in daily"
+                    className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">Points Value</label>
+                  <input
+                    type="number"
+                    value={customAction.points_value}
+                    onChange={(e) => setCustomAction({ ...customAction, points_value: parseInt(e.target.value) || 0 })}
+                    className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">Category</label>
+                  <select
+                    value={customAction.category}
+                    onChange={(e) => setCustomAction({ ...customAction, category: e.target.value as PointActionCategory })}
+                    className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
+                  >
+                    <option value="social">Social</option>
+                    <option value="activity">Activity</option>
+                    <option value="event">Event</option>
+                    <option value="referral">Referral</option>
+                    <option value="achievement">Achievement</option>
+                    <option value="special">Special</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">Max Per Day</label>
+                  <input
+                    type="number"
+                    value={customAction.max_per_day || ''}
+                    onChange={(e) => setCustomAction({ ...customAction, max_per_day: e.target.value ? parseInt(e.target.value) : null })}
+                    placeholder="No limit"
+                    className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">Max Per Week</label>
+                  <input
+                    type="number"
+                    value={customAction.max_per_week || ''}
+                    onChange={(e) => setCustomAction({ ...customAction, max_per_week: e.target.value ? parseInt(e.target.value) : null })}
+                    placeholder="No limit"
+                    className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
+                  />
+                </div>
+
+                <div className="md:col-span-2 flex items-center gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={customAction.is_active}
+                      onChange={(e) => setCustomAction({ ...customAction, is_active: e.target.checked })}
+                      className="rounded border-gray-600"
+                    />
+                    <span className="text-sm text-text-secondary">Active</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={customAction.requires_verification}
+                      onChange={(e) => setCustomAction({ ...customAction, requires_verification: e.target.checked })}
+                      className="rounded border-gray-600"
+                    />
+                    <span className="text-sm text-text-secondary">Requires Verification</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-4 mt-6">
+                <button
+                  onClick={() => {
+                    setShowCustomForm(false)
+                    setCustomAction({
+                      action_key: '',
+                      action_name: '',
+                      description: '',
+                      points_value: 10,
+                      category: 'activity' as PointActionCategory,
+                      is_active: true,
+                      requires_verification: false,
+                      max_per_day: null,
+                      max_per_week: null,
+                      max_per_month: null,
+                    })
+                  }}
+                  className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreateCustomAction}
+                  disabled={!customAction.action_key || !customAction.action_name}
+                  className={`px-6 py-3 rounded-lg transition-all ${
+                    customAction.action_key && customAction.action_name
+                      ? 'bg-gradient-to-r from-neon-purple to-neon-blue text-white hover:opacity-90'
+                      : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  Create Action
                 </button>
               </div>
             </motion.div>
@@ -531,6 +813,19 @@ export default function EnhancedPointsPage() {
                   <th className="px-4 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
                     Points
                   </th>
+                  {editMode && (
+                    <>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
+                        Max/Day
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
+                        Max/Week
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
+                        Max/Month
+                      </th>
+                    </>
+                  )}
                   <th className="px-4 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
                     Status
                   </th>
@@ -558,10 +853,109 @@ export default function EnhancedPointsPage() {
                       </span>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
-                      <span className="text-sm font-bold text-green-400">
-                        +{action.points_value}
-                      </span>
+                      {editMode ? (
+                        <input
+                          type="number"
+                          value={editingPoints[action.action_key] ?? action.points_value}
+                          onChange={e => setEditingPoints({ ...editingPoints, [action.action_key]: parseInt(e.target.value) || 0 })}
+                          onBlur={() => {
+                            if (editingPoints[action.action_key] !== undefined && editingPoints[action.action_key] !== action.points_value) {
+                              handlePointsChange(action.action_key, editingPoints[action.action_key])
+                            }
+                          }}
+                          className="w-20 px-2 py-1 bg-bg-primary border border-white/10 rounded text-text-primary font-semibold focus:border-neon-purple focus:outline-none"
+                        />
+                      ) : (
+                        <span className="text-sm font-bold text-green-400">
+                          +{action.points_value}
+                        </span>
+                      )}
                     </td>
+                    {editMode && (
+                      <>
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <input
+                            type="number"
+                            value={editingLimits[action.action_key]?.max_per_day ?? action.max_per_day ?? ''}
+                            onChange={e => {
+                              const currentLimits = editingLimits[action.action_key] ?? {
+                                max_per_day: action.max_per_day,
+                                max_per_week: action.max_per_week,
+                                max_per_month: action.max_per_month,
+                              }
+                              setEditingLimits({
+                                ...editingLimits,
+                                [action.action_key]: {
+                                  ...currentLimits,
+                                  max_per_day: e.target.value ? parseInt(e.target.value) : null,
+                                }
+                              })
+                            }}
+                            onBlur={() => {
+                              if (editingLimits[action.action_key]) {
+                                handleLimitsChange(action.action_key, editingLimits[action.action_key])
+                              }
+                            }}
+                            placeholder="∞"
+                            className="w-16 px-2 py-1 bg-bg-primary border border-white/10 rounded text-text-primary text-sm focus:border-neon-purple focus:outline-none"
+                          />
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <input
+                            type="number"
+                            value={editingLimits[action.action_key]?.max_per_week ?? action.max_per_week ?? ''}
+                            onChange={e => {
+                              const currentLimits = editingLimits[action.action_key] ?? {
+                                max_per_day: action.max_per_day,
+                                max_per_week: action.max_per_week,
+                                max_per_month: action.max_per_month,
+                              }
+                              setEditingLimits({
+                                ...editingLimits,
+                                [action.action_key]: {
+                                  ...currentLimits,
+                                  max_per_week: e.target.value ? parseInt(e.target.value) : null,
+                                }
+                              })
+                            }}
+                            onBlur={() => {
+                              if (editingLimits[action.action_key]) {
+                                handleLimitsChange(action.action_key, editingLimits[action.action_key])
+                              }
+                            }}
+                            placeholder="∞"
+                            className="w-16 px-2 py-1 bg-bg-primary border border-white/10 rounded text-text-primary text-sm focus:border-neon-purple focus:outline-none"
+                          />
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <input
+                            type="number"
+                            value={editingLimits[action.action_key]?.max_per_month ?? action.max_per_month ?? ''}
+                            onChange={e => {
+                              const currentLimits = editingLimits[action.action_key] ?? {
+                                max_per_day: action.max_per_day,
+                                max_per_week: action.max_per_week,
+                                max_per_month: action.max_per_month,
+                              }
+                              setEditingLimits({
+                                ...editingLimits,
+                                [action.action_key]: {
+                                  ...currentLimits,
+                                  max_per_month: e.target.value ? parseInt(e.target.value) : null,
+                                }
+                              })
+                            }}
+                            onBlur={() => {
+                              if (editingLimits[action.action_key]) {
+                                handleLimitsChange(action.action_key, editingLimits[action.action_key])
+                              }
+                            }}
+                            placeholder="∞"
+                            className="w-16 px-2 py-1 bg-bg-primary border border-white/10 rounded text-text-primary text-sm focus:border-neon-purple focus:outline-none"
+                          />
+                        </td>
+                      </>
+                    )}
                     <td className="px-4 py-4 whitespace-nowrap">
                       <span className={`flex items-center gap-1 text-sm ${
                         action.is_active ? 'text-green-400' : 'text-gray-400'
