@@ -664,6 +664,7 @@ export type Query = {
   eventRegistrations: Array<EventRegistration>
   events: EventConnection
   friendsDanceSessions: Array<DanceSession>
+  getAllEventRegistrations: Array<EventRegistration>
   getAllPointActions: Array<PointAction>
   getAllTransactions: TransactionHistory
   getAllUsers: Array<User>
@@ -1566,6 +1567,61 @@ export type FeatureEventMutation = {
   }
 }
 
+export type CreateEventMutationVariables = Exact<{
+  input: CreateEventInput
+}>
+
+export type CreateEventMutation = {
+  __typename?: 'Mutation'
+  createEvent: {
+    __typename?: 'Event'
+    id: string
+    title: string
+    description?: string | null
+    category?: EventCategory | null
+    image_url?: string | null
+    location_name: string
+    location_address?: string | null
+    location_city?: string | null
+    location_latitude?: number | null
+    location_longitude?: number | null
+    max_capacity?: number | null
+    price_usd?: number | null
+    price_danz?: number | null
+    is_featured?: boolean | null
+    skill_level?: SkillLevel | null
+    is_virtual?: boolean | null
+    virtual_link?: string | null
+    requirements?: string | null
+    tags?: Array<string> | null
+    dance_styles?: Array<string> | null
+    currency?: string | null
+    start_date_time: any
+    end_date_time: any
+    created_at: any
+    status?: EventStatus | null
+  }
+}
+
+export type RegisterForEventMutationVariables = Exact<{
+  eventId: Scalars['ID']['input']
+  notes?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type RegisterForEventMutation = {
+  __typename?: 'Mutation'
+  registerForEvent: {
+    __typename?: 'EventRegistration'
+    id: string
+    event_id: string
+    user_id: string
+    status?: RegistrationStatus | null
+    registration_date?: any | null
+    user_notes?: string | null
+    created_at?: any | null
+  }
+}
+
 export type TrackReferralClickMutationVariables = Exact<{
   input: TrackReferralClickInput
 }>
@@ -2058,6 +2114,99 @@ export type GetPendingOrganizersQuery = {
       role?: UserRole | null
       is_organizer_approved?: boolean | null
       created_at?: any | null
+    }>
+    pageInfo: {
+      __typename?: 'PageInfo'
+      hasNextPage: boolean
+      hasPreviousPage: boolean
+      startCursor?: string | null
+      endCursor?: string | null
+    }
+  }
+}
+
+export type GetAllEventRegistrationsQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetAllEventRegistrationsQuery = {
+  __typename?: 'Query'
+  getAllEventRegistrations: Array<{
+    __typename?: 'EventRegistration'
+    id: string
+    event_id: string
+    user_id: string
+    status?: RegistrationStatus | null
+    registration_date?: any | null
+    payment_status?: PaymentStatus | null
+    payment_amount?: number | null
+    payment_date?: any | null
+    checked_in?: boolean | null
+    check_in_time?: any | null
+    user_notes?: string | null
+    admin_notes?: string | null
+    created_at?: any | null
+    updated_at?: any | null
+    user?: {
+      __typename?: 'User'
+      privy_id: string
+      username?: string | null
+      display_name?: string | null
+    } | null
+    event?: {
+      __typename?: 'Event'
+      id: string
+      title: string
+      start_date_time: any
+      location_name: string
+    } | null
+  }>
+}
+
+export type GetEventsQueryVariables = Exact<{
+  filter?: InputMaybe<EventFilterInput>
+  pagination?: InputMaybe<PaginationInput>
+}>
+
+export type GetEventsQuery = {
+  __typename?: 'Query'
+  events: {
+    __typename?: 'EventConnection'
+    totalCount: number
+    events: Array<{
+      __typename?: 'Event'
+      id: string
+      title: string
+      description?: string | null
+      category?: EventCategory | null
+      image_url?: string | null
+      location_name: string
+      location_address?: string | null
+      location_city?: string | null
+      facilitator_id?: string | null
+      max_capacity?: number | null
+      current_capacity?: number | null
+      price_usd?: number | null
+      price_danz?: number | null
+      is_featured?: boolean | null
+      skill_level?: SkillLevel | null
+      is_virtual?: boolean | null
+      virtual_link?: string | null
+      requirements?: string | null
+      tags?: Array<string> | null
+      dance_styles?: Array<string> | null
+      currency?: string | null
+      start_date_time: any
+      end_date_time: any
+      created_at: any
+      updated_at: any
+      status?: EventStatus | null
+      is_registered?: boolean | null
+      registration_count?: number | null
+      facilitator?: {
+        __typename?: 'User'
+        privy_id: string
+        username?: string | null
+        display_name?: string | null
+      } | null
     }>
     pageInfo: {
       __typename?: 'PageInfo'
@@ -3270,6 +3419,128 @@ export type FeatureEventMutationResult = Apollo.MutationResult<FeatureEventMutat
 export type FeatureEventMutationOptions = Apollo.BaseMutationOptions<
   FeatureEventMutation,
   FeatureEventMutationVariables
+>
+export const CreateEventDocument = gql`
+    mutation CreateEvent($input: CreateEventInput!) {
+  createEvent(input: $input) {
+    id
+    title
+    description
+    category
+    image_url
+    location_name
+    location_address
+    location_city
+    location_latitude
+    location_longitude
+    max_capacity
+    price_usd
+    price_danz
+    is_featured
+    skill_level
+    is_virtual
+    virtual_link
+    requirements
+    tags
+    dance_styles
+    currency
+    start_date_time
+    end_date_time
+    created_at
+    status
+  }
+}
+    `
+export type CreateEventMutationFn = Apollo.MutationFunction<
+  CreateEventMutation,
+  CreateEventMutationVariables
+>
+
+/**
+ * __useCreateEventMutation__
+ *
+ * To run a mutation, you first call `useCreateEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createEventMutation, { data, loading, error }] = useCreateEventMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateEventMutation(
+  baseOptions?: Apollo.MutationHookOptions<CreateEventMutation, CreateEventMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<CreateEventMutation, CreateEventMutationVariables>(
+    CreateEventDocument,
+    options,
+  )
+}
+export type CreateEventMutationHookResult = ReturnType<typeof useCreateEventMutation>
+export type CreateEventMutationResult = Apollo.MutationResult<CreateEventMutation>
+export type CreateEventMutationOptions = Apollo.BaseMutationOptions<
+  CreateEventMutation,
+  CreateEventMutationVariables
+>
+export const RegisterForEventDocument = gql`
+    mutation RegisterForEvent($eventId: ID!, $notes: String) {
+  registerForEvent(eventId: $eventId, notes: $notes) {
+    id
+    event_id
+    user_id
+    status
+    registration_date
+    user_notes
+    created_at
+  }
+}
+    `
+export type RegisterForEventMutationFn = Apollo.MutationFunction<
+  RegisterForEventMutation,
+  RegisterForEventMutationVariables
+>
+
+/**
+ * __useRegisterForEventMutation__
+ *
+ * To run a mutation, you first call `useRegisterForEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterForEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerForEventMutation, { data, loading, error }] = useRegisterForEventMutation({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *      notes: // value for 'notes'
+ *   },
+ * });
+ */
+export function useRegisterForEventMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RegisterForEventMutation,
+    RegisterForEventMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<RegisterForEventMutation, RegisterForEventMutationVariables>(
+    RegisterForEventDocument,
+    options,
+  )
+}
+export type RegisterForEventMutationHookResult = ReturnType<typeof useRegisterForEventMutation>
+export type RegisterForEventMutationResult = Apollo.MutationResult<RegisterForEventMutation>
+export type RegisterForEventMutationOptions = Apollo.BaseMutationOptions<
+  RegisterForEventMutation,
+  RegisterForEventMutationVariables
 >
 export const TrackReferralClickDocument = gql`
     mutation TrackReferralClick($input: TrackReferralClickInput!) {
@@ -4614,6 +4885,199 @@ export type GetPendingOrganizersQueryResult = Apollo.QueryResult<
   GetPendingOrganizersQuery,
   GetPendingOrganizersQueryVariables
 >
+export const GetAllEventRegistrationsDocument = gql`
+    query GetAllEventRegistrations {
+  getAllEventRegistrations {
+    id
+    event_id
+    user_id
+    status
+    registration_date
+    payment_status
+    payment_amount
+    payment_date
+    checked_in
+    check_in_time
+    user_notes
+    admin_notes
+    created_at
+    updated_at
+    user {
+      privy_id
+      username
+      display_name
+    }
+    event {
+      id
+      title
+      start_date_time
+      location_name
+    }
+  }
+}
+    `
+
+/**
+ * __useGetAllEventRegistrationsQuery__
+ *
+ * To run a query within a React component, call `useGetAllEventRegistrationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllEventRegistrationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllEventRegistrationsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllEventRegistrationsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetAllEventRegistrationsQuery,
+    GetAllEventRegistrationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetAllEventRegistrationsQuery, GetAllEventRegistrationsQueryVariables>(
+    GetAllEventRegistrationsDocument,
+    options,
+  )
+}
+export function useGetAllEventRegistrationsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetAllEventRegistrationsQuery,
+    GetAllEventRegistrationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetAllEventRegistrationsQuery, GetAllEventRegistrationsQueryVariables>(
+    GetAllEventRegistrationsDocument,
+    options,
+  )
+}
+export function useGetAllEventRegistrationsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetAllEventRegistrationsQuery,
+        GetAllEventRegistrationsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    GetAllEventRegistrationsQuery,
+    GetAllEventRegistrationsQueryVariables
+  >(GetAllEventRegistrationsDocument, options)
+}
+export type GetAllEventRegistrationsQueryHookResult = ReturnType<
+  typeof useGetAllEventRegistrationsQuery
+>
+export type GetAllEventRegistrationsLazyQueryHookResult = ReturnType<
+  typeof useGetAllEventRegistrationsLazyQuery
+>
+export type GetAllEventRegistrationsSuspenseQueryHookResult = ReturnType<
+  typeof useGetAllEventRegistrationsSuspenseQuery
+>
+export type GetAllEventRegistrationsQueryResult = Apollo.QueryResult<
+  GetAllEventRegistrationsQuery,
+  GetAllEventRegistrationsQueryVariables
+>
+export const GetEventsDocument = gql`
+    query GetEvents($filter: EventFilterInput, $pagination: PaginationInput) {
+  events(filter: $filter, pagination: $pagination) {
+    events {
+      id
+      title
+      description
+      category
+      image_url
+      location_name
+      location_address
+      location_city
+      facilitator_id
+      facilitator {
+        privy_id
+        username
+        display_name
+      }
+      max_capacity
+      current_capacity
+      price_usd
+      price_danz
+      is_featured
+      skill_level
+      is_virtual
+      virtual_link
+      requirements
+      tags
+      dance_styles
+      currency
+      start_date_time
+      end_date_time
+      created_at
+      updated_at
+      status
+      is_registered
+      registration_count
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}
+    `
+
+/**
+ * __useGetEventsQuery__
+ *
+ * To run a query within a React component, call `useGetEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEventsQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *      pagination: // value for 'pagination'
+ *   },
+ * });
+ */
+export function useGetEventsQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetEventsQuery, GetEventsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetEventsQuery, GetEventsQueryVariables>(GetEventsDocument, options)
+}
+export function useGetEventsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetEventsQuery, GetEventsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetEventsQuery, GetEventsQueryVariables>(GetEventsDocument, options)
+}
+export function useGetEventsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetEventsQuery, GetEventsQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetEventsQuery, GetEventsQueryVariables>(
+    GetEventsDocument,
+    options,
+  )
+}
+export type GetEventsQueryHookResult = ReturnType<typeof useGetEventsQuery>
+export type GetEventsLazyQueryHookResult = ReturnType<typeof useGetEventsLazyQuery>
+export type GetEventsSuspenseQueryHookResult = ReturnType<typeof useGetEventsSuspenseQuery>
+export type GetEventsQueryResult = Apollo.QueryResult<GetEventsQuery, GetEventsQueryVariables>
 export const GetReferralByCodeDocument = gql`
     query GetReferralByCode($code: String!) {
   getReferralByCode(code: $code) {

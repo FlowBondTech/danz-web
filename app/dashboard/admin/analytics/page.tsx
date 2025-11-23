@@ -30,7 +30,7 @@ export default function AnalyticsPage() {
       sort_by: sortBy,
       sort_order: sortOrder,
     },
-    skip: !authenticated || !profileData?.me?.is_admin,
+    skip: !authenticated || profileData?.me?.role !== 'admin',
   })
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function AnalyticsPage() {
   }, [ready, authenticated, router])
 
   useEffect(() => {
-    if (ready && authenticated && !profileLoading && !profileData?.me?.is_admin) {
+    if (ready && authenticated && !profileLoading && profileData?.me?.role !== 'admin') {
       router.push('/dashboard')
     }
   }, [ready, authenticated, profileData, profileLoading, router])
@@ -59,7 +59,7 @@ export default function AnalyticsPage() {
     )
   }
 
-  if (!profileData?.me?.is_admin) {
+  if (profileData?.me?.role !== 'admin') {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">

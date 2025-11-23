@@ -22,7 +22,7 @@ export default function AdminReferralsPage() {
   }, [ready, authenticated, router])
 
   useEffect(() => {
-    if (ready && authenticated && !profileLoading && !profileData?.me?.is_admin) {
+    if (ready && authenticated && !profileLoading && profileData?.me?.role !== 'admin') {
       router.push('/dashboard')
     }
   }, [ready, authenticated, profileData, profileLoading, router])
@@ -37,7 +37,7 @@ export default function AdminReferralsPage() {
     )
   }
 
-  if (!profileData?.me?.is_admin) {
+  if (profileData?.me?.role !== 'admin') {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">

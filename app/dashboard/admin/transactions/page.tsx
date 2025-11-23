@@ -33,7 +33,7 @@ export default function TransactionsPage() {
       offset,
       status: statusFilter,
     },
-    skip: !authenticated || !profileData?.me?.is_admin,
+    skip: !authenticated || profileData?.me?.role !== 'admin',
   })
 
   const [verifyTransaction] = useVerifyPointTransactionMutation()
@@ -46,7 +46,7 @@ export default function TransactionsPage() {
   }, [ready, authenticated, router])
 
   useEffect(() => {
-    if (ready && authenticated && !profileLoading && !profileData?.me?.is_admin) {
+    if (ready && authenticated && !profileLoading && profileData?.me?.role !== 'admin') {
       router.push('/dashboard')
     }
   }, [ready, authenticated, profileData, profileLoading, router])
@@ -65,7 +65,7 @@ export default function TransactionsPage() {
     )
   }
 
-  if (!profileData?.me?.is_admin) {
+  if (profileData?.me?.role !== 'admin') {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
