@@ -1,7 +1,7 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
-import { useGetAllEventRegistrationsQuery, useGetMyProfileQuery } from '@/src/generated/graphql'
+import { useGetAllEventRegistrationsQuery, useGetMyProfileQuery, RegistrationStatus } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -160,7 +160,7 @@ export default function AdminRegistrationsPage() {
               <FiCheckCircle className="text-green-400" size={24} />
             </div>
             <p className="text-2xl font-bold text-text-primary">
-              {registrations.filter(r => r.status === 'confirmed').length}
+              {registrations.filter(r => r.status === RegistrationStatus.Registered).length}
             </p>
             <p className="text-sm text-text-secondary">Confirmed</p>
           </div>

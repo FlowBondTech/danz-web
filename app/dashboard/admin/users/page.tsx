@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/src/contexts/AuthContext'
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
-import { useGetMyProfileQuery, useGetAllUsersQuery, useUpdateUserRoleMutation, useApproveOrganizerMutation } from '@/src/generated/graphql'
+import { useGetMyProfileQuery, useGetAllUsersQuery, useUpdateUserRoleMutation, useApproveOrganizerMutation, UserRole } from '@/src/generated/graphql'
 import { FiUsers, FiShield, FiCalendar, FiCheck, FiX, FiSearch, FiChevronDown, FiUserCheck, FiEdit2 } from 'react-icons/fi'
 
 export default function AdminUsersPage() {
@@ -36,7 +36,7 @@ export default function AdminUsersPage() {
   const handleRoleChange = async (userId: string, newRole: string) => {
     try {
       await updateUserRole({
-        variables: { userId, role: newRole },
+        variables: { userId, role: newRole as UserRole },
       })
       refetch()
       setShowRoleMenu(null)
@@ -273,7 +273,7 @@ export default function AdminUsersPage() {
                         <div className="text-gray-400">
                           Referrals: <span className="text-white font-medium">{user.referral_count || 0}</span>
                         </div>
-                        {user.total_sessions > 0 && (
+                        {user.total_sessions && user.total_sessions > 0 && (
                           <div className="text-gray-400">
                             Sessions: <span className="text-white font-medium">{user.total_sessions}</span>
                           </div>

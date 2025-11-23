@@ -1,7 +1,7 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
-import { useGetEventsQuery, useCreateEventMutation, useRegisterForEventMutation, useGetMyProfileQuery } from '@/src/generated/graphql'
+import { useGetEventsQuery, useCreateEventMutation, useRegisterForEventMutation, useGetMyProfileQuery, EventStatus } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
 import { useState } from 'react'
 import { FiCalendar, FiMapPin, FiUsers, FiDollarSign, FiClock, FiPlus, FiX, FiCheck, FiMusic, FiStar } from 'react-icons/fi'
@@ -20,7 +20,7 @@ export default function EventsPage() {
   const { data: eventsData, loading, refetch } = useGetEventsQuery({
     variables: {
       filter: {
-        status: 'upcoming'
+        status: EventStatus.Upcoming
       },
       pagination: {
         limit: 20
@@ -442,7 +442,7 @@ export default function EventsPage() {
                   )}
 
                   <div className="flex items-center gap-4 text-sm">
-                    {event.price_usd > 0 ? (
+                    {event.price_usd && event.price_usd > 0 ? (
                       <div className="flex items-center gap-1">
                         <FiDollarSign className="text-green-400" size={14} />
                         <span className="text-green-400">${event.price_usd}</span>
@@ -478,7 +478,7 @@ export default function EventsPage() {
                 {authenticated && (
                   <button
                     onClick={() => setSelectedEvent(event)}
-                    disabled={event.is_registered}
+                    disabled={event.is_registered ?? false}
                     className={`w-full py-3 rounded-lg font-medium transition-all ${
                       event.is_registered
                         ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
