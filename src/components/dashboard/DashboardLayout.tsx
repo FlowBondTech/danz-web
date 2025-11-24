@@ -11,6 +11,7 @@ import {
   FiChevronRight,
   FiCreditCard,
   FiGrid,
+  FiHeart,
   FiLogOut,
   FiMenu,
   FiSettings,
@@ -47,6 +48,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       name: 'Overview',
       icon: FiGrid,
       href: '/dashboard',
+    },
+    {
+      name: 'Feed',
+      icon: FiHeart,
+      href: '/dashboard/feed',
     },
     {
       name: 'Profile',
