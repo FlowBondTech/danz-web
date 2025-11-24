@@ -191,6 +191,11 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
     setHasChanges(changed)
   }, [formData, user])
 
+  // Helper to remove spaces from social media handles
+  const sanitizeSocialHandle = (value: string) => {
+    return value.replace(/\s/g, '')
+  }
+
   const handleDanceStyleToggle = (style: string) => {
     setFormData(prev => ({
       ...prev,
@@ -452,7 +457,9 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
                 id="instagram"
                 type="text"
                 value={formData.instagram}
-                onChange={e => setFormData(prev => ({ ...prev, instagram: e.target.value }))}
+                onChange={e =>
+                  setFormData(prev => ({ ...prev, instagram: sanitizeSocialHandle(e.target.value) }))
+                }
                 className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text-primary focus:outline-none focus:border-neon-purple transition-colors"
                 placeholder="@username"
               />
@@ -469,7 +476,9 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
                 id="tiktok"
                 type="text"
                 value={formData.tiktok}
-                onChange={e => setFormData(prev => ({ ...prev, tiktok: e.target.value }))}
+                onChange={e =>
+                  setFormData(prev => ({ ...prev, tiktok: sanitizeSocialHandle(e.target.value) }))
+                }
                 className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text-primary focus:outline-none focus:border-neon-purple transition-colors"
                 placeholder="@username"
               />
@@ -486,7 +495,9 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
                 id="youtube"
                 type="text"
                 value={formData.youtube}
-                onChange={e => setFormData(prev => ({ ...prev, youtube: e.target.value }))}
+                onChange={e =>
+                  setFormData(prev => ({ ...prev, youtube: sanitizeSocialHandle(e.target.value) }))
+                }
                 className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text-primary focus:outline-none focus:border-neon-purple transition-colors"
                 placeholder="@channel"
               />
@@ -503,7 +514,9 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
                 id="twitter"
                 type="text"
                 value={formData.twitter}
-                onChange={e => setFormData(prev => ({ ...prev, twitter: e.target.value }))}
+                onChange={e =>
+                  setFormData(prev => ({ ...prev, twitter: sanitizeSocialHandle(e.target.value) }))
+                }
                 className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text-primary focus:outline-none focus:border-neon-purple transition-colors"
                 placeholder="@username"
               />
