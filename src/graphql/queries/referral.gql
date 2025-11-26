@@ -4,7 +4,7 @@ query GetReferralByCode($code: String!) {
     referral_code
     referrer_user_id
     status
-    created_at
+    clicked_at
     referrer {
       username
       display_name
@@ -43,8 +43,8 @@ query GetMyReferrals($limit: Int, $offset: Int, $status: ReferralStatus) {
     referral_code
     referee_user_id
     status
-    created_at
-    signup_completed_at
+    clicked_at
+    signed_up_at
     first_session_completed_at
     points_awarded
     referee {

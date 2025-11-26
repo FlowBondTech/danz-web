@@ -328,7 +328,7 @@ function ReferralsContent() {
                         @{referral.referee?.username || 'Unknown'}
                       </p>
                       <p className="text-sm text-text-secondary">
-                        {new Date(referral.created_at).toLocaleDateString()}
+                        {new Date(referral.clicked_at).toLocaleDateString()}
                       </p>
                     </div>
                   </div>

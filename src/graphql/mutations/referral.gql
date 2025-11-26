@@ -11,7 +11,7 @@ mutation CompleteReferral($input: CompleteReferralInput!) {
     referral_code
     referee_user_id
     status
-    signup_completed_at
+    signed_up_at
   }
 }
 

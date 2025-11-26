@@ -36,6 +36,14 @@ export type Achievement = {
   xp_reward?: Maybe<Scalars['Int']['output']>
 }
 
+export enum ActionType {
+  OpenAchievement = 'open_achievement',
+  OpenEvent = 'open_event',
+  OpenPost = 'open_post',
+  OpenProfile = 'open_profile',
+  OpenSettings = 'open_settings',
+}
+
 export type AdminStats = {
   __typename?: 'AdminStats'
   activeUsers: Scalars['Int']['output']
@@ -53,6 +61,13 @@ export type AwardPointsInput = {
   reference_id?: InputMaybe<Scalars['ID']['input']>
   reference_type?: InputMaybe<ReferenceType>
   user_id: Scalars['String']['input']
+}
+
+export enum BroadcastTarget {
+  AllUsers = 'all_users',
+  Dancers = 'dancers',
+  EventParticipants = 'event_participants',
+  Organizers = 'organizers',
 }
 
 export type CheckInEventInput = {
@@ -109,6 +124,17 @@ export type CreateFreestyleSessionInput = {
   motion_data?: InputMaybe<Scalars['JSON']['input']>
   movement_score: Scalars['Float']['input']
   music_source?: InputMaybe<MusicSource>
+}
+
+export type CreateNotificationInput = {
+  action_data?: InputMaybe<Scalars['JSON']['input']>
+  action_type?: InputMaybe<ActionType>
+  event_id?: InputMaybe<Scalars['ID']['input']>
+  message: Scalars['String']['input']
+  post_id?: InputMaybe<Scalars['ID']['input']>
+  recipient_id: Scalars['String']['input']
+  title: Scalars['String']['input']
+  type: NotificationType
 }
 
 export type CreatePointActionInput = {
@@ -348,6 +374,58 @@ export type EventFilterInput = {
   status?: InputMaybe<EventStatus>
 }
 
+export type EventManager = {
+  __typename?: 'EventManager'
+  accepted_at?: Maybe<Scalars['DateTime']['output']>
+  can_delete_event: Scalars['Boolean']['output']
+  can_edit_details: Scalars['Boolean']['output']
+  can_invite_managers: Scalars['Boolean']['output']
+  can_manage_posts: Scalars['Boolean']['output']
+  can_manage_registrations: Scalars['Boolean']['output']
+  can_send_broadcasts: Scalars['Boolean']['output']
+  created_at: Scalars['DateTime']['output']
+  event?: Maybe<Event>
+  event_id: Scalars['ID']['output']
+  id: Scalars['ID']['output']
+  invited_at?: Maybe<Scalars['DateTime']['output']>
+  invited_by?: Maybe<Scalars['String']['output']>
+  inviter?: Maybe<User>
+  role: EventManagerRole
+  status: EventManagerStatus
+  updated_at?: Maybe<Scalars['DateTime']['output']>
+  user?: Maybe<User>
+  user_id: Scalars['String']['output']
+}
+
+export type EventManagerConnection = {
+  __typename?: 'EventManagerConnection'
+  managers: Array<EventManager>
+  total_count: Scalars['Int']['output']
+}
+
+export type EventManagerPermissions = {
+  __typename?: 'EventManagerPermissions'
+  can_delete_event: Scalars['Boolean']['output']
+  can_edit_details: Scalars['Boolean']['output']
+  can_invite_managers: Scalars['Boolean']['output']
+  can_manage_posts: Scalars['Boolean']['output']
+  can_manage_registrations: Scalars['Boolean']['output']
+  can_send_broadcasts: Scalars['Boolean']['output']
+}
+
+export enum EventManagerRole {
+  Creator = 'creator',
+  Manager = 'manager',
+  Moderator = 'moderator',
+}
+
+export enum EventManagerStatus {
+  Active = 'active',
+  Declined = 'declined',
+  Pending = 'pending',
+  Removed = 'removed',
+}
+
 export type EventRegistration = {
   __typename?: 'EventRegistration'
   admin_notes?: Maybe<Scalars['String']['output']>
@@ -431,6 +509,17 @@ export type FreestyleSessionStats = {
   total_sessions: Scalars['Int']['output']
 }
 
+export type InviteEventManagerInput = {
+  can_edit_details?: InputMaybe<Scalars['Boolean']['input']>
+  can_invite_managers?: InputMaybe<Scalars['Boolean']['input']>
+  can_manage_posts?: InputMaybe<Scalars['Boolean']['input']>
+  can_manage_registrations?: InputMaybe<Scalars['Boolean']['input']>
+  can_send_broadcasts?: InputMaybe<Scalars['Boolean']['input']>
+  event_id: Scalars['ID']['input']
+  role?: InputMaybe<EventManagerRole>
+  user_id: Scalars['String']['input']
+}
+
 export type LocationInput = {
   latitude: Scalars['Float']['input']
   longitude: Scalars['Float']['input']
@@ -473,6 +562,7 @@ export enum MusicSource {
 export type Mutation = {
   __typename?: 'Mutation'
   _empty?: Maybe<Scalars['String']['output']>
+  acceptManagerInvitation: EventManager
   approveOrganizer: User
   awardManualPoints: PointTransaction
   awardPoints: PointTransaction
@@ -485,31 +575,44 @@ export type Mutation = {
   createDanceBond: DanceBond
   createEvent: Event
   createFreestyleSession: FreestyleSession
+  createNotification: Notification
   createPointAction: PointAction
   createPost: Post
+  declineManagerInvitation: EventManager
   deleteComment: MutationResponse
   deleteDanceBond: MutationResponse
   deleteDanceSession: MutationResponse
   deleteEvent: MutationResponse
   deleteFreestyleSession: MutationResponse
+  deleteNotification: MutationResponse
   deletePointAction: MutationResponse
   deletePost: MutationResponse
   featureEvent: Event
   generateShareLinks: ShareLinks
+  inviteEventManager: EventManager
+  leaveEventAsManager: MutationResponse
   likePost: MutationResponse
+  markAllNotificationsRead: MutationResponse
+  markNotificationRead: Notification
   markReferralCompleted: Referral
   registerForEvent: EventRegistration
+  removeEventManager: MutationResponse
   reversePointTransaction: PointTransaction
   saveDanceSession: DanceSession
+  sendAdminBroadcast: MutationResponse
+  sendEventBroadcast: MutationResponse
   shareDanceSession: DanceSession
   togglePointAction: PointAction
   trackAppOpen: DailyActivity
   trackReferralClick: MutationResponse
+  transferEventOwnership: EventManager
   unlikePost: MutationResponse
   updateComment: PostComment
   updateDanceBond: DanceBond
   updateEvent: Event
+  updateEventManager: EventManager
   updateFreestylePreferences: UserPreferences
+  updateNotificationPreferences: NotificationPreferences
   updatePointAction: PointAction
   updatePost: Post
   updateProfile: User
@@ -517,6 +620,10 @@ export type Mutation = {
   updateUserRole: User
   verifyEventAttendance: EventAttendance
   verifyPointTransaction: PointTransaction
+}
+
+export type MutationAcceptManagerInvitationArgs = {
+  manager_id: Scalars['ID']['input']
 }
 
 export type MutationApproveOrganizerArgs = {
@@ -570,12 +677,20 @@ export type MutationCreateFreestyleSessionArgs = {
   input: CreateFreestyleSessionInput
 }
 
+export type MutationCreateNotificationArgs = {
+  input: CreateNotificationInput
+}
+
 export type MutationCreatePointActionArgs = {
   input: CreatePointActionInput
 }
 
 export type MutationCreatePostArgs = {
   input: CreatePostInput
+}
+
+export type MutationDeclineManagerInvitationArgs = {
+  manager_id: Scalars['ID']['input']
 }
 
 export type MutationDeleteCommentArgs = {
@@ -598,6 +713,10 @@ export type MutationDeleteFreestyleSessionArgs = {
   sessionId: Scalars['ID']['input']
 }
 
+export type MutationDeleteNotificationArgs = {
+  id: Scalars['ID']['input']
+}
+
 export type MutationDeletePointActionArgs = {
   action_key: Scalars['String']['input']
 }
@@ -611,8 +730,20 @@ export type MutationFeatureEventArgs = {
   featured: Scalars['Boolean']['input']
 }
 
+export type MutationInviteEventManagerArgs = {
+  input: InviteEventManagerInput
+}
+
+export type MutationLeaveEventAsManagerArgs = {
+  event_id: Scalars['ID']['input']
+}
+
 export type MutationLikePostArgs = {
   postId: Scalars['ID']['input']
+}
+
+export type MutationMarkNotificationReadArgs = {
+  id: Scalars['ID']['input']
 }
 
 export type MutationMarkReferralCompletedArgs = {
@@ -624,6 +755,10 @@ export type MutationRegisterForEventArgs = {
   notes?: InputMaybe<Scalars['String']['input']>
 }
 
+export type MutationRemoveEventManagerArgs = {
+  manager_id: Scalars['ID']['input']
+}
+
 export type MutationReversePointTransactionArgs = {
   reason: Scalars['String']['input']
   transaction_id: Scalars['ID']['input']
@@ -631,6 +766,14 @@ export type MutationReversePointTransactionArgs = {
 
 export type MutationSaveDanceSessionArgs = {
   input: SaveDanceSessionInput
+}
+
+export type MutationSendAdminBroadcastArgs = {
+  input: SendBroadcastInput
+}
+
+export type MutationSendEventBroadcastArgs = {
+  input: SendEventBroadcastInput
 }
 
 export type MutationShareDanceSessionArgs = {
@@ -648,6 +791,11 @@ export type MutationTrackAppOpenArgs = {
 
 export type MutationTrackReferralClickArgs = {
   input: TrackReferralClickInput
+}
+
+export type MutationTransferEventOwnershipArgs = {
+  event_id: Scalars['ID']['input']
+  new_creator_id: Scalars['String']['input']
 }
 
 export type MutationUnlikePostArgs = {
@@ -669,8 +817,16 @@ export type MutationUpdateEventArgs = {
   input: UpdateEventInput
 }
 
+export type MutationUpdateEventManagerArgs = {
+  input: UpdateEventManagerInput
+}
+
 export type MutationUpdateFreestylePreferencesArgs = {
   input: UpdateUserPreferencesInput
+}
+
+export type MutationUpdateNotificationPreferencesArgs = {
+  input: UpdateNotificationPreferencesInput
 }
 
 export type MutationUpdatePointActionArgs = {
@@ -711,6 +867,74 @@ export type MutationResponse = {
   code?: Maybe<Scalars['String']['output']>
   message?: Maybe<Scalars['String']['output']>
   success: Scalars['Boolean']['output']
+}
+
+export type Notification = {
+  __typename?: 'Notification'
+  achievement_id?: Maybe<Scalars['ID']['output']>
+  action_data?: Maybe<Scalars['JSON']['output']>
+  action_type?: Maybe<ActionType>
+  bond_id?: Maybe<Scalars['ID']['output']>
+  broadcast_target?: Maybe<BroadcastTarget>
+  created_at: Scalars['DateTime']['output']
+  event?: Maybe<Event>
+  event_id?: Maybe<Scalars['ID']['output']>
+  expires_at?: Maybe<Scalars['DateTime']['output']>
+  id: Scalars['ID']['output']
+  is_broadcast: Scalars['Boolean']['output']
+  message: Scalars['String']['output']
+  post_id?: Maybe<Scalars['ID']['output']>
+  push_sent: Scalars['Boolean']['output']
+  push_sent_at?: Maybe<Scalars['DateTime']['output']>
+  read: Scalars['Boolean']['output']
+  read_at?: Maybe<Scalars['DateTime']['output']>
+  recipient?: Maybe<User>
+  recipient_id: Scalars['String']['output']
+  sender?: Maybe<User>
+  sender_id?: Maybe<Scalars['String']['output']>
+  sender_type?: Maybe<SenderType>
+  title: Scalars['String']['output']
+  type: NotificationType
+}
+
+export type NotificationConnection = {
+  __typename?: 'NotificationConnection'
+  has_more: Scalars['Boolean']['output']
+  notifications: Array<Notification>
+  total_count: Scalars['Int']['output']
+  unread_count: Scalars['Int']['output']
+}
+
+export type NotificationPreferences = {
+  __typename?: 'NotificationPreferences'
+  achievements: Scalars['Boolean']['output']
+  admin_broadcasts: Scalars['Boolean']['output']
+  created_at: Scalars['DateTime']['output']
+  dance_bonds: Scalars['Boolean']['output']
+  email_notifications: Scalars['Boolean']['output']
+  event_manager_broadcasts: Scalars['Boolean']['output']
+  event_updates: Scalars['Boolean']['output']
+  id: Scalars['ID']['output']
+  post_interactions: Scalars['Boolean']['output']
+  push_notifications: Scalars['Boolean']['output']
+  quiet_hours_enabled: Scalars['Boolean']['output']
+  quiet_hours_end?: Maybe<Scalars['String']['output']>
+  quiet_hours_start?: Maybe<Scalars['String']['output']>
+  updated_at: Scalars['DateTime']['output']
+  user_id: Scalars['String']['output']
+}
+
+export enum NotificationType {
+  Achievement = 'achievement',
+  AdminBroadcast = 'admin_broadcast',
+  DanceBond = 'dance_bond',
+  EventManagerBroadcast = 'event_manager_broadcast',
+  EventReminder = 'event_reminder',
+  EventUpdate = 'event_update',
+  PostComment = 'post_comment',
+  PostLike = 'post_like',
+  Referral = 'referral',
+  System = 'system',
 }
 
 export type PageInfo = {
@@ -861,10 +1085,13 @@ export type Query = {
   __typename?: 'Query'
   _empty?: Maybe<Scalars['String']['output']>
   adminStats: AdminStats
+  checkEventPermission: Scalars['Boolean']['output']
   checkUsername: Scalars['Boolean']['output']
   completedFreestyleToday: Scalars['Boolean']['output']
   danceSession?: Maybe<DanceSession>
   event?: Maybe<Event>
+  eventManager?: Maybe<EventManager>
+  eventManagers: EventManagerConnection
   eventRegistrations: Array<EventRegistration>
   events: EventConnection
   freestyleSession?: Maybe<FreestyleSession>
@@ -898,16 +1125,27 @@ export type Query = {
   myDanceBonds: Array<DanceBond>
   myDanceSessionStats: DanceSessionStats
   myDanceSessions: DanceSessionConnection
+  myEventManagerRole?: Maybe<EventManager>
   myFreestylePreferences: UserPreferences
   myFreestyleSessions: Array<FreestyleSession>
   myFreestyleStats: FreestyleSessionStats
+  myManagedEvents: Array<Event>
+  myNotificationPreferences: NotificationPreferences
+  myNotifications: NotificationConnection
   myReferralCode?: Maybe<ReferralCode>
   myReferralStats: ReferralStats
   myReferrals: Array<Referral>
+  notification?: Maybe<Notification>
   pendingOrganizers: UserConnection
   reportedContent?: Maybe<Scalars['JSON']['output']>
+  unreadNotificationCount: Scalars['Int']['output']
   user?: Maybe<User>
   users: UserConnection
+}
+
+export type QueryCheckEventPermissionArgs = {
+  event_id: Scalars['ID']['input']
+  permission: Scalars['String']['input']
 }
 
 export type QueryCheckUsernameArgs = {
@@ -920,6 +1158,14 @@ export type QueryDanceSessionArgs = {
 
 export type QueryEventArgs = {
   id: Scalars['ID']['input']
+}
+
+export type QueryEventManagerArgs = {
+  id: Scalars['ID']['input']
+}
+
+export type QueryEventManagersArgs = {
+  event_id: Scalars['ID']['input']
 }
 
 export type QueryEventRegistrationsArgs = {
@@ -1045,15 +1291,30 @@ export type QueryMyDanceSessionsArgs = {
   pagination?: InputMaybe<PaginationInput>
 }
 
+export type QueryMyEventManagerRoleArgs = {
+  event_id: Scalars['ID']['input']
+}
+
 export type QueryMyFreestyleSessionsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type QueryMyNotificationsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  type?: InputMaybe<NotificationType>
+  unread_only?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 export type QueryMyReferralsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
   status?: InputMaybe<ReferralStatus>
+}
+
+export type QueryNotificationArgs = {
+  id: Scalars['ID']['input']
 }
 
 export type QueryPendingOrganizersArgs = {
@@ -1086,8 +1347,8 @@ export enum ReferenceType {
 
 export type Referral = {
   __typename?: 'Referral'
+  clicked_at: Scalars['DateTime']['output']
   completed_at?: Maybe<Scalars['DateTime']['output']>
-  created_at: Scalars['DateTime']['output']
   device_id?: Maybe<Scalars['String']['output']>
   first_session_completed_at?: Maybe<Scalars['DateTime']['output']>
   id: Scalars['ID']['output']
@@ -1098,7 +1359,7 @@ export type Referral = {
   referral_code: Scalars['String']['output']
   referrer?: Maybe<User>
   referrer_user_id: Scalars['String']['output']
-  signup_completed_at?: Maybe<Scalars['DateTime']['output']>
+  signed_up_at?: Maybe<Scalars['DateTime']['output']>
   status: ReferralStatus
   user_agent?: Maybe<Scalars['String']['output']>
 }
@@ -1176,6 +1437,31 @@ export type SaveDanceSessionInput = {
   xp_earned: Scalars['Int']['input']
 }
 
+export type SendBroadcastInput = {
+  action_data?: InputMaybe<Scalars['JSON']['input']>
+  action_type?: InputMaybe<ActionType>
+  broadcast_target: BroadcastTarget
+  event_id?: InputMaybe<Scalars['ID']['input']>
+  expires_at?: InputMaybe<Scalars['DateTime']['input']>
+  message: Scalars['String']['input']
+  title: Scalars['String']['input']
+}
+
+export type SendEventBroadcastInput = {
+  action_data?: InputMaybe<Scalars['JSON']['input']>
+  action_type?: InputMaybe<ActionType>
+  event_id: Scalars['ID']['input']
+  message: Scalars['String']['input']
+  title: Scalars['String']['input']
+}
+
+export enum SenderType {
+  Admin = 'admin',
+  EventManager = 'event_manager',
+  System = 'system',
+  User = 'user',
+}
+
 export type ShareLinks = {
   __typename?: 'ShareLinks'
   referral_code: Scalars['String']['output']
@@ -1250,6 +1536,30 @@ export type UpdateEventInput = {
   tags?: InputMaybe<Array<Scalars['String']['input']>>
   title?: InputMaybe<Scalars['String']['input']>
   virtual_link?: InputMaybe<Scalars['String']['input']>
+}
+
+export type UpdateEventManagerInput = {
+  can_edit_details?: InputMaybe<Scalars['Boolean']['input']>
+  can_invite_managers?: InputMaybe<Scalars['Boolean']['input']>
+  can_manage_posts?: InputMaybe<Scalars['Boolean']['input']>
+  can_manage_registrations?: InputMaybe<Scalars['Boolean']['input']>
+  can_send_broadcasts?: InputMaybe<Scalars['Boolean']['input']>
+  manager_id: Scalars['ID']['input']
+  role?: InputMaybe<EventManagerRole>
+}
+
+export type UpdateNotificationPreferencesInput = {
+  achievements?: InputMaybe<Scalars['Boolean']['input']>
+  admin_broadcasts?: InputMaybe<Scalars['Boolean']['input']>
+  dance_bonds?: InputMaybe<Scalars['Boolean']['input']>
+  email_notifications?: InputMaybe<Scalars['Boolean']['input']>
+  event_manager_broadcasts?: InputMaybe<Scalars['Boolean']['input']>
+  event_updates?: InputMaybe<Scalars['Boolean']['input']>
+  post_interactions?: InputMaybe<Scalars['Boolean']['input']>
+  push_notifications?: InputMaybe<Scalars['Boolean']['input']>
+  quiet_hours_enabled?: InputMaybe<Scalars['Boolean']['input']>
+  quiet_hours_end?: InputMaybe<Scalars['String']['input']>
+  quiet_hours_start?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdatePointActionInput = {
@@ -2042,6 +2352,116 @@ export type RegisterForEventMutation = {
   }
 }
 
+export type InviteEventManagerMutationVariables = Exact<{
+  input: InviteEventManagerInput
+}>
+
+export type InviteEventManagerMutation = {
+  __typename?: 'Mutation'
+  inviteEventManager: {
+    __typename?: 'EventManager'
+    id: string
+    event_id: string
+    user_id: string
+    role: EventManagerRole
+    status: EventManagerStatus
+    can_edit_details: boolean
+    can_manage_registrations: boolean
+    can_send_broadcasts: boolean
+    can_manage_posts: boolean
+    can_invite_managers: boolean
+    invited_at?: any | null
+    user?: {
+      __typename?: 'User'
+      username?: string | null
+      display_name?: string | null
+      avatar_url?: string | null
+    } | null
+  }
+}
+
+export type AcceptManagerInvitationMutationVariables = Exact<{
+  manager_id: Scalars['ID']['input']
+}>
+
+export type AcceptManagerInvitationMutation = {
+  __typename?: 'Mutation'
+  acceptManagerInvitation: {
+    __typename?: 'EventManager'
+    id: string
+    status: EventManagerStatus
+    accepted_at?: any | null
+    role: EventManagerRole
+    event?: { __typename?: 'Event'; id: string; title: string } | null
+  }
+}
+
+export type DeclineManagerInvitationMutationVariables = Exact<{
+  manager_id: Scalars['ID']['input']
+}>
+
+export type DeclineManagerInvitationMutation = {
+  __typename?: 'Mutation'
+  declineManagerInvitation: { __typename?: 'EventManager'; id: string; status: EventManagerStatus }
+}
+
+export type UpdateEventManagerMutationVariables = Exact<{
+  input: UpdateEventManagerInput
+}>
+
+export type UpdateEventManagerMutation = {
+  __typename?: 'Mutation'
+  updateEventManager: {
+    __typename?: 'EventManager'
+    id: string
+    role: EventManagerRole
+    can_edit_details: boolean
+    can_manage_registrations: boolean
+    can_send_broadcasts: boolean
+    can_manage_posts: boolean
+    can_invite_managers: boolean
+    updated_at?: any | null
+  }
+}
+
+export type RemoveEventManagerMutationVariables = Exact<{
+  manager_id: Scalars['ID']['input']
+}>
+
+export type RemoveEventManagerMutation = {
+  __typename?: 'Mutation'
+  removeEventManager: { __typename?: 'MutationResponse'; success: boolean; message?: string | null }
+}
+
+export type LeaveEventAsManagerMutationVariables = Exact<{
+  event_id: Scalars['ID']['input']
+}>
+
+export type LeaveEventAsManagerMutation = {
+  __typename?: 'Mutation'
+  leaveEventAsManager: {
+    __typename?: 'MutationResponse'
+    success: boolean
+    message?: string | null
+  }
+}
+
+export type TransferEventOwnershipMutationVariables = Exact<{
+  event_id: Scalars['ID']['input']
+  new_creator_id: Scalars['String']['input']
+}>
+
+export type TransferEventOwnershipMutation = {
+  __typename?: 'Mutation'
+  transferEventOwnership: {
+    __typename?: 'EventManager'
+    id: string
+    user_id: string
+    role: EventManagerRole
+    user?: { __typename?: 'User'; username?: string | null; display_name?: string | null } | null
+  }
+}
+
 export type CreatePostMutationVariables = Exact<{
   input: CreatePostInput
 }>
@@ -2182,6 +2602,82 @@ export type DeleteCommentMutation = {
   deleteComment: { __typename?: 'MutationResponse'; success: boolean; message?: string | null }
 }
 
+export type MarkNotificationReadMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type MarkNotificationReadMutation = {
+  __typename?: 'Mutation'
+  markNotificationRead: {
+    __typename?: 'Notification'
+    id: string
+    read: boolean
+    read_at?: any | null
+  }
+}
+
+export type MarkAllNotificationsReadMutationVariables = Exact<{ [key: string]: never }>
+
+export type MarkAllNotificationsReadMutation = {
+  __typename?: 'Mutation'
+  markAllNotificationsRead: {
+    __typename?: 'MutationResponse'
+    success: boolean
+    message?: string | null
+  }
+}
+
+export type DeleteNotificationMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type DeleteNotificationMutation = {
+  __typename?: 'Mutation'
+  deleteNotification: { __typename?: 'MutationResponse'; success: boolean; message?: string | null }
+}
+
+export type UpdateNotificationPreferencesMutationVariables = Exact<{
+  input: UpdateNotificationPreferencesInput
+}>
+
+export type UpdateNotificationPreferencesMutation = {
+  __typename?: 'Mutation'
+  updateNotificationPreferences: {
+    __typename?: 'NotificationPreferences'
+    id: string
+    admin_broadcasts: boolean
+    event_manager_broadcasts: boolean
+    event_updates: boolean
+    dance_bonds: boolean
+    post_interactions: boolean
+    achievements: boolean
+    push_notifications: boolean
+    email_notifications: boolean
+    quiet_hours_enabled: boolean
+    quiet_hours_start?: string | null
+    quiet_hours_end?: string | null
+    updated_at: any
+  }
+}
+
+export type SendAdminBroadcastMutationVariables = Exact<{
+  input: SendBroadcastInput
+}>
+
+export type SendAdminBroadcastMutation = {
+  __typename?: 'Mutation'
+  sendAdminBroadcast: { __typename?: 'MutationResponse'; success: boolean; message?: string | null }
+}
+
+export type SendEventBroadcastMutationVariables = Exact<{
+  input: SendEventBroadcastInput
+}>
+
+export type SendEventBroadcastMutation = {
+  __typename?: 'Mutation'
+  sendEventBroadcast: { __typename?: 'MutationResponse'; success: boolean; message?: string | null }
+}
+
 export type TrackReferralClickMutationVariables = Exact<{
   input: TrackReferralClickInput
 }>
@@ -2203,7 +2699,7 @@ export type CompleteReferralMutation = {
     referral_code: string
     referee_user_id?: string | null
     status: ReferralStatus
-    signup_completed_at?: any | null
+    signed_up_at?: any | null
   }
 }
 
@@ -2685,6 +3181,129 @@ export type GetPendingOrganizersQuery = {
   }
 }
 
+export type GetEventManagersQueryVariables = Exact<{
+  event_id: Scalars['ID']['input']
+}>
+
+export type GetEventManagersQuery = {
+  __typename?: 'Query'
+  eventManagers: {
+    __typename?: 'EventManagerConnection'
+    total_count: number
+    managers: Array<{
+      __typename?: 'EventManager'
+      id: string
+      event_id: string
+      user_id: string
+      role: EventManagerRole
+      can_edit_details: boolean
+      can_manage_registrations: boolean
+      can_send_broadcasts: boolean
+      can_manage_posts: boolean
+      can_invite_managers: boolean
+      can_delete_event: boolean
+      status: EventManagerStatus
+      invited_by?: string | null
+      invited_at?: any | null
+      accepted_at?: any | null
+      created_at: any
+      user?: {
+        __typename?: 'User'
+        privy_id: string
+        username?: string | null
+        display_name?: string | null
+        avatar_url?: string | null
+      } | null
+      inviter?: {
+        __typename?: 'User'
+        username?: string | null
+        display_name?: string | null
+      } | null
+    }>
+  }
+}
+
+export type GetEventManagerQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type GetEventManagerQuery = {
+  __typename?: 'Query'
+  eventManager?: {
+    __typename?: 'EventManager'
+    id: string
+    event_id: string
+    user_id: string
+    role: EventManagerRole
+    can_edit_details: boolean
+    can_manage_registrations: boolean
+    can_send_broadcasts: boolean
+    can_manage_posts: boolean
+    can_invite_managers: boolean
+    can_delete_event: boolean
+    status: EventManagerStatus
+    invited_by?: string | null
+    invited_at?: any | null
+    accepted_at?: any | null
+    created_at: any
+    event?: { __typename?: 'Event'; id: string; title: string; start_date_time: any } | null
+    user?: {
+      __typename?: 'User'
+      privy_id: string
+      username?: string | null
+      display_name?: string | null
+      avatar_url?: string | null
+    } | null
+  } | null
+}
+
+export type GetMyEventManagerRoleQueryVariables = Exact<{
+  event_id: Scalars['ID']['input']
+}>
+
+export type GetMyEventManagerRoleQuery = {
+  __typename?: 'Query'
+  myEventManagerRole?: {
+    __typename?: 'EventManager'
+    id: string
+    role: EventManagerRole
+    can_edit_details: boolean
+    can_manage_registrations: boolean
+    can_send_broadcasts: boolean
+    can_manage_posts: boolean
+    can_invite_managers: boolean
+    can_delete_event: boolean
+    status: EventManagerStatus
+  } | null
+}
+
+export type GetMyManagedEventsQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetMyManagedEventsQuery = {
+  __typename?: 'Query'
+  myManagedEvents: Array<{
+    __typename?: 'Event'
+    id: string
+    title: string
+    description?: string | null
+    start_date_time: any
+    end_date_time: any
+    location_name: string
+    location_address?: string | null
+    image_url?: string | null
+    status?: EventStatus | null
+    max_capacity?: number | null
+    current_capacity?: number | null
+  }>
+}
+
+export type CheckEventPermissionQueryVariables = Exact<{
+  event_id: Scalars['ID']['input']
+  permission: Scalars['String']['input']
+}>
+
+export type CheckEventPermissionQuery = { __typename?: 'Query'; checkEventPermission: boolean }
+
 export type GetFeedQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>
   cursor?: InputMaybe<Scalars['String']['input']>
@@ -2995,6 +3614,111 @@ export type GetEventsQuery = {
   }
 }
 
+export type GetMyNotificationsQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  unread_only?: InputMaybe<Scalars['Boolean']['input']>
+  type?: InputMaybe<NotificationType>
+}>
+
+export type GetMyNotificationsQuery = {
+  __typename?: 'Query'
+  myNotifications: {
+    __typename?: 'NotificationConnection'
+    total_count: number
+    unread_count: number
+    has_more: boolean
+    notifications: Array<{
+      __typename?: 'Notification'
+      id: string
+      type: NotificationType
+      title: string
+      message: string
+      sender_id?: string | null
+      sender_type?: SenderType | null
+      recipient_id: string
+      event_id?: string | null
+      post_id?: string | null
+      read: boolean
+      read_at?: any | null
+      is_broadcast: boolean
+      broadcast_target?: BroadcastTarget | null
+      action_type?: ActionType | null
+      action_data?: any | null
+      created_at: any
+      expires_at?: any | null
+      sender?: {
+        __typename?: 'User'
+        username?: string | null
+        display_name?: string | null
+        avatar_url?: string | null
+      } | null
+    }>
+  }
+}
+
+export type GetNotificationQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type GetNotificationQuery = {
+  __typename?: 'Query'
+  notification?: {
+    __typename?: 'Notification'
+    id: string
+    type: NotificationType
+    title: string
+    message: string
+    sender_id?: string | null
+    sender_type?: SenderType | null
+    event_id?: string | null
+    post_id?: string | null
+    read: boolean
+    read_at?: any | null
+    action_type?: ActionType | null
+    action_data?: any | null
+    created_at: any
+    sender?: {
+      __typename?: 'User'
+      username?: string | null
+      display_name?: string | null
+      avatar_url?: string | null
+    } | null
+    event?: { __typename?: 'Event'; id: string; title: string; start_date_time: any } | null
+  } | null
+}
+
+export type GetMyNotificationPreferencesQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetMyNotificationPreferencesQuery = {
+  __typename?: 'Query'
+  myNotificationPreferences: {
+    __typename?: 'NotificationPreferences'
+    id: string
+    user_id: string
+    admin_broadcasts: boolean
+    event_manager_broadcasts: boolean
+    event_updates: boolean
+    dance_bonds: boolean
+    post_interactions: boolean
+    achievements: boolean
+    push_notifications: boolean
+    email_notifications: boolean
+    quiet_hours_enabled: boolean
+    quiet_hours_start?: string | null
+    quiet_hours_end?: string | null
+    created_at: any
+    updated_at: any
+  }
+}
+
+export type GetUnreadNotificationCountQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetUnreadNotificationCountQuery = {
+  __typename?: 'Query'
+  unreadNotificationCount: number
+}
+
 export type GetReferralByCodeQueryVariables = Exact<{
   code: Scalars['String']['input']
 }>
@@ -3007,7 +3731,7 @@ export type GetReferralByCodeQuery = {
     referral_code: string
     referrer_user_id: string
     status: ReferralStatus
-    created_at: any
+    clicked_at: any
     referrer?: {
       __typename?: 'User'
       username?: string | null
@@ -3063,8 +3787,8 @@ export type GetMyReferralsQuery = {
     referral_code: string
     referee_user_id?: string | null
     status: ReferralStatus
-    created_at: any
-    signup_completed_at?: any | null
+    clicked_at: any
+    signed_up_at?: any | null
     first_session_completed_at?: any | null
     points_awarded: number
     referee?: {
@@ -4397,6 +5121,385 @@ export type RegisterForEventMutationOptions = Apollo.BaseMutationOptions<
   RegisterForEventMutation,
   RegisterForEventMutationVariables
 >
+export const InviteEventManagerDocument = gql`
+    mutation InviteEventManager($input: InviteEventManagerInput!) {
+  inviteEventManager(input: $input) {
+    id
+    event_id
+    user_id
+    role
+    status
+    can_edit_details
+    can_manage_registrations
+    can_send_broadcasts
+    can_manage_posts
+    can_invite_managers
+    invited_at
+    user {
+      username
+      display_name
+      avatar_url
+    }
+  }
+}
+    `
+export type InviteEventManagerMutationFn = Apollo.MutationFunction<
+  InviteEventManagerMutation,
+  InviteEventManagerMutationVariables
+>
+
+/**
+ * __useInviteEventManagerMutation__
+ *
+ * To run a mutation, you first call `useInviteEventManagerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInviteEventManagerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [inviteEventManagerMutation, { data, loading, error }] = useInviteEventManagerMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useInviteEventManagerMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    InviteEventManagerMutation,
+    InviteEventManagerMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<InviteEventManagerMutation, InviteEventManagerMutationVariables>(
+    InviteEventManagerDocument,
+    options,
+  )
+}
+export type InviteEventManagerMutationHookResult = ReturnType<typeof useInviteEventManagerMutation>
+export type InviteEventManagerMutationResult = Apollo.MutationResult<InviteEventManagerMutation>
+export type InviteEventManagerMutationOptions = Apollo.BaseMutationOptions<
+  InviteEventManagerMutation,
+  InviteEventManagerMutationVariables
+>
+export const AcceptManagerInvitationDocument = gql`
+    mutation AcceptManagerInvitation($manager_id: ID!) {
+  acceptManagerInvitation(manager_id: $manager_id) {
+    id
+    status
+    accepted_at
+    role
+    event {
+      id
+      title
+    }
+  }
+}
+    `
+export type AcceptManagerInvitationMutationFn = Apollo.MutationFunction<
+  AcceptManagerInvitationMutation,
+  AcceptManagerInvitationMutationVariables
+>
+
+/**
+ * __useAcceptManagerInvitationMutation__
+ *
+ * To run a mutation, you first call `useAcceptManagerInvitationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAcceptManagerInvitationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [acceptManagerInvitationMutation, { data, loading, error }] = useAcceptManagerInvitationMutation({
+ *   variables: {
+ *      manager_id: // value for 'manager_id'
+ *   },
+ * });
+ */
+export function useAcceptManagerInvitationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AcceptManagerInvitationMutation,
+    AcceptManagerInvitationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    AcceptManagerInvitationMutation,
+    AcceptManagerInvitationMutationVariables
+  >(AcceptManagerInvitationDocument, options)
+}
+export type AcceptManagerInvitationMutationHookResult = ReturnType<
+  typeof useAcceptManagerInvitationMutation
+>
+export type AcceptManagerInvitationMutationResult =
+  Apollo.MutationResult<AcceptManagerInvitationMutation>
+export type AcceptManagerInvitationMutationOptions = Apollo.BaseMutationOptions<
+  AcceptManagerInvitationMutation,
+  AcceptManagerInvitationMutationVariables
+>
+export const DeclineManagerInvitationDocument = gql`
+    mutation DeclineManagerInvitation($manager_id: ID!) {
+  declineManagerInvitation(manager_id: $manager_id) {
+    id
+    status
+  }
+}
+    `
+export type DeclineManagerInvitationMutationFn = Apollo.MutationFunction<
+  DeclineManagerInvitationMutation,
+  DeclineManagerInvitationMutationVariables
+>
+
+/**
+ * __useDeclineManagerInvitationMutation__
+ *
+ * To run a mutation, you first call `useDeclineManagerInvitationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeclineManagerInvitationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [declineManagerInvitationMutation, { data, loading, error }] = useDeclineManagerInvitationMutation({
+ *   variables: {
+ *      manager_id: // value for 'manager_id'
+ *   },
+ * });
+ */
+export function useDeclineManagerInvitationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeclineManagerInvitationMutation,
+    DeclineManagerInvitationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    DeclineManagerInvitationMutation,
+    DeclineManagerInvitationMutationVariables
+  >(DeclineManagerInvitationDocument, options)
+}
+export type DeclineManagerInvitationMutationHookResult = ReturnType<
+  typeof useDeclineManagerInvitationMutation
+>
+export type DeclineManagerInvitationMutationResult =
+  Apollo.MutationResult<DeclineManagerInvitationMutation>
+export type DeclineManagerInvitationMutationOptions = Apollo.BaseMutationOptions<
+  DeclineManagerInvitationMutation,
+  DeclineManagerInvitationMutationVariables
+>
+export const UpdateEventManagerDocument = gql`
+    mutation UpdateEventManager($input: UpdateEventManagerInput!) {
+  updateEventManager(input: $input) {
+    id
+    role
+    can_edit_details
+    can_manage_registrations
+    can_send_broadcasts
+    can_manage_posts
+    can_invite_managers
+    updated_at
+  }
+}
+    `
+export type UpdateEventManagerMutationFn = Apollo.MutationFunction<
+  UpdateEventManagerMutation,
+  UpdateEventManagerMutationVariables
+>
+
+/**
+ * __useUpdateEventManagerMutation__
+ *
+ * To run a mutation, you first call `useUpdateEventManagerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateEventManagerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateEventManagerMutation, { data, loading, error }] = useUpdateEventManagerMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateEventManagerMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateEventManagerMutation,
+    UpdateEventManagerMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<UpdateEventManagerMutation, UpdateEventManagerMutationVariables>(
+    UpdateEventManagerDocument,
+    options,
+  )
+}
+export type UpdateEventManagerMutationHookResult = ReturnType<typeof useUpdateEventManagerMutation>
+export type UpdateEventManagerMutationResult = Apollo.MutationResult<UpdateEventManagerMutation>
+export type UpdateEventManagerMutationOptions = Apollo.BaseMutationOptions<
+  UpdateEventManagerMutation,
+  UpdateEventManagerMutationVariables
+>
+export const RemoveEventManagerDocument = gql`
+    mutation RemoveEventManager($manager_id: ID!) {
+  removeEventManager(manager_id: $manager_id) {
+    success
+    message
+  }
+}
+    `
+export type RemoveEventManagerMutationFn = Apollo.MutationFunction<
+  RemoveEventManagerMutation,
+  RemoveEventManagerMutationVariables
+>
+
+/**
+ * __useRemoveEventManagerMutation__
+ *
+ * To run a mutation, you first call `useRemoveEventManagerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveEventManagerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeEventManagerMutation, { data, loading, error }] = useRemoveEventManagerMutation({
+ *   variables: {
+ *      manager_id: // value for 'manager_id'
+ *   },
+ * });
+ */
+export function useRemoveEventManagerMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RemoveEventManagerMutation,
+    RemoveEventManagerMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<RemoveEventManagerMutation, RemoveEventManagerMutationVariables>(
+    RemoveEventManagerDocument,
+    options,
+  )
+}
+export type RemoveEventManagerMutationHookResult = ReturnType<typeof useRemoveEventManagerMutation>
+export type RemoveEventManagerMutationResult = Apollo.MutationResult<RemoveEventManagerMutation>
+export type RemoveEventManagerMutationOptions = Apollo.BaseMutationOptions<
+  RemoveEventManagerMutation,
+  RemoveEventManagerMutationVariables
+>
+export const LeaveEventAsManagerDocument = gql`
+    mutation LeaveEventAsManager($event_id: ID!) {
+  leaveEventAsManager(event_id: $event_id) {
+    success
+    message
+  }
+}
+    `
+export type LeaveEventAsManagerMutationFn = Apollo.MutationFunction<
+  LeaveEventAsManagerMutation,
+  LeaveEventAsManagerMutationVariables
+>
+
+/**
+ * __useLeaveEventAsManagerMutation__
+ *
+ * To run a mutation, you first call `useLeaveEventAsManagerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLeaveEventAsManagerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [leaveEventAsManagerMutation, { data, loading, error }] = useLeaveEventAsManagerMutation({
+ *   variables: {
+ *      event_id: // value for 'event_id'
+ *   },
+ * });
+ */
+export function useLeaveEventAsManagerMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    LeaveEventAsManagerMutation,
+    LeaveEventAsManagerMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<LeaveEventAsManagerMutation, LeaveEventAsManagerMutationVariables>(
+    LeaveEventAsManagerDocument,
+    options,
+  )
+}
+export type LeaveEventAsManagerMutationHookResult = ReturnType<
+  typeof useLeaveEventAsManagerMutation
+>
+export type LeaveEventAsManagerMutationResult = Apollo.MutationResult<LeaveEventAsManagerMutation>
+export type LeaveEventAsManagerMutationOptions = Apollo.BaseMutationOptions<
+  LeaveEventAsManagerMutation,
+  LeaveEventAsManagerMutationVariables
+>
+export const TransferEventOwnershipDocument = gql`
+    mutation TransferEventOwnership($event_id: ID!, $new_creator_id: String!) {
+  transferEventOwnership(event_id: $event_id, new_creator_id: $new_creator_id) {
+    id
+    user_id
+    role
+    user {
+      username
+      display_name
+    }
+  }
+}
+    `
+export type TransferEventOwnershipMutationFn = Apollo.MutationFunction<
+  TransferEventOwnershipMutation,
+  TransferEventOwnershipMutationVariables
+>
+
+/**
+ * __useTransferEventOwnershipMutation__
+ *
+ * To run a mutation, you first call `useTransferEventOwnershipMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTransferEventOwnershipMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [transferEventOwnershipMutation, { data, loading, error }] = useTransferEventOwnershipMutation({
+ *   variables: {
+ *      event_id: // value for 'event_id'
+ *      new_creator_id: // value for 'new_creator_id'
+ *   },
+ * });
+ */
+export function useTransferEventOwnershipMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    TransferEventOwnershipMutation,
+    TransferEventOwnershipMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    TransferEventOwnershipMutation,
+    TransferEventOwnershipMutationVariables
+  >(TransferEventOwnershipDocument, options)
+}
+export type TransferEventOwnershipMutationHookResult = ReturnType<
+  typeof useTransferEventOwnershipMutation
+>
+export type TransferEventOwnershipMutationResult =
+  Apollo.MutationResult<TransferEventOwnershipMutation>
+export type TransferEventOwnershipMutationOptions = Apollo.BaseMutationOptions<
+  TransferEventOwnershipMutation,
+  TransferEventOwnershipMutationVariables
+>
 export const CreatePostDocument = gql`
     mutation CreatePost($input: CreatePostInput!) {
   createPost(input: $input) {
@@ -4752,6 +5855,313 @@ export type DeleteCommentMutationOptions = Apollo.BaseMutationOptions<
   DeleteCommentMutation,
   DeleteCommentMutationVariables
 >
+export const MarkNotificationReadDocument = gql`
+    mutation MarkNotificationRead($id: ID!) {
+  markNotificationRead(id: $id) {
+    id
+    read
+    read_at
+  }
+}
+    `
+export type MarkNotificationReadMutationFn = Apollo.MutationFunction<
+  MarkNotificationReadMutation,
+  MarkNotificationReadMutationVariables
+>
+
+/**
+ * __useMarkNotificationReadMutation__
+ *
+ * To run a mutation, you first call `useMarkNotificationReadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMarkNotificationReadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [markNotificationReadMutation, { data, loading, error }] = useMarkNotificationReadMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useMarkNotificationReadMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    MarkNotificationReadMutation,
+    MarkNotificationReadMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<MarkNotificationReadMutation, MarkNotificationReadMutationVariables>(
+    MarkNotificationReadDocument,
+    options,
+  )
+}
+export type MarkNotificationReadMutationHookResult = ReturnType<
+  typeof useMarkNotificationReadMutation
+>
+export type MarkNotificationReadMutationResult = Apollo.MutationResult<MarkNotificationReadMutation>
+export type MarkNotificationReadMutationOptions = Apollo.BaseMutationOptions<
+  MarkNotificationReadMutation,
+  MarkNotificationReadMutationVariables
+>
+export const MarkAllNotificationsReadDocument = gql`
+    mutation MarkAllNotificationsRead {
+  markAllNotificationsRead {
+    success
+    message
+  }
+}
+    `
+export type MarkAllNotificationsReadMutationFn = Apollo.MutationFunction<
+  MarkAllNotificationsReadMutation,
+  MarkAllNotificationsReadMutationVariables
+>
+
+/**
+ * __useMarkAllNotificationsReadMutation__
+ *
+ * To run a mutation, you first call `useMarkAllNotificationsReadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMarkAllNotificationsReadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [markAllNotificationsReadMutation, { data, loading, error }] = useMarkAllNotificationsReadMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMarkAllNotificationsReadMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    MarkAllNotificationsReadMutation,
+    MarkAllNotificationsReadMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    MarkAllNotificationsReadMutation,
+    MarkAllNotificationsReadMutationVariables
+  >(MarkAllNotificationsReadDocument, options)
+}
+export type MarkAllNotificationsReadMutationHookResult = ReturnType<
+  typeof useMarkAllNotificationsReadMutation
+>
+export type MarkAllNotificationsReadMutationResult =
+  Apollo.MutationResult<MarkAllNotificationsReadMutation>
+export type MarkAllNotificationsReadMutationOptions = Apollo.BaseMutationOptions<
+  MarkAllNotificationsReadMutation,
+  MarkAllNotificationsReadMutationVariables
+>
+export const DeleteNotificationDocument = gql`
+    mutation DeleteNotification($id: ID!) {
+  deleteNotification(id: $id) {
+    success
+    message
+  }
+}
+    `
+export type DeleteNotificationMutationFn = Apollo.MutationFunction<
+  DeleteNotificationMutation,
+  DeleteNotificationMutationVariables
+>
+
+/**
+ * __useDeleteNotificationMutation__
+ *
+ * To run a mutation, you first call `useDeleteNotificationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteNotificationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteNotificationMutation, { data, loading, error }] = useDeleteNotificationMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteNotificationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteNotificationMutation,
+    DeleteNotificationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<DeleteNotificationMutation, DeleteNotificationMutationVariables>(
+    DeleteNotificationDocument,
+    options,
+  )
+}
+export type DeleteNotificationMutationHookResult = ReturnType<typeof useDeleteNotificationMutation>
+export type DeleteNotificationMutationResult = Apollo.MutationResult<DeleteNotificationMutation>
+export type DeleteNotificationMutationOptions = Apollo.BaseMutationOptions<
+  DeleteNotificationMutation,
+  DeleteNotificationMutationVariables
+>
+export const UpdateNotificationPreferencesDocument = gql`
+    mutation UpdateNotificationPreferences($input: UpdateNotificationPreferencesInput!) {
+  updateNotificationPreferences(input: $input) {
+    id
+    admin_broadcasts
+    event_manager_broadcasts
+    event_updates
+    dance_bonds
+    post_interactions
+    achievements
+    push_notifications
+    email_notifications
+    quiet_hours_enabled
+    quiet_hours_start
+    quiet_hours_end
+    updated_at
+  }
+}
+    `
+export type UpdateNotificationPreferencesMutationFn = Apollo.MutationFunction<
+  UpdateNotificationPreferencesMutation,
+  UpdateNotificationPreferencesMutationVariables
+>
+
+/**
+ * __useUpdateNotificationPreferencesMutation__
+ *
+ * To run a mutation, you first call `useUpdateNotificationPreferencesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateNotificationPreferencesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateNotificationPreferencesMutation, { data, loading, error }] = useUpdateNotificationPreferencesMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateNotificationPreferencesMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateNotificationPreferencesMutation,
+    UpdateNotificationPreferencesMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    UpdateNotificationPreferencesMutation,
+    UpdateNotificationPreferencesMutationVariables
+  >(UpdateNotificationPreferencesDocument, options)
+}
+export type UpdateNotificationPreferencesMutationHookResult = ReturnType<
+  typeof useUpdateNotificationPreferencesMutation
+>
+export type UpdateNotificationPreferencesMutationResult =
+  Apollo.MutationResult<UpdateNotificationPreferencesMutation>
+export type UpdateNotificationPreferencesMutationOptions = Apollo.BaseMutationOptions<
+  UpdateNotificationPreferencesMutation,
+  UpdateNotificationPreferencesMutationVariables
+>
+export const SendAdminBroadcastDocument = gql`
+    mutation SendAdminBroadcast($input: SendBroadcastInput!) {
+  sendAdminBroadcast(input: $input) {
+    success
+    message
+  }
+}
+    `
+export type SendAdminBroadcastMutationFn = Apollo.MutationFunction<
+  SendAdminBroadcastMutation,
+  SendAdminBroadcastMutationVariables
+>
+
+/**
+ * __useSendAdminBroadcastMutation__
+ *
+ * To run a mutation, you first call `useSendAdminBroadcastMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendAdminBroadcastMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendAdminBroadcastMutation, { data, loading, error }] = useSendAdminBroadcastMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSendAdminBroadcastMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SendAdminBroadcastMutation,
+    SendAdminBroadcastMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<SendAdminBroadcastMutation, SendAdminBroadcastMutationVariables>(
+    SendAdminBroadcastDocument,
+    options,
+  )
+}
+export type SendAdminBroadcastMutationHookResult = ReturnType<typeof useSendAdminBroadcastMutation>
+export type SendAdminBroadcastMutationResult = Apollo.MutationResult<SendAdminBroadcastMutation>
+export type SendAdminBroadcastMutationOptions = Apollo.BaseMutationOptions<
+  SendAdminBroadcastMutation,
+  SendAdminBroadcastMutationVariables
+>
+export const SendEventBroadcastDocument = gql`
+    mutation SendEventBroadcast($input: SendEventBroadcastInput!) {
+  sendEventBroadcast(input: $input) {
+    success
+    message
+  }
+}
+    `
+export type SendEventBroadcastMutationFn = Apollo.MutationFunction<
+  SendEventBroadcastMutation,
+  SendEventBroadcastMutationVariables
+>
+
+/**
+ * __useSendEventBroadcastMutation__
+ *
+ * To run a mutation, you first call `useSendEventBroadcastMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendEventBroadcastMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendEventBroadcastMutation, { data, loading, error }] = useSendEventBroadcastMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSendEventBroadcastMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SendEventBroadcastMutation,
+    SendEventBroadcastMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<SendEventBroadcastMutation, SendEventBroadcastMutationVariables>(
+    SendEventBroadcastDocument,
+    options,
+  )
+}
+export type SendEventBroadcastMutationHookResult = ReturnType<typeof useSendEventBroadcastMutation>
+export type SendEventBroadcastMutationResult = Apollo.MutationResult<SendEventBroadcastMutation>
+export type SendEventBroadcastMutationOptions = Apollo.BaseMutationOptions<
+  SendEventBroadcastMutation,
+  SendEventBroadcastMutationVariables
+>
 export const TrackReferralClickDocument = gql`
     mutation TrackReferralClick($input: TrackReferralClickInput!) {
   trackReferralClick(input: $input) {
@@ -4807,7 +6217,7 @@ export const CompleteReferralDocument = gql`
     referral_code
     referee_user_id
     status
-    signup_completed_at
+    signed_up_at
   }
 }
     `
@@ -6095,6 +7505,420 @@ export type GetPendingOrganizersQueryResult = Apollo.QueryResult<
   GetPendingOrganizersQuery,
   GetPendingOrganizersQueryVariables
 >
+export const GetEventManagersDocument = gql`
+    query GetEventManagers($event_id: ID!) {
+  eventManagers(event_id: $event_id) {
+    managers {
+      id
+      event_id
+      user_id
+      role
+      can_edit_details
+      can_manage_registrations
+      can_send_broadcasts
+      can_manage_posts
+      can_invite_managers
+      can_delete_event
+      status
+      invited_by
+      invited_at
+      accepted_at
+      created_at
+      user {
+        privy_id
+        username
+        display_name
+        avatar_url
+      }
+      inviter {
+        username
+        display_name
+      }
+    }
+    total_count
+  }
+}
+    `
+
+/**
+ * __useGetEventManagersQuery__
+ *
+ * To run a query within a React component, call `useGetEventManagersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetEventManagersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEventManagersQuery({
+ *   variables: {
+ *      event_id: // value for 'event_id'
+ *   },
+ * });
+ */
+export function useGetEventManagersQuery(
+  baseOptions: Apollo.QueryHookOptions<GetEventManagersQuery, GetEventManagersQueryVariables> &
+    ({ variables: GetEventManagersQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetEventManagersQuery, GetEventManagersQueryVariables>(
+    GetEventManagersDocument,
+    options,
+  )
+}
+export function useGetEventManagersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetEventManagersQuery, GetEventManagersQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetEventManagersQuery, GetEventManagersQueryVariables>(
+    GetEventManagersDocument,
+    options,
+  )
+}
+export function useGetEventManagersSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetEventManagersQuery, GetEventManagersQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetEventManagersQuery, GetEventManagersQueryVariables>(
+    GetEventManagersDocument,
+    options,
+  )
+}
+export type GetEventManagersQueryHookResult = ReturnType<typeof useGetEventManagersQuery>
+export type GetEventManagersLazyQueryHookResult = ReturnType<typeof useGetEventManagersLazyQuery>
+export type GetEventManagersSuspenseQueryHookResult = ReturnType<
+  typeof useGetEventManagersSuspenseQuery
+>
+export type GetEventManagersQueryResult = Apollo.QueryResult<
+  GetEventManagersQuery,
+  GetEventManagersQueryVariables
+>
+export const GetEventManagerDocument = gql`
+    query GetEventManager($id: ID!) {
+  eventManager(id: $id) {
+    id
+    event_id
+    user_id
+    role
+    can_edit_details
+    can_manage_registrations
+    can_send_broadcasts
+    can_manage_posts
+    can_invite_managers
+    can_delete_event
+    status
+    invited_by
+    invited_at
+    accepted_at
+    created_at
+    event {
+      id
+      title
+      start_date_time
+    }
+    user {
+      privy_id
+      username
+      display_name
+      avatar_url
+    }
+  }
+}
+    `
+
+/**
+ * __useGetEventManagerQuery__
+ *
+ * To run a query within a React component, call `useGetEventManagerQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetEventManagerQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEventManagerQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetEventManagerQuery(
+  baseOptions: Apollo.QueryHookOptions<GetEventManagerQuery, GetEventManagerQueryVariables> &
+    ({ variables: GetEventManagerQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetEventManagerQuery, GetEventManagerQueryVariables>(
+    GetEventManagerDocument,
+    options,
+  )
+}
+export function useGetEventManagerLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetEventManagerQuery, GetEventManagerQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetEventManagerQuery, GetEventManagerQueryVariables>(
+    GetEventManagerDocument,
+    options,
+  )
+}
+export function useGetEventManagerSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetEventManagerQuery, GetEventManagerQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetEventManagerQuery, GetEventManagerQueryVariables>(
+    GetEventManagerDocument,
+    options,
+  )
+}
+export type GetEventManagerQueryHookResult = ReturnType<typeof useGetEventManagerQuery>
+export type GetEventManagerLazyQueryHookResult = ReturnType<typeof useGetEventManagerLazyQuery>
+export type GetEventManagerSuspenseQueryHookResult = ReturnType<
+  typeof useGetEventManagerSuspenseQuery
+>
+export type GetEventManagerQueryResult = Apollo.QueryResult<
+  GetEventManagerQuery,
+  GetEventManagerQueryVariables
+>
+export const GetMyEventManagerRoleDocument = gql`
+    query GetMyEventManagerRole($event_id: ID!) {
+  myEventManagerRole(event_id: $event_id) {
+    id
+    role
+    can_edit_details
+    can_manage_registrations
+    can_send_broadcasts
+    can_manage_posts
+    can_invite_managers
+    can_delete_event
+    status
+  }
+}
+    `
+
+/**
+ * __useGetMyEventManagerRoleQuery__
+ *
+ * To run a query within a React component, call `useGetMyEventManagerRoleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyEventManagerRoleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyEventManagerRoleQuery({
+ *   variables: {
+ *      event_id: // value for 'event_id'
+ *   },
+ * });
+ */
+export function useGetMyEventManagerRoleQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetMyEventManagerRoleQuery,
+    GetMyEventManagerRoleQueryVariables
+  > &
+    ({ variables: GetMyEventManagerRoleQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetMyEventManagerRoleQuery, GetMyEventManagerRoleQueryVariables>(
+    GetMyEventManagerRoleDocument,
+    options,
+  )
+}
+export function useGetMyEventManagerRoleLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetMyEventManagerRoleQuery,
+    GetMyEventManagerRoleQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetMyEventManagerRoleQuery, GetMyEventManagerRoleQueryVariables>(
+    GetMyEventManagerRoleDocument,
+    options,
+  )
+}
+export function useGetMyEventManagerRoleSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetMyEventManagerRoleQuery,
+        GetMyEventManagerRoleQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetMyEventManagerRoleQuery, GetMyEventManagerRoleQueryVariables>(
+    GetMyEventManagerRoleDocument,
+    options,
+  )
+}
+export type GetMyEventManagerRoleQueryHookResult = ReturnType<typeof useGetMyEventManagerRoleQuery>
+export type GetMyEventManagerRoleLazyQueryHookResult = ReturnType<
+  typeof useGetMyEventManagerRoleLazyQuery
+>
+export type GetMyEventManagerRoleSuspenseQueryHookResult = ReturnType<
+  typeof useGetMyEventManagerRoleSuspenseQuery
+>
+export type GetMyEventManagerRoleQueryResult = Apollo.QueryResult<
+  GetMyEventManagerRoleQuery,
+  GetMyEventManagerRoleQueryVariables
+>
+export const GetMyManagedEventsDocument = gql`
+    query GetMyManagedEvents {
+  myManagedEvents {
+    id
+    title
+    description
+    start_date_time
+    end_date_time
+    location_name
+    location_address
+    image_url
+    status
+    max_capacity
+    current_capacity
+  }
+}
+    `
+
+/**
+ * __useGetMyManagedEventsQuery__
+ *
+ * To run a query within a React component, call `useGetMyManagedEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyManagedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyManagedEventsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyManagedEventsQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetMyManagedEventsQuery, GetMyManagedEventsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetMyManagedEventsQuery, GetMyManagedEventsQueryVariables>(
+    GetMyManagedEventsDocument,
+    options,
+  )
+}
+export function useGetMyManagedEventsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetMyManagedEventsQuery,
+    GetMyManagedEventsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetMyManagedEventsQuery, GetMyManagedEventsQueryVariables>(
+    GetMyManagedEventsDocument,
+    options,
+  )
+}
+export function useGetMyManagedEventsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetMyManagedEventsQuery, GetMyManagedEventsQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetMyManagedEventsQuery, GetMyManagedEventsQueryVariables>(
+    GetMyManagedEventsDocument,
+    options,
+  )
+}
+export type GetMyManagedEventsQueryHookResult = ReturnType<typeof useGetMyManagedEventsQuery>
+export type GetMyManagedEventsLazyQueryHookResult = ReturnType<
+  typeof useGetMyManagedEventsLazyQuery
+>
+export type GetMyManagedEventsSuspenseQueryHookResult = ReturnType<
+  typeof useGetMyManagedEventsSuspenseQuery
+>
+export type GetMyManagedEventsQueryResult = Apollo.QueryResult<
+  GetMyManagedEventsQuery,
+  GetMyManagedEventsQueryVariables
+>
+export const CheckEventPermissionDocument = gql`
+    query CheckEventPermission($event_id: ID!, $permission: String!) {
+  checkEventPermission(event_id: $event_id, permission: $permission)
+}
+    `
+
+/**
+ * __useCheckEventPermissionQuery__
+ *
+ * To run a query within a React component, call `useCheckEventPermissionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCheckEventPermissionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCheckEventPermissionQuery({
+ *   variables: {
+ *      event_id: // value for 'event_id'
+ *      permission: // value for 'permission'
+ *   },
+ * });
+ */
+export function useCheckEventPermissionQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    CheckEventPermissionQuery,
+    CheckEventPermissionQueryVariables
+  > &
+    ({ variables: CheckEventPermissionQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<CheckEventPermissionQuery, CheckEventPermissionQueryVariables>(
+    CheckEventPermissionDocument,
+    options,
+  )
+}
+export function useCheckEventPermissionLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    CheckEventPermissionQuery,
+    CheckEventPermissionQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<CheckEventPermissionQuery, CheckEventPermissionQueryVariables>(
+    CheckEventPermissionDocument,
+    options,
+  )
+}
+export function useCheckEventPermissionSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        CheckEventPermissionQuery,
+        CheckEventPermissionQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<CheckEventPermissionQuery, CheckEventPermissionQueryVariables>(
+    CheckEventPermissionDocument,
+    options,
+  )
+}
+export type CheckEventPermissionQueryHookResult = ReturnType<typeof useCheckEventPermissionQuery>
+export type CheckEventPermissionLazyQueryHookResult = ReturnType<
+  typeof useCheckEventPermissionLazyQuery
+>
+export type CheckEventPermissionSuspenseQueryHookResult = ReturnType<
+  typeof useCheckEventPermissionSuspenseQuery
+>
+export type CheckEventPermissionQueryResult = Apollo.QueryResult<
+  CheckEventPermissionQuery,
+  CheckEventPermissionQueryVariables
+>
 export const GetFeedDocument = gql`
     query GetFeed($limit: Int, $cursor: String) {
   getFeed(limit: $limit, cursor: $cursor) {
@@ -6573,6 +8397,356 @@ export type GetEventsQueryHookResult = ReturnType<typeof useGetEventsQuery>
 export type GetEventsLazyQueryHookResult = ReturnType<typeof useGetEventsLazyQuery>
 export type GetEventsSuspenseQueryHookResult = ReturnType<typeof useGetEventsSuspenseQuery>
 export type GetEventsQueryResult = Apollo.QueryResult<GetEventsQuery, GetEventsQueryVariables>
+export const GetMyNotificationsDocument = gql`
+    query GetMyNotifications($limit: Int, $offset: Int, $unread_only: Boolean, $type: NotificationType) {
+  myNotifications(
+    limit: $limit
+    offset: $offset
+    unread_only: $unread_only
+    type: $type
+  ) {
+    notifications {
+      id
+      type
+      title
+      message
+      sender_id
+      sender_type
+      sender {
+        username
+        display_name
+        avatar_url
+      }
+      recipient_id
+      event_id
+      post_id
+      read
+      read_at
+      is_broadcast
+      broadcast_target
+      action_type
+      action_data
+      created_at
+      expires_at
+    }
+    total_count
+    unread_count
+    has_more
+  }
+}
+    `
+
+/**
+ * __useGetMyNotificationsQuery__
+ *
+ * To run a query within a React component, call `useGetMyNotificationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyNotificationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyNotificationsQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *      unread_only: // value for 'unread_only'
+ *      type: // value for 'type'
+ *   },
+ * });
+ */
+export function useGetMyNotificationsQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetMyNotificationsQuery, GetMyNotificationsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetMyNotificationsQuery, GetMyNotificationsQueryVariables>(
+    GetMyNotificationsDocument,
+    options,
+  )
+}
+export function useGetMyNotificationsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetMyNotificationsQuery,
+    GetMyNotificationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetMyNotificationsQuery, GetMyNotificationsQueryVariables>(
+    GetMyNotificationsDocument,
+    options,
+  )
+}
+export function useGetMyNotificationsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetMyNotificationsQuery, GetMyNotificationsQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetMyNotificationsQuery, GetMyNotificationsQueryVariables>(
+    GetMyNotificationsDocument,
+    options,
+  )
+}
+export type GetMyNotificationsQueryHookResult = ReturnType<typeof useGetMyNotificationsQuery>
+export type GetMyNotificationsLazyQueryHookResult = ReturnType<
+  typeof useGetMyNotificationsLazyQuery
+>
+export type GetMyNotificationsSuspenseQueryHookResult = ReturnType<
+  typeof useGetMyNotificationsSuspenseQuery
+>
+export type GetMyNotificationsQueryResult = Apollo.QueryResult<
+  GetMyNotificationsQuery,
+  GetMyNotificationsQueryVariables
+>
+export const GetNotificationDocument = gql`
+    query GetNotification($id: ID!) {
+  notification(id: $id) {
+    id
+    type
+    title
+    message
+    sender_id
+    sender_type
+    sender {
+      username
+      display_name
+      avatar_url
+    }
+    event_id
+    event {
+      id
+      title
+      start_date_time
+    }
+    post_id
+    read
+    read_at
+    action_type
+    action_data
+    created_at
+  }
+}
+    `
+
+/**
+ * __useGetNotificationQuery__
+ *
+ * To run a query within a React component, call `useGetNotificationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetNotificationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetNotificationQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetNotificationQuery(
+  baseOptions: Apollo.QueryHookOptions<GetNotificationQuery, GetNotificationQueryVariables> &
+    ({ variables: GetNotificationQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetNotificationQuery, GetNotificationQueryVariables>(
+    GetNotificationDocument,
+    options,
+  )
+}
+export function useGetNotificationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetNotificationQuery, GetNotificationQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetNotificationQuery, GetNotificationQueryVariables>(
+    GetNotificationDocument,
+    options,
+  )
+}
+export function useGetNotificationSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetNotificationQuery, GetNotificationQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetNotificationQuery, GetNotificationQueryVariables>(
+    GetNotificationDocument,
+    options,
+  )
+}
+export type GetNotificationQueryHookResult = ReturnType<typeof useGetNotificationQuery>
+export type GetNotificationLazyQueryHookResult = ReturnType<typeof useGetNotificationLazyQuery>
+export type GetNotificationSuspenseQueryHookResult = ReturnType<
+  typeof useGetNotificationSuspenseQuery
+>
+export type GetNotificationQueryResult = Apollo.QueryResult<
+  GetNotificationQuery,
+  GetNotificationQueryVariables
+>
+export const GetMyNotificationPreferencesDocument = gql`
+    query GetMyNotificationPreferences {
+  myNotificationPreferences {
+    id
+    user_id
+    admin_broadcasts
+    event_manager_broadcasts
+    event_updates
+    dance_bonds
+    post_interactions
+    achievements
+    push_notifications
+    email_notifications
+    quiet_hours_enabled
+    quiet_hours_start
+    quiet_hours_end
+    created_at
+    updated_at
+  }
+}
+    `
+
+/**
+ * __useGetMyNotificationPreferencesQuery__
+ *
+ * To run a query within a React component, call `useGetMyNotificationPreferencesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyNotificationPreferencesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyNotificationPreferencesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyNotificationPreferencesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetMyNotificationPreferencesQuery,
+    GetMyNotificationPreferencesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    GetMyNotificationPreferencesQuery,
+    GetMyNotificationPreferencesQueryVariables
+  >(GetMyNotificationPreferencesDocument, options)
+}
+export function useGetMyNotificationPreferencesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetMyNotificationPreferencesQuery,
+    GetMyNotificationPreferencesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    GetMyNotificationPreferencesQuery,
+    GetMyNotificationPreferencesQueryVariables
+  >(GetMyNotificationPreferencesDocument, options)
+}
+export function useGetMyNotificationPreferencesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetMyNotificationPreferencesQuery,
+        GetMyNotificationPreferencesQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    GetMyNotificationPreferencesQuery,
+    GetMyNotificationPreferencesQueryVariables
+  >(GetMyNotificationPreferencesDocument, options)
+}
+export type GetMyNotificationPreferencesQueryHookResult = ReturnType<
+  typeof useGetMyNotificationPreferencesQuery
+>
+export type GetMyNotificationPreferencesLazyQueryHookResult = ReturnType<
+  typeof useGetMyNotificationPreferencesLazyQuery
+>
+export type GetMyNotificationPreferencesSuspenseQueryHookResult = ReturnType<
+  typeof useGetMyNotificationPreferencesSuspenseQuery
+>
+export type GetMyNotificationPreferencesQueryResult = Apollo.QueryResult<
+  GetMyNotificationPreferencesQuery,
+  GetMyNotificationPreferencesQueryVariables
+>
+export const GetUnreadNotificationCountDocument = gql`
+    query GetUnreadNotificationCount {
+  unreadNotificationCount
+}
+    `
+
+/**
+ * __useGetUnreadNotificationCountQuery__
+ *
+ * To run a query within a React component, call `useGetUnreadNotificationCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUnreadNotificationCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUnreadNotificationCountQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUnreadNotificationCountQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetUnreadNotificationCountQuery,
+    GetUnreadNotificationCountQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetUnreadNotificationCountQuery, GetUnreadNotificationCountQueryVariables>(
+    GetUnreadNotificationCountDocument,
+    options,
+  )
+}
+export function useGetUnreadNotificationCountLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetUnreadNotificationCountQuery,
+    GetUnreadNotificationCountQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    GetUnreadNotificationCountQuery,
+    GetUnreadNotificationCountQueryVariables
+  >(GetUnreadNotificationCountDocument, options)
+}
+export function useGetUnreadNotificationCountSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetUnreadNotificationCountQuery,
+        GetUnreadNotificationCountQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    GetUnreadNotificationCountQuery,
+    GetUnreadNotificationCountQueryVariables
+  >(GetUnreadNotificationCountDocument, options)
+}
+export type GetUnreadNotificationCountQueryHookResult = ReturnType<
+  typeof useGetUnreadNotificationCountQuery
+>
+export type GetUnreadNotificationCountLazyQueryHookResult = ReturnType<
+  typeof useGetUnreadNotificationCountLazyQuery
+>
+export type GetUnreadNotificationCountSuspenseQueryHookResult = ReturnType<
+  typeof useGetUnreadNotificationCountSuspenseQuery
+>
+export type GetUnreadNotificationCountQueryResult = Apollo.QueryResult<
+  GetUnreadNotificationCountQuery,
+  GetUnreadNotificationCountQueryVariables
+>
 export const GetReferralByCodeDocument = gql`
     query GetReferralByCode($code: String!) {
   getReferralByCode(code: $code) {
@@ -6580,7 +8754,7 @@ export const GetReferralByCodeDocument = gql`
     referral_code
     referrer_user_id
     status
-    created_at
+    clicked_at
     referrer {
       username
       display_name
@@ -6800,8 +8974,8 @@ export const GetMyReferralsDocument = gql`
     referral_code
     referee_user_id
     status
-    created_at
-    signup_completed_at
+    clicked_at
+    signed_up_at
     first_session_completed_at
     points_awarded
     referee {
