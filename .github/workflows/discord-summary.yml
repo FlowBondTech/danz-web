@@ -1,0 +1,69 @@
+name: Discord Commit Summary
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord Notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_SUMMARY_WEBHOOK }}
+        run: |
+          # Extract commit info
+          COMMIT_MSG=$(echo '${{ github.event.head_commit.message }}' | head -1)
+          COMMIT_BODY=$(echo '${{ github.event.head_commit.message }}' | tail -n +3 | head -20)
+          AUTHOR="${{ github.event.head_commit.author.name }}"
+          REPO="${{ github.repository }}"
+          COMMIT_URL="${{ github.event.head_commit.url }}"
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+
+          # Check if it's a Claude Code commit
+          IS_CLAUDE="false"
+          if echo '${{ github.event.head_commit.message }}' | grep -q "Claude Code"; then
+            IS_CLAUDE="true"
+          fi
+
+          # Build embed
+          if [ "$IS_CLAUDE" = "true" ]; then
+            COLOR=10181046  # Purple for Claude commits
+            FOOTER="🤖 AI-Assisted Development"
+          else
+            COLOR=3066993   # Green for manual commits
+            FOOTER="👤 Manual Commit"
+          fi
+
+          # Create JSON payload
+          JSON_PAYLOAD=$(cat <<PAYLOAD
+          {
+            "embeds": [{
+              "title": "📦 ${REPO##*/} - New Commit",
+              "description": "**${COMMIT_MSG}**\n\n${COMMIT_BODY}",
+              "color": ${COLOR},
+              "fields": [
+                {
+                  "name": "Author",
+                  "value": "${AUTHOR}",
+                  "inline": true
+                },
+                {
+                  "name": "Commit",
+                  "value": "[${SHORT_SHA}](${COMMIT_URL})",
+                  "inline": true
+                }
+              ],
+              "footer": {
+                "text": "${FOOTER}"
+              },
+              "timestamp": "${{ github.event.head_commit.timestamp }}"
+            }]
+          }
+          PAYLOAD
+          )
+
+          # Send to Discord
+          curl -H "Content-Type: application/json" \
+               -d "$JSON_PAYLOAD" \
+               "$DISCORD_WEBHOOK"
