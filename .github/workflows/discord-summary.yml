@@ -1,4 +1,4 @@
-name: Discord Commit Summary
+name: Discord Summary
 
 on:
   push:
