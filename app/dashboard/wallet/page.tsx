@@ -109,8 +109,16 @@ export default function WalletPage() {
 
   const handleFundWallet = async (address: string) => {
     try {
-      await fundWallet({ address })
+      // First try to find the wallet in connected wallets and use its fund method
+      const connectedWallet = connectedWallets.find(w => w.address === address)
+      if (connectedWallet && 'fund' in connectedWallet) {
+        await (connectedWallet as any).fund()
+      } else {
+        // Fall back to useFundWallet hook
+        await fundWallet({ address })
+      }
     } catch (err: any) {
+      console.error('Fund wallet error:', err)
       setError(err.message || "Failed to open funding flow")
       setTimeout(() => setError(null), 3000)
     }
