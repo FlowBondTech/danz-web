@@ -19,6 +19,7 @@ jobs:
           REPO="${{ github.repository }}"
           COMMIT_URL="${{ github.event.head_commit.url }}"
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          TIMESTAMP="${{ github.event.head_commit.timestamp }}"
 
           # Check if it's a Claude Code commit
           IS_CLAUDE="false"
@@ -35,40 +36,34 @@ jobs:
             FOOTER="👤 Manual Commit"
           fi
 
-          # Create JSON payload with proper escaping
-          JSON_PAYLOAD=$(jq -n \
-            --arg title "📦 ${REPO##*/} - New Commit" \
-            --arg desc "**${COMMIT_MSG}**
+          # Escape special characters for JSON
+          COMMIT_MSG_ESCAPED=$(echo "$COMMIT_MSG" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+          COMMIT_BODY_ESCAPED=$(echo "$COMMIT_BODY" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
 
-${COMMIT_BODY}" \
-            --argjson color "${COLOR}" \
-            --arg author "${AUTHOR}" \
-            --arg sha "[${SHORT_SHA}](${COMMIT_URL})" \
-            --arg footer "${FOOTER}" \
-            --arg timestamp "${{ github.event.head_commit.timestamp }}" \
-            '{
-              embeds: [{
-                title: $title,
-                description: $desc,
-                color: $color,
-                fields: [
-                  {
-                    name: "Author",
-                    value: $author,
-                    inline: true
-                  },
-                  {
-                    name: "Commit",
-                    value: $sha,
-                    inline: true
-                  }
-                ],
-                footer: {
-                  text: $footer
+          # Create JSON payload
+          JSON_PAYLOAD="{
+            \"embeds\": [{
+              \"title\": \"📦 ${REPO##*/} - New Commit\",
+              \"description\": \"**${COMMIT_MSG_ESCAPED}**\\n\\n${COMMIT_BODY_ESCAPED}\",
+              \"color\": ${COLOR},
+              \"fields\": [
+                {
+                  \"name\": \"Author\",
+                  \"value\": \"${AUTHOR}\",
+                  \"inline\": true
                 },
-                timestamp: $timestamp
-              }]
-            }')
+                {
+                  \"name\": \"Commit\",
+                  \"value\": \"[${SHORT_SHA}](${COMMIT_URL})\",
+                  \"inline\": true
+                }
+              ],
+              \"footer\": {
+                \"text\": \"${FOOTER}\"
+              },
+              \"timestamp\": \"${TIMESTAMP}\"
+            }]
+          }"
 
           # Send to Discord
           curl -H "Content-Type: application/json" \
