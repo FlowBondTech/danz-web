@@ -35,33 +35,40 @@ jobs:
             FOOTER="👤 Manual Commit"
           fi
 
-          # Create JSON payload
-          JSON_PAYLOAD=$(cat <<PAYLOAD
-          {
-            "embeds": [{
-              "title": "📦 ${REPO##*/} - New Commit",
-              "description": "**${COMMIT_MSG}**\n\n${COMMIT_BODY}",
-              "color": ${COLOR},
-              "fields": [
-                {
-                  "name": "Author",
-                  "value": "${AUTHOR}",
-                  "inline": true
+          # Create JSON payload with proper escaping
+          JSON_PAYLOAD=$(jq -n \
+            --arg title "📦 ${REPO##*/} - New Commit" \
+            --arg desc "**${COMMIT_MSG}**
+
+${COMMIT_BODY}" \
+            --argjson color "${COLOR}" \
+            --arg author "${AUTHOR}" \
+            --arg sha "[${SHORT_SHA}](${COMMIT_URL})" \
+            --arg footer "${FOOTER}" \
+            --arg timestamp "${{ github.event.head_commit.timestamp }}" \
+            '{
+              embeds: [{
+                title: $title,
+                description: $desc,
+                color: $color,
+                fields: [
+                  {
+                    name: "Author",
+                    value: $author,
+                    inline: true
+                  },
+                  {
+                    name: "Commit",
+                    value: $sha,
+                    inline: true
+                  }
+                ],
+                footer: {
+                  text: $footer
                 },
-                {
-                  "name": "Commit",
-                  "value": "[${SHORT_SHA}](${COMMIT_URL})",
-                  "inline": true
-                }
-              ],
-              "footer": {
-                "text": "${FOOTER}"
-              },
-              "timestamp": "${{ github.event.head_commit.timestamp }}"
-            }]
-          }
-          PAYLOAD
-          )
+                timestamp: $timestamp
+              }]
+            }')
 
           # Send to Discord
           curl -H "Content-Type: application/json" \
