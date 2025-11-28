@@ -15,6 +15,7 @@ import {
   FiLogOut,
   FiMenu,
   FiSettings,
+  FiShield,
   FiUser,
   FiUserPlus,
   FiX,
@@ -63,6 +64,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       name: 'Events',
       icon: FiCalendar,
       href: '/dashboard/events',
+    },
+    {
+      name: 'Wallet',
+      icon: FiShield,
+      href: '/dashboard/wallet',
     },
     {
       name: 'Referrals',

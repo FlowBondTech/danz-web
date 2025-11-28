@@ -4,14 +4,22 @@ import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import { useGetEventsQuery, useCreateEventMutation, useRegisterForEventMutation, useGetMyProfileQuery, EventStatus } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
 import { useState } from 'react'
-import { FiCalendar, FiMapPin, FiUsers, FiDollarSign, FiClock, FiPlus, FiX, FiCheck, FiMusic, FiStar } from 'react-icons/fi'
+import { FiCalendar, FiMapPin, FiUsers, FiDollarSign, FiClock, FiPlus, FiX, FiCheck, FiMusic, FiStar, FiAlertCircle } from 'react-icons/fi'
 import { motion, AnimatePresence } from 'motion/react'
+
+interface DateValidationError {
+  field: 'start_date_time' | 'end_date_time'
+  message: string
+}
 
 export default function EventsPage() {
   const { authenticated } = usePrivy()
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState<any>(null)
   const [registrationNotes, setRegistrationNotes] = useState('')
+  const [dateErrors, setDateErrors] = useState<DateValidationError[]>([])
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { data: profileData } = useGetMyProfileQuery({
     skip: !authenticated,
@@ -55,32 +63,93 @@ export default function EventsPage() {
     })
   }
 
+  // Validate dates client-side
+  const validateDates = (startDateStr: string, endDateStr: string): DateValidationError[] => {
+    const errors: DateValidationError[] = []
+    const now = new Date()
+    const startDate = new Date(startDateStr)
+    const endDate = new Date(endDateStr)
+
+    // Check if start date is in the past
+    if (startDate < now) {
+      errors.push({
+        field: 'start_date_time',
+        message: 'Event start date must be in the future'
+      })
+    }
+
+    // Check if end date is after start date
+    if (endDate <= startDate) {
+      errors.push({
+        field: 'end_date_time',
+        message: 'End date must be after start date'
+      })
+    }
+
+    return errors
+  }
+
   const handleCreateEvent = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const formData = new FormData(e.currentTarget)
+    setDateErrors([])
+    setSubmitError(null)
 
-    await createEvent({
-      variables: {
-        input: {
-          title: formData.get('title') as string,
-          description: formData.get('description') as string,
-          category: formData.get('category') as any || 'class',
-          location_name: formData.get('location_name') as string,
-          location_address: formData.get('location_address') as string,
-          location_city: formData.get('location_city') as string,
-          max_capacity: parseInt(formData.get('max_capacity') as string) || null,
-          price_usd: parseFloat(formData.get('price_usd') as string) || 0,
-          skill_level: formData.get('skill_level') as any || 'all',
-          is_virtual: formData.get('is_virtual') === 'true',
-          virtual_link: formData.get('virtual_link') as string || null,
-          requirements: formData.get('requirements') as string || null,
-          tags: (formData.get('tags') as string)?.split(',').map(t => t.trim()).filter(Boolean) || [],
-          dance_styles: (formData.get('dance_styles') as string)?.split(',').map(t => t.trim()).filter(Boolean) || [],
-          start_date_time: new Date(formData.get('start_date_time') as string).toISOString(),
-          end_date_time: new Date(formData.get('end_date_time') as string).toISOString(),
+    const formData = new FormData(e.currentTarget)
+    const startDateStr = formData.get('start_date_time') as string
+    const endDateStr = formData.get('end_date_time') as string
+
+    // Client-side validation
+    const validationErrors = validateDates(startDateStr, endDateStr)
+    if (validationErrors.length > 0) {
+      setDateErrors(validationErrors)
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      await createEvent({
+        variables: {
+          input: {
+            title: formData.get('title') as string,
+            description: formData.get('description') as string,
+            category: formData.get('category') as any || 'class',
+            location_name: formData.get('location_name') as string,
+            location_address: formData.get('location_address') as string,
+            location_city: formData.get('location_city') as string,
+            max_capacity: parseInt(formData.get('max_capacity') as string) || null,
+            price_usd: parseFloat(formData.get('price_usd') as string) || 0,
+            skill_level: formData.get('skill_level') as any || 'all',
+            is_virtual: formData.get('is_virtual') === 'true',
+            virtual_link: formData.get('virtual_link') as string || null,
+            requirements: formData.get('requirements') as string || null,
+            tags: (formData.get('tags') as string)?.split(',').map(t => t.trim()).filter(Boolean) || [],
+            dance_styles: (formData.get('dance_styles') as string)?.split(',').map(t => t.trim()).filter(Boolean) || [],
+            start_date_time: new Date(startDateStr).toISOString(),
+            end_date_time: new Date(endDateStr).toISOString(),
+          }
         }
+      })
+    } catch (error: any) {
+      // Handle GraphQL errors
+      const graphqlError = error?.graphQLErrors?.[0]
+      if (graphqlError) {
+        const validationType = graphqlError.extensions?.validationType
+        const field = graphqlError.extensions?.field
+
+        if (validationType === 'PAST_DATE' && field === 'start_date_time') {
+          setDateErrors([{ field: 'start_date_time', message: graphqlError.message }])
+        } else if (validationType === 'END_BEFORE_START' && field === 'end_date_time') {
+          setDateErrors([{ field: 'end_date_time', message: graphqlError.message }])
+        } else {
+          setSubmitError(graphqlError.message || 'Failed to create event')
+        }
+      } else {
+        setSubmitError('An unexpected error occurred. Please try again.')
       }
-    })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleRegister = async () => {
@@ -245,8 +314,20 @@ export default function EventsPage() {
                       type="datetime-local"
                       name="start_date_time"
                       required
-                      className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
+                      min={new Date().toISOString().slice(0, 16)}
+                      onChange={() => setDateErrors(prev => prev.filter(e => e.field !== 'start_date_time'))}
+                      className={`w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border focus:outline-none ${
+                        dateErrors.some(e => e.field === 'start_date_time')
+                          ? 'border-red-500 focus:border-red-500'
+                          : 'border-neon-purple/20 focus:border-neon-purple/50'
+                      }`}
                     />
+                    {dateErrors.find(e => e.field === 'start_date_time') && (
+                      <div className="flex items-center gap-1 mt-1 text-red-500 text-sm">
+                        <FiAlertCircle className="w-4 h-4" />
+                        <span>{dateErrors.find(e => e.field === 'start_date_time')?.message}</span>
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -257,8 +338,19 @@ export default function EventsPage() {
                       type="datetime-local"
                       name="end_date_time"
                       required
-                      className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
+                      onChange={() => setDateErrors(prev => prev.filter(e => e.field !== 'end_date_time'))}
+                      className={`w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border focus:outline-none ${
+                        dateErrors.some(e => e.field === 'end_date_time')
+                          ? 'border-red-500 focus:border-red-500'
+                          : 'border-neon-purple/20 focus:border-neon-purple/50'
+                      }`}
                     />
+                    {dateErrors.find(e => e.field === 'end_date_time') && (
+                      <div className="flex items-center gap-1 mt-1 text-red-500 text-sm">
+                        <FiAlertCircle className="w-4 h-4" />
+                        <span>{dateErrors.find(e => e.field === 'end_date_time')?.message}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -366,19 +458,40 @@ export default function EventsPage() {
                   />
                 </div>
 
+                {/* General error message */}
+                {submitError && (
+                  <div className="flex items-center gap-2 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-500">
+                    <FiAlertCircle className="w-5 h-5 flex-shrink-0" />
+                    <span>{submitError}</span>
+                  </div>
+                )}
+
                 <div className="flex justify-end gap-4">
                   <button
                     type="button"
-                    onClick={() => setShowCreateForm(false)}
+                    onClick={() => {
+                      setShowCreateForm(false)
+                      setDateErrors([])
+                      setSubmitError(null)
+                    }}
                     className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                    disabled={isSubmitting}
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-3 bg-gradient-to-r from-neon-purple to-neon-blue text-white rounded-lg hover:opacity-90 transition-opacity"
+                    disabled={isSubmitting}
+                    className="px-6 py-3 bg-gradient-to-r from-neon-purple to-neon-blue text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
-                    Create Event
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Creating...
+                      </>
+                    ) : (
+                      'Create Event'
+                    )}
                   </button>
                 </div>
               </form>
