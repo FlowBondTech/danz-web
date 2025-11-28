@@ -1,5 +1,7 @@
 # DANZ Web - Claude Code Instructions
 
+> Last updated: 2025-01-28
+
 ## Project Overview
 DANZ Web is the marketing website and web dashboard for the DANZ platform, built with Next.js 15 and React 19.
 
