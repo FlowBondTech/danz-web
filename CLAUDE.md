@@ -201,6 +201,14 @@ NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
 4. Handle loading/error states
 5. Implement optimistic updates
 
+## Git Push Rules
+**IMPORTANT**: Always push to BOTH remotes to keep repos in sync:
+```bash
+git push origin main && git push cryptokoh main
+```
+- `origin` → FlowBondTech/danz-web
+- `cryptokoh` → cryptokoh/danz-web
+
 ## DO NOT
 - Use npm or yarn (use bun only)
 - Install new icon libraries (use react-icons)
@@ -209,3 +217,4 @@ NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
 - Ignore mobile responsiveness
 - Use console.log in production
 - Create .md documentation files unless requested
+- Push to only one remote (always push to both origin AND cryptokoh)
