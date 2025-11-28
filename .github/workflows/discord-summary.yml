@@ -1,4 +1,4 @@
-name: Discord Summary
+name: Discord Commit Summary
 
 on:
   push:
@@ -12,60 +12,51 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_SUMMARY_WEBHOOK }}
         run: |
-          # Extract commit info
-          COMMIT_MSG=$(echo '${{ github.event.head_commit.message }}' | head -1)
-          COMMIT_BODY=$(echo '${{ github.event.head_commit.message }}' | tail -n +3 | head -20)
+          # Extract commit info safely using jq
+          COMMIT_MSG=$(cat << 'ENDMSG'
+          ${{ github.event.head_commit.message }}
+          ENDMSG
+          )
+          FIRST_LINE=$(echo "$COMMIT_MSG" | head -1)
           AUTHOR="${{ github.event.head_commit.author.name }}"
-          REPO="${{ github.repository }}"
           COMMIT_URL="${{ github.event.head_commit.url }}"
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-          TIMESTAMP="${{ github.event.head_commit.timestamp }}"
 
           # Check if it's a Claude Code commit
-          IS_CLAUDE="false"
-          if echo '${{ github.event.head_commit.message }}' | grep -q "Claude Code"; then
-            IS_CLAUDE="true"
-          fi
-
-          # Build embed
-          if [ "$IS_CLAUDE" = "true" ]; then
-            COLOR=10181046  # Purple for Claude commits
+          if echo "$COMMIT_MSG" | grep -q "Claude Code"; then
+            COLOR=10181046
             FOOTER="🤖 AI-Assisted Development"
           else
-            COLOR=3066993   # Green for manual commits
+            COLOR=3066993
             FOOTER="👤 Manual Commit"
           fi
 
-          # Escape special characters for JSON
-          COMMIT_MSG_ESCAPED=$(echo "$COMMIT_MSG" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
-          COMMIT_BODY_ESCAPED=$(echo "$COMMIT_BODY" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+          # Use jq to safely create JSON
+          JSON_PAYLOAD=$(jq -n \
+            --arg title "💃 danz-web - New Commit" \
+            --arg desc "$FIRST_LINE" \
+            --arg author "$AUTHOR" \
+            --arg sha "$SHORT_SHA" \
+            --arg url "$COMMIT_URL" \
+            --arg footer "$FOOTER" \
+            --argjson color "$COLOR" \
+            --arg ts "${{ github.event.head_commit.timestamp }}" \
+            '{
+              embeds: [{
+                title: $title,
+                description: $desc,
+                color: $color,
+                fields: [
+                  {name: "Author", value: $author, inline: true},
+                  {name: "Commit", value: "[\($sha)](\($url))", inline: true}
+                ],
+                footer: {text: $footer},
+                timestamp: $ts
+              }]
+            }')
 
-          # Create JSON payload
-          JSON_PAYLOAD="{
-            \"embeds\": [{
-              \"title\": \"📦 ${REPO##*/} - New Commit\",
-              \"description\": \"**${COMMIT_MSG_ESCAPED}**\\n\\n${COMMIT_BODY_ESCAPED}\",
-              \"color\": ${COLOR},
-              \"fields\": [
-                {
-                  \"name\": \"Author\",
-                  \"value\": \"${AUTHOR}\",
-                  \"inline\": true
-                },
-                {
-                  \"name\": \"Commit\",
-                  \"value\": \"[${SHORT_SHA}](${COMMIT_URL})\",
-                  \"inline\": true
-                }
-              ],
-              \"footer\": {
-                \"text\": \"${FOOTER}\"
-              },
-              \"timestamp\": \"${TIMESTAMP}\"
-            }]
-          }"
-
-          # Send to Discord
-          curl -H "Content-Type: application/json" \
+          # Send to Discord with verbose output
+          curl -s -o /dev/null -w "%{http_code}" \
+               -H "Content-Type: application/json" \
                -d "$JSON_PAYLOAD" \
                "$DISCORD_WEBHOOK"
