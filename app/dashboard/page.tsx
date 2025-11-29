@@ -6,7 +6,26 @@ import { usePrivy } from '@privy-io/react-auth'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect } from 'react'
 import { FaTiktok } from 'react-icons/fa'
-import { FiAward, FiInstagram, FiMusic, FiTarget, FiTwitter, FiYoutube } from 'react-icons/fi'
+import {
+  FiActivity,
+  FiAward,
+  FiCalendar,
+  FiChevronRight,
+  FiClock,
+  FiEdit3,
+  FiHeart,
+  FiInstagram,
+  FiMapPin,
+  FiMusic,
+  FiPlus,
+  FiStar,
+  FiTarget,
+  FiTrendingUp,
+  FiTwitter,
+  FiUsers,
+  FiYoutube,
+  FiZap,
+} from 'react-icons/fi'
 
 function DashboardContent() {
   const { authenticated, ready, user } = usePrivy()
@@ -15,7 +34,7 @@ function DashboardContent() {
 
   const { data, loading, error, refetch } = useGetMyProfileQuery({
     skip: !authenticated,
-    fetchPolicy: 'cache-and-network', // Always fetch fresh stats
+    fetchPolicy: 'cache-and-network',
   })
 
   useEffect(() => {
@@ -25,7 +44,6 @@ function DashboardContent() {
   }, [ready, authenticated, router])
 
   useEffect(() => {
-    // Refetch user data if coming back from Stripe checkout
     if (
       searchParams.get('session_id') ||
       searchParams.get('success') ||
@@ -39,7 +57,13 @@ function DashboardContent() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-white text-2xl">Loading...</div>
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative">
+              <div className="w-16 h-16 border-4 border-neon-purple/20 rounded-full" />
+              <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-neon-purple rounded-full animate-spin" />
+            </div>
+            <p className="text-text-secondary animate-pulse">Loading your dance journey...</p>
+          </div>
         </div>
       </DashboardLayout>
     )
@@ -49,7 +73,21 @@ function DashboardContent() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-red-400 text-xl">Error loading profile</div>
+          <div className="bg-gradient-to-br from-red-500/10 to-red-900/10 border border-red-500/30 rounded-2xl p-8 text-center max-w-md">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
+              <FiZap className="text-red-400" size={28} />
+            </div>
+            <p className="text-red-400 font-semibold text-lg mb-2">Connection Error</p>
+            <p className="text-text-secondary text-sm mb-4">
+              We couldn't load your profile. Please try again.
+            </p>
+            <button
+              onClick={() => refetch()}
+              className="px-6 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 rounded-lg text-red-400 font-medium transition-all"
+            >
+              Retry
+            </button>
+          </div>
         </div>
       </DashboardLayout>
     )
@@ -57,349 +95,510 @@ function DashboardContent() {
 
   const profile = data?.me
 
+  // Calculate level title based on level
+  const getLevelTitle = (level: number) => {
+    if (level >= 50) return 'Dance Legend'
+    if (level >= 30) return 'Dance Master'
+    if (level >= 20) return 'Groove Expert'
+    if (level >= 10) return 'Rhythm Rider'
+    if (level >= 5) return 'Beat Seeker'
+    return 'Fresh Mover'
+  }
+
+  // Calculate XP progress percentage
+  const xpProgress = Math.min(((profile?.xp || 0) % 1000) / 10, 100)
+  const xpToNext = 1000 - ((profile?.xp || 0) % 1000)
+
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">Dashboard Overview</h1>
-          {profile?.is_premium === 'active' && (
-            <div className="bg-gradient-neon px-4 py-2 rounded-full">
-              <span className="text-white font-medium text-sm">✨ Premium Member</span>
-            </div>
-          )}
-        </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        {/* ═══════════════════════════════════════════════════════════════════
+            HERO SECTION - Identity & Level
+        ═══════════════════════════════════════════════════════════════════ */}
+        <div className="relative mb-8">
+          {/* Background Glow Effects */}
+          <div className="absolute inset-0 overflow-hidden rounded-3xl">
+            <div className="absolute -top-20 -left-20 w-72 h-72 bg-neon-purple/20 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-neon-pink/15 rounded-full blur-3xl animate-pulse delay-1000" />
+          </div>
 
-        {profile ? (
-          <>
-            {/* Primary Stats Grid */}
-            <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4 mb-6 sm:mb-8">
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <FiAward className="text-neon-purple" size={24} />
-                  <span className="text-xs text-text-secondary uppercase tracking-wider">
-                    Level
-                  </span>
-                </div>
-                <p className="text-2xl font-bold text-text-primary">{profile.level || 1}</p>
-                <p className="text-sm text-text-secondary mt-1">Dance Level</p>
-              </div>
+          {/* Hero Card */}
+          <div className="relative bg-gradient-to-br from-bg-secondary/90 via-bg-secondary to-bg-card/90 backdrop-blur-xl rounded-3xl border border-neon-purple/20 overflow-hidden">
+            {/* Top Accent Line */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-neon-purple via-neon-pink to-neon-purple" />
 
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <FiTarget className="text-neon-pink" size={24} />
-                  <span className="text-xs text-text-secondary uppercase tracking-wider">XP</span>
-                </div>
-                <p className="text-2xl font-bold text-text-primary">{profile.xp || 0}</p>
-                <p className="text-sm text-text-secondary mt-1">Experience Points</p>
-              </div>
-
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <FiMusic className="text-blue-400" size={24} />
-                  <span className="text-xs text-text-secondary uppercase tracking-wider">
-                    Events
-                  </span>
-                </div>
-                <p className="text-2xl font-bold text-text-primary">
-                  {profile.total_events_attended || 0}
-                </p>
-                <p className="text-sm text-text-secondary mt-1">Events Attended</p>
-              </div>
-
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <FiAward className="text-yellow-400" size={24} />
-                  <span className="text-xs text-text-secondary uppercase tracking-wider">
-                    Streak
-                  </span>
-                </div>
-                <p className="text-2xl font-bold text-text-primary">
-                  {profile.longest_streak || 0}
-                </p>
-                <p className="text-sm text-text-secondary mt-1">Best Streak</p>
-              </div>
-            </div>
-
-            {/* Secondary Stats Grid */}
-            <div className="grid gap-4 sm:gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mb-6 sm:mb-8">
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-text-secondary uppercase tracking-wider">
-                    Sessions
-                  </span>
-                </div>
-                <p className="text-xl font-bold text-text-primary">{profile.total_sessions || 0}</p>
-                <p className="text-xs text-text-secondary">Total Sessions</p>
-              </div>
-
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-text-secondary uppercase tracking-wider">
-                    Created
-                  </span>
-                </div>
-                <p className="text-xl font-bold text-text-primary">
-                  {profile.total_events_created || 0}
-                </p>
-                <p className="text-xs text-text-secondary">Events Created</p>
-              </div>
-
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-text-secondary uppercase tracking-wider">
-                    Upcoming
-                  </span>
-                </div>
-                <p className="text-xl font-bold text-text-primary">
-                  {profile.upcoming_events_count || 0}
-                </p>
-                <p className="text-xs text-text-secondary">Future Events</p>
-              </div>
-
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-text-secondary uppercase tracking-wider">
-                    Achievements
-                  </span>
-                </div>
-                <p className="text-xl font-bold text-text-primary">
-                  {profile.total_achievements || 0}
-                </p>
-                <p className="text-xs text-text-secondary">Unlocked</p>
-              </div>
-
-              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-text-secondary uppercase tracking-wider">
-                    Bonds
-                  </span>
-                </div>
-                <p className="text-xl font-bold text-text-primary">
-                  {profile.dance_bonds_count || 0}
-                </p>
-                <p className="text-xs text-text-secondary">Dance Bonds</p>
-              </div>
-            </div>
-
-            {/* Profile Info */}
-            <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
-              <div className="lg:col-span-2 space-y-4 sm:space-y-6">
-                <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
-                  <h2 className="text-xl font-bold text-text-primary mb-4">Profile Information</h2>
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                      {profile.avatar_url ? (
-                        <img
-                          src={profile.avatar_url}
-                          alt={profile.display_name || profile.username || 'User avatar'}
-                          className="w-20 h-20 rounded-full object-cover border-2 border-neon-purple/50"
+            <div className="p-6 sm:p-8">
+              <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-8">
+                {/* Avatar with Level Ring */}
+                <div className="flex items-center gap-5">
+                  <div className="relative group">
+                    {/* Rotating Level Ring */}
+                    <div className="absolute -inset-2">
+                      <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
+                        {/* Background circle */}
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="45"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                          className="text-neon-purple/20"
                         />
-                      ) : (
-                        <div className="w-20 h-20 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white text-2xl font-bold">
-                          {profile.username?.charAt(0).toUpperCase() || 'U'}
-                        </div>
-                      )}
-                      <div>
-                        <p className="text-lg font-semibold text-text-primary">
-                          {profile.display_name || profile.username}
-                        </p>
-                        <p className="text-text-secondary">@{profile.username}</p>
-                        {profile.city && (
-                          <p className="text-sm text-text-secondary mt-1">
-                            📍 {profile.city}
-                            {profile.location && `, ${profile.location}`}
-                          </p>
-                        )}
-                      </div>
+                        {/* Progress circle */}
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="45"
+                          fill="none"
+                          stroke="url(#levelGradient)"
+                          strokeWidth="4"
+                          strokeLinecap="round"
+                          strokeDasharray={`${xpProgress * 2.83} 283`}
+                          className="transition-all duration-1000"
+                        />
+                        <defs>
+                          <linearGradient id="levelGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#b967ff" />
+                            <stop offset="100%" stopColor="#ff6ec7" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
                     </div>
-
-                    {profile.bio && (
-                      <div className="pt-4 border-t border-white/10">
-                        <h3 className="text-sm font-medium text-text-secondary mb-2">Bio</h3>
-                        <p className="text-text-primary">{profile.bio}</p>
+                    {/* Avatar */}
+                    {profile?.avatar_url ? (
+                      <img
+                        src={profile.avatar_url}
+                        alt={profile.display_name || 'Avatar'}
+                        className="w-24 h-24 rounded-full object-cover border-2 border-bg-secondary relative z-10"
+                      />
+                    ) : (
+                      <div className="w-24 h-24 rounded-full bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center text-white text-3xl font-bold relative z-10 border-2 border-bg-secondary">
+                        {profile?.username?.charAt(0).toUpperCase() || 'D'}
                       </div>
                     )}
-
-                    <div className="pt-4 border-t border-white/10">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <p className="text-sm text-text-secondary">Role</p>
-                          <p className="text-text-primary capitalize">{profile.role || 'Dancer'}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-text-secondary">Skill Level</p>
-                          <p className="text-text-primary capitalize">
-                            {profile.skill_level || 'Not set'}
-                          </p>
-                        </div>
-                      </div>
+                    {/* Level Badge */}
+                    <div className="absolute -bottom-1 -right-1 w-9 h-9 bg-gradient-to-br from-neon-purple to-neon-pink rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-neon-purple/30 z-20 border-2 border-bg-secondary">
+                      {profile?.level || 1}
                     </div>
+                  </div>
+
+                  {/* Name & Title */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">
+                        {profile?.display_name || profile?.username || 'Dancer'}
+                      </h1>
+                      {profile?.is_premium === 'active' && (
+                        <div className="px-2 py-0.5 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/30 rounded-full">
+                          <FiStar className="text-amber-400" size={14} />
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-text-secondary">@{profile?.username}</p>
+                    <p className="text-neon-purple font-medium mt-1">
+                      {getLevelTitle(profile?.level || 1)}
+                    </p>
                   </div>
                 </div>
 
-                {profile.dance_styles && profile.dance_styles.length > 0 && (
-                  <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
-                    <h2 className="text-xl font-bold text-text-primary mb-4">Dance Styles</h2>
-                    <div className="flex flex-wrap gap-2">
-                      {profile.dance_styles.map((style: string) => (
-                        <span
-                          key={style}
-                          className="px-4 py-2 bg-neon-purple/20 border border-neon-purple/40 text-neon-purple rounded-full text-sm font-medium"
-                        >
-                          {style}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Social Media & Additional Info */}
-                <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
-                  <h2 className="text-xl font-bold text-text-primary mb-4">Additional Info</h2>
-                  <div className="space-y-3">
-                    {profile.age && (
-                      <div className="flex justify-between">
-                        <span className="text-text-secondary">Age</span>
-                        <span className="text-text-primary">{profile.age}</span>
-                      </div>
-                    )}
-                    {profile.pronouns && (
-                      <div className="flex justify-between">
-                        <span className="text-text-secondary">Pronouns</span>
-                        <span className="text-text-primary">{profile.pronouns}</span>
-                      </div>
-                    )}
-                    {profile.subscription_tier && (
-                      <div className="flex justify-between">
-                        <span className="text-text-secondary">Subscription</span>
-                        <span className="text-text-primary capitalize">
-                          {profile.subscription_tier}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex justify-between">
-                      <span className="text-text-secondary">Profile Visibility</span>
-                      <span className="text-text-primary">
-                        {profile.is_public ? 'Public' : 'Private'}
+                {/* XP Progress Bar - Desktop */}
+                <div className="hidden lg:flex flex-1 items-center">
+                  <div className="w-full max-w-md">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-text-secondary">Level Progress</span>
+                      <span className="text-sm font-medium text-neon-purple">
+                        {profile?.xp || 0} XP
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-text-secondary">Messages</span>
-                      <span className="text-text-primary">
-                        {profile.allow_messages ? 'Enabled' : 'Disabled'}
-                      </span>
+                    <div className="h-2.5 bg-bg-primary rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-neon-purple to-neon-pink rounded-full transition-all duration-1000 ease-out"
+                        style={{ width: `${xpProgress}%` }}
+                      />
                     </div>
-                    {profile.total_dance_time !== null &&
-                      profile.total_dance_time !== undefined && (
-                        <div className="flex justify-between">
-                          <span className="text-text-secondary">Total Dance Time</span>
-                          <span className="text-text-primary">
-                            {Math.floor(profile.total_dance_time / 60)} hours
-                          </span>
-                        </div>
-                      )}
+                    <p className="text-xs text-text-muted mt-1.5">{xpToNext} XP to level up</p>
                   </div>
+                </div>
 
-                  {(profile.instagram || profile.twitter || profile.tiktok || profile.youtube) && (
-                    <div className="mt-4 pt-4 border-t border-white/10">
-                      <p className="text-sm text-text-secondary mb-2">Social Media</p>
-                      <div className="flex gap-3">
-                        {profile.instagram && (
-                          <a
-                            href={`https://instagram.com/${profile.instagram}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-text-secondary hover:text-neon-pink"
-                          >
-                            <FiInstagram size={20} />
-                          </a>
-                        )}
-                        {profile.twitter && (
-                          <a
-                            href={`https://twitter.com/${profile.twitter}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-text-secondary hover:text-neon-purple"
-                          >
-                            <FiTwitter size={20} />
-                          </a>
-                        )}
-                        {profile.tiktok && (
-                          <a
-                            href={`https://tiktok.com/@${profile.tiktok}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-text-secondary hover:text-neon-pink"
-                          >
-                            <FaTiktok size={20} />
-                          </a>
-                        )}
-                        {profile.youtube && (
-                          <a
-                            href={`https://youtube.com/${profile.youtube}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-text-secondary hover:text-red-500"
-                          >
-                            <FiYoutube size={20} />
-                          </a>
-                        )}
-                      </div>
+                {/* Quick Stats Pills */}
+                <div className="flex flex-wrap gap-3">
+                  <div className="flex items-center gap-2 px-4 py-2.5 bg-bg-primary/60 rounded-xl border border-neon-purple/10">
+                    <FiZap className="text-yellow-400" size={18} />
+                    <div>
+                      <p className="text-lg font-bold text-text-primary leading-none">
+                        {profile?.longest_streak || 0}
+                      </p>
+                      <p className="text-xs text-text-muted">Day Streak</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-2.5 bg-bg-primary/60 rounded-xl border border-neon-purple/10">
+                    <FiHeart className="text-pink-400" size={18} />
+                    <div>
+                      <p className="text-lg font-bold text-text-primary leading-none">
+                        {profile?.dance_bonds_count || 0}
+                      </p>
+                      <p className="text-xs text-text-muted">Bonds</p>
+                    </div>
+                  </div>
+                  {profile?.city && (
+                    <div className="flex items-center gap-2 px-4 py-2.5 bg-bg-primary/60 rounded-xl border border-neon-purple/10">
+                      <FiMapPin className="text-neon-blue" size={18} />
+                      <p className="text-sm text-text-secondary">{profile.city}</p>
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="space-y-4 sm:space-y-6">
-                <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
-                  <h2 className="text-xl font-bold text-text-primary mb-4">Quick Actions</h2>
-                  <div className="space-y-3">
-                    <button
-                      onClick={() => router.push('/dashboard/profile')}
-                      className="w-full btn btn-primary"
-                    >
-                      Edit Profile
-                    </button>
-                    <button className="w-full btn btn-outline">View Public Profile</button>
-                  </div>
+              {/* XP Progress Bar - Mobile */}
+              <div className="lg:hidden mt-6">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-text-secondary">Level Progress</span>
+                  <span className="text-sm font-medium text-neon-purple">
+                    {profile?.xp || 0} XP
+                  </span>
                 </div>
+                <div className="h-2.5 bg-bg-primary rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-neon-purple to-neon-pink rounded-full transition-all duration-1000"
+                    style={{ width: `${xpProgress}%` }}
+                  />
+                </div>
+                <p className="text-xs text-text-muted mt-1.5">{xpToNext} XP to level up</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
-                  <h2 className="text-xl font-bold text-text-primary mb-4">Account Info</h2>
-                  <div className="space-y-3 text-sm">
-                    <div>
-                      <p className="text-text-secondary">Email</p>
-                      <p className="text-text-primary truncate">
-                        {user?.email?.address || 'Not set'}
-                      </p>
-                    </div>
-                    {user?.wallet?.address && (
-                      <div>
-                        <p className="text-text-secondary">Wallet</p>
-                        <p className="text-text-primary font-mono text-xs">
-                          {user.wallet.address.slice(0, 6)}...{user.wallet.address.slice(-4)}
-                        </p>
-                      </div>
-                    )}
-                    <div>
-                      <p className="text-text-secondary">Member Since</p>
-                      <p className="text-text-primary">
-                        {profile.created_at
-                          ? new Date(profile.created_at).toLocaleDateString()
-                          : 'Unknown'}
-                      </p>
-                    </div>
+        {/* ═══════════════════════════════════════════════════════════════════
+            QUICK ACTIONS - Primary CTAs
+        ═══════════════════════════════════════════════════════════════════ */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <button
+            onClick={() => router.push('/dashboard/events')}
+            className="group relative bg-gradient-to-br from-neon-purple/20 to-neon-purple/5 hover:from-neon-purple/30 hover:to-neon-purple/10 rounded-2xl border border-neon-purple/30 hover:border-neon-purple/50 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-neon-purple/20 text-left"
+          >
+            <div className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-neon-purple/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <FiCalendar className="text-neon-purple" size={20} />
+            </div>
+            <p className="text-2xl font-bold text-text-primary mb-1">
+              {profile?.upcoming_events_count || 0}
+            </p>
+            <p className="text-sm text-text-secondary">Upcoming Events</p>
+            <div className="flex items-center gap-1 mt-3 text-neon-purple text-sm font-medium group-hover:gap-2 transition-all">
+              <span>View All</span>
+              <FiChevronRight size={16} />
+            </div>
+          </button>
+
+          <button
+            onClick={() => router.push('/dashboard/events/create')}
+            className="group relative bg-gradient-to-br from-neon-pink/20 to-neon-pink/5 hover:from-neon-pink/30 hover:to-neon-pink/10 rounded-2xl border border-neon-pink/30 hover:border-neon-pink/50 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-neon-pink/20 text-left"
+          >
+            <div className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-neon-pink/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <FiPlus className="text-neon-pink" size={20} />
+            </div>
+            <p className="text-lg font-bold text-text-primary mb-1">Host Event</p>
+            <p className="text-sm text-text-secondary">Create a dance session</p>
+            <div className="flex items-center gap-1 mt-3 text-neon-pink text-sm font-medium group-hover:gap-2 transition-all">
+              <span>Create</span>
+              <FiChevronRight size={16} />
+            </div>
+          </button>
+
+          <button
+            onClick={() => router.push('/dashboard/feed')}
+            className="group relative bg-gradient-to-br from-blue-500/20 to-blue-500/5 hover:from-blue-500/30 hover:to-blue-500/10 rounded-2xl border border-blue-500/30 hover:border-blue-500/50 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 text-left"
+          >
+            <div className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <FiActivity className="text-blue-400" size={20} />
+            </div>
+            <p className="text-lg font-bold text-text-primary mb-1">Activity</p>
+            <p className="text-sm text-text-secondary">See community feed</p>
+            <div className="flex items-center gap-1 mt-3 text-blue-400 text-sm font-medium group-hover:gap-2 transition-all">
+              <span>Explore</span>
+              <FiChevronRight size={16} />
+            </div>
+          </button>
+
+          <button
+            onClick={() => router.push('/dashboard/profile')}
+            className="group relative bg-gradient-to-br from-green-500/20 to-green-500/5 hover:from-green-500/30 hover:to-green-500/10 rounded-2xl border border-green-500/30 hover:border-green-500/50 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20 text-left"
+          >
+            <div className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <FiEdit3 className="text-green-400" size={20} />
+            </div>
+            <p className="text-lg font-bold text-text-primary mb-1">Profile</p>
+            <p className="text-sm text-text-secondary">Edit your info</p>
+            <div className="flex items-center gap-1 mt-3 text-green-400 text-sm font-medium group-hover:gap-2 transition-all">
+              <span>Edit</span>
+              <FiChevronRight size={16} />
+            </div>
+          </button>
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════════
+            STATS SECTION - Your Journey
+        ═══════════════════════════════════════════════════════════════════ */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold text-text-primary mb-4 flex items-center gap-2">
+            <FiTrendingUp className="text-neon-purple" />
+            Your Dance Journey
+          </h2>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {/* Events Attended */}
+            <div className="bg-bg-secondary rounded-xl border border-neon-purple/10 p-4 hover:border-blue-500/30 transition-colors">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                  <FiCalendar className="text-blue-400" size={16} />
+                </div>
+              </div>
+              <p className="text-2xl font-bold text-text-primary">
+                {profile?.total_events_attended || 0}
+              </p>
+              <p className="text-xs text-text-muted mt-1">Events Attended</p>
+            </div>
+
+            {/* Events Created */}
+            <div className="bg-bg-secondary rounded-xl border border-neon-purple/10 p-4 hover:border-neon-pink/30 transition-colors">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-lg bg-neon-pink/20 flex items-center justify-center">
+                  <FiPlus className="text-neon-pink" size={16} />
+                </div>
+              </div>
+              <p className="text-2xl font-bold text-text-primary">
+                {profile?.total_events_created || 0}
+              </p>
+              <p className="text-xs text-text-muted mt-1">Events Hosted</p>
+            </div>
+
+            {/* Dance Sessions */}
+            <div className="bg-bg-secondary rounded-xl border border-neon-purple/10 p-4 hover:border-purple-500/30 transition-colors">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                  <FiMusic className="text-purple-400" size={16} />
+                </div>
+              </div>
+              <p className="text-2xl font-bold text-text-primary">
+                {profile?.total_sessions || 0}
+              </p>
+              <p className="text-xs text-text-muted mt-1">Dance Sessions</p>
+            </div>
+
+            {/* Achievements */}
+            <div className="bg-bg-secondary rounded-xl border border-neon-purple/10 p-4 hover:border-amber-500/30 transition-colors">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center">
+                  <FiAward className="text-amber-400" size={16} />
+                </div>
+              </div>
+              <p className="text-2xl font-bold text-text-primary">
+                {profile?.total_achievements || 0}
+              </p>
+              <p className="text-xs text-text-muted mt-1">Achievements</p>
+            </div>
+
+            {/* Dance Time */}
+            <div className="bg-bg-secondary rounded-xl border border-neon-purple/10 p-4 hover:border-cyan-500/30 transition-colors">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+                  <FiClock className="text-cyan-400" size={16} />
+                </div>
+              </div>
+              <p className="text-2xl font-bold text-text-primary">
+                {profile?.total_dance_time ? Math.floor(profile.total_dance_time / 60) : 0}h
+              </p>
+              <p className="text-xs text-text-muted mt-1">Dance Time</p>
+            </div>
+
+            {/* Dance Bonds */}
+            <div className="bg-bg-secondary rounded-xl border border-neon-purple/10 p-4 hover:border-pink-500/30 transition-colors">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center">
+                  <FiUsers className="text-pink-400" size={16} />
+                </div>
+              </div>
+              <p className="text-2xl font-bold text-text-primary">
+                {profile?.dance_bonds_count || 0}
+              </p>
+              <p className="text-xs text-text-muted mt-1">Dance Bonds</p>
+            </div>
+          </div>
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════════
+            BOTTOM SECTION - Profile Details & Account
+        ═══════════════════════════════════════════════════════════════════ */}
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Dance Styles */}
+          <div className="lg:col-span-2">
+            {profile?.dance_styles && profile.dance_styles.length > 0 ? (
+              <div className="bg-bg-secondary rounded-2xl border border-neon-purple/10 p-6">
+                <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                  <FiMusic className="text-neon-purple" />
+                  Dance Styles
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {profile.dance_styles.map((style: string) => (
+                    <span
+                      key={style}
+                      className="px-4 py-2 bg-gradient-to-r from-neon-purple/10 to-neon-pink/10 border border-neon-purple/30 text-text-primary rounded-full text-sm font-medium hover:border-neon-purple/50 transition-colors"
+                    >
+                      {style}
+                    </span>
+                  ))}
+                </div>
+                {profile.bio && (
+                  <div className="mt-6 pt-4 border-t border-white/5">
+                    <p className="text-text-secondary text-sm leading-relaxed">{profile.bio}</p>
                   </div>
+                )}
+              </div>
+            ) : (
+              <div className="bg-bg-secondary rounded-2xl border border-neon-purple/10 border-dashed p-6">
+                <div className="text-center py-4">
+                  <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-neon-purple/10 flex items-center justify-center">
+                    <FiMusic className="text-neon-purple" size={24} />
+                  </div>
+                  <p className="text-text-secondary mb-3">Add your dance styles</p>
+                  <button
+                    onClick={() => router.push('/dashboard/profile')}
+                    className="px-4 py-2 bg-neon-purple/20 hover:bg-neon-purple/30 border border-neon-purple/30 rounded-lg text-neon-purple text-sm font-medium transition-colors"
+                  >
+                    Complete Profile
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Account & Social */}
+          <div className="space-y-4">
+            {/* Account Info */}
+            <div className="bg-bg-secondary rounded-2xl border border-neon-purple/10 p-5">
+              <h3 className="text-lg font-semibold text-text-primary mb-4">Account</h3>
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-text-muted">Email</span>
+                  <span className="text-text-primary truncate max-w-[180px]">
+                    {user?.email?.address || 'Not set'}
+                  </span>
+                </div>
+                {user?.wallet?.address && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-text-muted">Wallet</span>
+                    <span className="text-text-primary font-mono text-xs">
+                      {user.wallet.address.slice(0, 6)}...{user.wallet.address.slice(-4)}
+                    </span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between">
+                  <span className="text-text-muted">Member Since</span>
+                  <span className="text-text-primary">
+                    {profile?.created_at
+                      ? new Date(profile.created_at).toLocaleDateString('en-US', {
+                          month: 'short',
+                          year: 'numeric',
+                        })
+                      : 'Unknown'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-text-muted">Role</span>
+                  <span className="text-text-primary capitalize">{profile?.role || 'Dancer'}</span>
                 </div>
               </div>
             </div>
-          </>
-        ) : (
-          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-12 text-center">
+
+            {/* Social Links */}
+            {(profile?.instagram ||
+              profile?.twitter ||
+              profile?.tiktok ||
+              profile?.youtube) && (
+              <div className="bg-bg-secondary rounded-2xl border border-neon-purple/10 p-5">
+                <h3 className="text-lg font-semibold text-text-primary mb-4">Social</h3>
+                <div className="flex gap-3">
+                  {profile.instagram && (
+                    <a
+                      href={`https://instagram.com/${profile.instagram}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-purple-500/20 flex items-center justify-center text-pink-400 hover:from-pink-500/30 hover:to-purple-500/30 transition-colors"
+                    >
+                      <FiInstagram size={18} />
+                    </a>
+                  )}
+                  {profile.twitter && (
+                    <a
+                      href={`https://twitter.com/${profile.twitter}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 hover:bg-blue-500/30 transition-colors"
+                    >
+                      <FiTwitter size={18} />
+                    </a>
+                  )}
+                  {profile.tiktok && (
+                    <a
+                      href={`https://tiktok.com/@${profile.tiktok}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-xl bg-bg-primary flex items-center justify-center text-text-secondary hover:text-white transition-colors"
+                    >
+                      <FaTiktok size={18} />
+                    </a>
+                  )}
+                  {profile.youtube && (
+                    <a
+                      href={`https://youtube.com/${profile.youtube}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center text-red-400 hover:bg-red-500/30 transition-colors"
+                    >
+                      <FiYoutube size={18} />
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Premium Upgrade CTA */}
+            {profile?.is_premium !== 'active' && (
+              <button
+                onClick={() => router.push('/dashboard/subscription')}
+                className="w-full bg-gradient-to-r from-amber-500/20 to-yellow-500/20 hover:from-amber-500/30 hover:to-yellow-500/30 border border-amber-500/30 rounded-2xl p-5 text-left transition-all group"
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center">
+                    <FiStar className="text-white" size={18} />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-text-primary">Go Premium</p>
+                    <p className="text-xs text-text-muted">Unlock exclusive features</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 text-amber-400 text-sm font-medium group-hover:gap-2 transition-all">
+                  <span>Learn More</span>
+                  <FiChevronRight size={16} />
+                </div>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {profile === null && (
+          <div className="bg-bg-secondary rounded-2xl border border-neon-purple/20 p-12 text-center">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-neon-purple/20 flex items-center justify-center">
+              <FiUsers className="text-neon-purple" size={28} />
+            </div>
             <p className="text-text-secondary mb-4">
-              Profile not found. Please complete your registration.
+              Complete your registration to start your dance journey
             </p>
-            <button onClick={() => router.push('/register')} className="btn btn-primary">
+            <button
+              onClick={() => router.push('/register')}
+              className="px-6 py-3 bg-gradient-to-r from-neon-purple to-neon-pink rounded-xl text-white font-medium hover:shadow-lg hover:shadow-neon-purple/30 transition-all"
+            >
               Complete Registration
             </button>
           </div>
@@ -415,7 +614,13 @@ export default function DashboardPage() {
       fallback={
         <DashboardLayout>
           <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="text-white text-2xl">Loading...</div>
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative">
+                <div className="w-16 h-16 border-4 border-neon-purple/20 rounded-full" />
+                <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-neon-purple rounded-full animate-spin" />
+              </div>
+              <p className="text-text-secondary">Loading...</p>
+            </div>
           </div>
         </DashboardLayout>
       }
