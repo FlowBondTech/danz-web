@@ -107,7 +107,14 @@ export default function WalletPage() {
     }
   }
 
-  const handleFundWallet = async (address: string) => {
+  const handleFundWallet = async (address: string, chainType: string) => {
+    // Privy's fiat on-ramp only supports EVM chains, not Solana
+    if (chainType === 'solana') {
+      setError("Fiat on-ramp is only available for Ethereum wallets. Use an exchange to fund Solana wallets.")
+      setTimeout(() => setError(null), 5000)
+      return
+    }
+
     try {
       // First try to find the wallet in connected wallets and use its fund method
       const connectedWallet = connectedWallets.find(w => w.address === address)
@@ -368,11 +375,17 @@ export default function WalletPage() {
                   {/* Embedded Wallet Actions */}
                   <div className="mt-6 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
                     <button
-                      onClick={() => handleFundWallet(wallet.address)}
-                      className="flex items-center justify-center gap-2 px-4 py-3 bg-green-500/10 hover:bg-green-500/20 text-green-500 rounded-xl font-medium transition-colors"
+                      onClick={() => handleFundWallet(wallet.address, wallet.chainType)}
+                      disabled={wallet.chainType === 'solana'}
+                      className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-colors ${
+                        wallet.chainType === 'solana'
+                          ? 'bg-gray-500/10 text-gray-500 cursor-not-allowed'
+                          : 'bg-green-500/10 hover:bg-green-500/20 text-green-500'
+                      }`}
+                      title={wallet.chainType === 'solana' ? 'Fiat on-ramp not available for Solana' : 'Add funds via card'}
                     >
                       <FiDollarSign className="w-5 h-5" />
-                      Add Funds
+                      {wallet.chainType === 'solana' ? 'N/A (Solana)' : 'Add Funds'}
                     </button>
                     <button
                       onClick={() => handleExportWallet(wallet.address)}
@@ -503,13 +516,15 @@ export default function WalletPage() {
 
                     {/* Actions */}
                     <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleFundWallet(wallet.address)}
-                        className="p-2 hover:bg-green-500/10 text-text-secondary hover:text-green-500 rounded-lg transition-all"
-                        title="Fund wallet"
-                      >
-                        <FiDollarSign className="w-5 h-5" />
-                      </button>
+                      {wallet.chainType !== 'solana' && (
+                        <button
+                          onClick={() => handleFundWallet(wallet.address, wallet.chainType)}
+                          className="p-2 hover:bg-green-500/10 text-text-secondary hover:text-green-500 rounded-lg transition-all"
+                          title="Fund wallet"
+                        >
+                          <FiDollarSign className="w-5 h-5" />
+                        </button>
+                      )}
                       {allLinkedWallets.length > 1 && (
                         <button
                           onClick={() => handleUnlinkWallet(wallet.address)}
