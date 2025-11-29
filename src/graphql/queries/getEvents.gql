@@ -34,12 +34,6 @@ query GetEvents($filter: EventFilterInput, $pagination: PaginationInput) {
       status
       is_registered
       registration_count
-      is_recurring
-      recurrence_type
-      recurrence_end_date
-      recurrence_days
-      recurrence_count
-      parent_event_id
     }
     pageInfo {
       hasNextPage

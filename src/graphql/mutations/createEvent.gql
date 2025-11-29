@@ -25,12 +25,6 @@ mutation CreateEvent($input: CreateEventInput!) {
     end_date_time
     created_at
     status
-    is_recurring
-    recurrence_type
-    recurrence_end_date
-    recurrence_days
-    recurrence_count
-    parent_event_id
   }
 }
 

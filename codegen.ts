@@ -2,7 +2,7 @@ import type { CodegenConfig } from '@graphql-codegen/cli'
 
 const config: CodegenConfig = {
   overwrite: true,
-  schema: 'http://localhost:4000/graphql',
+  schema: process.env.GRAPHQL_SCHEMA_URL || 'https://api.danz.now/graphql',
   documents: 'src/graphql/**/*.gql',
   generates: {
     'src/generated/graphql.tsx': {
