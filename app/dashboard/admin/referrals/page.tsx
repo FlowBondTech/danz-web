@@ -5,7 +5,8 @@ import { useGetMyProfileQuery } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { FiAward, FiUsers, FiTrendingUp } from 'react-icons/fi'
+import { FiAward, FiUsers, FiTrendingUp, FiArrowLeft } from 'react-icons/fi'
+import Link from 'next/link'
 
 export default function AdminReferralsPage() {
   const { authenticated, ready } = usePrivy()
@@ -50,6 +51,15 @@ export default function AdminReferralsPage() {
   return (
     <DashboardLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Back Navigation */}
+        <Link
+          href="/dashboard/admin"
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6"
+        >
+          <FiArrowLeft size={20} />
+          <span>Back to Admin</span>
+        </Link>
+
         <div className="flex items-center justify-between mb-6 sm:mb-8">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">

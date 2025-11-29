@@ -101,6 +101,7 @@ export type CreateEventInput = {
   end_date_time: Scalars['DateTime']['input']
   image_url?: InputMaybe<Scalars['String']['input']>
   is_featured?: InputMaybe<Scalars['Boolean']['input']>
+  is_recurring?: InputMaybe<Scalars['Boolean']['input']>
   is_virtual?: InputMaybe<Scalars['Boolean']['input']>
   location_address?: InputMaybe<Scalars['String']['input']>
   location_city?: InputMaybe<Scalars['String']['input']>
@@ -110,6 +111,10 @@ export type CreateEventInput = {
   max_capacity?: InputMaybe<Scalars['Int']['input']>
   price_danz?: InputMaybe<Scalars['Float']['input']>
   price_usd?: InputMaybe<Scalars['Float']['input']>
+  recurrence_count?: InputMaybe<Scalars['Int']['input']>
+  recurrence_days?: InputMaybe<Array<Scalars['String']['input']>>
+  recurrence_end_date?: InputMaybe<Scalars['DateTime']['input']>
+  recurrence_type?: InputMaybe<RecurrenceType>
   requirements?: InputMaybe<Scalars['String']['input']>
   skill_level?: InputMaybe<SkillLevel>
   start_date_time: Scalars['DateTime']['input']
@@ -271,6 +276,7 @@ export type Event = {
   image_url?: Maybe<Scalars['String']['output']>
   is_featured?: Maybe<Scalars['Boolean']['output']>
   is_registered?: Maybe<Scalars['Boolean']['output']>
+  is_recurring?: Maybe<Scalars['Boolean']['output']>
   is_virtual?: Maybe<Scalars['Boolean']['output']>
   location_address?: Maybe<Scalars['String']['output']>
   location_city?: Maybe<Scalars['String']['output']>
@@ -278,9 +284,16 @@ export type Event = {
   location_longitude?: Maybe<Scalars['Float']['output']>
   location_name: Scalars['String']['output']
   max_capacity?: Maybe<Scalars['Int']['output']>
+  parent_event?: Maybe<Event>
+  parent_event_id?: Maybe<Scalars['ID']['output']>
   participants?: Maybe<Array<EventRegistration>>
   price_danz?: Maybe<Scalars['Float']['output']>
   price_usd?: Maybe<Scalars['Float']['output']>
+  recurrence_count?: Maybe<Scalars['Int']['output']>
+  recurrence_days?: Maybe<Array<Scalars['String']['output']>>
+  recurrence_end_date?: Maybe<Scalars['DateTime']['output']>
+  recurrence_type?: Maybe<RecurrenceType>
+  recurring_instances?: Maybe<Array<Event>>
   registration_count?: Maybe<Scalars['Int']['output']>
   requirements?: Maybe<Scalars['String']['output']>
   skill_level?: Maybe<SkillLevel>
@@ -461,6 +474,14 @@ export enum EventStatus {
   Ongoing = 'ongoing',
   Past = 'past',
   Upcoming = 'upcoming',
+}
+
+export enum RecurrenceType {
+  None = 'none',
+  Daily = 'daily',
+  Weekly = 'weekly',
+  Biweekly = 'biweekly',
+  Monthly = 'monthly',
 }
 
 export type FeedResponse = {
@@ -2330,6 +2351,12 @@ export type CreateEventMutation = {
     end_date_time: any
     created_at: any
     status?: EventStatus | null
+    is_recurring?: boolean | null
+    recurrence_type?: RecurrenceType | null
+    recurrence_end_date?: any | null
+    recurrence_days?: Array<string> | null
+    recurrence_count?: number | null
+    parent_event_id?: string | null
   }
 }
 
@@ -3597,6 +3624,12 @@ export type GetEventsQuery = {
       status?: EventStatus | null
       is_registered?: boolean | null
       registration_count?: number | null
+      is_recurring?: boolean | null
+      recurrence_type?: RecurrenceType | null
+      recurrence_end_date?: any | null
+      recurrence_days?: Array<string> | null
+      recurrence_count?: number | null
+      parent_event_id?: string | null
       facilitator?: {
         __typename?: 'User'
         privy_id: string
@@ -5027,6 +5060,12 @@ export const CreateEventDocument = gql`
     end_date_time
     created_at
     status
+    is_recurring
+    recurrence_type
+    recurrence_end_date
+    recurrence_days
+    recurrence_count
+    parent_event_id
   }
 }
     `
@@ -8340,6 +8379,12 @@ export const GetEventsDocument = gql`
       status
       is_registered
       registration_count
+      is_recurring
+      recurrence_type
+      recurrence_end_date
+      recurrence_days
+      recurrence_count
+      parent_event_id
     }
     pageInfo {
       hasNextPage

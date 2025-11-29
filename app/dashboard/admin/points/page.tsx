@@ -12,7 +12,8 @@ import {
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { FiCheck, FiX, FiPlus, FiZap, FiAward, FiUsers, FiActivity, FiWatch, FiLink, FiStar, FiTarget, FiTrendingUp, FiDollarSign, FiLock, FiUnlock } from 'react-icons/fi'
+import { FiCheck, FiX, FiPlus, FiZap, FiAward, FiUsers, FiActivity, FiWatch, FiLink, FiStar, FiTarget, FiTrendingUp, FiDollarSign, FiLock, FiUnlock, FiArrowLeft } from 'react-icons/fi'
+import Link from 'next/link'
 import { motion, AnimatePresence } from 'motion/react'
 
 // Point System Templates
@@ -123,6 +124,35 @@ export default function EnhancedPointsPage() {
     max_per_month: null as number | null,
   })
 
+  // Helper to close other sections when opening one (auto-minimize)
+  const openSection = (section: 'wizard' | 'custom' | 'bonding' | 'wearable') => {
+    setShowSetupWizard(section === 'wizard')
+    setShowCustomForm(section === 'custom')
+    setShowBondingSection(section === 'bonding')
+    setShowWearableSection(section === 'wearable')
+  }
+
+  // Toggle a section (close if open, open and close others if closed)
+  const toggleSection = (section: 'wizard' | 'custom' | 'bonding' | 'wearable') => {
+    const currentState = {
+      wizard: showSetupWizard,
+      custom: showCustomForm,
+      bonding: showBondingSection,
+      wearable: showWearableSection,
+    }
+
+    if (currentState[section]) {
+      // If already open, just close it
+      if (section === 'wizard') setShowSetupWizard(false)
+      else if (section === 'custom') setShowCustomForm(false)
+      else if (section === 'bonding') setShowBondingSection(false)
+      else if (section === 'wearable') setShowWearableSection(false)
+    } else {
+      // If closed, open it and close others
+      openSection(section)
+    }
+  }
+
   useEffect(() => {
     if (ready && !authenticated) {
       router.push('/')
@@ -135,36 +165,28 @@ export default function EnhancedPointsPage() {
     }
   }, [ready, authenticated, profileData, profileLoading, router])
 
-  const handleApplyTemplate = async () => {
-    if (selectedTemplate) {
-      const template = POINT_TEMPLATES[selectedTemplate]
-
-      try {
-        // Create all actions from the template
-        for (const action of template.actions) {
-          await createPointAction({
-            variables: {
-              input: {
-                action_key: action.action_key,
-                action_name: action.action_name,
-                description: action.description,
-                points_value: action.points_value,
-                category: action.category,
-                is_active: true,
-                requires_verification: false,
-              }
-            }
-          })
-        }
-
-        setShowSetupWizard(false)
-        setSelectedTemplate(null)
-        refetch()
-      } catch (error) {
-        console.error('Error applying template:', error)
-        alert('Some actions may already exist or there was an error creating them')
-      }
-    }
+  // Fill the custom action form with a template action's values
+  const applyTemplateToForm = (templateAction: {
+    action_key: string
+    action_name: string
+    points_value: number
+    category: PointActionCategory
+    description: string
+  }) => {
+    setCustomAction({
+      action_key: templateAction.action_key,
+      action_name: templateAction.action_name,
+      description: templateAction.description,
+      points_value: templateAction.points_value,
+      category: templateAction.category,
+      is_active: true,
+      requires_verification: false,
+      max_per_day: null,
+      max_per_week: null,
+      max_per_month: null,
+    })
+    // Open the custom form and close templates
+    openSection('custom')
   }
 
   const handleCreateCustomAction = async () => {
@@ -286,6 +308,15 @@ export default function EnhancedPointsPage() {
   return (
     <DashboardLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Back Navigation */}
+        <Link
+          href="/dashboard/admin"
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6"
+        >
+          <FiArrowLeft size={20} />
+          <span>Back to Admin</span>
+        </Link>
+
         <div className="flex items-center justify-between mb-6 sm:mb-8">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">
@@ -306,14 +337,14 @@ export default function EnhancedPointsPage() {
               {editMode ? 'View Mode' : 'Edit Mode'}
             </button>
             <button
-              onClick={() => setShowCustomForm(!showCustomForm)}
+              onClick={() => toggleSection('custom')}
               className="flex items-center gap-2 px-4 py-2 bg-purple-600 rounded-lg hover:opacity-90 transition-opacity"
             >
               <FiPlus size={20} />
               Create Action
             </button>
             <button
-              onClick={() => setShowSetupWizard(!showSetupWizard)}
+              onClick={() => toggleSection('wizard')}
               className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-blue rounded-lg hover:opacity-90 transition-opacity"
             >
               <FiZap size={20} />
@@ -333,7 +364,7 @@ export default function EnhancedPointsPage() {
           </div>
 
           <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6 cursor-pointer hover:border-neon-purple/40"
-               onClick={() => setShowBondingSection(!showBondingSection)}>
+               onClick={() => toggleSection('bonding')}>
             <div className="flex items-center justify-between mb-2">
               <FiLock className="text-purple-400" size={24} />
             </div>
@@ -342,7 +373,7 @@ export default function EnhancedPointsPage() {
           </div>
 
           <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6 cursor-pointer hover:border-neon-purple/40"
-               onClick={() => setShowWearableSection(!showWearableSection)}>
+               onClick={() => toggleSection('wearable')}>
             <div className="flex items-center justify-between mb-2">
               <FiWatch className="text-green-400" size={24} />
             </div>
@@ -359,7 +390,7 @@ export default function EnhancedPointsPage() {
           </div>
         </div>
 
-        {/* Guided Setup Wizard */}
+        {/* Template Actions Library */}
         <AnimatePresence>
           {showSetupWizard && (
             <motion.div
@@ -368,73 +399,127 @@ export default function EnhancedPointsPage() {
               exit={{ opacity: 0, height: 0 }}
               className="mb-8 bg-bg-secondary rounded-xl border border-neon-purple/20 p-6"
             >
-              <h2 className="text-xl font-bold text-text-primary mb-4">
-                🎯 Choose a Point System Template
-              </h2>
-              <p className="text-text-secondary mb-6">
-                Select a pre-configured template to quickly set up your point system
-              </p>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-xl font-bold text-text-primary">
+                    🎯 Action Templates
+                  </h2>
+                  <p className="text-text-secondary text-sm mt-1">
+                    Click any action to fill the create form with its values
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowSetupWizard(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <FiX size={20} />
+                </button>
+              </div>
 
-              <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+              <div className="space-y-6">
                 {Object.entries(POINT_TEMPLATES).map(([key, template]) => {
                   const Icon = template.icon
+                  const isExpanded = selectedTemplate === key
                   return (
-                    <div
-                      key={key}
-                      onClick={() => setSelectedTemplate(key as keyof typeof POINT_TEMPLATES)}
-                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                        selectedTemplate === key
-                          ? 'border-neon-purple bg-neon-purple/10'
-                          : 'border-gray-700 hover:border-gray-600'
-                      }`}
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className={`p-2 rounded-lg ${template.bgColor}`}>
-                          <Icon className={template.color} size={24} />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-bold text-text-primary mb-1">{template.name}</h3>
-                          <p className="text-sm text-text-secondary mb-3">{template.description}</p>
-                          <div className="space-y-1">
-                            {template.actions.slice(0, 3).map((action, idx) => (
-                              <div key={idx} className="text-xs text-text-secondary">
-                                • {action.action_name} (+{action.points_value} pts)
-                              </div>
-                            ))}
-                            {template.actions.length > 3 && (
-                              <div className="text-xs text-text-secondary">
-                                • And {template.actions.length - 3} more...
-                              </div>
-                            )}
+                    <div key={key} className="border border-gray-700 rounded-lg overflow-hidden">
+                      {/* Template Header - Click to expand/collapse */}
+                      <div
+                        onClick={() => setSelectedTemplate(isExpanded ? null : key as keyof typeof POINT_TEMPLATES)}
+                        className={`p-4 cursor-pointer transition-all hover:bg-white/5 ${
+                          isExpanded ? 'bg-neon-purple/10 border-b border-gray-700' : ''
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2 rounded-lg ${template.bgColor}`}>
+                            <Icon className={template.color} size={20} />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-bold text-text-primary">{template.name}</h3>
+                            <p className="text-xs text-text-secondary">{template.description}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-text-secondary bg-gray-700 px-2 py-1 rounded">
+                              {template.actions.length} actions
+                            </span>
+                            <motion.div
+                              animate={{ rotate: isExpanded ? 180 : 0 }}
+                              transition={{ duration: 0.2 }}
+                            >
+                              <FiActivity className={isExpanded ? 'text-neon-purple' : 'text-gray-400'} size={16} />
+                            </motion.div>
                           </div>
                         </div>
                       </div>
+
+                      {/* Template Actions - Clickable to fill form */}
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="bg-bg-primary/50"
+                          >
+                            <div className="p-4 grid gap-2">
+                              {template.actions.map((action, idx) => {
+                                // Check if action already exists
+                                const exists = pointActions.some(pa => pa.action_key === action.action_key)
+                                return (
+                                  <div
+                                    key={idx}
+                                    onClick={() => !exists && applyTemplateToForm(action)}
+                                    className={`p-3 rounded-lg border transition-all ${
+                                      exists
+                                        ? 'border-gray-700 bg-gray-800/50 opacity-50 cursor-not-allowed'
+                                        : 'border-gray-700 hover:border-neon-purple hover:bg-neon-purple/5 cursor-pointer'
+                                    }`}
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-neon-purple to-neon-blue flex items-center justify-center text-xs font-bold text-white">
+                                          +{action.points_value}
+                                        </div>
+                                        <div>
+                                          <p className="text-sm font-medium text-text-primary">
+                                            {action.action_name}
+                                          </p>
+                                          <p className="text-xs text-text-secondary">
+                                            {action.description}
+                                          </p>
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <span className={`text-xs px-2 py-1 rounded ${
+                                          action.category === 'social' ? 'bg-blue-400/20 text-blue-400' :
+                                          action.category === 'activity' ? 'bg-purple-400/20 text-purple-400' :
+                                          action.category === 'event' ? 'bg-green-400/20 text-green-400' :
+                                          action.category === 'achievement' ? 'bg-yellow-400/20 text-yellow-400' :
+                                          action.category === 'referral' ? 'bg-pink-400/20 text-pink-400' :
+                                          'bg-gray-400/20 text-gray-400'
+                                        }`}>
+                                          {action.category}
+                                        </span>
+                                        {exists ? (
+                                          <span className="text-xs text-green-400 flex items-center gap-1">
+                                            <FiCheck size={12} /> exists
+                                          </span>
+                                        ) : (
+                                          <span className="text-xs text-neon-purple flex items-center gap-1">
+                                            <FiPlus size={12} /> use
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   )
                 })}
-              </div>
-
-              <div className="flex justify-end gap-4 mt-6">
-                <button
-                  onClick={() => {
-                    setShowSetupWizard(false)
-                    setSelectedTemplate(null)
-                  }}
-                  className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleApplyTemplate}
-                  disabled={!selectedTemplate}
-                  className={`px-6 py-3 rounded-lg transition-all ${
-                    selectedTemplate
-                      ? 'bg-gradient-to-r from-neon-purple to-neon-blue text-white hover:opacity-90'
-                      : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                  }`}
-                >
-                  Apply Template
-                </button>
               </div>
             </motion.div>
           )}
@@ -449,9 +534,38 @@ export default function EnhancedPointsPage() {
               exit={{ opacity: 0, height: 0 }}
               className="mb-8 bg-bg-secondary rounded-xl border border-neon-purple/20 p-6"
             >
-              <h2 className="text-xl font-bold text-text-primary mb-4">
-                ✨ Create Custom Point Action
-              </h2>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-xl font-bold text-text-primary">
+                    ✨ {customAction.action_key ? 'Create Point Action' : 'Create Custom Point Action'}
+                  </h2>
+                  {customAction.action_key && (
+                    <p className="text-text-secondary text-sm mt-1">
+                      Pre-filled from template. Modify values as needed before creating.
+                    </p>
+                  )}
+                </div>
+                <button
+                  onClick={() => {
+                    setShowCustomForm(false)
+                    setCustomAction({
+                      action_key: '',
+                      action_name: '',
+                      description: '',
+                      points_value: 10,
+                      category: 'activity' as PointActionCategory,
+                      is_active: true,
+                      requires_verification: false,
+                      max_per_day: null,
+                      max_per_week: null,
+                      max_per_month: null,
+                    })
+                  }}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <FiX size={20} />
+                </button>
+              </div>
 
               <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                 <div>
@@ -559,10 +673,9 @@ export default function EnhancedPointsPage() {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-4 mt-6">
+              <div className="flex justify-between items-center mt-6">
                 <button
                   onClick={() => {
-                    setShowCustomForm(false)
                     setCustomAction({
                       action_key: '',
                       action_name: '',
@@ -576,9 +689,9 @@ export default function EnhancedPointsPage() {
                       max_per_month: null,
                     })
                   }}
-                  className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                  className="text-sm text-text-secondary hover:text-white transition-colors"
                 >
-                  Cancel
+                  Clear Form
                 </button>
                 <button
                   onClick={handleCreateCustomAction}

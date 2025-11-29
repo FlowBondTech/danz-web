@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/src/contexts/AuthContext'
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import { useGetMyProfileQuery, useGetAllUsersQuery, useUpdateUserRoleMutation, useApproveOrganizerMutation, UserRole } from '@/src/generated/graphql'
-import { FiUsers, FiShield, FiCalendar, FiCheck, FiX, FiSearch, FiChevronDown, FiUserCheck, FiEdit2 } from 'react-icons/fi'
+import { FiUsers, FiShield, FiCalendar, FiCheck, FiX, FiSearch, FiChevronDown, FiUserCheck, FiEdit2, FiArrowLeft } from 'react-icons/fi'
+import Link from 'next/link'
 
 export default function AdminUsersPage() {
   const router = useRouter()
@@ -104,6 +105,15 @@ export default function AdminUsersPage() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        {/* Back Navigation */}
+        <Link
+          href="/dashboard/admin"
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+        >
+          <FiArrowLeft size={20} />
+          <span>Back to Admin</span>
+        </Link>
+
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-white">User Management</h1>
