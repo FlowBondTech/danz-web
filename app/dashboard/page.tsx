@@ -15,6 +15,7 @@ function DashboardContent() {
 
   const { data, loading, error, refetch } = useGetMyProfileQuery({
     skip: !authenticated,
+    fetchPolicy: 'cache-and-network', // Always fetch fresh stats
   })
 
   useEffect(() => {

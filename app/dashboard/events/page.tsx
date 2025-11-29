@@ -38,7 +38,7 @@ export default function EventsPage() {
   const [recurrenceDays, setRecurrenceDays] = useState<string[]>([])
   const [recurrenceCount, setRecurrenceCount] = useState<number | null>(null)
 
-  const { data: profileData } = useGetMyProfileQuery({
+  const { data: profileData, refetch: refetchProfile } = useGetMyProfileQuery({
     skip: !authenticated,
   })
 
@@ -57,6 +57,7 @@ export default function EventsPage() {
     onCompleted: () => {
       setShowCreateForm(false)
       refetch()
+      refetchProfile() // Update dashboard stats
     }
   })
 
