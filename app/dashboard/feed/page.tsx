@@ -8,9 +8,23 @@ import {
   useUnlikePostMutation,
 } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
-import { FiHeart, FiImage, FiMessageCircle, FiSend, FiX } from 'react-icons/fi'
+import {
+  FiChevronRight,
+  FiHeart,
+  FiHome,
+  FiImage,
+  FiMessageCircle,
+  FiPlus,
+  FiSend,
+  FiShare2,
+  FiTrendingUp,
+  FiUsers,
+  FiX,
+  FiZap,
+} from 'react-icons/fi'
 
 function FeedContent() {
   const { authenticated, ready } = usePrivy()
@@ -97,7 +111,10 @@ function FeedContent() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-white text-2xl">Loading feed...</div>
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 border-4 border-neon-purple/30 border-t-neon-purple rounded-full animate-spin" />
+            <p className="text-text-secondary">Loading your feed...</p>
+          </div>
         </div>
       </DashboardLayout>
     )
@@ -107,7 +124,13 @@ function FeedContent() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-red-400 text-xl">Error loading feed</div>
+          <div className="text-center">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/10 flex items-center justify-center">
+              <FiX className="w-8 h-8 text-red-400" />
+            </div>
+            <p className="text-red-400 text-xl mb-2">Error loading feed</p>
+            <p className="text-text-secondary text-sm">Please try again later</p>
+          </div>
         </div>
       </DashboardLayout>
     )
@@ -117,140 +140,241 @@ function FeedContent() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-2xl mx-auto px-4 py-6">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-text-primary mb-4">Feed</h1>
+      <div className="max-w-3xl mx-auto px-4 py-6">
+        {/* Breadcrumb Navigation */}
+        <nav className="flex items-center gap-2 text-sm mb-6">
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-1.5 text-text-secondary hover:text-neon-purple transition-colors"
+          >
+            <FiHome className="w-4 h-4" />
+            <span>Home</span>
+          </Link>
+          <FiChevronRight className="w-4 h-4 text-text-secondary/50" />
+          <span className="text-neon-purple font-medium">Feed</span>
+        </nav>
 
-          {/* Create Post Button */}
-          {!showCreatePost && (
+        {/* Hero Header */}
+        <div className="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-neon-purple/20 via-bg-secondary to-neon-pink/10 border border-neon-purple/20 p-6 sm:p-8">
+          {/* Background decoration */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-neon-purple/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-neon-pink/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+
+          <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center shadow-lg shadow-neon-purple/25">
+                <FiZap className="w-7 h-7 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">Community Feed</h1>
+                <p className="text-text-secondary mt-1">See what dancers are sharing</p>
+              </div>
+            </div>
+
             <button
               onClick={() => setShowCreatePost(true)}
-              className="w-full bg-bg-secondary border border-neon-purple/20 rounded-xl p-4 text-left text-text-secondary hover:border-neon-purple/40 transition-colors"
+              className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-neon-purple to-neon-pink rounded-xl font-semibold text-white shadow-lg shadow-neon-purple/25 hover:shadow-neon-purple/40 hover:scale-105 transition-all duration-200"
             >
-              What's on your mind?
+              <FiPlus className="w-5 h-5" />
+              <span>New Post</span>
             </button>
-          )}
+          </div>
 
-          {/* Create Post Form */}
-          {showCreatePost && (
-            <div className="bg-bg-secondary border border-neon-purple/20 rounded-xl p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-text-primary">Create Post</h2>
+          {/* Quick Stats */}
+          <div className="relative mt-6 grid grid-cols-3 gap-4">
+            <div className="text-center p-3 rounded-xl bg-bg-primary/50 backdrop-blur-sm border border-white/5">
+              <div className="flex items-center justify-center gap-1.5 text-neon-purple mb-1">
+                <FiTrendingUp className="w-4 h-4" />
+                <span className="font-bold">{posts.length}</span>
+              </div>
+              <p className="text-xs text-text-secondary">Posts Today</p>
+            </div>
+            <div className="text-center p-3 rounded-xl bg-bg-primary/50 backdrop-blur-sm border border-white/5">
+              <div className="flex items-center justify-center gap-1.5 text-neon-pink mb-1">
+                <FiUsers className="w-4 h-4" />
+                <span className="font-bold">Active</span>
+              </div>
+              <p className="text-xs text-text-secondary">Community</p>
+            </div>
+            <div className="text-center p-3 rounded-xl bg-bg-primary/50 backdrop-blur-sm border border-white/5">
+              <div className="flex items-center justify-center gap-1.5 text-neon-cyan mb-1">
+                <FiHeart className="w-4 h-4" />
+                <span className="font-bold">Vibes</span>
+              </div>
+              <p className="text-xs text-text-secondary">Positive</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Create Post Modal */}
+        {showCreatePost && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="w-full max-w-lg bg-bg-secondary border border-neon-purple/30 rounded-2xl p-6 shadow-2xl shadow-neon-purple/10">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center">
+                    <FiSend className="w-5 h-5 text-white" />
+                  </div>
+                  <h2 className="text-xl font-bold text-text-primary">Create Post</h2>
+                </div>
                 <button
                   onClick={() => {
                     setShowCreatePost(false)
                     setPostContent('')
                   }}
-                  className="text-text-secondary hover:text-text-primary"
+                  className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors"
                 >
-                  <FiX size={20} />
+                  <FiX size={18} />
                 </button>
               </div>
 
               <textarea
                 value={postContent}
                 onChange={(e) => setPostContent(e.target.value)}
-                placeholder="Share your dance journey..."
-                className="w-full bg-bg-primary border border-white/10 rounded-lg p-3 text-text-primary placeholder-text-secondary resize-none focus:outline-none focus:border-neon-purple/50"
-                rows={4}
+                placeholder="Share your dance journey, a win, or just say hi..."
+                className="w-full bg-bg-primary border border-white/10 rounded-xl p-4 text-text-primary placeholder-text-secondary resize-none focus:outline-none focus:border-neon-purple/50 focus:ring-2 focus:ring-neon-purple/20 transition-all"
+                rows={5}
+                autoFocus
               />
 
-              <div className="flex items-center justify-between">
-                <button className="text-text-secondary hover:text-neon-purple transition-colors">
-                  <FiImage size={20} />
-                </button>
+              <div className="flex items-center justify-between mt-4">
+                <div className="flex items-center gap-2">
+                  <button className="w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-text-secondary hover:text-neon-purple transition-colors">
+                    <FiImage size={20} />
+                  </button>
+                </div>
 
-                <button
-                  onClick={handleCreatePost}
-                  disabled={creating || !postContent.trim()}
-                  className="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                >
-                  <FiSend size={16} />
-                  {creating ? 'Posting...' : 'Post'}
-                </button>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-text-secondary">
+                    {postContent.length}/500
+                  </span>
+                  <button
+                    onClick={handleCreatePost}
+                    disabled={creating || !postContent.trim()}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-neon-purple to-neon-pink rounded-xl font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-neon-purple/25 transition-all"
+                  >
+                    <FiSend size={16} />
+                    {creating ? 'Posting...' : 'Post'}
+                  </button>
+                </div>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Feed */}
         <div className="space-y-4">
           {posts.length === 0 ? (
-            <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-12 text-center">
-              <p className="text-text-secondary mb-4">No posts yet. Be the first to share!</p>
-              <button onClick={() => setShowCreatePost(true)} className="btn btn-primary">
-                Create Post
-              </button>
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-bg-secondary to-bg-primary border border-neon-purple/20 p-12 text-center">
+              {/* Decorative elements */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-neon-purple/5 rounded-full blur-3xl" />
+
+              <div className="relative">
+                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-neon-purple/20 to-neon-pink/20 flex items-center justify-center border border-neon-purple/20">
+                  <FiMessageCircle className="w-10 h-10 text-neon-purple" />
+                </div>
+                <h3 className="text-xl font-bold text-text-primary mb-2">No posts yet</h3>
+                <p className="text-text-secondary mb-6 max-w-sm mx-auto">
+                  Be the first to share something with the community! Your dance journey matters.
+                </p>
+                <button
+                  onClick={() => setShowCreatePost(true)}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-neon-purple to-neon-pink rounded-xl font-semibold text-white shadow-lg shadow-neon-purple/25 hover:shadow-neon-purple/40 hover:scale-105 transition-all duration-200"
+                >
+                  <FiPlus className="w-5 h-5" />
+                  Create First Post
+                </button>
+              </div>
             </div>
           ) : (
-            posts.map((post) => (
-              <div
+            posts.map((post, index) => (
+              <article
                 key={post.id}
-                className="bg-bg-secondary border border-neon-purple/20 rounded-xl p-6"
+                className="group bg-bg-secondary border border-white/5 hover:border-neon-purple/30 rounded-2xl p-5 sm:p-6 transition-all duration-300 hover:shadow-lg hover:shadow-neon-purple/5"
+                style={{ animationDelay: `${index * 50}ms` }}
               >
                 {/* Post Header */}
-                <div className="flex items-center gap-3 mb-4">
-                  {post.user?.avatar_url ? (
-                    <img
-                      src={post.user.avatar_url}
-                      alt={post.user.display_name || post.user.username || 'User'}
-                      className="w-10 h-10 rounded-full object-cover border-2 border-neon-purple/50"
-                    />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white font-bold">
-                      {post.user?.username?.charAt(0).toUpperCase() || 'U'}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    {post.user?.avatar_url ? (
+                      <img
+                        src={post.user.avatar_url}
+                        alt={post.user.display_name || post.user.username || 'User'}
+                        className="w-12 h-12 rounded-xl object-cover border-2 border-neon-purple/30 group-hover:border-neon-purple/50 transition-colors"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-neon-purple/20">
+                        {post.user?.username?.charAt(0).toUpperCase() || 'U'}
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-semibold text-text-primary group-hover:text-neon-purple transition-colors">
+                        {post.user?.display_name || post.user?.username}
+                      </p>
+                      <p className="text-sm text-text-secondary">
+                        {formatTimeAgo(new Date(post.created_at))}
+                      </p>
                     </div>
-                  )}
-                  <div>
-                    <p className="font-semibold text-text-primary">
-                      {post.user?.display_name || post.user?.username}
-                    </p>
-                    <p className="text-sm text-text-secondary">
-                      {new Date(post.created_at).toLocaleDateString()}
-                    </p>
                   </div>
+
+                  <button className="w-8 h-8 rounded-lg bg-white/5 opacity-0 group-hover:opacity-100 hover:bg-white/10 flex items-center justify-center text-text-secondary hover:text-text-primary transition-all">
+                    <FiShare2 size={16} />
+                  </button>
                 </div>
 
                 {/* Post Content */}
-                <p className="text-text-primary mb-4 whitespace-pre-wrap">{post.content}</p>
+                <p className="text-text-primary leading-relaxed mb-4 whitespace-pre-wrap">{post.content}</p>
 
                 {/* Post Media */}
                 {post.media_url && post.media_type === 'image' && (
-                  <img
-                    src={post.media_url}
-                    alt="Post media"
-                    className="w-full rounded-lg mb-4 max-h-96 object-cover"
-                  />
+                  <div className="relative rounded-xl overflow-hidden mb-4">
+                    <img
+                      src={post.media_url}
+                      alt="Post media"
+                      className="w-full max-h-96 object-cover"
+                    />
+                  </div>
                 )}
 
                 {/* Post Actions */}
-                <div className="flex items-center gap-6 pt-4 border-t border-white/10">
+                <div className="flex items-center gap-1 pt-4 border-t border-white/5">
                   <button
                     onClick={() => handleLike(post.id, post.is_liked_by_me)}
-                    className={`flex items-center gap-2 transition-colors ${
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 ${
                       post.is_liked_by_me
-                        ? 'text-neon-pink'
-                        : 'text-text-secondary hover:text-neon-pink'
+                        ? 'bg-neon-pink/10 text-neon-pink'
+                        : 'text-text-secondary hover:bg-white/5 hover:text-neon-pink'
                     }`}
                   >
-                    <FiHeart size={20} fill={post.is_liked_by_me ? 'currentColor' : 'none'} />
-                    <span>{post.likes_count}</span>
+                    <FiHeart
+                      size={18}
+                      fill={post.is_liked_by_me ? 'currentColor' : 'none'}
+                      className={post.is_liked_by_me ? 'animate-pulse' : ''}
+                    />
+                    <span className="font-medium">{post.likes_count}</span>
                   </button>
 
-                  <button className="flex items-center gap-2 text-text-secondary hover:text-neon-purple transition-colors">
-                    <FiMessageCircle size={20} />
-                    <span>{post.comments_count}</span>
+                  <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-text-secondary hover:bg-white/5 hover:text-neon-purple transition-all duration-200">
+                    <FiMessageCircle size={18} />
+                    <span className="font-medium">{post.comments_count}</span>
+                  </button>
+
+                  <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-text-secondary hover:bg-white/5 hover:text-neon-cyan transition-all duration-200 ml-auto">
+                    <FiShare2 size={18} />
+                    <span className="font-medium hidden sm:inline">Share</span>
                   </button>
                 </div>
-              </div>
+              </article>
             ))
           )}
 
           {/* Load More */}
           {data?.getFeed.has_more && (
-            <button onClick={loadMore} className="w-full btn btn-outline">
-              Load More
+            <button
+              onClick={loadMore}
+              className="w-full py-4 rounded-xl border border-neon-purple/20 text-neon-purple font-medium hover:bg-neon-purple/10 hover:border-neon-purple/40 transition-all duration-200"
+            >
+              Load More Posts
             </button>
           )}
         </div>
@@ -259,13 +383,29 @@ function FeedContent() {
   )
 }
 
+// Helper function to format time ago
+function formatTimeAgo(date: Date): string {
+  const now = new Date()
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+
+  if (diffInSeconds < 60) return 'Just now'
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`
+  if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`
+
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
 export default function FeedPage() {
   return (
     <Suspense
       fallback={
         <DashboardLayout>
           <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="text-white text-2xl">Loading...</div>
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-12 h-12 border-4 border-neon-purple/30 border-t-neon-purple rounded-full animate-spin" />
+              <p className="text-text-secondary">Loading...</p>
+            </div>
           </div>
         </DashboardLayout>
       }
