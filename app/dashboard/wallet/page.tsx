@@ -20,6 +20,8 @@ import {
   FiKey,
   FiLock,
   FiUnlock,
+  FiAlertTriangle,
+  FiX,
 } from 'react-icons/fi'
 import { SiEthereum, SiSolana } from 'react-icons/si'
 
@@ -43,6 +45,7 @@ export default function WalletPage() {
   const [success, setSuccess] = useState<string | null>(null)
   const [isCreatingWallet, setIsCreatingWallet] = useState(false)
   const [isExporting, setIsExporting] = useState(false)
+  const [exportWarningWallet, setExportWarningWallet] = useState<WalletInfo | null>(null)
 
   useEffect(() => {
     if (ready && !authenticated) {
@@ -93,15 +96,31 @@ export default function WalletPage() {
     }
   }
 
-  const handleExportWallet = async (address: string) => {
+  const showExportWarning = (wallet: WalletInfo) => {
+    setExportWarningWallet(wallet)
+  }
+
+  const handleExportWallet = async () => {
+    if (!exportWarningWallet) return
+
+    const { address, chainType } = exportWarningWallet
     setIsExporting(true)
+    setExportWarningWallet(null)
+
     try {
+      // Note: Privy's exportWallet may only support Ethereum embedded wallets
+      // Solana export might require a different approach
       await exportWallet({ address })
       setSuccess("Check the Privy modal to export your wallet")
       setTimeout(() => setSuccess(null), 3000)
     } catch (err: any) {
-      setError(err.message || "Failed to export wallet")
-      setTimeout(() => setError(null), 3000)
+      console.error('Export wallet error:', err)
+      if (chainType === 'solana') {
+        setError("Solana wallet export may not be supported yet. Contact support for assistance.")
+      } else {
+        setError(err.message || "Failed to export wallet")
+      }
+      setTimeout(() => setError(null), 5000)
     } finally {
       setIsExporting(false)
     }
@@ -235,6 +254,101 @@ export default function WalletPage() {
             >
               <FiCheck className="w-5 h-5 flex-shrink-0" />
               <span>{success}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Export Warning Modal */}
+        <AnimatePresence>
+          {exportWarningWallet && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+              onClick={() => setExportWarningWallet(null)}
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-bg-secondary rounded-2xl border border-red-500/30 p-6 max-w-md w-full shadow-2xl"
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
+                      <FiAlertTriangle className="w-6 h-6 text-red-500" />
+                    </div>
+                    <h3 className="text-xl font-bold text-text-primary">Security Warning</h3>
+                  </div>
+                  <button
+                    onClick={() => setExportWarningWallet(null)}
+                    className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+                  >
+                    <FiX className="w-5 h-5 text-text-secondary" />
+                  </button>
+                </div>
+
+                {/* Warning Content */}
+                <div className="space-y-4 mb-6">
+                  <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+                    <p className="text-red-400 font-medium mb-2">⚠️ NEVER share your private key!</p>
+                    <ul className="text-sm text-text-secondary space-y-1">
+                      <li>• Anyone with your key can steal your funds</li>
+                      <li>• DANZ staff will NEVER ask for your key</li>
+                      <li>• Store it securely offline (not screenshots)</li>
+                      <li>• Don't paste it into websites or apps</li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-bg-primary rounded-xl p-4">
+                    <p className="text-text-secondary text-sm mb-2">Exporting key for:</p>
+                    <div className="flex items-center gap-2">
+                      <span className={`inline-flex items-center gap-1.5 px-2 py-1 text-xs rounded-full ${
+                        exportWarningWallet.chainType === 'solana'
+                          ? 'bg-purple-500/20 text-purple-400'
+                          : 'bg-blue-500/20 text-blue-400'
+                      }`}>
+                        {exportWarningWallet.chainType === 'solana' ? (
+                          <SiSolana className="w-3 h-3" />
+                        ) : (
+                          <SiEthereum className="w-3 h-3" />
+                        )}
+                        {exportWarningWallet.chainType === 'solana' ? 'Solana' : 'Ethereum'}
+                      </span>
+                      <code className="text-text-primary text-sm font-mono">
+                        {exportWarningWallet.address.slice(0, 8)}...{exportWarningWallet.address.slice(-6)}
+                      </code>
+                    </div>
+                  </div>
+
+                  {exportWarningWallet.chainType === 'solana' && (
+                    <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
+                      <p className="text-yellow-400 text-sm">
+                        <strong>Note:</strong> Solana wallet export may have limited support. If export fails, contact support for assistance.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setExportWarningWallet(null)}
+                    className="flex-1 px-4 py-3 bg-bg-primary border border-white/10 text-text-primary rounded-xl font-medium hover:bg-white/5 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleExportWallet}
+                    className="flex-1 px-4 py-3 bg-red-500/20 border border-red-500/30 text-red-400 rounded-xl font-medium hover:bg-red-500/30 transition-colors"
+                  >
+                    I Understand, Export
+                  </button>
+                </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -403,7 +517,7 @@ export default function WalletPage() {
                       </button>
                     )}
                     <button
-                      onClick={() => handleExportWallet(wallet.address)}
+                      onClick={() => showExportWarning(wallet)}
                       disabled={isExporting}
                       className="flex items-center justify-center gap-2 px-4 py-3 bg-orange-500/10 hover:bg-orange-500/20 text-orange-500 rounded-xl font-medium transition-colors disabled:opacity-50"
                     >
