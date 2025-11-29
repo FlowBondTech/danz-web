@@ -374,19 +374,34 @@ export default function WalletPage() {
 
                   {/* Embedded Wallet Actions */}
                   <div className="mt-6 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
-                    <button
-                      onClick={() => handleFundWallet(wallet.address, wallet.chainType)}
-                      disabled={wallet.chainType === 'solana'}
-                      className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-colors ${
-                        wallet.chainType === 'solana'
-                          ? 'bg-gray-500/10 text-gray-500 cursor-not-allowed'
-                          : 'bg-green-500/10 hover:bg-green-500/20 text-green-500'
-                      }`}
-                      title={wallet.chainType === 'solana' ? 'Fiat on-ramp not available for Solana' : 'Add funds via card'}
-                    >
-                      <FiDollarSign className="w-5 h-5" />
-                      {wallet.chainType === 'solana' ? 'N/A (Solana)' : 'Add Funds'}
-                    </button>
+                    {wallet.chainType === 'solana' ? (
+                      <button
+                        onClick={() => copyToClipboard(wallet.address)}
+                        className="flex items-center justify-center gap-2 px-4 py-3 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 rounded-xl font-medium transition-colors"
+                        title="Copy Solana address to receive funds"
+                      >
+                        {copiedAddress === wallet.address ? (
+                          <>
+                            <FiCheck className="w-5 h-5" />
+                            Copied!
+                          </>
+                        ) : (
+                          <>
+                            <FiCopy className="w-5 h-5" />
+                            Receive SOL
+                          </>
+                        )}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleFundWallet(wallet.address, wallet.chainType)}
+                        className="flex items-center justify-center gap-2 px-4 py-3 bg-green-500/10 hover:bg-green-500/20 text-green-500 rounded-xl font-medium transition-colors"
+                        title="Add funds via card"
+                      >
+                        <FiDollarSign className="w-5 h-5" />
+                        Add Funds
+                      </button>
+                    )}
                     <button
                       onClick={() => handleExportWallet(wallet.address)}
                       disabled={isExporting}
@@ -516,7 +531,19 @@ export default function WalletPage() {
 
                     {/* Actions */}
                     <div className="flex items-center gap-2">
-                      {wallet.chainType !== 'solana' && (
+                      {wallet.chainType === 'solana' ? (
+                        <button
+                          onClick={() => copyToClipboard(wallet.address)}
+                          className="p-2 hover:bg-purple-500/10 text-text-secondary hover:text-purple-400 rounded-lg transition-all"
+                          title="Copy address to receive SOL"
+                        >
+                          {copiedAddress === wallet.address ? (
+                            <FiCheck className="w-5 h-5 text-green-500" />
+                          ) : (
+                            <FiCopy className="w-5 h-5" />
+                          )}
+                        </button>
+                      ) : (
                         <button
                           onClick={() => handleFundWallet(wallet.address, wallet.chainType)}
                           className="p-2 hover:bg-green-500/10 text-text-secondary hover:text-green-500 rounded-lg transition-all"
