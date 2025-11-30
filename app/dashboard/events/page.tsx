@@ -1,26 +1,16 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
-import { useGetEventsQuery, useCreateEventMutation, useRegisterForEventMutation, useGetMyProfileQuery, EventStatus, RecurrenceType } from '@/src/generated/graphql'
+import { useGetEventsQuery, useCreateEventMutation, useRegisterForEventMutation, useGetMyProfileQuery, EventStatus } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
 import { useState } from 'react'
-import { FiCalendar, FiMapPin, FiUsers, FiDollarSign, FiClock, FiPlus, FiX, FiCheck, FiMusic, FiStar, FiAlertCircle, FiRepeat } from 'react-icons/fi'
+import { FiCalendar, FiMapPin, FiUsers, FiDollarSign, FiClock, FiPlus, FiX, FiCheck, FiMusic, FiStar, FiAlertCircle } from 'react-icons/fi'
 import { motion, AnimatePresence } from 'motion/react'
 
 interface DateValidationError {
   field: 'start_date_time' | 'end_date_time'
   message: string
 }
-
-const WEEKDAYS = [
-  { value: 'monday', label: 'Mon' },
-  { value: 'tuesday', label: 'Tue' },
-  { value: 'wednesday', label: 'Wed' },
-  { value: 'thursday', label: 'Thu' },
-  { value: 'friday', label: 'Fri' },
-  { value: 'saturday', label: 'Sat' },
-  { value: 'sunday', label: 'Sun' },
-]
 
 export default function EventsPage() {
   const { authenticated } = usePrivy()
@@ -30,13 +20,6 @@ export default function EventsPage() {
   const [dateErrors, setDateErrors] = useState<DateValidationError[]>([])
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  // Recurring event state
-  const [isRecurring, setIsRecurring] = useState(false)
-  const [recurrenceType, setRecurrenceType] = useState<RecurrenceType>(RecurrenceType.Weekly)
-  const [recurrenceEndDate, setRecurrenceEndDate] = useState('')
-  const [recurrenceDays, setRecurrenceDays] = useState<string[]>([])
-  const [recurrenceCount, setRecurrenceCount] = useState<number | null>(null)
 
   const { data: profileData, refetch: refetchProfile } = useGetMyProfileQuery({
     skip: !authenticated,
@@ -145,22 +128,9 @@ export default function EventsPage() {
             dance_styles: (formData.get('dance_styles') as string)?.split(',').map(t => t.trim()).filter(Boolean) || [],
             start_date_time: new Date(startDateStr).toISOString(),
             end_date_time: new Date(endDateStr).toISOString(),
-            // Recurring event fields
-            is_recurring: isRecurring,
-            recurrence_type: isRecurring ? recurrenceType : RecurrenceType.None,
-            recurrence_end_date: isRecurring && recurrenceEndDate ? new Date(recurrenceEndDate).toISOString() : null,
-            recurrence_days: isRecurring && recurrenceType === RecurrenceType.Weekly ? recurrenceDays : null,
-            recurrence_count: isRecurring && recurrenceCount ? recurrenceCount : null,
           }
         }
       })
-
-      // Reset recurring event state after successful creation
-      setIsRecurring(false)
-      setRecurrenceType(RecurrenceType.Weekly)
-      setRecurrenceEndDate('')
-      setRecurrenceDays([])
-      setRecurrenceCount(null)
     } catch (error: any) {
       // Handle GraphQL errors
       const graphqlError = error?.graphQLErrors?.[0]
@@ -477,96 +447,6 @@ export default function EventsPage() {
                   />
                 </div>
 
-                {/* Recurring Event Section */}
-                <div className="border border-neon-purple/20 rounded-lg p-4 space-y-4">
-                  <div className="flex items-center gap-2">
-                    <FiRepeat className="text-neon-purple" size={18} />
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={isRecurring}
-                        onChange={(e) => setIsRecurring(e.target.checked)}
-                        className="w-4 h-4 text-purple-600 bg-black/50 border-purple-500/30 rounded focus:ring-purple-500"
-                      />
-                      <span className="text-text-primary font-medium">Make this a recurring event</span>
-                    </label>
-                  </div>
-
-                  {isRecurring && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="space-y-4 pl-6"
-                    >
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-text-secondary mb-1">
-                            Repeat Frequency *
-                          </label>
-                          <select
-                            value={recurrenceType}
-                            onChange={(e) => setRecurrenceType(e.target.value as RecurrenceType)}
-                            className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
-                          >
-                            <option value={RecurrenceType.Daily}>Daily</option>
-                            <option value={RecurrenceType.Weekly}>Weekly</option>
-                            <option value={RecurrenceType.Biweekly}>Bi-weekly</option>
-                            <option value={RecurrenceType.Monthly}>Monthly</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-text-secondary mb-1">
-                            Series End Date *
-                          </label>
-                          <input
-                            type="date"
-                            value={recurrenceEndDate}
-                            onChange={(e) => setRecurrenceEndDate(e.target.value)}
-                            min={new Date().toISOString().split('T')[0]}
-                            className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
-                          />
-                        </div>
-                      </div>
-
-                      {recurrenceType === RecurrenceType.Weekly && (
-                        <div>
-                          <label className="block text-sm font-medium text-text-secondary mb-2">
-                            Repeat on Days *
-                          </label>
-                          <div className="flex flex-wrap gap-2">
-                            {WEEKDAYS.map((day) => (
-                              <button
-                                key={day.value}
-                                type="button"
-                                onClick={() => {
-                                  setRecurrenceDays(prev =>
-                                    prev.includes(day.value)
-                                      ? prev.filter(d => d !== day.value)
-                                      : [...prev, day.value]
-                                  )
-                                }}
-                                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                                  recurrenceDays.includes(day.value)
-                                    ? 'bg-neon-purple text-white'
-                                    : 'bg-bg-primary text-text-secondary border border-neon-purple/20 hover:border-neon-purple/50'
-                                }`}
-                              >
-                                {day.label}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="text-sm text-text-secondary">
-                        <span className="text-neon-purple">Note:</span> Recurring events will automatically create instances based on your schedule.
-                      </div>
-                    </motion.div>
-                  )}
-                </div>
-
                 <div>
                   <label className="block text-sm font-medium text-text-secondary mb-1">
                     Requirements
@@ -594,11 +474,6 @@ export default function EventsPage() {
                       setShowCreateForm(false)
                       setDateErrors([])
                       setSubmitError(null)
-                      setIsRecurring(false)
-                      setRecurrenceType(RecurrenceType.Weekly)
-                      setRecurrenceEndDate('')
-                      setRecurrenceDays([])
-                      setRecurrenceCount(null)
                     }}
                     className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
                     disabled={isSubmitting}
@@ -651,9 +526,6 @@ export default function EventsPage() {
                     {event.title}
                   </h3>
                   <div className="flex items-center gap-2">
-                    {event.is_recurring && (
-                      <FiRepeat className="text-neon-purple" size={18} title="Recurring Event" />
-                    )}
                     {event.is_featured && (
                       <FiStar className="text-yellow-400" size={20} />
                     )}
