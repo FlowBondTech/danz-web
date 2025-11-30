@@ -3750,6 +3750,12 @@ export type GetEventsQuery = {
       status?: EventStatus | null
       is_registered?: boolean | null
       registration_count?: number | null
+      is_recurring?: boolean | null
+      recurrence_type?: RecurrenceType | null
+      recurrence_end_date?: any | null
+      recurrence_days?: Array<string> | null
+      recurrence_count?: number | null
+      parent_event_id?: string | null
       facilitator?: {
         __typename?: 'User'
         privy_id: string
@@ -8719,6 +8725,12 @@ export const GetEventsDocument = gql`
       status
       is_registered
       registration_count
+      is_recurring
+      recurrence_type
+      recurrence_end_date
+      recurrence_days
+      recurrence_count
+      parent_event_id
     }
     pageInfo {
       hasNextPage
