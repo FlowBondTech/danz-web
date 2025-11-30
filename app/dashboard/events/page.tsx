@@ -1,10 +1,11 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
+import OrganizerApplicationForm from '@/src/components/dashboard/OrganizerApplicationForm'
 import { useGetEventsQuery, useCreateEventMutation, useRegisterForEventMutation, useGetMyProfileQuery, EventStatus } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
 import { useState } from 'react'
-import { FiCalendar, FiMapPin, FiUsers, FiDollarSign, FiClock, FiPlus, FiX, FiCheck, FiMusic, FiStar, FiAlertCircle } from 'react-icons/fi'
+import { FiCalendar, FiMapPin, FiUsers, FiDollarSign, FiClock, FiPlus, FiX, FiCheck, FiMusic, FiStar, FiAlertCircle, FiFileText } from 'react-icons/fi'
 import { motion, AnimatePresence } from 'motion/react'
 
 interface DateValidationError {
@@ -15,6 +16,7 @@ interface DateValidationError {
 export default function EventsPage() {
   const { authenticated } = usePrivy()
   const [showCreateForm, setShowCreateForm] = useState(false)
+  const [showApplicationForm, setShowApplicationForm] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState<any>(null)
   const [registrationNotes, setRegistrationNotes] = useState('')
   const [dateErrors, setDateErrors] = useState<DateValidationError[]>([])
@@ -52,7 +54,12 @@ export default function EventsPage() {
     }
   })
 
-  const canCreateEvents = profileData?.me?.role === 'admin' || profileData?.me?.role === 'organizer'
+  // Check permissions
+  const userRole = profileData?.me?.role
+  const isApprovedOrganizer = profileData?.me?.is_organizer_approved
+  const canCreateEvents = userRole === 'admin' || userRole === 'manager' || (userRole === 'organizer' && isApprovedOrganizer)
+  const needsApproval = userRole === 'organizer' && !isApprovedOrganizer
+  const canApplyToOrganize = !canCreateEvents && authenticated
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -188,7 +195,7 @@ export default function EventsPage() {
               Join us at our upcoming events and connect with the DANZ community
             </p>
           </div>
-          {canCreateEvents && (
+          {canCreateEvents ? (
             <button
               onClick={() => setShowCreateForm(!showCreateForm)}
               className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-blue rounded-lg hover:opacity-90 transition-opacity"
@@ -205,7 +212,23 @@ export default function EventsPage() {
                 </>
               )}
             </button>
-          )}
+          ) : needsApproval ? (
+            <button
+              onClick={() => setShowApplicationForm(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 rounded-lg hover:bg-yellow-500/30 transition-colors"
+            >
+              <FiClock size={20} />
+              Approval Pending
+            </button>
+          ) : canApplyToOrganize ? (
+            <button
+              onClick={() => setShowApplicationForm(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-blue rounded-lg hover:opacity-90 transition-opacity"
+            >
+              <FiFileText size={20} />
+              Apply to Organize
+            </button>
+          ) : null}
         </div>
 
         {/* Create Event Form */}
@@ -699,6 +722,15 @@ export default function EventsPage() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Organizer Application Modal */}
+        <OrganizerApplicationForm
+          isOpen={showApplicationForm}
+          onClose={() => setShowApplicationForm(false)}
+          onSuccess={() => {
+            refetchProfile()
+          }}
+        />
       </div>
     </DashboardLayout>
   )

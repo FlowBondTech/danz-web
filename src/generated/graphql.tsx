@@ -55,6 +55,12 @@ export type AdminStats = {
   upcomingEvents: Scalars['Int']['output']
 }
 
+export enum ApplicationStatus {
+  Approved = 'approved',
+  Pending = 'pending',
+  Rejected = 'rejected',
+}
+
 export type AwardPointsInput = {
   action_key: Scalars['String']['input']
   metadata?: InputMaybe<Scalars['JSON']['input']>
@@ -101,6 +107,7 @@ export type CreateEventInput = {
   end_date_time: Scalars['DateTime']['input']
   image_url?: InputMaybe<Scalars['String']['input']>
   is_featured?: InputMaybe<Scalars['Boolean']['input']>
+  is_recurring?: InputMaybe<Scalars['Boolean']['input']>
   is_virtual?: InputMaybe<Scalars['Boolean']['input']>
   location_address?: InputMaybe<Scalars['String']['input']>
   location_city?: InputMaybe<Scalars['String']['input']>
@@ -110,6 +117,10 @@ export type CreateEventInput = {
   max_capacity?: InputMaybe<Scalars['Int']['input']>
   price_danz?: InputMaybe<Scalars['Float']['input']>
   price_usd?: InputMaybe<Scalars['Float']['input']>
+  recurrence_count?: InputMaybe<Scalars['Int']['input']>
+  recurrence_days?: InputMaybe<Array<Scalars['String']['input']>>
+  recurrence_end_date?: InputMaybe<Scalars['DateTime']['input']>
+  recurrence_type?: InputMaybe<RecurrenceType>
   requirements?: InputMaybe<Scalars['String']['input']>
   skill_level?: InputMaybe<SkillLevel>
   start_date_time: Scalars['DateTime']['input']
@@ -270,6 +281,7 @@ export type Event = {
   id: Scalars['ID']['output']
   image_url?: Maybe<Scalars['String']['output']>
   is_featured?: Maybe<Scalars['Boolean']['output']>
+  is_recurring?: Maybe<Scalars['Boolean']['output']>
   is_registered?: Maybe<Scalars['Boolean']['output']>
   is_virtual?: Maybe<Scalars['Boolean']['output']>
   location_address?: Maybe<Scalars['String']['output']>
@@ -278,9 +290,16 @@ export type Event = {
   location_longitude?: Maybe<Scalars['Float']['output']>
   location_name: Scalars['String']['output']
   max_capacity?: Maybe<Scalars['Int']['output']>
+  parent_event?: Maybe<Event>
+  parent_event_id?: Maybe<Scalars['ID']['output']>
   participants?: Maybe<Array<EventRegistration>>
   price_danz?: Maybe<Scalars['Float']['output']>
   price_usd?: Maybe<Scalars['Float']['output']>
+  recurrence_count?: Maybe<Scalars['Int']['output']>
+  recurrence_days?: Maybe<Array<Scalars['String']['output']>>
+  recurrence_end_date?: Maybe<Scalars['DateTime']['output']>
+  recurrence_type?: Maybe<RecurrenceType>
+  recurring_instances?: Maybe<Array<Event>>
   registration_count?: Maybe<Scalars['Int']['output']>
   requirements?: Maybe<Scalars['String']['output']>
   skill_level?: Maybe<SkillLevel>
@@ -361,8 +380,10 @@ export type EventFilterInput = {
   created_by_me?: InputMaybe<Scalars['Boolean']['input']>
   dance_style?: InputMaybe<Scalars['String']['input']>
   endDate?: InputMaybe<Scalars['DateTime']['input']>
+  exclude_instances?: InputMaybe<Scalars['Boolean']['input']>
   facilitator_id?: InputMaybe<Scalars['String']['input']>
   is_featured?: InputMaybe<Scalars['Boolean']['input']>
+  is_recurring?: InputMaybe<Scalars['Boolean']['input']>
   is_virtual?: InputMaybe<Scalars['Boolean']['input']>
   maxPrice?: InputMaybe<Scalars['Float']['input']>
   minPrice?: InputMaybe<Scalars['Float']['input']>
@@ -598,10 +619,12 @@ export type Mutation = {
   registerForEvent: EventRegistration
   removeEventManager: MutationResponse
   reversePointTransaction: PointTransaction
+  reviewOrganizerApplication: OrganizerApplication
   saveDanceSession: DanceSession
   sendAdminBroadcast: MutationResponse
   sendEventBroadcast: MutationResponse
   shareDanceSession: DanceSession
+  submitOrganizerApplication: OrganizerApplication
   togglePointAction: PointAction
   trackAppOpen: DailyActivity
   trackReferralClick: MutationResponse
@@ -764,6 +787,10 @@ export type MutationReversePointTransactionArgs = {
   transaction_id: Scalars['ID']['input']
 }
 
+export type MutationReviewOrganizerApplicationArgs = {
+  input: ReviewApplicationInput
+}
+
 export type MutationSaveDanceSessionArgs = {
   input: SaveDanceSessionInput
 }
@@ -779,6 +806,10 @@ export type MutationSendEventBroadcastArgs = {
 export type MutationShareDanceSessionArgs = {
   sessionId: Scalars['ID']['input']
   userIds: Array<Scalars['String']['input']>
+}
+
+export type MutationSubmitOrganizerApplicationArgs = {
+  input: SubmitOrganizerApplicationInput
 }
 
 export type MutationTogglePointActionArgs = {
@@ -935,6 +966,36 @@ export enum NotificationType {
   PostLike = 'post_like',
   Referral = 'referral',
   System = 'system',
+}
+
+export type OrganizerApplication = {
+  __typename?: 'OrganizerApplication'
+  additional_info?: Maybe<Scalars['String']['output']>
+  admin_notes?: Maybe<Scalars['String']['output']>
+  created_at: Scalars['String']['output']
+  dance_styles?: Maybe<Array<Scalars['String']['output']>>
+  experience?: Maybe<Scalars['String']['output']>
+  id: Scalars['ID']['output']
+  reason: Scalars['String']['output']
+  reviewed_at?: Maybe<Scalars['String']['output']>
+  reviewed_by?: Maybe<Scalars['String']['output']>
+  reviewer?: Maybe<User>
+  social_media?: Maybe<Scalars['String']['output']>
+  status: ApplicationStatus
+  updated_at: Scalars['String']['output']
+  user?: Maybe<User>
+  user_id: Scalars['String']['output']
+  venue_address?: Maybe<Scalars['String']['output']>
+  venue_capacity?: Maybe<Scalars['Int']['output']>
+  venue_city?: Maybe<Scalars['String']['output']>
+  venue_name?: Maybe<Scalars['String']['output']>
+  website_url?: Maybe<Scalars['String']['output']>
+}
+
+export type OrganizerApplicationsResponse = {
+  __typename?: 'OrganizerApplicationsResponse'
+  applications: Array<OrganizerApplication>
+  totalCount: Scalars['Int']['output']
 }
 
 export type PageInfo = {
@@ -1132,10 +1193,14 @@ export type Query = {
   myManagedEvents: Array<Event>
   myNotificationPreferences: NotificationPreferences
   myNotifications: NotificationConnection
+  myOrganizerApplication?: Maybe<OrganizerApplication>
   myReferralCode?: Maybe<ReferralCode>
   myReferralStats: ReferralStats
   myReferrals: Array<Referral>
   notification?: Maybe<Notification>
+  organizerApplication?: Maybe<OrganizerApplication>
+  organizerApplications: OrganizerApplicationsResponse
+  pendingOrganizerApplications: OrganizerApplicationsResponse
   pendingOrganizers: UserConnection
   reportedContent?: Maybe<Scalars['JSON']['output']>
   unreadNotificationCount: Scalars['Int']['output']
@@ -1317,6 +1382,21 @@ export type QueryNotificationArgs = {
   id: Scalars['ID']['input']
 }
 
+export type QueryOrganizerApplicationArgs = {
+  id: Scalars['ID']['input']
+}
+
+export type QueryOrganizerApplicationsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  status?: InputMaybe<ApplicationStatus>
+}
+
+export type QueryPendingOrganizerApplicationsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+}
+
 export type QueryPendingOrganizersArgs = {
   pagination?: InputMaybe<PaginationInput>
 }
@@ -1334,6 +1414,14 @@ export type QueryUserArgs = {
 export type QueryUsersArgs = {
   filter?: InputMaybe<UserFilterInput>
   pagination?: InputMaybe<PaginationInput>
+}
+
+export enum RecurrenceType {
+  Biweekly = 'biweekly',
+  Daily = 'daily',
+  Monthly = 'monthly',
+  None = 'none',
+  Weekly = 'weekly',
 }
 
 export enum ReferenceType {
@@ -1419,6 +1507,12 @@ export enum RegistrationStatus {
   Registered = 'registered',
 }
 
+export type ReviewApplicationInput = {
+  admin_notes?: InputMaybe<Scalars['String']['input']>
+  application_id: Scalars['ID']['input']
+  status: ApplicationStatus
+}
+
 export type SaveDanceSessionInput = {
   achievements_unlocked?: InputMaybe<Array<Scalars['String']['input']>>
   app_version?: InputMaybe<Scalars['String']['input']>
@@ -1478,6 +1572,19 @@ export enum SkillLevel {
   Intermediate = 'intermediate',
 }
 
+export type SubmitOrganizerApplicationInput = {
+  additional_info?: InputMaybe<Scalars['String']['input']>
+  dance_styles?: InputMaybe<Array<Scalars['String']['input']>>
+  experience?: InputMaybe<Scalars['String']['input']>
+  reason: Scalars['String']['input']
+  social_media?: InputMaybe<Scalars['String']['input']>
+  venue_address?: InputMaybe<Scalars['String']['input']>
+  venue_capacity?: InputMaybe<Scalars['Int']['input']>
+  venue_city?: InputMaybe<Scalars['String']['input']>
+  venue_name?: InputMaybe<Scalars['String']['input']>
+  website_url?: InputMaybe<Scalars['String']['input']>
+}
+
 export type Subscription = {
   __typename?: 'Subscription'
   _empty?: Maybe<Scalars['String']['output']>
@@ -1521,6 +1628,7 @@ export type UpdateEventInput = {
   end_date_time?: InputMaybe<Scalars['DateTime']['input']>
   image_url?: InputMaybe<Scalars['String']['input']>
   is_featured?: InputMaybe<Scalars['Boolean']['input']>
+  is_recurring?: InputMaybe<Scalars['Boolean']['input']>
   is_virtual?: InputMaybe<Scalars['Boolean']['input']>
   location_address?: InputMaybe<Scalars['String']['input']>
   location_city?: InputMaybe<Scalars['String']['input']>
@@ -1530,6 +1638,10 @@ export type UpdateEventInput = {
   max_capacity?: InputMaybe<Scalars['Int']['input']>
   price_danz?: InputMaybe<Scalars['Float']['input']>
   price_usd?: InputMaybe<Scalars['Float']['input']>
+  recurrence_count?: InputMaybe<Scalars['Int']['input']>
+  recurrence_days?: InputMaybe<Array<Scalars['String']['input']>>
+  recurrence_end_date?: InputMaybe<Scalars['DateTime']['input']>
+  recurrence_type?: InputMaybe<RecurrenceType>
   requirements?: InputMaybe<Scalars['String']['input']>
   skill_level?: InputMaybe<SkillLevel>
   start_date_time?: InputMaybe<Scalars['DateTime']['input']>
@@ -2678,6 +2790,47 @@ export type SendEventBroadcastMutation = {
   sendEventBroadcast: { __typename?: 'MutationResponse'; success: boolean; message?: string | null }
 }
 
+export type SubmitOrganizerApplicationMutationVariables = Exact<{
+  input: SubmitOrganizerApplicationInput
+}>
+
+export type SubmitOrganizerApplicationMutation = {
+  __typename?: 'Mutation'
+  submitOrganizerApplication: {
+    __typename?: 'OrganizerApplication'
+    id: string
+    user_id: string
+    reason: string
+    experience?: string | null
+    venue_name?: string | null
+    venue_address?: string | null
+    venue_city?: string | null
+    venue_capacity?: number | null
+    dance_styles?: Array<string> | null
+    website_url?: string | null
+    social_media?: string | null
+    additional_info?: string | null
+    status: ApplicationStatus
+    created_at: string
+  }
+}
+
+export type ReviewOrganizerApplicationMutationVariables = Exact<{
+  input: ReviewApplicationInput
+}>
+
+export type ReviewOrganizerApplicationMutation = {
+  __typename?: 'Mutation'
+  reviewOrganizerApplication: {
+    __typename?: 'OrganizerApplication'
+    id: string
+    status: ApplicationStatus
+    admin_notes?: string | null
+    reviewed_by?: string | null
+    reviewed_at?: string | null
+  }
+}
+
 export type TrackReferralClickMutationVariables = Exact<{
   input: TrackReferralClickInput
 }>
@@ -3717,6 +3870,115 @@ export type GetUnreadNotificationCountQueryVariables = Exact<{ [key: string]: ne
 export type GetUnreadNotificationCountQuery = {
   __typename?: 'Query'
   unreadNotificationCount: number
+}
+
+export type GetMyOrganizerApplicationQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetMyOrganizerApplicationQuery = {
+  __typename?: 'Query'
+  myOrganizerApplication?: {
+    __typename?: 'OrganizerApplication'
+    id: string
+    user_id: string
+    reason: string
+    experience?: string | null
+    venue_name?: string | null
+    venue_address?: string | null
+    venue_city?: string | null
+    venue_capacity?: number | null
+    dance_styles?: Array<string> | null
+    website_url?: string | null
+    social_media?: string | null
+    additional_info?: string | null
+    status: ApplicationStatus
+    admin_notes?: string | null
+    reviewed_at?: string | null
+    created_at: string
+  } | null
+}
+
+export type GetPendingOrganizerApplicationsQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type GetPendingOrganizerApplicationsQuery = {
+  __typename?: 'Query'
+  pendingOrganizerApplications: {
+    __typename?: 'OrganizerApplicationsResponse'
+    totalCount: number
+    applications: Array<{
+      __typename?: 'OrganizerApplication'
+      id: string
+      user_id: string
+      reason: string
+      experience?: string | null
+      venue_name?: string | null
+      venue_address?: string | null
+      venue_city?: string | null
+      venue_capacity?: number | null
+      dance_styles?: Array<string> | null
+      website_url?: string | null
+      social_media?: string | null
+      additional_info?: string | null
+      status: ApplicationStatus
+      created_at: string
+      user?: {
+        __typename?: 'User'
+        privy_id: string
+        username?: string | null
+        display_name?: string | null
+        avatar_url?: string | null
+        created_at?: any | null
+      } | null
+    }>
+  }
+}
+
+export type GetOrganizerApplicationsQueryVariables = Exact<{
+  status?: InputMaybe<ApplicationStatus>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type GetOrganizerApplicationsQuery = {
+  __typename?: 'Query'
+  organizerApplications: {
+    __typename?: 'OrganizerApplicationsResponse'
+    totalCount: number
+    applications: Array<{
+      __typename?: 'OrganizerApplication'
+      id: string
+      user_id: string
+      reason: string
+      experience?: string | null
+      venue_name?: string | null
+      venue_address?: string | null
+      venue_city?: string | null
+      venue_capacity?: number | null
+      dance_styles?: Array<string> | null
+      website_url?: string | null
+      social_media?: string | null
+      additional_info?: string | null
+      status: ApplicationStatus
+      admin_notes?: string | null
+      reviewed_by?: string | null
+      reviewed_at?: string | null
+      created_at: string
+      user?: {
+        __typename?: 'User'
+        privy_id: string
+        username?: string | null
+        display_name?: string | null
+        avatar_url?: string | null
+      } | null
+      reviewer?: {
+        __typename?: 'User'
+        display_name?: string | null
+        username?: string | null
+      } | null
+    }>
+  }
 }
 
 export type GetReferralByCodeQueryVariables = Exact<{
@@ -6161,6 +6423,123 @@ export type SendEventBroadcastMutationResult = Apollo.MutationResult<SendEventBr
 export type SendEventBroadcastMutationOptions = Apollo.BaseMutationOptions<
   SendEventBroadcastMutation,
   SendEventBroadcastMutationVariables
+>
+export const SubmitOrganizerApplicationDocument = gql`
+    mutation SubmitOrganizerApplication($input: SubmitOrganizerApplicationInput!) {
+  submitOrganizerApplication(input: $input) {
+    id
+    user_id
+    reason
+    experience
+    venue_name
+    venue_address
+    venue_city
+    venue_capacity
+    dance_styles
+    website_url
+    social_media
+    additional_info
+    status
+    created_at
+  }
+}
+    `
+export type SubmitOrganizerApplicationMutationFn = Apollo.MutationFunction<
+  SubmitOrganizerApplicationMutation,
+  SubmitOrganizerApplicationMutationVariables
+>
+
+/**
+ * __useSubmitOrganizerApplicationMutation__
+ *
+ * To run a mutation, you first call `useSubmitOrganizerApplicationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubmitOrganizerApplicationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [submitOrganizerApplicationMutation, { data, loading, error }] = useSubmitOrganizerApplicationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSubmitOrganizerApplicationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SubmitOrganizerApplicationMutation,
+    SubmitOrganizerApplicationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    SubmitOrganizerApplicationMutation,
+    SubmitOrganizerApplicationMutationVariables
+  >(SubmitOrganizerApplicationDocument, options)
+}
+export type SubmitOrganizerApplicationMutationHookResult = ReturnType<
+  typeof useSubmitOrganizerApplicationMutation
+>
+export type SubmitOrganizerApplicationMutationResult =
+  Apollo.MutationResult<SubmitOrganizerApplicationMutation>
+export type SubmitOrganizerApplicationMutationOptions = Apollo.BaseMutationOptions<
+  SubmitOrganizerApplicationMutation,
+  SubmitOrganizerApplicationMutationVariables
+>
+export const ReviewOrganizerApplicationDocument = gql`
+    mutation ReviewOrganizerApplication($input: ReviewApplicationInput!) {
+  reviewOrganizerApplication(input: $input) {
+    id
+    status
+    admin_notes
+    reviewed_by
+    reviewed_at
+  }
+}
+    `
+export type ReviewOrganizerApplicationMutationFn = Apollo.MutationFunction<
+  ReviewOrganizerApplicationMutation,
+  ReviewOrganizerApplicationMutationVariables
+>
+
+/**
+ * __useReviewOrganizerApplicationMutation__
+ *
+ * To run a mutation, you first call `useReviewOrganizerApplicationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useReviewOrganizerApplicationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [reviewOrganizerApplicationMutation, { data, loading, error }] = useReviewOrganizerApplicationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useReviewOrganizerApplicationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ReviewOrganizerApplicationMutation,
+    ReviewOrganizerApplicationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    ReviewOrganizerApplicationMutation,
+    ReviewOrganizerApplicationMutationVariables
+  >(ReviewOrganizerApplicationDocument, options)
+}
+export type ReviewOrganizerApplicationMutationHookResult = ReturnType<
+  typeof useReviewOrganizerApplicationMutation
+>
+export type ReviewOrganizerApplicationMutationResult =
+  Apollo.MutationResult<ReviewOrganizerApplicationMutation>
+export type ReviewOrganizerApplicationMutationOptions = Apollo.BaseMutationOptions<
+  ReviewOrganizerApplicationMutation,
+  ReviewOrganizerApplicationMutationVariables
 >
 export const TrackReferralClickDocument = gql`
     mutation TrackReferralClick($input: TrackReferralClickInput!) {
@@ -8746,6 +9125,303 @@ export type GetUnreadNotificationCountSuspenseQueryHookResult = ReturnType<
 export type GetUnreadNotificationCountQueryResult = Apollo.QueryResult<
   GetUnreadNotificationCountQuery,
   GetUnreadNotificationCountQueryVariables
+>
+export const GetMyOrganizerApplicationDocument = gql`
+    query GetMyOrganizerApplication {
+  myOrganizerApplication {
+    id
+    user_id
+    reason
+    experience
+    venue_name
+    venue_address
+    venue_city
+    venue_capacity
+    dance_styles
+    website_url
+    social_media
+    additional_info
+    status
+    admin_notes
+    reviewed_at
+    created_at
+  }
+}
+    `
+
+/**
+ * __useGetMyOrganizerApplicationQuery__
+ *
+ * To run a query within a React component, call `useGetMyOrganizerApplicationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyOrganizerApplicationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyOrganizerApplicationQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyOrganizerApplicationQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetMyOrganizerApplicationQuery,
+    GetMyOrganizerApplicationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetMyOrganizerApplicationQuery, GetMyOrganizerApplicationQueryVariables>(
+    GetMyOrganizerApplicationDocument,
+    options,
+  )
+}
+export function useGetMyOrganizerApplicationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetMyOrganizerApplicationQuery,
+    GetMyOrganizerApplicationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    GetMyOrganizerApplicationQuery,
+    GetMyOrganizerApplicationQueryVariables
+  >(GetMyOrganizerApplicationDocument, options)
+}
+export function useGetMyOrganizerApplicationSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetMyOrganizerApplicationQuery,
+        GetMyOrganizerApplicationQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    GetMyOrganizerApplicationQuery,
+    GetMyOrganizerApplicationQueryVariables
+  >(GetMyOrganizerApplicationDocument, options)
+}
+export type GetMyOrganizerApplicationQueryHookResult = ReturnType<
+  typeof useGetMyOrganizerApplicationQuery
+>
+export type GetMyOrganizerApplicationLazyQueryHookResult = ReturnType<
+  typeof useGetMyOrganizerApplicationLazyQuery
+>
+export type GetMyOrganizerApplicationSuspenseQueryHookResult = ReturnType<
+  typeof useGetMyOrganizerApplicationSuspenseQuery
+>
+export type GetMyOrganizerApplicationQueryResult = Apollo.QueryResult<
+  GetMyOrganizerApplicationQuery,
+  GetMyOrganizerApplicationQueryVariables
+>
+export const GetPendingOrganizerApplicationsDocument = gql`
+    query GetPendingOrganizerApplications($limit: Int, $offset: Int) {
+  pendingOrganizerApplications(limit: $limit, offset: $offset) {
+    applications {
+      id
+      user_id
+      user {
+        privy_id
+        username
+        display_name
+        avatar_url
+        created_at
+      }
+      reason
+      experience
+      venue_name
+      venue_address
+      venue_city
+      venue_capacity
+      dance_styles
+      website_url
+      social_media
+      additional_info
+      status
+      created_at
+    }
+    totalCount
+  }
+}
+    `
+
+/**
+ * __useGetPendingOrganizerApplicationsQuery__
+ *
+ * To run a query within a React component, call `useGetPendingOrganizerApplicationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPendingOrganizerApplicationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPendingOrganizerApplicationsQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useGetPendingOrganizerApplicationsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetPendingOrganizerApplicationsQuery,
+    GetPendingOrganizerApplicationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    GetPendingOrganizerApplicationsQuery,
+    GetPendingOrganizerApplicationsQueryVariables
+  >(GetPendingOrganizerApplicationsDocument, options)
+}
+export function useGetPendingOrganizerApplicationsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetPendingOrganizerApplicationsQuery,
+    GetPendingOrganizerApplicationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    GetPendingOrganizerApplicationsQuery,
+    GetPendingOrganizerApplicationsQueryVariables
+  >(GetPendingOrganizerApplicationsDocument, options)
+}
+export function useGetPendingOrganizerApplicationsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetPendingOrganizerApplicationsQuery,
+        GetPendingOrganizerApplicationsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    GetPendingOrganizerApplicationsQuery,
+    GetPendingOrganizerApplicationsQueryVariables
+  >(GetPendingOrganizerApplicationsDocument, options)
+}
+export type GetPendingOrganizerApplicationsQueryHookResult = ReturnType<
+  typeof useGetPendingOrganizerApplicationsQuery
+>
+export type GetPendingOrganizerApplicationsLazyQueryHookResult = ReturnType<
+  typeof useGetPendingOrganizerApplicationsLazyQuery
+>
+export type GetPendingOrganizerApplicationsSuspenseQueryHookResult = ReturnType<
+  typeof useGetPendingOrganizerApplicationsSuspenseQuery
+>
+export type GetPendingOrganizerApplicationsQueryResult = Apollo.QueryResult<
+  GetPendingOrganizerApplicationsQuery,
+  GetPendingOrganizerApplicationsQueryVariables
+>
+export const GetOrganizerApplicationsDocument = gql`
+    query GetOrganizerApplications($status: ApplicationStatus, $limit: Int, $offset: Int) {
+  organizerApplications(status: $status, limit: $limit, offset: $offset) {
+    applications {
+      id
+      user_id
+      user {
+        privy_id
+        username
+        display_name
+        avatar_url
+      }
+      reason
+      experience
+      venue_name
+      venue_address
+      venue_city
+      venue_capacity
+      dance_styles
+      website_url
+      social_media
+      additional_info
+      status
+      admin_notes
+      reviewed_by
+      reviewer {
+        display_name
+        username
+      }
+      reviewed_at
+      created_at
+    }
+    totalCount
+  }
+}
+    `
+
+/**
+ * __useGetOrganizerApplicationsQuery__
+ *
+ * To run a query within a React component, call `useGetOrganizerApplicationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrganizerApplicationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrganizerApplicationsQuery({
+ *   variables: {
+ *      status: // value for 'status'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useGetOrganizerApplicationsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetOrganizerApplicationsQuery,
+    GetOrganizerApplicationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetOrganizerApplicationsQuery, GetOrganizerApplicationsQueryVariables>(
+    GetOrganizerApplicationsDocument,
+    options,
+  )
+}
+export function useGetOrganizerApplicationsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetOrganizerApplicationsQuery,
+    GetOrganizerApplicationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetOrganizerApplicationsQuery, GetOrganizerApplicationsQueryVariables>(
+    GetOrganizerApplicationsDocument,
+    options,
+  )
+}
+export function useGetOrganizerApplicationsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetOrganizerApplicationsQuery,
+        GetOrganizerApplicationsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    GetOrganizerApplicationsQuery,
+    GetOrganizerApplicationsQueryVariables
+  >(GetOrganizerApplicationsDocument, options)
+}
+export type GetOrganizerApplicationsQueryHookResult = ReturnType<
+  typeof useGetOrganizerApplicationsQuery
+>
+export type GetOrganizerApplicationsLazyQueryHookResult = ReturnType<
+  typeof useGetOrganizerApplicationsLazyQuery
+>
+export type GetOrganizerApplicationsSuspenseQueryHookResult = ReturnType<
+  typeof useGetOrganizerApplicationsSuspenseQuery
+>
+export type GetOrganizerApplicationsQueryResult = Apollo.QueryResult<
+  GetOrganizerApplicationsQuery,
+  GetOrganizerApplicationsQueryVariables
 >
 export const GetReferralByCodeDocument = gql`
     query GetReferralByCode($code: String!) {
