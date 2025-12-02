@@ -1,44 +1,61 @@
 'use client'
 
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
+import {
+  FiGrid,
+  FiCalendar,
+  FiMap,
+  FiPlus,
+  FiFileText,
+  FiClock,
+  FiTrendingUp,
+  FiFilter,
+  FiSearch,
+  FiX,
+  FiDollarSign,
+  FiMapPin,
+  FiCheck,
+} from 'react-icons/fi'
+import { usePrivy } from '@privy-io/react-auth'
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import OrganizerApplicationForm from '@/src/components/dashboard/OrganizerApplicationForm'
-import { useGetEventsQuery, useCreateEventMutation, useRegisterForEventMutation, useGetMyProfileQuery, EventStatus, RecurrenceType } from '@/src/generated/graphql'
-import { usePrivy } from '@privy-io/react-auth'
-import { useState } from 'react'
-import { FiCalendar, FiMapPin, FiUsers, FiDollarSign, FiClock, FiPlus, FiX, FiCheck, FiMusic, FiStar, FiAlertCircle, FiFileText, FiRepeat } from 'react-icons/fi'
-import { motion, AnimatePresence } from 'motion/react'
+import GamificationBar from '@/src/components/events/GamificationBar'
+import EventCreationWizard from '@/src/components/events/EventCreationWizard'
+import EventsGridView from '@/src/components/events/EventsGridView'
+import EventsCalendarView from '@/src/components/events/EventsCalendarView'
+import EventsMapView from '@/src/components/events/EventsMapView'
+import Leaderboard from '@/src/components/events/Leaderboard'
+import {
+  useGetEventsQuery,
+  useRegisterForEventMutation,
+  useGetMyProfileQuery,
+  EventStatus,
+} from '@/src/generated/graphql'
 
-interface DateValidationError {
-  field: 'start_date_time' | 'end_date_time'
-  message: string
-}
+type ViewMode = 'grid' | 'calendar' | 'map'
 
-const WEEKDAYS = [
-  { value: 'monday', label: 'Mon' },
-  { value: 'tuesday', label: 'Tue' },
-  { value: 'wednesday', label: 'Wed' },
-  { value: 'thursday', label: 'Thu' },
-  { value: 'friday', label: 'Fri' },
-  { value: 'saturday', label: 'Sat' },
-  { value: 'sunday', label: 'Sun' },
+// Mock leaderboard data (in production, fetch from API)
+const MOCK_LEADERBOARD = [
+  { id: '1', username: 'dancequeen', display_name: 'Sarah M.', xp: 4250, level: 8, events_created: 12, events_attended: 45, streak: 14 },
+  { id: '2', username: 'groovyking', display_name: 'Marcus J.', xp: 3890, level: 7, events_created: 8, events_attended: 52, streak: 21 },
+  { id: '3', username: 'salsafire', display_name: 'Elena R.', xp: 3450, level: 7, events_created: 15, events_attended: 38, streak: 7 },
+  { id: '4', username: 'hiphopdreams', display_name: 'Tyler W.', xp: 2980, level: 6, events_created: 5, events_attended: 42, streak: 0 },
+  { id: '5', username: 'balletrose', display_name: 'Lily C.', xp: 2650, level: 5, events_created: 3, events_attended: 35, streak: 5 },
+  { id: '6', username: 'jazzyhands', display_name: 'Mike D.', xp: 2340, level: 5, events_created: 7, events_attended: 28, streak: 3 },
+  { id: '7', username: 'breakdancer', display_name: 'Carlos G.', xp: 1980, level: 4, events_created: 2, events_attended: 31, streak: 0 },
 ]
 
 export default function EventsPage() {
   const { authenticated } = usePrivy()
-  const [showCreateForm, setShowCreateForm] = useState(false)
+  const [viewMode, setViewMode] = useState<ViewMode>('grid')
+  const [showCreateWizard, setShowCreateWizard] = useState(false)
   const [showApplicationForm, setShowApplicationForm] = useState(false)
+  const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState<any>(null)
   const [registrationNotes, setRegistrationNotes] = useState('')
-  const [dateErrors, setDateErrors] = useState<DateValidationError[]>([])
-  const [submitError, setSubmitError] = useState<string | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  // Recurring event state
-  const [isRecurring, setIsRecurring] = useState(false)
-  const [recurrenceType, setRecurrenceType] = useState<RecurrenceType>(RecurrenceType.Weekly)
-  const [recurrenceEndDate, setRecurrenceEndDate] = useState('')
-  const [recurrenceDays, setRecurrenceDays] = useState<string[]>([])
-  const [recurrenceCount, setRecurrenceCount] = useState<number | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
   const { data: profileData, refetch: refetchProfile } = useGetMyProfileQuery({
     skip: !authenticated,
@@ -47,20 +64,12 @@ export default function EventsPage() {
   const { data: eventsData, loading, refetch } = useGetEventsQuery({
     variables: {
       filter: {
-        status: EventStatus.Upcoming
+        status: EventStatus.Upcoming,
       },
       pagination: {
-        limit: 20
-      }
-    }
-  })
-
-  const [createEvent] = useCreateEventMutation({
-    onCompleted: () => {
-      setShowCreateForm(false)
-      refetch()
-      refetchProfile() // Update dashboard stats
-    }
+        limit: 50,
+      },
+    },
   })
 
   const [registerForEvent] = useRegisterForEventMutation({
@@ -68,716 +77,248 @@ export default function EventsPage() {
       setSelectedEvent(null)
       setRegistrationNotes('')
       refetch()
-    }
+    },
   })
 
   // Check permissions
   const userRole = profileData?.me?.role
   const isApprovedOrganizer = profileData?.me?.is_organizer_approved
-  const canCreateEvents = userRole === 'admin' || userRole === 'manager' || (userRole === 'organizer' && isApprovedOrganizer)
+  const canCreateEvents =
+    userRole === 'admin' || userRole === 'manager' || (userRole === 'organizer' && isApprovedOrganizer)
   const needsApproval = userRole === 'organizer' && !isApprovedOrganizer
   const canApplyToOrganize = !canCreateEvents && authenticated
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
-
-  // Validate dates client-side
-  const validateDates = (startDateStr: string, endDateStr: string): DateValidationError[] => {
-    const errors: DateValidationError[] = []
-    const now = new Date()
-    const startDate = new Date(startDateStr)
-    const endDate = new Date(endDateStr)
-
-    // Check if start date is in the past
-    if (startDate < now) {
-      errors.push({
-        field: 'start_date_time',
-        message: 'Event start date must be in the future'
-      })
-    }
-
-    // Check if end date is after start date
-    if (endDate <= startDate) {
-      errors.push({
-        field: 'end_date_time',
-        message: 'End date must be after start date'
-      })
-    }
-
-    return errors
-  }
-
-  const handleCreateEvent = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setDateErrors([])
-    setSubmitError(null)
-
-    const formData = new FormData(e.currentTarget)
-    const startDateStr = formData.get('start_date_time') as string
-    const endDateStr = formData.get('end_date_time') as string
-
-    // Client-side validation
-    const validationErrors = validateDates(startDateStr, endDateStr)
-    if (validationErrors.length > 0) {
-      setDateErrors(validationErrors)
-      return
-    }
-
-    setIsSubmitting(true)
-
-    try {
-      await createEvent({
-        variables: {
-          input: {
-            title: formData.get('title') as string,
-            description: formData.get('description') as string,
-            category: formData.get('category') as any || 'class',
-            location_name: formData.get('location_name') as string,
-            location_address: formData.get('location_address') as string,
-            location_city: formData.get('location_city') as string,
-            max_capacity: parseInt(formData.get('max_capacity') as string) || null,
-            price_usd: parseFloat(formData.get('price_usd') as string) || 0,
-            skill_level: formData.get('skill_level') as any || 'all',
-            is_virtual: formData.get('is_virtual') === 'true',
-            virtual_link: formData.get('virtual_link') as string || null,
-            requirements: formData.get('requirements') as string || null,
-            tags: (formData.get('tags') as string)?.split(',').map(t => t.trim()).filter(Boolean) || [],
-            dance_styles: (formData.get('dance_styles') as string)?.split(',').map(t => t.trim()).filter(Boolean) || [],
-            start_date_time: new Date(startDateStr).toISOString(),
-            end_date_time: new Date(endDateStr).toISOString(),
-            // Recurring event fields
-            is_recurring: isRecurring,
-            recurrence_type: isRecurring ? recurrenceType : RecurrenceType.None,
-            recurrence_end_date: isRecurring && recurrenceEndDate ? new Date(recurrenceEndDate).toISOString() : null,
-            recurrence_days: isRecurring && recurrenceType === RecurrenceType.Weekly ? recurrenceDays : null,
-            recurrence_count: isRecurring && recurrenceCount ? recurrenceCount : null,
-          }
-        }
-      })
-
-      // Reset recurring event state after successful creation
-      setIsRecurring(false)
-      setRecurrenceType(RecurrenceType.Weekly)
-      setRecurrenceEndDate('')
-      setRecurrenceDays([])
-      setRecurrenceCount(null)
-    } catch (error: any) {
-      // Handle GraphQL errors
-      const graphqlError = error?.graphQLErrors?.[0]
-      if (graphqlError) {
-        const validationType = graphqlError.extensions?.validationType
-        const field = graphqlError.extensions?.field
-
-        if (validationType === 'PAST_DATE' && field === 'start_date_time') {
-          setDateErrors([{ field: 'start_date_time', message: graphqlError.message }])
-        } else if (validationType === 'END_BEFORE_START' && field === 'end_date_time') {
-          setDateErrors([{ field: 'end_date_time', message: graphqlError.message }])
-        } else {
-          setSubmitError(graphqlError.message || 'Failed to create event')
-        }
-      } else {
-        setSubmitError('An unexpected error occurred. Please try again.')
-      }
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  const handleRegister = async () => {
-    if (selectedEvent) {
-      await registerForEvent({
-        variables: {
-          eventId: selectedEvent.id,
-          notes: registrationNotes || null
-        }
-      })
-    }
-  }
-
-  if (loading) {
-    return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-white text-2xl">Loading events...</div>
-        </div>
-      </DashboardLayout>
-    )
+  // Gamification stats (TODO: Add these fields to GraphQL schema)
+  // For now using mock data, in production fetch from profile API
+  const gamificationStats = {
+    xp: 850,
+    level: 3,
+    eventsCreated: 2,
+    eventsAttended: 8,
+    streak: 5,
   }
 
   const events = eventsData?.events?.events || []
 
+  // Filter events
+  const filteredEvents = events.filter(event => {
+    const matchesSearch =
+      !searchQuery ||
+      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.location_city?.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesCategory = !selectedCategory || event.category === selectedCategory
+    return matchesSearch && matchesCategory
+  })
+
+  const handleRegister = async (event: any) => {
+    setSelectedEvent(event)
+  }
+
+  const handleConfirmRegistration = async () => {
+    if (selectedEvent) {
+      await registerForEvent({
+        variables: {
+          eventId: selectedEvent.id,
+          notes: registrationNotes || null,
+        },
+      })
+    }
+  }
+
+  const handleEventCreated = () => {
+    setShowCreateWizard(false)
+    refetch()
+    refetchProfile()
+  }
+
+  const CATEGORIES = [
+    { value: 'class', label: 'Class', emoji: '💃' },
+    { value: 'social', label: 'Social', emoji: '🎉' },
+    { value: 'workshop', label: 'Workshop', emoji: '📚' },
+    { value: 'competition', label: 'Competition', emoji: '🏆' },
+    { value: 'performance', label: 'Performance', emoji: '🎭' },
+    { value: 'fitness', label: 'Fitness', emoji: '💪' },
+  ]
+
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        {/* Gamification Bar */}
+        {authenticated && (
+          <GamificationBar
+            xp={gamificationStats.xp}
+            level={gamificationStats.level}
+            eventsCreated={gamificationStats.eventsCreated}
+            eventsAttended={gamificationStats.eventsAttended}
+            streak={gamificationStats.streak}
+          />
+        )}
+
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-3xl md:text-4xl font-display font-bold text-text-primary mb-2">
-              Upcoming Events
+              Dance Events
             </h1>
             <p className="text-text-secondary">
-              Join us at our upcoming events and connect with the DANZ community
+              Discover, join, and create amazing dance experiences
             </p>
           </div>
-          {canCreateEvents ? (
+
+          <div className="flex items-center gap-3">
+            {/* Leaderboard Toggle */}
             <button
-              onClick={() => setShowCreateForm(!showCreateForm)}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-blue rounded-lg hover:opacity-90 transition-opacity"
+              onClick={() => setShowLeaderboard(!showLeaderboard)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                showLeaderboard
+                  ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                  : 'bg-white/5 text-text-secondary hover:bg-white/10'
+              }`}
             >
-              {showCreateForm ? (
-                <>
-                  <FiX size={20} />
-                  Cancel
-                </>
-              ) : (
-                <>
-                  <FiPlus size={20} />
-                  Create Event
-                </>
-              )}
+              <FiTrendingUp className="w-5 h-5" />
+              <span className="hidden sm:inline">Leaderboard</span>
             </button>
-          ) : needsApproval ? (
-            <button
-              onClick={() => setShowApplicationForm(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 rounded-lg hover:bg-yellow-500/30 transition-colors"
-            >
-              <FiClock size={20} />
-              Approval Pending
-            </button>
-          ) : canApplyToOrganize ? (
-            <button
-              onClick={() => setShowApplicationForm(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-blue rounded-lg hover:opacity-90 transition-opacity"
-            >
-              <FiFileText size={20} />
-              Apply to Organize
-            </button>
-          ) : null}
+
+            {/* Create Event Button */}
+            {canCreateEvents ? (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setShowCreateWizard(true)}
+                className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-neon-purple to-neon-pink text-white rounded-xl font-medium shadow-lg shadow-neon-purple/30 hover:shadow-neon-purple/40 transition-shadow"
+              >
+                <FiPlus className="w-5 h-5" />
+                Create Event
+                <span className="hidden sm:inline text-xs bg-white/20 px-2 py-0.5 rounded-full">
+                  +100 XP
+                </span>
+              </motion.button>
+            ) : needsApproval ? (
+              <button
+                onClick={() => setShowApplicationForm(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 rounded-lg hover:bg-yellow-500/30 transition-colors"
+              >
+                <FiClock className="w-5 h-5" />
+                Approval Pending
+              </button>
+            ) : canApplyToOrganize ? (
+              <button
+                onClick={() => setShowApplicationForm(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-blue text-white rounded-lg hover:opacity-90 transition-opacity"
+              >
+                <FiFileText className="w-5 h-5" />
+                Apply to Organize
+              </button>
+            ) : null}
+          </div>
         </div>
 
-        {/* Create Event Form */}
-        <AnimatePresence>
-          {showCreateForm && canCreateEvents && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mb-8 bg-bg-secondary rounded-xl border border-neon-purple/20 p-6"
-            >
-              <h2 className="text-xl font-bold text-text-primary mb-4">Create New Event</h2>
-              <form onSubmit={handleCreateEvent} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-1">
-                      Event Title *
-                    </label>
-                    <input
-                      type="text"
-                      name="title"
-                      required
-                      className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
-                      placeholder="Dance Workshop"
-                    />
-                  </div>
+        {/* Filters and View Modes */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          {/* Search and Category Filter */}
+          <div className="flex flex-1 items-center gap-3 w-full sm:w-auto">
+            <div className="relative flex-1 sm:flex-initial sm:w-64">
+              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Search events..."
+                className="w-full pl-10 pr-4 py-2.5 bg-bg-secondary rounded-xl border border-white/10 focus:border-neon-purple/50 focus:outline-none text-white"
+              />
+            </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-1">
-                      Category
-                    </label>
-                    <select
-                      name="category"
-                      className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
-                    >
-                      <option value="class">Class</option>
-                      <option value="salsa">Salsa</option>
-                      <option value="hip_hop">Hip Hop</option>
-                      <option value="contemporary">Contemporary</option>
-                      <option value="ballet">Ballet</option>
-                      <option value="jazz">Jazz</option>
-                      <option value="ballroom">Ballroom</option>
-                      <option value="street">Street</option>
-                      <option value="cultural">Cultural</option>
-                      <option value="fitness">Fitness</option>
-                    </select>
-                  </div>
-                </div>
+            <div className="relative">
+              <select
+                value={selectedCategory || ''}
+                onChange={e => setSelectedCategory(e.target.value || null)}
+                className="appearance-none pl-4 pr-10 py-2.5 bg-bg-secondary rounded-xl border border-white/10 focus:border-neon-purple/50 focus:outline-none text-white cursor-pointer"
+              >
+                <option value="">All Categories</option>
+                {CATEGORIES.map(cat => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.emoji} {cat.label}
+                  </option>
+                ))}
+              </select>
+              <FiFilter className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary pointer-events-none" />
+            </div>
+          </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-text-secondary mb-1">
-                    Description
-                  </label>
-                  <textarea
-                    name="description"
-                    rows={3}
-                    className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
-                    placeholder="Describe your event..."
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-1">
-                      Location Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="location_name"
-                      required
-                      className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
-                      placeholder="Dance Studio"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-1">
-                      Address
-                    </label>
-                    <input
-                      type="text"
-                      name="location_address"
-                      className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
-                      placeholder="123 Main St"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-1">
-                      City
-                    </label>
-                    <input
-                      type="text"
-                      name="location_city"
-                      className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
-                      placeholder="New York"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-1">
-                      Start Date & Time *
-                    </label>
-                    <input
-                      type="datetime-local"
-                      name="start_date_time"
-                      required
-                      min={new Date().toISOString().slice(0, 16)}
-                      onChange={() => setDateErrors(prev => prev.filter(e => e.field !== 'start_date_time'))}
-                      className={`w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border focus:outline-none ${
-                        dateErrors.some(e => e.field === 'start_date_time')
-                          ? 'border-red-500 focus:border-red-500'
-                          : 'border-neon-purple/20 focus:border-neon-purple/50'
-                      }`}
-                    />
-                    {dateErrors.find(e => e.field === 'start_date_time') && (
-                      <div className="flex items-center gap-1 mt-1 text-red-500 text-sm">
-                        <FiAlertCircle className="w-4 h-4" />
-                        <span>{dateErrors.find(e => e.field === 'start_date_time')?.message}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-1">
-                      End Date & Time *
-                    </label>
-                    <input
-                      type="datetime-local"
-                      name="end_date_time"
-                      required
-                      onChange={() => setDateErrors(prev => prev.filter(e => e.field !== 'end_date_time'))}
-                      className={`w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border focus:outline-none ${
-                        dateErrors.some(e => e.field === 'end_date_time')
-                          ? 'border-red-500 focus:border-red-500'
-                          : 'border-neon-purple/20 focus:border-neon-purple/50'
-                      }`}
-                    />
-                    {dateErrors.find(e => e.field === 'end_date_time') && (
-                      <div className="flex items-center gap-1 mt-1 text-red-500 text-sm">
-                        <FiAlertCircle className="w-4 h-4" />
-                        <span>{dateErrors.find(e => e.field === 'end_date_time')?.message}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-1">
-                      Max Capacity
-                    </label>
-                    <input
-                      type="number"
-                      name="max_capacity"
-                      className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
-                      placeholder="50"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-1">
-                      Price (USD)
-                    </label>
-                    <input
-                      type="number"
-                      name="price_usd"
-                      step="0.01"
-                      className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
-                      placeholder="0.00"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-1">
-                      Skill Level
-                    </label>
-                    <select
-                      name="skill_level"
-                      className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
-                    >
-                      <option value="all">All Levels</option>
-                      <option value="beginner">Beginner</option>
-                      <option value="intermediate">Intermediate</option>
-                      <option value="advanced">Advanced</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-1">
-                      Dance Styles (comma separated)
-                    </label>
-                    <input
-                      type="text"
-                      name="dance_styles"
-                      className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
-                      placeholder="Hip Hop, Contemporary, Jazz"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-1">
-                      Tags (comma separated)
-                    </label>
-                    <input
-                      type="text"
-                      name="tags"
-                      className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
-                      placeholder="workshop, community, beginner-friendly"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      name="is_virtual"
-                      value="true"
-                      className="w-4 h-4 text-purple-600 bg-black/50 border-purple-500/30 rounded focus:ring-purple-500"
-                    />
-                    <span className="text-text-secondary">Virtual Event</span>
-                  </label>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text-secondary mb-1">
-                    Virtual Link (if virtual)
-                  </label>
-                  <input
-                    type="url"
-                    name="virtual_link"
-                    className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
-                    placeholder="https://zoom.us/..."
-                  />
-                </div>
-
-                {/* Recurring Event Section */}
-                <div className="border border-neon-purple/20 rounded-lg p-4 space-y-4">
-                  <div className="flex items-center gap-2">
-                    <FiRepeat className="text-neon-purple" size={18} />
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={isRecurring}
-                        onChange={(e) => setIsRecurring(e.target.checked)}
-                        className="w-4 h-4 text-purple-600 bg-black/50 border-purple-500/30 rounded focus:ring-purple-500"
-                      />
-                      <span className="text-text-primary font-medium">Make this a recurring event</span>
-                    </label>
-                  </div>
-
-                  {isRecurring && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="space-y-4 pl-6"
-                    >
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-text-secondary mb-1">
-                            Repeat Frequency *
-                          </label>
-                          <select
-                            value={recurrenceType}
-                            onChange={(e) => setRecurrenceType(e.target.value as RecurrenceType)}
-                            className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
-                          >
-                            <option value={RecurrenceType.Daily}>Daily</option>
-                            <option value={RecurrenceType.Weekly}>Weekly</option>
-                            <option value={RecurrenceType.Biweekly}>Bi-weekly</option>
-                            <option value={RecurrenceType.Monthly}>Monthly</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-text-secondary mb-1">
-                            Series End Date *
-                          </label>
-                          <input
-                            type="date"
-                            value={recurrenceEndDate}
-                            onChange={(e) => setRecurrenceEndDate(e.target.value)}
-                            min={new Date().toISOString().split('T')[0]}
-                            className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
-                          />
-                        </div>
-                      </div>
-
-                      {recurrenceType === RecurrenceType.Weekly && (
-                        <div>
-                          <label className="block text-sm font-medium text-text-secondary mb-2">
-                            Repeat on Days *
-                          </label>
-                          <div className="flex flex-wrap gap-2">
-                            {WEEKDAYS.map((day) => (
-                              <button
-                                key={day.value}
-                                type="button"
-                                onClick={() => {
-                                  setRecurrenceDays(prev =>
-                                    prev.includes(day.value)
-                                      ? prev.filter(d => d !== day.value)
-                                      : [...prev, day.value]
-                                  )
-                                }}
-                                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                                  recurrenceDays.includes(day.value)
-                                    ? 'bg-neon-purple text-white'
-                                    : 'bg-bg-primary text-text-secondary border border-neon-purple/20 hover:border-neon-purple/50'
-                                }`}
-                              >
-                                {day.label}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="text-sm text-text-secondary">
-                        <span className="text-neon-purple">Note:</span> Recurring events will automatically create instances based on your schedule.
-                      </div>
-                    </motion.div>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text-secondary mb-1">
-                    Requirements
-                  </label>
-                  <textarea
-                    name="requirements"
-                    rows={2}
-                    className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
-                    placeholder="What participants should bring or know..."
-                  />
-                </div>
-
-                {/* General error message */}
-                {submitError && (
-                  <div className="flex items-center gap-2 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-500">
-                    <FiAlertCircle className="w-5 h-5 flex-shrink-0" />
-                    <span>{submitError}</span>
-                  </div>
-                )}
-
-                <div className="flex justify-end gap-4">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowCreateForm(false)
-                      setDateErrors([])
-                      setSubmitError(null)
-                      setIsRecurring(false)
-                      setRecurrenceType(RecurrenceType.Weekly)
-                      setRecurrenceEndDate('')
-                      setRecurrenceDays([])
-                      setRecurrenceCount(null)
-                    }}
-                    className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-                    disabled={isSubmitting}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="px-6 py-3 bg-gradient-to-r from-neon-purple to-neon-blue text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Creating...
-                      </>
-                    ) : (
-                      'Create Event'
-                    )}
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Events Grid */}
-        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {events.map((event) => (
-            <motion.div
-              key={event.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="bg-bg-secondary rounded-xl border border-neon-purple/20 overflow-hidden hover:border-neon-purple/40 transition-all"
-            >
-              {event.image_url && (
-                <div className="h-48 overflow-hidden">
-                  <img
-                    src={event.image_url}
-                    alt={event.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-xl font-bold text-text-primary flex-1">
-                    {event.title}
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    {event.is_recurring && (
-                      <FiRepeat className="text-neon-purple" size={18} title="Recurring Event" />
-                    )}
-                    {event.is_featured && (
-                      <FiStar className="text-yellow-400" size={20} />
-                    )}
-                  </div>
-                </div>
-
-                {event.description && (
-                  <p className="text-text-secondary text-sm mb-4 line-clamp-2">
-                    {event.description}
-                  </p>
-                )}
-
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2 text-sm text-text-secondary">
-                    <FiCalendar className="text-neon-purple" size={14} />
-                    <span>{formatDate(event.start_date_time)}</span>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-sm text-text-secondary">
-                    <FiMapPin className="text-neon-purple" size={14} />
-                    <span>{event.location_name}</span>
-                    {event.location_city && <span>• {event.location_city}</span>}
-                  </div>
-
-                  {event.facilitator && (
-                    <div className="flex items-center gap-2 text-sm text-text-secondary">
-                      <FiUsers className="text-neon-purple" size={14} />
-                      <span>by {event.facilitator.display_name || event.facilitator.username}</span>
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-4 text-sm">
-                    {event.price_usd && event.price_usd > 0 ? (
-                      <div className="flex items-center gap-1">
-                        <FiDollarSign className="text-green-400" size={14} />
-                        <span className="text-green-400">${event.price_usd}</span>
-                      </div>
-                    ) : (
-                      <span className="text-green-400 font-medium">Free</span>
-                    )}
-
-                    {event.max_capacity && (
-                      <div className="flex items-center gap-1">
-                        <FiUsers className="text-text-secondary" size={14} />
-                        <span className="text-text-secondary">
-                          {event.registration_count || 0}/{event.max_capacity}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {event.dance_styles && event.dance_styles.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {event.dance_styles.map((style) => (
-                        <span
-                          key={style}
-                          className="px-2 py-1 bg-neon-purple/20 text-neon-purple text-xs rounded-full"
-                        >
-                          {style}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {authenticated && (
-                  <button
-                    onClick={() => setSelectedEvent(event)}
-                    disabled={event.is_registered ?? false}
-                    className={`w-full py-3 rounded-lg font-medium transition-all ${
-                      event.is_registered
-                        ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                        : 'bg-gradient-to-r from-neon-purple to-neon-blue text-white hover:opacity-90'
-                    }`}
-                  >
-                    {event.is_registered ? (
-                      <span className="flex items-center justify-center gap-2">
-                        <FiCheck size={16} />
-                        Registered
-                      </span>
-                    ) : (
-                      'Register Now'
-                    )}
-                  </button>
-                )}
-              </div>
-            </motion.div>
-          ))}
+          {/* View Mode Toggle */}
+          <div className="flex items-center gap-1 p-1 bg-bg-secondary rounded-xl border border-white/10">
+            {[
+              { mode: 'grid' as ViewMode, icon: FiGrid, label: 'Grid' },
+              { mode: 'calendar' as ViewMode, icon: FiCalendar, label: 'Calendar' },
+              { mode: 'map' as ViewMode, icon: FiMap, label: 'Map' },
+            ].map(({ mode, icon: Icon, label }) => (
+              <button
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                  viewMode === mode
+                    ? 'bg-neon-purple text-white'
+                    : 'text-text-secondary hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span className="hidden sm:inline text-sm">{label}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
-        {events.length === 0 && (
-          <div className="text-center py-12">
-            <FiCalendar className="mx-auto text-gray-400 mb-4" size={48} />
-            <p className="text-text-secondary text-lg">No upcoming events at the moment</p>
-            {canCreateEvents && (
-              <p className="text-text-secondary text-sm mt-2">
-                Create your first event using the button above
-              </p>
+        {/* Main Content Grid */}
+        <div className={`grid gap-6 ${showLeaderboard ? 'lg:grid-cols-4' : 'lg:grid-cols-1'}`}>
+          {/* Events Section */}
+          <div className={showLeaderboard ? 'lg:col-span-3' : ''}>
+            {viewMode === 'grid' && (
+              <EventsGridView
+                events={filteredEvents as any}
+                onRegister={handleRegister}
+                isLoading={loading}
+              />
+            )}
+
+            {viewMode === 'calendar' && (
+              <EventsCalendarView
+                events={filteredEvents as any}
+                onRegister={handleRegister}
+                onEventClick={setSelectedEvent}
+              />
+            )}
+
+            {viewMode === 'map' && (
+              <EventsMapView events={filteredEvents as any} onRegister={handleRegister} />
             )}
           </div>
-        )}
+
+          {/* Leaderboard Sidebar */}
+          <AnimatePresence>
+            {showLeaderboard && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                className="lg:col-span-1"
+              >
+                <Leaderboard
+                  users={MOCK_LEADERBOARD}
+                  currentUserId={profileData?.me?.privy_id}
+                  variant="compact"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Event Creation Wizard Modal */}
+        <EventCreationWizard
+          isOpen={showCreateWizard}
+          onClose={() => setShowCreateWizard(false)}
+          onSuccess={handleEventCreated}
+        />
 
         {/* Registration Modal */}
         <AnimatePresence>
@@ -793,57 +334,79 @@ export default function EventsPage() {
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 max-w-md w-full"
-                onClick={(e) => e.stopPropagation()}
+                className="bg-bg-secondary rounded-2xl border border-neon-purple/20 p-6 max-w-md w-full"
+                onClick={e => e.stopPropagation()}
               >
-                <h3 className="text-xl font-bold text-text-primary mb-4">
-                  Register for {selectedEvent.title}
-                </h3>
+                <div className="flex items-start justify-between mb-4">
+                  <h3 className="text-xl font-bold text-text-primary">Join Event</h3>
+                  <button
+                    onClick={() => setSelectedEvent(null)}
+                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  >
+                    <FiX className="w-5 h-5" />
+                  </button>
+                </div>
 
-                <div className="space-y-3 mb-4">
-                  <div className="flex items-center gap-2 text-sm text-text-secondary">
-                    <FiCalendar className="text-neon-purple" size={14} />
-                    <span>{formatDate(selectedEvent.start_date_time)}</span>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-sm text-text-secondary">
-                    <FiMapPin className="text-neon-purple" size={14} />
-                    <span>{selectedEvent.location_name}</span>
-                  </div>
-
-                  {selectedEvent.price_usd > 0 && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <FiDollarSign className="text-green-400" size={14} />
-                      <span className="text-green-400">${selectedEvent.price_usd}</span>
+                <div className="bg-bg-primary rounded-xl p-4 mb-4">
+                  <h4 className="font-bold text-white mb-2">{selectedEvent.title}</h4>
+                  <div className="space-y-2 text-sm text-text-secondary">
+                    <div className="flex items-center gap-2">
+                      <FiCalendar className="w-4 h-4 text-neon-purple" />
+                      {new Date(selectedEvent.start_date_time).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                      })}
                     </div>
-                  )}
+                    <div className="flex items-center gap-2">
+                      <FiMapPin className="w-4 h-4 text-neon-purple" />
+                      {selectedEvent.is_virtual
+                        ? 'Virtual Event'
+                        : selectedEvent.location_name || selectedEvent.location_city}
+                    </div>
+                    {selectedEvent.price_usd > 0 && (
+                      <div className="flex items-center gap-2">
+                        <FiDollarSign className="w-4 h-4 text-green-400" />
+                        <span className="text-green-400">${selectedEvent.price_usd}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* XP Reward Preview */}
+                <div className="flex items-center justify-center gap-2 p-3 bg-neon-purple/10 border border-neon-purple/20 rounded-xl mb-4">
+                  <span className="text-yellow-500">+25 XP</span>
+                  <span className="text-text-secondary">for joining this event!</span>
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-text-secondary mb-1">
-                    Additional Information (Optional)
+                  <label className="block text-sm font-medium text-text-secondary mb-2">
+                    Additional Notes (Optional)
                   </label>
                   <textarea
                     value={registrationNotes}
-                    onChange={(e) => setRegistrationNotes(e.target.value)}
-                    className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
+                    onChange={e => setRegistrationNotes(e.target.value)}
+                    className="w-full bg-bg-primary text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none resize-none"
                     rows={3}
-                    placeholder="Any special requirements or notes..."
+                    placeholder="Any dietary restrictions, special requirements..."
                   />
                 </div>
 
                 <div className="flex gap-3">
                   <button
                     onClick={() => setSelectedEvent(null)}
-                    className="flex-1 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                    className="flex-1 py-3 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
-                    onClick={handleRegister}
-                    className="flex-1 py-3 bg-gradient-to-r from-neon-purple to-neon-blue text-white rounded-lg hover:opacity-90 transition-opacity"
+                    onClick={handleConfirmRegistration}
+                    className="flex-1 py-3 bg-gradient-to-r from-neon-purple to-neon-pink text-white rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
                   >
-                    Confirm Registration
+                    <FiCheck className="w-5 h-5" />
+                    Confirm
                   </button>
                 </div>
               </motion.div>
