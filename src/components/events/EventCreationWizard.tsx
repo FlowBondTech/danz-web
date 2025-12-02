@@ -20,6 +20,8 @@ import {
 } from 'react-icons/fi'
 import { useCreateEventMutation, RecurrenceType } from '@/src/generated/graphql'
 import confetti from 'canvas-confetti'
+import DateTimePicker from './DateTimePicker'
+import DatePicker from './DatePicker'
 
 interface EventCreationWizardProps {
   isOpen: boolean
@@ -476,30 +478,24 @@ function StepWhenWhere({
 }) {
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">
-            <FiCalendar className="inline w-4 h-4 mr-1" /> Start Date & Time *
-          </label>
-          <input
-            type="datetime-local"
-            value={formData.start_date_time}
-            onChange={e => updateFormData({ start_date_time: e.target.value })}
-            min={new Date().toISOString().slice(0, 16)}
-            className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">
-            <FiCalendar className="inline w-4 h-4 mr-1" /> End Date & Time *
-          </label>
-          <input
-            type="datetime-local"
-            value={formData.end_date_time}
-            onChange={e => updateFormData({ end_date_time: e.target.value })}
-            className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
-          />
-        </div>
+      {/* Date & Time Pickers */}
+      <div className="grid grid-cols-1 gap-4">
+        <DateTimePicker
+          value={formData.start_date_time}
+          onChange={value => updateFormData({ start_date_time: value })}
+          label="Start Date & Time"
+          placeholder="When does it start?"
+          minDate={new Date()}
+          required
+        />
+        <DateTimePicker
+          value={formData.end_date_time}
+          onChange={value => updateFormData({ end_date_time: value })}
+          label="End Date & Time"
+          placeholder="When does it end?"
+          minDate={formData.start_date_time ? new Date(formData.start_date_time) : new Date()}
+          required
+        />
       </div>
 
       <div className="flex items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10">
@@ -693,7 +689,7 @@ function StepExtras({
             animate={{ opacity: 1, height: 'auto' }}
             className="space-y-4 pt-4 border-t border-white/10"
           >
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-text-secondary mb-2">
                   Repeat
@@ -713,12 +709,11 @@ function StepExtras({
                 <label className="block text-sm font-medium text-text-secondary mb-2">
                   Until
                 </label>
-                <input
-                  type="date"
+                <DatePicker
                   value={formData.recurrence_end_date}
-                  onChange={e => updateFormData({ recurrence_end_date: e.target.value })}
-                  min={new Date().toISOString().split('T')[0]}
-                  className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
+                  onChange={value => updateFormData({ recurrence_end_date: value })}
+                  placeholder="Series end date"
+                  minDate={new Date()}
                 />
               </div>
             </div>
