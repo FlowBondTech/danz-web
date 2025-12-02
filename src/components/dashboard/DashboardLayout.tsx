@@ -9,6 +9,7 @@ import {
   FiCalendar,
   FiChevronLeft,
   FiChevronRight,
+  FiCode,
   FiCreditCard,
   FiGrid,
   FiHeart,
@@ -82,6 +83,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     },
   ]
 
+  const devMenuItems = [
+    {
+      name: 'Dev',
+      icon: FiCode,
+      href: '/dashboard/admin/dev',
+    },
+  ]
+
   const adminMenuItems = [
     {
       name: 'Admin',
@@ -90,9 +99,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     },
   ]
 
-  const menuItems = profileData?.me?.is_admin
-    ? [...baseMenuItems, ...adminMenuItems]
-    : baseMenuItems
+  // Cast to string for comparison since 'dev' role may not be in generated types yet
+  const userRole = profileData?.me?.role as string | undefined
+  const isDevOrAdmin = userRole === 'dev' || userRole === 'admin'
+  const isAdmin = profileData?.me?.is_admin || userRole === 'admin'
+
+  const menuItems = [
+    ...baseMenuItems,
+    ...(isDevOrAdmin ? devMenuItems : []),
+    ...(isAdmin ? adminMenuItems : []),
+  ]
 
   const handleLogout = async () => {
     await logout()

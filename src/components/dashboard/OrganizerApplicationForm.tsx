@@ -15,10 +15,20 @@ export default function OrganizerApplicationForm({ isOpen, onClose, onSuccess }:
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
 
-  const { data: existingApplication, refetch } = useGetMyOrganizerApplicationQuery()
+  const { data: existingApplication, loading: queryLoading, error: queryError, refetch } = useGetMyOrganizerApplicationQuery({
+    fetchPolicy: 'network-only', // Always fetch fresh data when form opens
+    onError: (error) => {
+      console.error('[OrganizerApplication] Query error:', error)
+    }
+  })
   const [submitApplication] = useSubmitOrganizerApplicationMutation()
 
   const application = existingApplication?.myOrganizerApplication
+
+  // Log query state for debugging
+  if (queryError) {
+    console.error('[OrganizerApplication] Query failed:', queryError.message)
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -49,7 +59,22 @@ export default function OrganizerApplicationForm({ isOpen, onClose, onSuccess }:
       refetch()
       onSuccess?.()
     } catch (error: any) {
-      const message = error?.graphQLErrors?.[0]?.message || 'Failed to submit application'
+      console.error('[OrganizerApplication] Submission error:', error)
+
+      // Extract the most specific error message available
+      let message = 'Failed to submit application'
+
+      if (error?.graphQLErrors?.length > 0) {
+        const gqlError = error.graphQLErrors[0]
+        message = gqlError.message
+        console.error('[OrganizerApplication] GraphQL error:', gqlError)
+      } else if (error?.networkError) {
+        message = 'Network error - please check your connection and try again'
+        console.error('[OrganizerApplication] Network error:', error.networkError)
+      } else if (error?.message) {
+        message = error.message
+      }
+
       setSubmitError(message)
     } finally {
       setIsSubmitting(false)
@@ -103,7 +128,7 @@ export default function OrganizerApplicationForm({ isOpen, onClose, onSuccess }:
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-text-primary">
-                {application ? 'Your Organizer Application' : 'Become an Event Organizer'}
+                {queryLoading ? 'Loading...' : application ? 'Your Organizer Application' : 'Become an Event Organizer'}
               </h2>
               <button
                 onClick={onClose}
@@ -113,8 +138,23 @@ export default function OrganizerApplicationForm({ isOpen, onClose, onSuccess }:
               </button>
             </div>
 
+            {/* Loading state */}
+            {queryLoading && (
+              <div className="flex items-center justify-center py-12">
+                <div className="w-8 h-8 border-2 border-neon-purple/30 border-t-neon-purple rounded-full animate-spin" />
+              </div>
+            )}
+
+            {/* Query error state */}
+            {queryError && !queryLoading && (
+              <div className="flex items-center gap-2 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-500 mb-6">
+                <FiXCircle className="w-5 h-5 flex-shrink-0" />
+                <span>Failed to load application status. Please try again.</span>
+              </div>
+            )}
+
             {/* Show existing application status */}
-            {application ? (
+            {!queryLoading && application ? (
               <div className="space-y-6">
                 {getStatusBadge(application.status)}
 
@@ -173,7 +213,7 @@ export default function OrganizerApplicationForm({ isOpen, onClose, onSuccess }:
                   </p>
                 )}
               </div>
-            ) : (
+            ) : !queryLoading ? (
               /* Show application form */
               <form onSubmit={handleSubmit} className="space-y-6">
                 <p className="text-text-secondary">
@@ -347,7 +387,7 @@ export default function OrganizerApplicationForm({ isOpen, onClose, onSuccess }:
                   </button>
                 </div>
               </form>
-            )}
+            ) : null}
           </motion.div>
         </motion.div>
       )}
