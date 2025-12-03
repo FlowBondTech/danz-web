@@ -317,76 +317,78 @@ export default function EnhancedPointsPage() {
           <span>Back to Admin</span>
         </Link>
 
-        <div className="flex items-center justify-between mb-6 sm:mb-8">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">
-              Special Points System
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-text-primary">
+              Points System
             </h1>
-            <p className="text-text-secondary mt-1">
-              Configure rewards, bonding mechanisms, and wearable integration
+            <p className="text-text-secondary mt-1 text-sm sm:text-base">
+              Configure rewards, bonding & wearables
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:overflow-visible scrollbar-hide">
             <button
               onClick={() => setEditMode(!editMode)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-opacity ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg transition-opacity whitespace-nowrap text-sm ${
                 editMode ? 'bg-green-500' : 'bg-gray-600'
               } hover:opacity-90`}
             >
-              {editMode ? <FiCheck size={20} /> : <FiActivity size={20} />}
-              {editMode ? 'View Mode' : 'Edit Mode'}
+              {editMode ? <FiCheck size={16} /> : <FiActivity size={16} />}
+              <span className="hidden sm:inline">{editMode ? 'View Mode' : 'Edit Mode'}</span>
+              <span className="sm:hidden">{editMode ? 'View' : 'Edit'}</span>
             </button>
             <button
               onClick={() => toggleSection('custom')}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 rounded-lg hover:opacity-90 transition-opacity"
+              className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-purple-600 rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap text-sm"
             >
-              <FiPlus size={20} />
-              Create Action
+              <FiPlus size={16} />
+              <span className="hidden sm:inline">Create Action</span>
+              <span className="sm:hidden">Create</span>
             </button>
             <button
               onClick={() => toggleSection('wizard')}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-blue rounded-lg hover:opacity-90 transition-opacity"
+              className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-blue rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap text-sm"
             >
-              <FiZap size={20} />
+              <FiZap size={16} />
               Templates
             </button>
           </div>
         </div>
 
         {/* Quick Stats */}
-        <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-4 mb-6 sm:mb-8">
-          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
+        <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4 mb-6 sm:mb-8">
+          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4 md:p-6">
             <div className="flex items-center justify-between mb-2">
-              <FiStar className="text-yellow-400" size={24} />
+              <FiStar className="text-yellow-400" size={20} />
             </div>
-            <p className="text-2xl font-bold text-text-primary">{pointActions.length}</p>
-            <p className="text-sm text-text-secondary">Active Actions</p>
+            <p className="text-xl sm:text-2xl font-bold text-text-primary">{pointActions.length}</p>
+            <p className="text-xs sm:text-sm text-text-secondary">Actions</p>
           </div>
 
-          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6 cursor-pointer hover:border-neon-purple/40"
+          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4 md:p-6 cursor-pointer hover:border-neon-purple/40 active:bg-white/5"
                onClick={() => toggleSection('bonding')}>
             <div className="flex items-center justify-between mb-2">
-              <FiLock className="text-purple-400" size={24} />
+              <FiLock className="text-purple-400" size={20} />
             </div>
-            <p className="text-2xl font-bold text-text-primary">Bonding</p>
-            <p className="text-sm text-text-secondary">Token Staking</p>
+            <p className="text-lg sm:text-2xl font-bold text-text-primary">Bonding</p>
+            <p className="text-xs sm:text-sm text-text-secondary">Staking</p>
           </div>
 
-          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6 cursor-pointer hover:border-neon-purple/40"
+          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4 md:p-6 cursor-pointer hover:border-neon-purple/40 active:bg-white/5"
                onClick={() => toggleSection('wearable')}>
             <div className="flex items-center justify-between mb-2">
-              <FiWatch className="text-green-400" size={24} />
+              <FiWatch className="text-green-400" size={20} />
             </div>
-            <p className="text-2xl font-bold text-text-primary">Wearables</p>
-            <p className="text-sm text-text-secondary">Coming Soon</p>
+            <p className="text-lg sm:text-2xl font-bold text-text-primary">Wearables</p>
+            <p className="text-xs sm:text-sm text-text-secondary">Soon</p>
           </div>
 
-          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
+          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4 md:p-6">
             <div className="flex items-center justify-between mb-2">
-              <FiTrendingUp className="text-blue-400" size={24} />
+              <FiTrendingUp className="text-blue-400" size={20} />
             </div>
-            <p className="text-2xl font-bold text-text-primary">2.5M</p>
-            <p className="text-sm text-text-secondary">Points Issued</p>
+            <p className="text-xl sm:text-2xl font-bold text-text-primary">2.5M</p>
+            <p className="text-xs sm:text-sm text-text-secondary">Issued</p>
           </div>
         </div>
 
@@ -890,10 +892,10 @@ export default function EnhancedPointsPage() {
           <h2 className="text-xl font-bold text-text-primary mb-4">Current Point Actions</h2>
 
           {/* Category Filter */}
-          <div className="flex flex-wrap gap-2 mb-6">
+          <div className="flex gap-2 mb-6 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
             <button
               onClick={() => setSelectedCategory(undefined)}
-              className={`px-4 py-2 rounded-lg transition-colors ${
+              className={`px-3 sm:px-4 py-2 rounded-lg transition-colors whitespace-nowrap text-sm ${
                 !selectedCategory ? 'bg-neon-purple text-white' : 'bg-gray-700 text-gray-300'
               }`}
             >
@@ -903,7 +905,7 @@ export default function EnhancedPointsPage() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat as PointActionCategory)}
-                className={`px-4 py-2 rounded-lg transition-colors capitalize ${
+                className={`px-3 sm:px-4 py-2 rounded-lg transition-colors capitalize whitespace-nowrap text-sm ${
                   selectedCategory === cat ? 'bg-neon-purple text-white' : 'bg-gray-700 text-gray-300'
                 }`}
               >
@@ -912,8 +914,157 @@ export default function EnhancedPointsPage() {
             ))}
           </div>
 
-          {/* Actions Table */}
-          <div className="overflow-x-auto">
+          {/* Mobile Card Layout */}
+          <div className="md:hidden divide-y divide-gray-700">
+            {pointActions.map((action) => (
+              <div key={action.id} className="py-4 space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium text-text-primary">
+                      {action.action_name}
+                    </div>
+                    <div className="text-xs text-text-secondary mt-0.5 line-clamp-2">
+                      {action.description}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {editMode ? (
+                      <input
+                        type="number"
+                        value={editingPoints[action.action_key] ?? action.points_value}
+                        onChange={e => setEditingPoints({ ...editingPoints, [action.action_key]: parseInt(e.target.value) || 0 })}
+                        onBlur={() => {
+                          if (editingPoints[action.action_key] !== undefined && editingPoints[action.action_key] !== action.points_value) {
+                            handlePointsChange(action.action_key, editingPoints[action.action_key])
+                          }
+                        }}
+                        className="w-16 px-2 py-1.5 bg-bg-primary border border-white/10 rounded text-text-primary font-semibold text-sm focus:border-neon-purple focus:outline-none"
+                      />
+                    ) : (
+                      <span className="text-sm font-bold text-green-400 bg-green-400/10 px-2 py-1 rounded">
+                        +{action.points_value}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="px-2 py-1 text-xs rounded-full bg-purple-400/20 text-purple-400">
+                    {action.category}
+                  </span>
+                  <span className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
+                    action.is_active ? 'bg-green-400/20 text-green-400' : 'bg-gray-400/20 text-gray-400'
+                  }`}>
+                    {action.is_active ? <FiCheck size={12} /> : <FiX size={12} />}
+                    {action.is_active ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+
+                {editMode && (
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <label className="block text-xs text-text-secondary mb-1">Day</label>
+                      <input
+                        type="number"
+                        value={editingLimits[action.action_key]?.max_per_day ?? action.max_per_day ?? ''}
+                        onChange={e => {
+                          const currentLimits = editingLimits[action.action_key] ?? {
+                            max_per_day: action.max_per_day,
+                            max_per_week: action.max_per_week,
+                            max_per_month: action.max_per_month,
+                          }
+                          setEditingLimits({
+                            ...editingLimits,
+                            [action.action_key]: {
+                              ...currentLimits,
+                              max_per_day: e.target.value ? parseInt(e.target.value) : null,
+                            }
+                          })
+                        }}
+                        onBlur={() => {
+                          if (editingLimits[action.action_key]) {
+                            handleLimitsChange(action.action_key, editingLimits[action.action_key])
+                          }
+                        }}
+                        placeholder="∞"
+                        className="w-full px-2 py-2 bg-bg-primary border border-white/10 rounded text-text-primary text-sm focus:border-neon-purple focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-text-secondary mb-1">Week</label>
+                      <input
+                        type="number"
+                        value={editingLimits[action.action_key]?.max_per_week ?? action.max_per_week ?? ''}
+                        onChange={e => {
+                          const currentLimits = editingLimits[action.action_key] ?? {
+                            max_per_day: action.max_per_day,
+                            max_per_week: action.max_per_week,
+                            max_per_month: action.max_per_month,
+                          }
+                          setEditingLimits({
+                            ...editingLimits,
+                            [action.action_key]: {
+                              ...currentLimits,
+                              max_per_week: e.target.value ? parseInt(e.target.value) : null,
+                            }
+                          })
+                        }}
+                        onBlur={() => {
+                          if (editingLimits[action.action_key]) {
+                            handleLimitsChange(action.action_key, editingLimits[action.action_key])
+                          }
+                        }}
+                        placeholder="∞"
+                        className="w-full px-2 py-2 bg-bg-primary border border-white/10 rounded text-text-primary text-sm focus:border-neon-purple focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-text-secondary mb-1">Month</label>
+                      <input
+                        type="number"
+                        value={editingLimits[action.action_key]?.max_per_month ?? action.max_per_month ?? ''}
+                        onChange={e => {
+                          const currentLimits = editingLimits[action.action_key] ?? {
+                            max_per_day: action.max_per_day,
+                            max_per_week: action.max_per_week,
+                            max_per_month: action.max_per_month,
+                          }
+                          setEditingLimits({
+                            ...editingLimits,
+                            [action.action_key]: {
+                              ...currentLimits,
+                              max_per_month: e.target.value ? parseInt(e.target.value) : null,
+                            }
+                          })
+                        }}
+                        onBlur={() => {
+                          if (editingLimits[action.action_key]) {
+                            handleLimitsChange(action.action_key, editingLimits[action.action_key])
+                          }
+                        }}
+                        placeholder="∞"
+                        className="w-full px-2 py-2 bg-bg-primary border border-white/10 rounded text-text-primary text-sm focus:border-neon-purple focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  onClick={() => handleToggle(action.action_key)}
+                  className={`w-full py-2.5 text-sm font-medium rounded-lg transition-colors active:scale-[0.98] ${
+                    action.is_active
+                      ? 'bg-red-400/20 text-red-400 active:bg-red-400/30'
+                      : 'bg-green-400/20 text-green-400 active:bg-green-400/30'
+                  }`}
+                >
+                  {action.is_active ? 'Disable Action' : 'Enable Action'}
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Table Layout */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full">
               <thead className="border-b border-neon-purple/20">
                 <tr>
@@ -1102,6 +1253,7 @@ export default function EnhancedPointsPage() {
                 ))}
               </tbody>
             </table>
+          </div>
 
             {pointActions.length === 0 && (
               <div className="text-center py-12">

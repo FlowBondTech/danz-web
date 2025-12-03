@@ -194,30 +194,30 @@ export default function DevPanelPage() {
     <DashboardLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6 sm:mb-8">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">Dev Panel</h1>
-            <p className="text-text-secondary mt-1">Development tools and feature management</p>
+        <div className="flex items-center justify-between mb-6 sm:mb-8 gap-4">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-text-primary">Dev Panel</h1>
+            <p className="text-text-secondary mt-1 text-sm sm:text-base truncate">Development tools & features</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             <button
               onClick={handleRefresh}
-              className="p-2 text-text-secondary hover:text-text-primary transition-colors"
+              className="p-2.5 text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-white/10"
               title="Refresh data"
             >
-              <FiRefreshCw size={20} />
+              <FiRefreshCw size={18} />
             </button>
-            <div className="bg-gradient-to-r from-blue-500 to-cyan-500 px-4 py-2 rounded-full">
-              <span className="text-white font-medium text-sm flex items-center gap-2">
-                <FiCode size={16} />
-                {userRole === 'admin' ? 'Admin' : 'Dev'}
+            <div className="bg-gradient-to-r from-blue-500 to-cyan-500 px-3 sm:px-4 py-2 rounded-full">
+              <span className="text-white font-medium text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
+                <FiCode size={14} />
+                <span className="hidden sm:inline">{userRole === 'admin' ? 'Admin' : 'Dev'}</span>
               </span>
             </div>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
           {[
             { id: 'overview', label: 'Overview', icon: FiTrendingUp },
             { id: 'features', label: 'Features', icon: FiMessageSquare },
@@ -228,14 +228,15 @@ export default function DevPanelPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ${
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-lg transition-colors whitespace-nowrap text-sm sm:text-base ${
                 activeTab === tab.id
                   ? 'bg-neon-purple/20 text-neon-purple border border-neon-purple/40'
                   : 'bg-bg-secondary text-text-secondary hover:text-text-primary border border-transparent'
               }`}
             >
               <tab.icon size={16} />
-              {tab.label}
+              <span className="hidden sm:inline">{tab.label}</span>
+              <span className="sm:hidden">{tab.id === 'overview' ? 'Home' : tab.id === 'features' ? 'Feats' : tab.label}</span>
             </button>
           ))}
         </div>
@@ -257,152 +258,152 @@ export default function DevPanelPage() {
               <>
                 {/* Feature Request Stats */}
                 <div>
-                  <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                  <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
                     <FiMessageSquare className="text-neon-purple" />
                     Feature Requests
                   </h2>
-                  <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-                    <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <FiMessageSquare className="text-neon-purple" size={24} />
-                        <span className="text-xs text-text-secondary uppercase tracking-wider">Total</span>
+                  <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+                    <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
+                      <div className="flex items-center justify-between mb-3 sm:mb-4">
+                        <FiMessageSquare className="text-neon-purple" size={20} />
+                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">Total</span>
                       </div>
-                      <p className="text-2xl font-bold text-text-primary">{stats.total_feature_requests}</p>
-                      <p className="text-sm text-text-secondary mt-1">Requests</p>
+                      <p className="text-xl sm:text-2xl font-bold text-text-primary">{stats.total_feature_requests}</p>
+                      <p className="text-xs sm:text-sm text-text-secondary mt-1">Requests</p>
                     </div>
 
-                    <div className="bg-bg-secondary rounded-xl border border-yellow-400/20 p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <FiClock className="text-yellow-400" size={24} />
-                        <span className="text-xs text-text-secondary uppercase tracking-wider">Pending</span>
+                    <div className="bg-bg-secondary rounded-xl border border-yellow-400/20 p-4 sm:p-6">
+                      <div className="flex items-center justify-between mb-3 sm:mb-4">
+                        <FiClock className="text-yellow-400" size={20} />
+                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">Pending</span>
                       </div>
-                      <p className="text-2xl font-bold text-text-primary">{stats.pending_requests}</p>
-                      <p className="text-sm text-text-secondary mt-1">Awaiting Review</p>
+                      <p className="text-xl sm:text-2xl font-bold text-text-primary">{stats.pending_requests}</p>
+                      <p className="text-xs sm:text-sm text-text-secondary mt-1">Awaiting</p>
                     </div>
 
-                    <div className="bg-bg-secondary rounded-xl border border-blue-400/20 p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <FiActivity className="text-blue-400" size={24} />
-                        <span className="text-xs text-text-secondary uppercase tracking-wider">In Progress</span>
+                    <div className="bg-bg-secondary rounded-xl border border-blue-400/20 p-4 sm:p-6">
+                      <div className="flex items-center justify-between mb-3 sm:mb-4">
+                        <FiActivity className="text-blue-400" size={20} />
+                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">Active</span>
                       </div>
-                      <p className="text-2xl font-bold text-text-primary">{stats.in_progress_requests}</p>
-                      <p className="text-sm text-text-secondary mt-1">Being Worked On</p>
+                      <p className="text-xl sm:text-2xl font-bold text-text-primary">{stats.in_progress_requests}</p>
+                      <p className="text-xs sm:text-sm text-text-secondary mt-1">In Progress</p>
                     </div>
 
-                    <div className="bg-bg-secondary rounded-xl border border-green-400/20 p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <FiCheckCircle className="text-green-400" size={24} />
-                        <span className="text-xs text-text-secondary uppercase tracking-wider">Completed</span>
+                    <div className="bg-bg-secondary rounded-xl border border-green-400/20 p-4 sm:p-6">
+                      <div className="flex items-center justify-between mb-3 sm:mb-4">
+                        <FiCheckCircle className="text-green-400" size={20} />
+                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">Done</span>
                       </div>
-                      <p className="text-2xl font-bold text-text-primary">{stats.completed_requests}</p>
-                      <p className="text-sm text-text-secondary mt-1">Shipped</p>
+                      <p className="text-xl sm:text-2xl font-bold text-text-primary">{stats.completed_requests}</p>
+                      <p className="text-xs sm:text-sm text-text-secondary mt-1">Shipped</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Dev Task Stats */}
                 <div>
-                  <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                  <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
                     <FiList className="text-neon-pink" />
                     Dev Tasks
                   </h2>
-                  <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-                    <div className="bg-bg-secondary rounded-xl border border-neon-pink/20 p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <FiList className="text-neon-pink" size={24} />
-                        <span className="text-xs text-text-secondary uppercase tracking-wider">Total</span>
+                  <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+                    <div className="bg-bg-secondary rounded-xl border border-neon-pink/20 p-4 sm:p-6">
+                      <div className="flex items-center justify-between mb-3 sm:mb-4">
+                        <FiList className="text-neon-pink" size={20} />
+                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">Total</span>
                       </div>
-                      <p className="text-2xl font-bold text-text-primary">{stats.total_tasks}</p>
-                      <p className="text-sm text-text-secondary mt-1">Tasks</p>
+                      <p className="text-xl sm:text-2xl font-bold text-text-primary">{stats.total_tasks}</p>
+                      <p className="text-xs sm:text-sm text-text-secondary mt-1">Tasks</p>
                     </div>
 
-                    <div className="bg-bg-secondary rounded-xl border border-gray-400/20 p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <FiClock className="text-gray-400" size={24} />
-                        <span className="text-xs text-text-secondary uppercase tracking-wider">To Do</span>
+                    <div className="bg-bg-secondary rounded-xl border border-gray-400/20 p-4 sm:p-6">
+                      <div className="flex items-center justify-between mb-3 sm:mb-4">
+                        <FiClock className="text-gray-400" size={20} />
+                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">To Do</span>
                       </div>
-                      <p className="text-2xl font-bold text-text-primary">{stats.todo_tasks}</p>
-                      <p className="text-sm text-text-secondary mt-1">Not Started</p>
+                      <p className="text-xl sm:text-2xl font-bold text-text-primary">{stats.todo_tasks}</p>
+                      <p className="text-xs sm:text-sm text-text-secondary mt-1">Not Started</p>
                     </div>
 
-                    <div className="bg-bg-secondary rounded-xl border border-blue-400/20 p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <FiZap className="text-blue-400" size={24} />
-                        <span className="text-xs text-text-secondary uppercase tracking-wider">Active</span>
+                    <div className="bg-bg-secondary rounded-xl border border-blue-400/20 p-4 sm:p-6">
+                      <div className="flex items-center justify-between mb-3 sm:mb-4">
+                        <FiZap className="text-blue-400" size={20} />
+                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">Active</span>
                       </div>
-                      <p className="text-2xl font-bold text-text-primary">{stats.in_progress_tasks}</p>
-                      <p className="text-sm text-text-secondary mt-1">In Progress</p>
+                      <p className="text-xl sm:text-2xl font-bold text-text-primary">{stats.in_progress_tasks}</p>
+                      <p className="text-xs sm:text-sm text-text-secondary mt-1">In Progress</p>
                     </div>
 
-                    <div className="bg-bg-secondary rounded-xl border border-red-400/20 p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <FiAlertTriangle className="text-red-400" size={24} />
-                        <span className="text-xs text-text-secondary uppercase tracking-wider">Blocked</span>
+                    <div className="bg-bg-secondary rounded-xl border border-red-400/20 p-4 sm:p-6">
+                      <div className="flex items-center justify-between mb-3 sm:mb-4">
+                        <FiAlertTriangle className="text-red-400" size={20} />
+                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">Blocked</span>
                       </div>
-                      <p className="text-2xl font-bold text-text-primary">{stats.blocked_tasks}</p>
-                      <p className="text-sm text-text-secondary mt-1">Need Attention</p>
+                      <p className="text-xl sm:text-2xl font-bold text-text-primary">{stats.blocked_tasks}</p>
+                      <p className="text-xs sm:text-sm text-text-secondary mt-1">Attention</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Quick Stats Row */}
-                <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
+                <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                   {/* Changelog */}
-                  <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="p-3 bg-neon-purple/20 rounded-lg">
-                        <FiTag className="text-neon-purple" size={24} />
+                  <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
+                    <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                      <div className="p-2.5 sm:p-3 bg-neon-purple/20 rounded-lg">
+                        <FiTag className="text-neon-purple" size={20} />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-text-primary">Changelog</h3>
-                        <p className="text-text-secondary text-sm">{stats.total_changelog_entries} entries</p>
+                        <h3 className="text-base sm:text-lg font-semibold text-text-primary">Changelog</h3>
+                        <p className="text-text-secondary text-xs sm:text-sm">{stats.total_changelog_entries} entries</p>
                       </div>
                     </div>
                     {stats.latest_version && (
                       <div className="bg-bg-primary rounded-lg p-3">
                         <p className="text-xs text-text-secondary">Latest Version</p>
-                        <p className="text-xl font-bold text-neon-purple">{stats.latest_version}</p>
+                        <p className="text-lg sm:text-xl font-bold text-neon-purple">{stats.latest_version}</p>
                       </div>
                     )}
                   </div>
 
                   {/* GitHub */}
-                  <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="p-3 bg-neon-pink/20 rounded-lg">
-                        <FiGitBranch className="text-neon-pink" size={24} />
+                  <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
+                    <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                      <div className="p-2.5 sm:p-3 bg-neon-pink/20 rounded-lg">
+                        <FiGitBranch className="text-neon-pink" size={20} />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-text-primary">GitHub</h3>
-                        <p className="text-text-secondary text-sm">Repository Status</p>
+                        <h3 className="text-base sm:text-lg font-semibold text-text-primary">GitHub</h3>
+                        <p className="text-text-secondary text-xs sm:text-sm">Repository Status</p>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-bg-primary rounded-lg p-3">
-                        <p className="text-xs text-text-secondary">Open PRs</p>
-                        <p className="text-xl font-bold text-green-400">{stats.github_open_prs ?? '-'}</p>
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                      <div className="bg-bg-primary rounded-lg p-2.5 sm:p-3">
+                        <p className="text-[10px] sm:text-xs text-text-secondary">Open PRs</p>
+                        <p className="text-lg sm:text-xl font-bold text-green-400">{stats.github_open_prs ?? '-'}</p>
                       </div>
-                      <div className="bg-bg-primary rounded-lg p-3">
-                        <p className="text-xs text-text-secondary">Open Issues</p>
-                        <p className="text-xl font-bold text-yellow-400">{stats.github_open_issues ?? '-'}</p>
+                      <div className="bg-bg-primary rounded-lg p-2.5 sm:p-3">
+                        <p className="text-[10px] sm:text-xs text-text-secondary">Open Issues</p>
+                        <p className="text-lg sm:text-xl font-bold text-yellow-400">{stats.github_open_issues ?? '-'}</p>
                       </div>
                     </div>
                   </div>
 
                   {/* API Rate Limit */}
                   {stats.github_rate_limit && (
-                    <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="p-3 bg-blue-400/20 rounded-lg">
-                          <FiDatabase className="text-blue-400" size={24} />
+                    <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6 sm:col-span-2 lg:col-span-1">
+                      <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                        <div className="p-2.5 sm:p-3 bg-blue-400/20 rounded-lg">
+                          <FiDatabase className="text-blue-400" size={20} />
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-text-primary">API Rate Limit</h3>
-                          <p className="text-text-secondary text-sm">GitHub API</p>
+                          <h3 className="text-base sm:text-lg font-semibold text-text-primary">API Rate</h3>
+                          <p className="text-text-secondary text-xs sm:text-sm">GitHub API</p>
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-xs sm:text-sm">
                           <span className="text-text-secondary">Remaining</span>
                           <span className="text-text-primary font-medium">
                             {stats.github_rate_limit.remaining} / {stats.github_rate_limit.limit}
@@ -431,40 +432,40 @@ export default function DevPanelPage() {
 
             {/* System Health */}
             <div>
-              <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+              <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
                 <FiServer className="text-green-400" />
                 System Health
               </h2>
               {healthLoading ? (
-                <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
                   {[...Array(4)].map((_, i) => (
-                    <div key={i} className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 animate-pulse">
+                    <div key={i} className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4 animate-pulse">
                       <div className="h-4 bg-white/10 rounded w-3/4 mb-2" />
                       <div className="h-6 bg-white/10 rounded w-1/2" />
                     </div>
                   ))}
                 </div>
               ) : health.length > 0 ? (
-                <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
                   {health.map(service => (
                     <div
                       key={service.service}
-                      className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4"
+                      className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4"
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-text-primary font-medium capitalize">{service.service}</span>
+                        <span className="text-text-primary font-medium capitalize text-sm sm:text-base truncate">{service.service}</span>
                         {getHealthIcon(service.status)}
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${getHealthStatusColor(service.status)}`}>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={`px-2 py-1 rounded text-[10px] sm:text-xs font-medium ${getHealthStatusColor(service.status)}`}>
                           {service.status}
                         </span>
                         {service.response_time_ms !== null && (
-                          <span className="text-text-secondary text-xs">{service.response_time_ms}ms</span>
+                          <span className="text-text-secondary text-[10px] sm:text-xs">{service.response_time_ms}ms</span>
                         )}
                       </div>
                       {service.error_message && (
-                        <p className="text-red-400 text-xs mt-2 truncate" title={service.error_message}>
+                        <p className="text-red-400 text-[10px] sm:text-xs mt-2 truncate" title={service.error_message}>
                           {service.error_message}
                         </p>
                       )}
@@ -480,48 +481,48 @@ export default function DevPanelPage() {
 
             {/* Quick Actions */}
             <div>
-              <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+              <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
                 <FiSettings className="text-blue-400" />
                 Quick Actions
               </h2>
-              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 <button
                   onClick={() => setActiveTab('features')}
-                  className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 hover:border-neon-purple/40 transition-colors text-left group"
+                  className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6 hover:border-neon-purple/40 active:bg-white/5 transition-colors text-left group"
                 >
-                  <div className="flex items-center gap-4 mb-3">
-                    <div className="p-3 bg-neon-purple/20 rounded-lg group-hover:bg-neon-purple/30 transition-colors">
-                      <FiMessageSquare className="text-neon-purple" size={24} />
+                  <div className="flex items-center gap-3 sm:gap-4 mb-2 sm:mb-3">
+                    <div className="p-2.5 sm:p-3 bg-neon-purple/20 rounded-lg group-hover:bg-neon-purple/30 transition-colors">
+                      <FiMessageSquare className="text-neon-purple" size={20} />
                     </div>
-                    <h3 className="text-lg font-semibold text-text-primary">Feature Requests</h3>
+                    <h3 className="text-base sm:text-lg font-semibold text-text-primary">Feature Requests</h3>
                   </div>
-                  <p className="text-text-secondary text-sm">View and manage feature requests from users</p>
+                  <p className="text-text-secondary text-xs sm:text-sm">View and manage feature requests from users</p>
                 </button>
 
                 <button
                   onClick={() => setActiveTab('tasks')}
-                  className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 hover:border-neon-purple/40 transition-colors text-left group"
+                  className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6 hover:border-neon-purple/40 active:bg-white/5 transition-colors text-left group"
                 >
-                  <div className="flex items-center gap-4 mb-3">
-                    <div className="p-3 bg-neon-pink/20 rounded-lg group-hover:bg-neon-pink/30 transition-colors">
-                      <FiList className="text-neon-pink" size={24} />
+                  <div className="flex items-center gap-3 sm:gap-4 mb-2 sm:mb-3">
+                    <div className="p-2.5 sm:p-3 bg-neon-pink/20 rounded-lg group-hover:bg-neon-pink/30 transition-colors">
+                      <FiList className="text-neon-pink" size={20} />
                     </div>
-                    <h3 className="text-lg font-semibold text-text-primary">Dev Tasks</h3>
+                    <h3 className="text-base sm:text-lg font-semibold text-text-primary">Dev Tasks</h3>
                   </div>
-                  <p className="text-text-secondary text-sm">Track development tasks and sprints</p>
+                  <p className="text-text-secondary text-xs sm:text-sm">Track development tasks and sprints</p>
                 </button>
 
                 <button
                   onClick={() => setActiveTab('github')}
-                  className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 hover:border-neon-purple/40 transition-colors text-left group"
+                  className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6 hover:border-neon-purple/40 active:bg-white/5 transition-colors text-left group sm:col-span-2 lg:col-span-1"
                 >
-                  <div className="flex items-center gap-4 mb-3">
-                    <div className="p-3 bg-blue-400/20 rounded-lg group-hover:bg-blue-400/30 transition-colors">
-                      <FiGitPullRequest className="text-blue-400" size={24} />
+                  <div className="flex items-center gap-3 sm:gap-4 mb-2 sm:mb-3">
+                    <div className="p-2.5 sm:p-3 bg-blue-400/20 rounded-lg group-hover:bg-blue-400/30 transition-colors">
+                      <FiGitPullRequest className="text-blue-400" size={20} />
                     </div>
-                    <h3 className="text-lg font-semibold text-text-primary">GitHub Activity</h3>
+                    <h3 className="text-base sm:text-lg font-semibold text-text-primary">GitHub Activity</h3>
                   </div>
-                  <p className="text-text-secondary text-sm">View commits, PRs, and CI/CD status</p>
+                  <p className="text-text-secondary text-xs sm:text-sm">View commits, PRs, and CI/CD status</p>
                 </button>
               </div>
             </div>
