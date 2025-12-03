@@ -1080,7 +1080,7 @@ export default function EnhancedPointsPage() {
                 >
                   {action.is_active ? 'Disable Action' : 'Enable Action'}
                 </button>
-              </div>
+              </article>
             ))}
           </div>
 
@@ -1276,18 +1276,17 @@ export default function EnhancedPointsPage() {
             </table>
           </div>
 
-            {pointActions.length === 0 && (
-              <div className="text-center py-12">
-                <FiAward className="mx-auto text-gray-400 mb-4" size={48} />
-                <p className="text-text-secondary text-lg">
-                  No point actions configured yet
-                </p>
-                <p className="text-text-secondary text-sm mt-2">
-                  Use the Guided Setup above to get started quickly
-                </p>
-              </div>
-            )}
-          </div>
+          {pointActions.length === 0 && (
+            <div className="text-center py-12">
+              <FiAward className="mx-auto text-gray-400 mb-4" size={48} />
+              <p className="text-text-secondary text-lg">
+                No point actions configured yet
+              </p>
+              <p className="text-text-secondary text-sm mt-2">
+                Use the Guided Setup above to get started quickly
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </DashboardLayout>

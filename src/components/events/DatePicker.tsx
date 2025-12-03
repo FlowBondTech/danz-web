@@ -194,7 +194,7 @@ export default function DatePicker({
 
                 <div className="grid grid-cols-7 gap-1 mb-2" role="row">
                   {DAYS.map(day => (
-                    <div key={day} className="text-center text-xs text-text-secondary py-2 font-medium" role="columnheader" abbr={day}>
+                    <div key={day} className="text-center text-xs text-text-secondary py-2 font-medium" role="columnheader" aria-label={day}>
                       {day}
                     </div>
                   ))}

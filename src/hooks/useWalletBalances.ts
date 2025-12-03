@@ -24,7 +24,7 @@ const SOL_RPC = 'https://api.mainnet-beta.solana.com'
 
 // Constants
 const LAMPORTS_PER_SOL = 1_000_000_000
-const WEI_PER_ETH = 1_000_000_000_000_000_000n
+const WEI_PER_ETH = BigInt('1000000000000000000')
 
 export function useWalletBalances(addresses: { address: string; chainType: 'ethereum' | 'solana' }[]): UseWalletBalancesResult {
   const [balances, setBalances] = useState<Record<string, WalletBalance>>({})
