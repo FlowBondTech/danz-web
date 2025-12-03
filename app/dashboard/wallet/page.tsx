@@ -3,7 +3,7 @@
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import { usePrivy, useWallets, useCreateWallet, useFundWallet } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import {
   FiCopy,
@@ -22,8 +22,10 @@ import {
   FiUnlock,
   FiAlertTriangle,
   FiX,
+  FiRefreshCw,
 } from 'react-icons/fi'
 import { SiEthereum, SiSolana } from 'react-icons/si'
+import { useWalletBalances } from '@/src/hooks/useWalletBalances'
 
 interface WalletInfo {
   address: string
@@ -69,6 +71,13 @@ export default function WalletPage() {
   // Separate embedded and external wallets
   const embeddedWallets = allLinkedWallets.filter(w => w.isEmbedded)
   const linkedWallets = allLinkedWallets.filter(w => !w.isEmbedded)
+
+  // Fetch balances for all wallets
+  const walletAddresses = useMemo(() =>
+    allLinkedWallets.map(w => ({ address: w.address, chainType: w.chainType })),
+    [allLinkedWallets]
+  )
+  const { balances, isLoading: balancesLoading, refetch: refetchBalances, getBalance } = useWalletBalances(walletAddresses)
 
   const copyToClipboard = async (address: string) => {
     await navigator.clipboard.writeText(address)
@@ -365,7 +374,15 @@ export default function WalletPage() {
               {allLinkedWallets.filter(w => w.isConnected).length}
             </p>
           </div>
-          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
+          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 relative">
+            <button
+              onClick={() => refetchBalances()}
+              disabled={balancesLoading}
+              className="absolute top-4 right-4 p-2 hover:bg-white/5 rounded-lg transition-colors disabled:opacity-50"
+              title="Refresh balances"
+            >
+              <FiRefreshCw className={`w-4 h-4 text-text-secondary ${balancesLoading ? 'animate-spin' : ''}`} />
+            </button>
             <p className="text-text-secondary text-sm mb-1">Embedded Wallets</p>
             <p className="text-3xl font-bold text-neon-pink">
               {embeddedWallets.length}
@@ -483,6 +500,24 @@ export default function WalletPage() {
                           </span>
                         </div>
                       </div>
+                    </div>
+
+                    {/* Balance Display */}
+                    <div className="text-right">
+                      {balancesLoading ? (
+                        <div className="w-6 h-6 border-2 border-neon-purple border-t-transparent rounded-full animate-spin" />
+                      ) : getBalance(wallet.address) ? (
+                        <div>
+                          <p className="text-2xl font-bold text-text-primary">
+                            {getBalance(wallet.address)?.balanceFormatted}
+                          </p>
+                          <p className="text-sm text-text-secondary">
+                            {getBalance(wallet.address)?.symbol}
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-text-secondary text-sm">--</p>
+                      )}
                     </div>
                   </div>
 
@@ -643,8 +678,28 @@ export default function WalletPage() {
                       </div>
                     </div>
 
-                    {/* Actions */}
-                    <div className="flex items-center gap-2">
+                    {/* Balance + Actions */}
+                    <div className="flex items-center gap-4">
+                      {/* Balance */}
+                      <div className="text-right">
+                        {balancesLoading ? (
+                          <div className="w-5 h-5 border-2 border-neon-purple/50 border-t-transparent rounded-full animate-spin" />
+                        ) : getBalance(wallet.address) ? (
+                          <div>
+                            <p className="text-lg font-bold text-text-primary">
+                              {getBalance(wallet.address)?.balanceFormatted}
+                            </p>
+                            <p className="text-xs text-text-secondary">
+                              {getBalance(wallet.address)?.symbol}
+                            </p>
+                          </div>
+                        ) : (
+                          <p className="text-text-secondary text-sm">--</p>
+                        )}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-2">
                       {wallet.chainType === 'solana' ? (
                         <button
                           onClick={() => copyToClipboard(wallet.address)}
@@ -680,6 +735,7 @@ export default function WalletPage() {
                           )}
                         </button>
                       )}
+                      </div>
                     </div>
                   </div>
                 </motion.div>
