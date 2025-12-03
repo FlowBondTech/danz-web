@@ -287,7 +287,7 @@ export default function EnhancedPointsPage() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-white text-2xl">Loading...</div>
+          <div className="text-white text-2xl" role="status" aria-live="polite">Loading...</div>
         </div>
       </DashboardLayout>
     )
@@ -297,7 +297,7 @@ export default function EnhancedPointsPage() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-red-400 text-xl">Access Denied - Admin Only</div>
+          <div className="text-red-400 text-xl" role="alert">Access Denied - Admin Only</div>
         </div>
       </DashboardLayout>
     )
@@ -355,39 +355,55 @@ export default function EnhancedPointsPage() {
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4 mb-6 sm:mb-8">
-          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4 md:p-6">
-            <div className="flex items-center justify-between mb-2">
-              <FiStar className="text-yellow-400" size={20} />
+        {/* Quick Stats - Fluid grid for accessibility */}
+        <div
+          className="grid gap-3 sm:gap-4 grid-cols-[repeat(auto-fit,minmax(140px,1fr))] lg:grid-cols-4 mb-6 sm:mb-8"
+          role="region"
+          aria-label="Points system overview"
+        >
+          <div className="bg-bg-secondary rounded-xl border border-neon-purple/30 p-3 sm:p-4 md:p-6 min-h-[100px]">
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <FiStar className="text-yellow-400 flex-shrink-0" size={20} aria-hidden="true" />
+              <span className="text-xs text-text-secondary uppercase tracking-wider">Total</span>
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-text-primary">{pointActions.length}</p>
+            <p className="text-xl sm:text-2xl font-bold text-text-primary break-words">{pointActions.length}</p>
             <p className="text-xs sm:text-sm text-text-secondary">Actions</p>
           </div>
 
-          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4 md:p-6 cursor-pointer hover:border-neon-purple/40 active:bg-white/5"
-               onClick={() => toggleSection('bonding')}>
-            <div className="flex items-center justify-between mb-2">
-              <FiLock className="text-purple-400" size={20} />
+          <button
+            className="bg-bg-secondary rounded-xl border border-neon-purple/30 p-3 sm:p-4 md:p-6 cursor-pointer hover:border-neon-purple/50 active:bg-white/5 text-left min-h-[100px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary transition-colors"
+            onClick={() => toggleSection('bonding')}
+            aria-expanded={showBondingSection}
+            aria-label="Toggle bonding section"
+          >
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <FiLock className="text-purple-400 flex-shrink-0" size={20} aria-hidden="true" />
+              <span className="text-xs text-text-secondary uppercase tracking-wider">Config</span>
             </div>
             <p className="text-lg sm:text-2xl font-bold text-text-primary">Bonding</p>
             <p className="text-xs sm:text-sm text-text-secondary">Staking</p>
-          </div>
+          </button>
 
-          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4 md:p-6 cursor-pointer hover:border-neon-purple/40 active:bg-white/5"
-               onClick={() => toggleSection('wearable')}>
-            <div className="flex items-center justify-between mb-2">
-              <FiWatch className="text-green-400" size={20} />
+          <button
+            className="bg-bg-secondary rounded-xl border border-neon-purple/30 p-3 sm:p-4 md:p-6 cursor-pointer hover:border-neon-purple/50 active:bg-white/5 text-left min-h-[100px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary transition-colors"
+            onClick={() => toggleSection('wearable')}
+            aria-expanded={showWearableSection}
+            aria-label="Toggle wearables section"
+          >
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <FiWatch className="text-green-400 flex-shrink-0" size={20} aria-hidden="true" />
+              <span className="text-xs text-text-secondary uppercase tracking-wider">Status</span>
             </div>
             <p className="text-lg sm:text-2xl font-bold text-text-primary">Wearables</p>
             <p className="text-xs sm:text-sm text-text-secondary">Soon</p>
-          </div>
+          </button>
 
-          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4 md:p-6">
-            <div className="flex items-center justify-between mb-2">
-              <FiTrendingUp className="text-blue-400" size={20} />
+          <div className="bg-bg-secondary rounded-xl border border-neon-purple/30 p-3 sm:p-4 md:p-6 min-h-[100px]">
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <FiTrendingUp className="text-blue-400 flex-shrink-0" size={20} aria-hidden="true" />
+              <span className="text-xs text-text-secondary uppercase tracking-wider">Total</span>
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-text-primary">2.5M</p>
+            <p className="text-xl sm:text-2xl font-bold text-text-primary break-words">2.5M</p>
             <p className="text-xs sm:text-sm text-text-secondary">Issued</p>
           </div>
         </div>
@@ -888,36 +904,40 @@ export default function EnhancedPointsPage() {
         </AnimatePresence>
 
         {/* Existing Point Actions */}
-        <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
+        <div className="bg-bg-secondary rounded-xl border border-neon-purple/30 p-4 sm:p-6">
           <h2 className="text-xl font-bold text-text-primary mb-4">Current Point Actions</h2>
 
           {/* Category Filter */}
-          <div className="flex gap-2 mb-6 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
-            <button
-              onClick={() => setSelectedCategory(undefined)}
-              className={`px-3 sm:px-4 py-2 rounded-lg transition-colors whitespace-nowrap text-sm ${
-                !selectedCategory ? 'bg-neon-purple text-white' : 'bg-gray-700 text-gray-300'
-              }`}
-            >
-              All
-            </button>
-            {['social', 'activity', 'event', 'referral', 'achievement', 'special'].map((cat) => (
+          <nav className="mb-6" aria-label="Filter by category">
+            <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
               <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat as PointActionCategory)}
-                className={`px-3 sm:px-4 py-2 rounded-lg transition-colors capitalize whitespace-nowrap text-sm ${
-                  selectedCategory === cat ? 'bg-neon-purple text-white' : 'bg-gray-700 text-gray-300'
+                onClick={() => setSelectedCategory(undefined)}
+                className={`px-3 sm:px-4 py-2 rounded-lg transition-colors whitespace-nowrap text-sm min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple ${
+                  !selectedCategory ? 'bg-neon-purple text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
+                aria-pressed={!selectedCategory}
               >
-                {cat}
+                All
               </button>
-            ))}
-          </div>
+              {['social', 'activity', 'event', 'referral', 'achievement', 'special'].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat as PointActionCategory)}
+                  className={`px-3 sm:px-4 py-2 rounded-lg transition-colors capitalize whitespace-nowrap text-sm min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple ${
+                    selectedCategory === cat ? 'bg-neon-purple text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  }`}
+                  aria-pressed={selectedCategory === cat}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </nav>
 
           {/* Mobile Card Layout */}
-          <div className="md:hidden divide-y divide-gray-700">
+          <div className="md:hidden divide-y divide-gray-700" role="list" aria-label="Point actions list">
             {pointActions.map((action) => (
-              <div key={action.id} className="py-4 space-y-3">
+              <article key={action.id} className="py-4 space-y-3" role="listitem" aria-label={`${action.action_name} - ${action.points_value} points`}>
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-text-primary">
@@ -938,10 +958,11 @@ export default function EnhancedPointsPage() {
                             handlePointsChange(action.action_key, editingPoints[action.action_key])
                           }
                         }}
-                        className="w-16 px-2 py-1.5 bg-bg-primary border border-white/10 rounded text-text-primary font-semibold text-sm focus:border-neon-purple focus:outline-none"
+                        className="w-16 px-2 py-1.5 bg-bg-primary border border-white/10 rounded text-text-primary font-semibold text-sm focus:border-neon-purple focus:outline-none min-h-[36px]"
+                        aria-label={`Points value for ${action.action_name}`}
                       />
                     ) : (
-                      <span className="text-sm font-bold text-green-400 bg-green-400/10 px-2 py-1 rounded">
+                      <span className="text-sm font-bold text-green-400 bg-green-400/10 px-2 py-1 rounded" aria-label={`${action.points_value} points`}>
                         +{action.points_value}
                       </span>
                     )}
@@ -954,8 +975,8 @@ export default function EnhancedPointsPage() {
                   </span>
                   <span className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
                     action.is_active ? 'bg-green-400/20 text-green-400' : 'bg-gray-400/20 text-gray-400'
-                  }`}>
-                    {action.is_active ? <FiCheck size={12} /> : <FiX size={12} />}
+                  }`} aria-label={action.is_active ? 'Status: Active' : 'Status: Inactive'}>
+                    {action.is_active ? <FiCheck size={12} aria-hidden="true" /> : <FiX size={12} aria-hidden="true" />}
                     {action.is_active ? 'Active' : 'Inactive'}
                   </span>
                 </div>

@@ -128,9 +128,12 @@ export default function DatePicker({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none hover:bg-white/10 transition-colors text-left flex items-center gap-3"
+        className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none hover:bg-white/10 transition-colors text-left flex items-center gap-3 min-h-[48px] focus-visible:ring-2 focus-visible:ring-neon-purple focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary"
+        aria-label={`${label || 'Select date'}: ${formatDisplayValue() || 'Not selected'}`}
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
       >
-        <FiCalendar className="w-5 h-5 text-neon-purple flex-shrink-0" />
+        <FiCalendar className="w-5 h-5 text-neon-purple flex-shrink-0" aria-hidden="true" />
         <span className={value ? 'text-white' : 'text-text-secondary'}>
           {formatDisplayValue() || placeholder}
         </span>
@@ -144,6 +147,7 @@ export default function DatePicker({
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] flex items-end sm:items-center justify-center"
             onClick={() => setIsOpen(false)}
+            role="presentation"
           >
             <motion.div
               initial={{ opacity: 0, y: 100, scale: 0.95 }}
@@ -152,14 +156,18 @@ export default function DatePicker({
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               className="bg-bg-secondary rounded-t-3xl sm:rounded-2xl border border-white/10 w-full sm:max-w-sm max-h-[80vh] overflow-hidden"
               onClick={e => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="datepicker-title"
             >
               <div className="p-4 border-b border-white/10 flex items-center justify-between">
-                <h3 className="text-lg font-bold text-white">{label || 'Select Date'}</h3>
+                <h3 id="datepicker-title" className="text-lg font-bold text-white">{label || 'Select Date'}</h3>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple"
+                  aria-label="Close date picker"
                 >
-                  <FiX className="w-5 h-5 text-text-secondary" />
+                  <FiX className="w-5 h-5 text-text-secondary" aria-hidden="true" />
                 </button>
               </div>
 
@@ -167,42 +175,47 @@ export default function DatePicker({
                 <div className="flex items-center justify-between mb-4">
                   <button
                     onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))}
-                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                    className="p-2 hover:bg-white/10 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple"
+                    aria-label="Previous month"
                   >
-                    <FiChevronLeft className="w-5 h-5" />
+                    <FiChevronLeft className="w-5 h-5" aria-hidden="true" />
                   </button>
-                  <h4 className="text-lg font-bold text-white">
+                  <h4 className="text-lg font-bold text-white" aria-live="polite">
                     {MONTHS[viewDate.getMonth()]} {viewDate.getFullYear()}
                   </h4>
                   <button
                     onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))}
-                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                    className="p-2 hover:bg-white/10 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple"
+                    aria-label="Next month"
                   >
-                    <FiChevronRight className="w-5 h-5" />
+                    <FiChevronRight className="w-5 h-5" aria-hidden="true" />
                   </button>
                 </div>
 
-                <div className="grid grid-cols-7 gap-1 mb-2">
+                <div className="grid grid-cols-7 gap-1 mb-2" role="row">
                   {DAYS.map(day => (
-                    <div key={day} className="text-center text-xs text-text-secondary py-2 font-medium">
+                    <div key={day} className="text-center text-xs text-text-secondary py-2 font-medium" role="columnheader" abbr={day}>
                       {day}
                     </div>
                   ))}
                 </div>
 
-                <div className="grid grid-cols-7 gap-1">
+                <div className="grid grid-cols-7 gap-1" role="grid" aria-label="Calendar">
                   {calendarDays.map((day, index) => (
                     <button
                       key={index}
                       onClick={() => !day.isDisabled && handleDateSelect(day.date)}
                       disabled={day.isDisabled}
                       className={`
-                        aspect-square rounded-xl flex items-center justify-center text-sm font-medium transition-all
+                        aspect-square rounded-xl flex items-center justify-center text-sm font-medium transition-all min-h-[36px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple
                         ${!day.isCurrentMonth ? 'text-text-secondary/30' : ''}
                         ${day.isDisabled ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/10'}
                         ${isToday(day.date) && !isSelected(day.date) ? 'ring-2 ring-neon-purple/50' : ''}
                         ${isSelected(day.date) ? 'bg-neon-purple text-white' : ''}
                       `}
+                      aria-label={`${day.date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}${isToday(day.date) ? ', today' : ''}${isSelected(day.date) ? ', selected' : ''}`}
+                      aria-selected={isSelected(day.date)}
+                      aria-current={isToday(day.date) ? 'date' : undefined}
                     >
                       {day.date.getDate()}
                     </button>
@@ -213,16 +226,16 @@ export default function DatePicker({
               <div className="p-4 border-t border-white/10 flex gap-3">
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="flex-1 py-3 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-colors font-medium"
+                  className="flex-1 py-3 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-colors font-medium min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleConfirm}
                   disabled={!tempDate}
-                  className="flex-1 py-3 bg-gradient-to-r from-neon-purple to-neon-pink text-white rounded-xl hover:opacity-90 disabled:opacity-50 transition-all font-medium flex items-center justify-center gap-2"
+                  className="flex-1 py-3 bg-gradient-to-r from-neon-purple to-neon-pink text-white rounded-xl hover:opacity-90 disabled:opacity-50 transition-all font-medium flex items-center justify-center gap-2 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple"
                 >
-                  <FiCheck className="w-5 h-5" />
+                  <FiCheck className="w-5 h-5" aria-hidden="true" />
                   Confirm
                 </button>
               </div>
