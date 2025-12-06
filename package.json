@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "next build",
+    "build": "npm run build:docs && next build",
+    "build:next": "next build",
+    "build:docs": "cd docs && npm install && npm run build && mkdir -p ../public/docs && cp -r .vitepress/dist/* ../public/docs/",
     "start": "next start",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",

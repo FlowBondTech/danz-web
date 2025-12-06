@@ -102,6 +102,13 @@ temp/
 # Public folder uploads
 public/uploads
 
+# Built docs (generated from docs/ folder)
+public/docs/
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+docs/node_modules/
+docs/bun.lock
+
 # Backup files
 *.backup
 *.bak

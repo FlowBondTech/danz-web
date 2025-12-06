@@ -3,9 +3,10 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'DANZ Platform',
   description: 'Dance-to-Earn Ecosystem Documentation',
+  base: '/docs/',
 
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/docs/logo.svg' }],
     ['meta', { name: 'theme-color', content: '#8B5CF6' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'DANZ Platform Documentation' }],
