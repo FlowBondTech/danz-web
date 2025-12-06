@@ -182,7 +182,6 @@ mutation UpdateChangelogEntry($id: ID!, $input: UpdateChangelogEntryInput!) {
     github_pr_url
     is_public
     is_highlighted
-    updated_at
   }
 }
 

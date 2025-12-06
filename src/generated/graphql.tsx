@@ -36,12 +36,124 @@ export type Achievement = {
   xp_reward?: Maybe<Scalars['Int']['output']>
 }
 
+export type AcquisitionChannel = {
+  __typename?: 'AcquisitionChannel'
+  channel: Scalars['String']['output']
+  percentage: Scalars['Float']['output']
+  users: Scalars['Int']['output']
+}
+
 export enum ActionType {
   OpenAchievement = 'open_achievement',
   OpenEvent = 'open_event',
   OpenPost = 'open_post',
   OpenProfile = 'open_profile',
   OpenSettings = 'open_settings',
+}
+
+export type ActiveUsersMetrics = {
+  __typename?: 'ActiveUsersMetrics'
+  dau: Scalars['Int']['output']
+  dau_mau_ratio: Scalars['Float']['output']
+  dau_wau_ratio: Scalars['Float']['output']
+  mau: Scalars['Int']['output']
+  trend: Array<TimeSeriesPoint>
+  wau: Scalars['Int']['output']
+}
+
+export type Activity = {
+  __typename?: 'Activity'
+  activity_type: ActivityType
+  color?: Maybe<Scalars['String']['output']>
+  comments_count: Scalars['Int']['output']
+  created_at: Scalars['DateTime']['output']
+  description?: Maybe<Scalars['String']['output']>
+  icon?: Maybe<Scalars['String']['output']>
+  id: Scalars['ID']['output']
+  is_highlighted: Scalars['Boolean']['output']
+  is_liked_by_me?: Maybe<Scalars['Boolean']['output']>
+  likes_count: Scalars['Int']['output']
+  metadata?: Maybe<Scalars['JSON']['output']>
+  points_earned?: Maybe<Scalars['Int']['output']>
+  related_entity_id?: Maybe<Scalars['String']['output']>
+  related_entity_type?: Maybe<Scalars['String']['output']>
+  target_user?: Maybe<User>
+  target_user_id?: Maybe<Scalars['String']['output']>
+  title: Scalars['String']['output']
+  user: User
+  user_id: Scalars['String']['output']
+  visibility: ActivityVisibility
+  xp_earned?: Maybe<Scalars['Int']['output']>
+}
+
+export type ActivityFeed = {
+  __typename?: 'ActivityFeed'
+  activities: Array<Activity>
+  has_more: Scalars['Boolean']['output']
+  last_activity_id?: Maybe<Scalars['String']['output']>
+  total_count: Scalars['Int']['output']
+  unread_count: Scalars['Int']['output']
+}
+
+export type ActivityFilter = {
+  from_date?: InputMaybe<Scalars['DateTime']['input']>
+  has_rewards?: InputMaybe<Scalars['Boolean']['input']>
+  to_date?: InputMaybe<Scalars['DateTime']['input']>
+  types?: InputMaybe<Array<ActivityType>>
+  user_id?: InputMaybe<Scalars['String']['input']>
+  visibility?: InputMaybe<ActivityVisibility>
+}
+
+export type ActivityGroup = {
+  __typename?: 'ActivityGroup'
+  activities: Array<Activity>
+  date: Scalars['String']['output']
+  summary: Scalars['String']['output']
+}
+
+export type ActivityStats = {
+  __typename?: 'ActivityStats'
+  engagement_rate: Scalars['Float']['output']
+  most_active_type?: Maybe<ActivityType>
+  this_week_activities: Scalars['Int']['output']
+  today_activities: Scalars['Int']['output']
+  total_activities: Scalars['Int']['output']
+  trending_now: Array<Activity>
+}
+
+export enum ActivityType {
+  ChallengeCompleted = 'CHALLENGE_COMPLETED',
+  ChallengeStarted = 'CHALLENGE_STARTED',
+  ChallengeStreak = 'CHALLENGE_STREAK',
+  DanceBondStrengthened = 'DANCE_BOND_STRENGTHENED',
+  DanceMilestone = 'DANCE_MILESTONE',
+  DanceSessionCompleted = 'DANCE_SESSION_COMPLETED',
+  DanceSessionShared = 'DANCE_SESSION_SHARED',
+  EventCheckin = 'EVENT_CHECKIN',
+  EventCompleted = 'EVENT_COMPLETED',
+  EventCreated = 'EVENT_CREATED',
+  EventJoined = 'EVENT_JOINED',
+  HighScoreAchieved = 'HIGH_SCORE_ACHIEVED',
+  LeaderboardRankUp = 'LEADERBOARD_RANK_UP',
+  NewDanceBond = 'NEW_DANCE_BOND',
+  PostCommented = 'POST_COMMENTED',
+  PostCreated = 'POST_CREATED',
+  PostLiked = 'POST_LIKED',
+  ReferralBonus = 'REFERRAL_BONUS',
+  ReferralInvited = 'REFERRAL_INVITED',
+  ReferralJoined = 'REFERRAL_JOINED',
+  SeasonReward = 'SEASON_REWARD',
+  SpecialAnnouncement = 'SPECIAL_ANNOUNCEMENT',
+  UserAchievement = 'USER_ACHIEVEMENT',
+  UserJoined = 'USER_JOINED',
+  UserLevelUp = 'USER_LEVEL_UP',
+  UserStreak = 'USER_STREAK',
+}
+
+export enum ActivityVisibility {
+  Friends = 'FRIENDS',
+  Private = 'PRIVATE',
+  Public = 'PUBLIC',
 }
 
 export type AdminStats = {
@@ -53,6 +165,54 @@ export type AdminStats = {
   totalRevenue: Scalars['Float']['output']
   totalUsers: Scalars['Int']['output']
   upcomingEvents: Scalars['Int']['output']
+}
+
+export type AgeGroupMetric = {
+  __typename?: 'AgeGroupMetric'
+  group: Scalars['String']['output']
+  percentage: Scalars['Float']['output']
+  users: Scalars['Int']['output']
+}
+
+export type AnalyticsComparison = {
+  __typename?: 'AnalyticsComparison'
+  change_percentage: Scalars['Float']['output']
+  current_value: Scalars['Float']['output']
+  metric: Scalars['String']['output']
+  previous_value: Scalars['Float']['output']
+  trend: Scalars['String']['output']
+}
+
+export type AnalyticsDateRange = {
+  from: Scalars['DateTime']['input']
+  to: Scalars['DateTime']['input']
+}
+
+export enum AnalyticsGranularity {
+  Day = 'DAY',
+  Hour = 'HOUR',
+  Month = 'MONTH',
+  Week = 'WEEK',
+}
+
+export type AnalyticsOptions = {
+  compare_to_previous?: InputMaybe<Scalars['Boolean']['input']>
+  custom_range?: InputMaybe<AnalyticsDateRange>
+  granularity?: InputMaybe<AnalyticsGranularity>
+  period?: InputMaybe<AnalyticsPeriod>
+}
+
+export enum AnalyticsPeriod {
+  AllTime = 'ALL_TIME',
+  Custom = 'CUSTOM',
+  Last_7Days = 'LAST_7_DAYS',
+  Last_30Days = 'LAST_30_DAYS',
+  Last_90Days = 'LAST_90_DAYS',
+  LastMonth = 'LAST_MONTH',
+  ThisMonth = 'THIS_MONTH',
+  ThisYear = 'THIS_YEAR',
+  Today = 'TODAY',
+  Yesterday = 'YESTERDAY',
 }
 
 export enum ApplicationStatus {
@@ -76,6 +236,148 @@ export enum BroadcastTarget {
   Organizers = 'organizers',
 }
 
+export type CategoryMetric = {
+  __typename?: 'CategoryMetric'
+  category: Scalars['String']['output']
+  count: Scalars['Int']['output']
+  percentage: Scalars['Float']['output']
+}
+
+export type Challenge = {
+  __typename?: 'Challenge'
+  badge_reward?: Maybe<Scalars['String']['output']>
+  category: ChallengeCategory
+  challenge_type: ChallengeType
+  cooldown_hours?: Maybe<Scalars['Int']['output']>
+  created_at: Scalars['DateTime']['output']
+  description: Scalars['String']['output']
+  difficulty: ChallengeDifficulty
+  ends_at?: Maybe<Scalars['DateTime']['output']>
+  id: Scalars['ID']['output']
+  is_active: Scalars['Boolean']['output']
+  is_repeatable: Scalars['Boolean']['output']
+  max_completions?: Maybe<Scalars['Int']['output']>
+  min_level?: Maybe<Scalars['Int']['output']>
+  points_reward: Scalars['Int']['output']
+  required_badges?: Maybe<Array<Scalars['String']['output']>>
+  special_reward?: Maybe<Scalars['JSON']['output']>
+  starts_at?: Maybe<Scalars['DateTime']['output']>
+  target_unit: Scalars['String']['output']
+  target_value: Scalars['Int']['output']
+  time_limit_hours?: Maybe<Scalars['Int']['output']>
+  title: Scalars['String']['output']
+  updated_at: Scalars['DateTime']['output']
+  xp_reward: Scalars['Int']['output']
+}
+
+export enum ChallengeCategory {
+  Calories = 'CALORIES',
+  Community = 'COMMUNITY',
+  DanceTime = 'DANCE_TIME',
+  Exploration = 'EXPLORATION',
+  Mastery = 'MASTERY',
+  MovementScore = 'MOVEMENT_SCORE',
+  Social = 'SOCIAL',
+  Streak = 'STREAK',
+}
+
+export enum ChallengeDifficulty {
+  Easy = 'EASY',
+  Extreme = 'EXTREME',
+  Hard = 'HARD',
+  Medium = 'MEDIUM',
+}
+
+export type ChallengeLeaderboard = {
+  __typename?: 'ChallengeLeaderboard'
+  entries: Array<ChallengeLeaderboardEntry>
+  period: Scalars['String']['output']
+}
+
+export type ChallengeLeaderboardEntry = {
+  __typename?: 'ChallengeLeaderboardEntry'
+  challenges_completed: Scalars['Int']['output']
+  points_earned: Scalars['Int']['output']
+  rank: Scalars['Int']['output']
+  user: User
+  xp_earned: Scalars['Int']['output']
+}
+
+export type ChallengeProgress = {
+  __typename?: 'ChallengeProgress'
+  challenge: Challenge
+  current_progress: Scalars['Int']['output']
+  is_claimable: Scalars['Boolean']['output']
+  percentage: Scalars['Float']['output']
+  target_value: Scalars['Int']['output']
+  time_remaining?: Maybe<Scalars['Int']['output']>
+  user_challenge?: Maybe<UserChallenge>
+}
+
+export type ChallengeStats = {
+  __typename?: 'ChallengeStats'
+  badges_earned: Array<Scalars['String']['output']>
+  challenges_by_difficulty: Scalars['JSON']['output']
+  completion_rate: Scalars['Float']['output']
+  current_streak: Scalars['Int']['output']
+  favorite_category?: Maybe<ChallengeCategory>
+  longest_streak: Scalars['Int']['output']
+  total_completed: Scalars['Int']['output']
+  total_points_earned: Scalars['Int']['output']
+  total_xp_earned: Scalars['Int']['output']
+}
+
+export enum ChallengeStatus {
+  Available = 'AVAILABLE',
+  Claimed = 'CLAIMED',
+  Completed = 'COMPLETED',
+  Expired = 'EXPIRED',
+  InProgress = 'IN_PROGRESS',
+}
+
+export enum ChallengeType {
+  Daily = 'DAILY',
+  Event = 'EVENT',
+  Social = 'SOCIAL',
+  Special = 'SPECIAL',
+  Streak = 'STREAK',
+  Weekly = 'WEEKLY',
+}
+
+export enum ChangelogCategory {
+  Breaking = 'breaking',
+  Deprecation = 'deprecation',
+  Feature = 'feature',
+  Fix = 'fix',
+  Improvement = 'improvement',
+  Performance = 'performance',
+  Security = 'security',
+}
+
+export type ChangelogEntry = {
+  __typename?: 'ChangelogEntry'
+  category: ChangelogCategory
+  created_at: Scalars['DateTime']['output']
+  created_by?: Maybe<User>
+  description?: Maybe<Scalars['String']['output']>
+  feature_request?: Maybe<FeatureRequest>
+  github_commit_sha?: Maybe<Scalars['String']['output']>
+  github_pr_url?: Maybe<Scalars['String']['output']>
+  id: Scalars['ID']['output']
+  is_highlighted: Scalars['Boolean']['output']
+  is_public: Scalars['Boolean']['output']
+  title: Scalars['String']['output']
+  version: Scalars['String']['output']
+}
+
+export type ChangelogVersion = {
+  __typename?: 'ChangelogVersion'
+  entries: Array<ChangelogEntry>
+  is_current: Scalars['Boolean']['output']
+  release_date: Scalars['DateTime']['output']
+  version: Scalars['String']['output']
+}
+
 export type CheckInEventInput = {
   event_id: Scalars['ID']['input']
   user_id: Scalars['String']['input']
@@ -85,9 +387,65 @@ export type CheckOutEventInput = {
   attendance_id: Scalars['ID']['input']
 }
 
+export type CityMetric = {
+  __typename?: 'CityMetric'
+  city: Scalars['String']['output']
+  country: Scalars['String']['output']
+  percentage: Scalars['Float']['output']
+  users: Scalars['Int']['output']
+}
+
+export type CohortData = {
+  __typename?: 'CohortData'
+  cohort_date: Scalars['String']['output']
+  retention_days: Array<Scalars['Float']['output']>
+  size: Scalars['Int']['output']
+}
+
 export type CompleteReferralInput = {
   referee_user_id: Scalars['String']['input']
   referral_code: Scalars['String']['input']
+}
+
+export type CountryMetric = {
+  __typename?: 'CountryMetric'
+  country: Scalars['String']['output']
+  percentage: Scalars['Float']['output']
+  users: Scalars['Int']['output']
+}
+
+export type CreateChallengeInput = {
+  badge_reward?: InputMaybe<Scalars['String']['input']>
+  category: ChallengeCategory
+  challenge_type: ChallengeType
+  cooldown_hours?: InputMaybe<Scalars['Int']['input']>
+  description: Scalars['String']['input']
+  difficulty: ChallengeDifficulty
+  ends_at?: InputMaybe<Scalars['DateTime']['input']>
+  is_repeatable?: InputMaybe<Scalars['Boolean']['input']>
+  max_completions?: InputMaybe<Scalars['Int']['input']>
+  min_level?: InputMaybe<Scalars['Int']['input']>
+  points_reward: Scalars['Int']['input']
+  required_badges?: InputMaybe<Array<Scalars['String']['input']>>
+  special_reward?: InputMaybe<Scalars['JSON']['input']>
+  starts_at?: InputMaybe<Scalars['DateTime']['input']>
+  target_unit: Scalars['String']['input']
+  target_value: Scalars['Int']['input']
+  time_limit_hours?: InputMaybe<Scalars['Int']['input']>
+  title: Scalars['String']['input']
+  xp_reward: Scalars['Int']['input']
+}
+
+export type CreateChangelogEntryInput = {
+  category: ChangelogCategory
+  description?: InputMaybe<Scalars['String']['input']>
+  feature_request_id?: InputMaybe<Scalars['String']['input']>
+  github_commit_sha?: InputMaybe<Scalars['String']['input']>
+  github_pr_url?: InputMaybe<Scalars['String']['input']>
+  is_highlighted?: InputMaybe<Scalars['Boolean']['input']>
+  is_public?: InputMaybe<Scalars['Boolean']['input']>
+  title: Scalars['String']['input']
+  version: Scalars['String']['input']
 }
 
 export type CreateCommentInput = {
@@ -97,6 +455,21 @@ export type CreateCommentInput = {
 
 export type CreateDanceBondInput = {
   user_id: Scalars['String']['input']
+}
+
+export type CreateDevTaskInput = {
+  assigned_to?: InputMaybe<Scalars['String']['input']>
+  description?: InputMaybe<Scalars['String']['input']>
+  due_date?: InputMaybe<Scalars['String']['input']>
+  estimated_hours?: InputMaybe<Scalars['Int']['input']>
+  feature_request_id?: InputMaybe<Scalars['String']['input']>
+  github_issue_url?: InputMaybe<Scalars['String']['input']>
+  parent_task_id?: InputMaybe<Scalars['String']['input']>
+  priority: TaskPriority
+  sprint?: InputMaybe<Scalars['String']['input']>
+  tags?: InputMaybe<Array<Scalars['String']['input']>>
+  task_type: DevTaskType
+  title: Scalars['String']['input']
 }
 
 export type CreateEventInput = {
@@ -127,6 +500,14 @@ export type CreateEventInput = {
   tags?: InputMaybe<Array<Scalars['String']['input']>>
   title: Scalars['String']['input']
   virtual_link?: InputMaybe<Scalars['String']['input']>
+}
+
+export type CreateFeatureRequestInput = {
+  category: FeatureRequestCategory
+  description?: InputMaybe<Scalars['String']['input']>
+  priority?: InputMaybe<TaskPriority>
+  tags?: InputMaybe<Array<Scalars['String']['input']>>
+  title: Scalars['String']['input']
 }
 
 export type CreateFreestyleSessionInput = {
@@ -189,6 +570,25 @@ export type DailyActivity = {
   user_id: Scalars['String']['output']
 }
 
+export type DailyChallengeset = {
+  __typename?: 'DailyChallengeset'
+  challenges: Array<Challenge>
+  date: Scalars['String']['output']
+  total_points_available: Scalars['Int']['output']
+  total_xp_available: Scalars['Int']['output']
+  user_progress?: Maybe<Array<UserChallenge>>
+}
+
+export type DailyWearableActivity = {
+  __typename?: 'DailyWearableActivity'
+  active_minutes: Scalars['Int']['output']
+  calories: Scalars['Int']['output']
+  dance_sessions: Scalars['Int']['output']
+  date: Scalars['String']['output']
+  heart_rate_avg?: Maybe<Scalars['Int']['output']>
+  steps: Scalars['Int']['output']
+}
+
 export type DanceBond = {
   __typename?: 'DanceBond'
   bond_level: Scalars['Int']['output']
@@ -206,6 +606,18 @@ export type DanceBond = {
   user2_id: Scalars['String']['output']
   user_id_1: Scalars['String']['output']
   user_id_2: Scalars['String']['output']
+}
+
+export type DanceMetrics = {
+  __typename?: 'DanceMetrics'
+  avg_movement_score: Scalars['Float']['output']
+  avg_session_duration: Scalars['Float']['output']
+  peak_hours: Array<HourlyMetric>
+  popular_styles: Array<StyleMetric>
+  sessions_this_week: Scalars['Int']['output']
+  sessions_today: Scalars['Int']['output']
+  total_calories_burned: Scalars['Int']['output']
+  trend: Array<TimeSeriesPoint>
 }
 
 export type DanceSession = {
@@ -264,6 +676,118 @@ export type DanceSessionStats = {
   total_duration: Scalars['Int']['output']
   total_sessions: Scalars['Int']['output']
   total_xp_earned: Scalars['Int']['output']
+}
+
+export type DanceStyleMetric = {
+  __typename?: 'DanceStyleMetric'
+  percentage: Scalars['Float']['output']
+  style: Scalars['String']['output']
+  users: Scalars['Int']['output']
+}
+
+export type DemographicsMetrics = {
+  __typename?: 'DemographicsMetrics'
+  by_age_group: Array<AgeGroupMetric>
+  by_city: Array<CityMetric>
+  by_country: Array<CountryMetric>
+  by_dance_style: Array<DanceStyleMetric>
+  by_skill_level: Array<SkillLevelMetric>
+}
+
+export type DevDashboardStats = {
+  __typename?: 'DevDashboardStats'
+  blocked_tasks: Scalars['Int']['output']
+  completed_requests: Scalars['Int']['output']
+  github_open_issues?: Maybe<Scalars['Int']['output']>
+  github_open_prs?: Maybe<Scalars['Int']['output']>
+  github_rate_limit?: Maybe<GitHubRateLimit>
+  in_progress_requests: Scalars['Int']['output']
+  in_progress_tasks: Scalars['Int']['output']
+  latest_version?: Maybe<Scalars['String']['output']>
+  pending_requests: Scalars['Int']['output']
+  todo_tasks: Scalars['Int']['output']
+  total_changelog_entries: Scalars['Int']['output']
+  total_feature_requests: Scalars['Int']['output']
+  total_tasks: Scalars['Int']['output']
+}
+
+export type DevTask = {
+  __typename?: 'DevTask'
+  actual_hours?: Maybe<Scalars['Int']['output']>
+  assigned_to?: Maybe<User>
+  completed_at?: Maybe<Scalars['DateTime']['output']>
+  created_at: Scalars['DateTime']['output']
+  created_by?: Maybe<User>
+  description?: Maybe<Scalars['String']['output']>
+  due_date?: Maybe<Scalars['String']['output']>
+  estimated_hours?: Maybe<Scalars['Int']['output']>
+  feature_request?: Maybe<FeatureRequest>
+  github_issue_url?: Maybe<Scalars['String']['output']>
+  github_pr_url?: Maybe<Scalars['String']['output']>
+  id: Scalars['ID']['output']
+  parent_task?: Maybe<DevTask>
+  priority: TaskPriority
+  sprint?: Maybe<Scalars['String']['output']>
+  started_at?: Maybe<Scalars['DateTime']['output']>
+  status: DevTaskStatus
+  subtasks?: Maybe<Array<DevTask>>
+  tags?: Maybe<Array<Scalars['String']['output']>>
+  task_type: DevTaskType
+  title: Scalars['String']['output']
+  updated_at: Scalars['DateTime']['output']
+}
+
+export type DevTaskConnection = {
+  __typename?: 'DevTaskConnection'
+  has_more: Scalars['Boolean']['output']
+  tasks: Array<DevTask>
+  total_count: Scalars['Int']['output']
+}
+
+export type DevTaskFilter = {
+  assigned_to?: InputMaybe<Scalars['String']['input']>
+  priority?: InputMaybe<Array<TaskPriority>>
+  search?: InputMaybe<Scalars['String']['input']>
+  sprint?: InputMaybe<Scalars['String']['input']>
+  status?: InputMaybe<Array<DevTaskStatus>>
+  task_type?: InputMaybe<Array<DevTaskType>>
+}
+
+export enum DevTaskStatus {
+  Blocked = 'blocked',
+  Done = 'done',
+  InProgress = 'in_progress',
+  Review = 'review',
+  Testing = 'testing',
+  Todo = 'todo',
+}
+
+export enum DevTaskType {
+  Bug = 'bug',
+  Documentation = 'documentation',
+  Hotfix = 'hotfix',
+  Research = 'research',
+  Task = 'task',
+  TechDebt = 'tech_debt',
+}
+
+export type EconomyMetrics = {
+  __typename?: 'EconomyMetrics'
+  points_sources: Array<PointsSource>
+  top_earners: Array<TopEarner>
+  total_points_earned: Scalars['Float']['output']
+  total_xp_earned: Scalars['Float']['output']
+  trend: Array<TimeSeriesPoint>
+  xp_distribution: Array<XpDistribution>
+}
+
+export type EngagementMetrics = {
+  __typename?: 'EngagementMetrics'
+  avg_dance_time_per_user: Scalars['Float']['output']
+  avg_session_duration: Scalars['Float']['output']
+  avg_sessions_per_user: Scalars['Float']['output']
+  power_users_count: Scalars['Int']['output']
+  power_users_percentage: Scalars['Float']['output']
 }
 
 export type Event = {
@@ -395,6 +919,14 @@ export type EventFilterInput = {
   status?: InputMaybe<EventStatus>
 }
 
+export type EventLeaderboard = {
+  __typename?: 'EventLeaderboard'
+  event_id: Scalars['String']['output']
+  event_name: Scalars['String']['output']
+  leaderboard: Leaderboard
+  prizes?: Maybe<Array<LeaderboardPrize>>
+}
+
 export type EventManager = {
   __typename?: 'EventManager'
   accepted_at?: Maybe<Scalars['DateTime']['output']>
@@ -447,6 +979,18 @@ export enum EventManagerStatus {
   Removed = 'removed',
 }
 
+export type EventMetrics = {
+  __typename?: 'EventMetrics'
+  avg_attendance: Scalars['Float']['output']
+  avg_rating: Scalars['Float']['output']
+  completed_events: Scalars['Int']['output']
+  popular_categories: Array<CategoryMetric>
+  total_events: Scalars['Int']['output']
+  total_registrations: Scalars['Int']['output']
+  trend: Array<TimeSeriesPoint>
+  upcoming_events: Scalars['Int']['output']
+}
+
 export type EventRegistration = {
   __typename?: 'EventRegistration'
   admin_notes?: Maybe<Scalars['String']['output']>
@@ -482,6 +1026,77 @@ export enum EventStatus {
   Ongoing = 'ongoing',
   Past = 'past',
   Upcoming = 'upcoming',
+}
+
+export type FeatureRequest = {
+  __typename?: 'FeatureRequest'
+  actual_hours?: Maybe<Scalars['Int']['output']>
+  assigned_at?: Maybe<Scalars['DateTime']['output']>
+  assigned_to?: Maybe<User>
+  category: FeatureRequestCategory
+  comments?: Maybe<Array<FeatureRequestComment>>
+  completed_at?: Maybe<Scalars['DateTime']['output']>
+  created_at: Scalars['DateTime']['output']
+  description?: Maybe<Scalars['String']['output']>
+  estimated_hours?: Maybe<Scalars['Int']['output']>
+  github_issue_url?: Maybe<Scalars['String']['output']>
+  github_pr_url?: Maybe<Scalars['String']['output']>
+  id: Scalars['ID']['output']
+  priority?: Maybe<TaskPriority>
+  requested_at: Scalars['DateTime']['output']
+  requested_by?: Maybe<User>
+  status: FeatureRequestStatus
+  tags?: Maybe<Array<Scalars['String']['output']>>
+  target_version?: Maybe<Scalars['String']['output']>
+  title: Scalars['String']['output']
+  updated_at: Scalars['DateTime']['output']
+  user_vote?: Maybe<Scalars['String']['output']>
+  votes: Scalars['Int']['output']
+}
+
+export enum FeatureRequestCategory {
+  Bug = 'bug',
+  Enhancement = 'enhancement',
+  Integration = 'integration',
+  Performance = 'performance',
+  Security = 'security',
+  Ux = 'ux',
+}
+
+export type FeatureRequestComment = {
+  __typename?: 'FeatureRequestComment'
+  content: Scalars['String']['output']
+  created_at: Scalars['DateTime']['output']
+  id: Scalars['ID']['output']
+  is_internal: Scalars['Boolean']['output']
+  user?: Maybe<User>
+}
+
+export type FeatureRequestConnection = {
+  __typename?: 'FeatureRequestConnection'
+  has_more: Scalars['Boolean']['output']
+  requests: Array<FeatureRequest>
+  total_count: Scalars['Int']['output']
+}
+
+export type FeatureRequestFilter = {
+  assigned_to?: InputMaybe<Scalars['String']['input']>
+  category?: InputMaybe<Array<FeatureRequestCategory>>
+  priority?: InputMaybe<Array<TaskPriority>>
+  requested_by?: InputMaybe<Scalars['String']['input']>
+  search?: InputMaybe<Scalars['String']['input']>
+  status?: InputMaybe<Array<FeatureRequestStatus>>
+}
+
+export enum FeatureRequestStatus {
+  Completed = 'completed',
+  Deferred = 'deferred',
+  InProgress = 'in_progress',
+  Planned = 'planned',
+  Rejected = 'rejected',
+  Requested = 'requested',
+  Testing = 'testing',
+  UnderReview = 'under_review',
 }
 
 export type FeedResponse = {
@@ -530,6 +1145,93 @@ export type FreestyleSessionStats = {
   total_sessions: Scalars['Int']['output']
 }
 
+export type GitHubAction = {
+  __typename?: 'GitHubAction'
+  branch: Scalars['String']['output']
+  commit_sha: Scalars['String']['output']
+  completed_at?: Maybe<Scalars['DateTime']['output']>
+  conclusion?: Maybe<Scalars['String']['output']>
+  duration_seconds?: Maybe<Scalars['Int']['output']>
+  id: Scalars['ID']['output']
+  name: Scalars['String']['output']
+  started_at: Scalars['DateTime']['output']
+  status: Scalars['String']['output']
+  url: Scalars['String']['output']
+  workflow_name: Scalars['String']['output']
+}
+
+export type GitHubCommit = {
+  __typename?: 'GitHubCommit'
+  additions?: Maybe<Scalars['Int']['output']>
+  author: Scalars['String']['output']
+  author_avatar?: Maybe<Scalars['String']['output']>
+  date: Scalars['DateTime']['output']
+  deletions?: Maybe<Scalars['Int']['output']>
+  message: Scalars['String']['output']
+  sha: Scalars['String']['output']
+  url: Scalars['String']['output']
+}
+
+export type GitHubPullRequest = {
+  __typename?: 'GitHubPullRequest'
+  additions?: Maybe<Scalars['Int']['output']>
+  author: Scalars['String']['output']
+  author_avatar?: Maybe<Scalars['String']['output']>
+  changed_files?: Maybe<Scalars['Int']['output']>
+  closed_at?: Maybe<Scalars['DateTime']['output']>
+  created_at: Scalars['DateTime']['output']
+  deletions?: Maybe<Scalars['Int']['output']>
+  draft?: Maybe<Scalars['Boolean']['output']>
+  labels?: Maybe<Array<Scalars['String']['output']>>
+  merged_at?: Maybe<Scalars['DateTime']['output']>
+  number: Scalars['Int']['output']
+  state: Scalars['String']['output']
+  title: Scalars['String']['output']
+  url: Scalars['String']['output']
+}
+
+export type GitHubRateLimit = {
+  __typename?: 'GitHubRateLimit'
+  limit: Scalars['Int']['output']
+  remaining: Scalars['Int']['output']
+  reset_at: Scalars['DateTime']['output']
+  used: Scalars['Int']['output']
+}
+
+export type GitHubRelease = {
+  __typename?: 'GitHubRelease'
+  author: Scalars['String']['output']
+  author_avatar?: Maybe<Scalars['String']['output']>
+  body?: Maybe<Scalars['String']['output']>
+  draft: Scalars['Boolean']['output']
+  id: Scalars['ID']['output']
+  name: Scalars['String']['output']
+  prerelease: Scalars['Boolean']['output']
+  published_at: Scalars['DateTime']['output']
+  tag_name: Scalars['String']['output']
+  url: Scalars['String']['output']
+}
+
+export type GitHubRepo = {
+  __typename?: 'GitHubRepo'
+  default_branch: Scalars['String']['output']
+  description?: Maybe<Scalars['String']['output']>
+  forks: Scalars['Int']['output']
+  full_name: Scalars['String']['output']
+  last_push: Scalars['DateTime']['output']
+  name: Scalars['String']['output']
+  open_issues: Scalars['Int']['output']
+  open_prs?: Maybe<Scalars['Int']['output']>
+  stars: Scalars['Int']['output']
+  url: Scalars['String']['output']
+}
+
+export type HourlyMetric = {
+  __typename?: 'HourlyMetric'
+  hour: Scalars['Int']['output']
+  value: Scalars['Int']['output']
+}
+
 export type InviteEventManagerInput = {
   can_edit_details?: InputMaybe<Scalars['Boolean']['input']>
   can_invite_managers?: InputMaybe<Scalars['Boolean']['input']>
@@ -539,6 +1241,100 @@ export type InviteEventManagerInput = {
   event_id: Scalars['ID']['input']
   role?: InputMaybe<EventManagerRole>
   user_id: Scalars['String']['input']
+}
+
+export type Leaderboard = {
+  __typename?: 'Leaderboard'
+  current_user_entry?: Maybe<LeaderboardEntry>
+  entries: Array<LeaderboardEntry>
+  metric: LeaderboardMetric
+  nearby_entries?: Maybe<Array<LeaderboardEntry>>
+  period: Scalars['String']['output']
+  total_participants: Scalars['Int']['output']
+  type: LeaderboardType
+  updated_at: Scalars['DateTime']['output']
+}
+
+export type LeaderboardEntry = {
+  __typename?: 'LeaderboardEntry'
+  avatar_url?: Maybe<Scalars['String']['output']>
+  badges?: Maybe<Array<Scalars['String']['output']>>
+  city?: Maybe<Scalars['String']['output']>
+  country?: Maybe<Scalars['String']['output']>
+  display_name?: Maybe<Scalars['String']['output']>
+  is_current_user: Scalars['Boolean']['output']
+  level: Scalars['Int']['output']
+  previous_rank?: Maybe<Scalars['Int']['output']>
+  rank: Scalars['Int']['output']
+  rank_change?: Maybe<Scalars['Int']['output']>
+  user_id: Scalars['String']['output']
+  username: Scalars['String']['output']
+  value: Scalars['Float']['output']
+}
+
+export type LeaderboardHistory = {
+  __typename?: 'LeaderboardHistory'
+  dates: Array<Scalars['String']['output']>
+  ranks: Array<Scalars['Int']['output']>
+  values: Array<Scalars['Float']['output']>
+}
+
+export enum LeaderboardMetric {
+  Calories = 'CALORIES',
+  ChallengesCompleted = 'CHALLENGES_COMPLETED',
+  DanceTime = 'DANCE_TIME',
+  EventsAttended = 'EVENTS_ATTENDED',
+  MovementScore = 'MOVEMENT_SCORE',
+  Points = 'POINTS',
+  Referrals = 'REFERRALS',
+  SocialEngagement = 'SOCIAL_ENGAGEMENT',
+  Streak = 'STREAK',
+  Xp = 'XP',
+}
+
+export type LeaderboardPrize = {
+  __typename?: 'LeaderboardPrize'
+  prize_description?: Maybe<Scalars['String']['output']>
+  prize_type: Scalars['String']['output']
+  prize_value: Scalars['String']['output']
+  rank_from: Scalars['Int']['output']
+  rank_to: Scalars['Int']['output']
+}
+
+export type LeaderboardSummary = {
+  __typename?: 'LeaderboardSummary'
+  friends_rank?: Maybe<Scalars['Int']['output']>
+  global_rank?: Maybe<Scalars['Int']['output']>
+  monthly_change?: Maybe<Scalars['Int']['output']>
+  percentile?: Maybe<Scalars['Float']['output']>
+  regional_rank?: Maybe<Scalars['Int']['output']>
+  top_metric?: Maybe<LeaderboardMetric>
+  top_metric_rank?: Maybe<Scalars['Int']['output']>
+  weekly_change?: Maybe<Scalars['Int']['output']>
+}
+
+export enum LeaderboardType {
+  AllTime = 'ALL_TIME',
+  Event = 'EVENT',
+  Friends = 'FRIENDS',
+  Global = 'GLOBAL',
+  Monthly = 'MONTHLY',
+  Regional = 'REGIONAL',
+  Weekly = 'WEEKLY',
+}
+
+export type LiveActivityUpdate = {
+  __typename?: 'LiveActivityUpdate'
+  activity: Activity
+  timestamp: Scalars['DateTime']['output']
+  type: Scalars['String']['output']
+}
+
+export type LiveMetrics = {
+  __typename?: 'LiveMetrics'
+  sessions_active: Array<TimeSeriesPoint>
+  users_online: Array<TimeSeriesPoint>
+  xp_per_minute: Array<TimeSeriesPoint>
 }
 
 export type LocationInput = {
@@ -574,6 +1370,151 @@ export enum MimeType {
   VideoWebm = 'VIDEO_WEBM',
 }
 
+export type MiniappActivity = {
+  __typename?: 'MiniappActivity'
+  icon: Scalars['String']['output']
+  id: Scalars['String']['output']
+  subtitle?: Maybe<Scalars['String']['output']>
+  timestamp: Scalars['DateTime']['output']
+  title: Scalars['String']['output']
+  type: Scalars['String']['output']
+  xp_earned?: Maybe<Scalars['Int']['output']>
+}
+
+export type MiniappChallenge = {
+  __typename?: 'MiniappChallenge'
+  expires_in_hours?: Maybe<Scalars['Int']['output']>
+  icon: Scalars['String']['output']
+  id: Scalars['String']['output']
+  progress: Scalars['Int']['output']
+  target: Scalars['Int']['output']
+  title: Scalars['String']['output']
+  xp_reward: Scalars['Int']['output']
+}
+
+export type MiniappDailyStats = {
+  __typename?: 'MiniappDailyStats'
+  calories_burned: Scalars['Int']['output']
+  daily_goal_progress: Scalars['Float']['output']
+  dance_minutes: Scalars['Int']['output']
+  points_earned: Scalars['Int']['output']
+  sessions_count: Scalars['Int']['output']
+  xp_earned: Scalars['Int']['output']
+}
+
+export type MiniappFriend = {
+  __typename?: 'MiniappFriend'
+  avatar_url?: Maybe<Scalars['String']['output']>
+  dance_bond_strength: Scalars['Int']['output']
+  display_name?: Maybe<Scalars['String']['output']>
+  is_online: Scalars['Boolean']['output']
+  last_active?: Maybe<Scalars['DateTime']['output']>
+  level: Scalars['Int']['output']
+  user_id: Scalars['String']['output']
+  username: Scalars['String']['output']
+}
+
+export type MiniappHomeData = {
+  __typename?: 'MiniappHomeData'
+  active_challenges: Array<MiniappChallenge>
+  daily_stats: MiniappDailyStats
+  leaderboard_preview: MiniappLeaderboardPreview
+  notifications_count: Scalars['Int']['output']
+  recent_activities: Array<MiniappActivity>
+  streak_info: MiniappStreakInfo
+  user: User
+}
+
+export type MiniappLeaderboardEntry = {
+  __typename?: 'MiniappLeaderboardEntry'
+  avatar_url?: Maybe<Scalars['String']['output']>
+  is_me: Scalars['Boolean']['output']
+  rank: Scalars['Int']['output']
+  username: Scalars['String']['output']
+  xp: Scalars['Int']['output']
+}
+
+export type MiniappLeaderboardPreview = {
+  __typename?: 'MiniappLeaderboardPreview'
+  my_rank: Scalars['Int']['output']
+  my_xp: Scalars['Int']['output']
+  nearby: Array<MiniappLeaderboardEntry>
+  top_3: Array<MiniappLeaderboardEntry>
+}
+
+export type MiniappNotification = {
+  __typename?: 'MiniappNotification'
+  action_url?: Maybe<Scalars['String']['output']>
+  body: Scalars['String']['output']
+  created_at: Scalars['DateTime']['output']
+  icon?: Maybe<Scalars['String']['output']>
+  id: Scalars['String']['output']
+  is_read: Scalars['Boolean']['output']
+  title: Scalars['String']['output']
+  type: Scalars['String']['output']
+}
+
+export type MiniappQuickSession = {
+  __typename?: 'MiniappQuickSession'
+  mode: Scalars['String']['output']
+  session_id: Scalars['String']['output']
+  start_time: Scalars['DateTime']['output']
+  target_duration?: Maybe<Scalars['Int']['output']>
+}
+
+export type MiniappQuickSessionInput = {
+  challenge_id?: InputMaybe<Scalars['String']['input']>
+  mode: Scalars['String']['input']
+  target_duration?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type MiniappRewardClaim = {
+  __typename?: 'MiniappRewardClaim'
+  amount: Scalars['Int']['output']
+  message: Scalars['String']['output']
+  new_balance: Scalars['Int']['output']
+  reward_type: Scalars['String']['output']
+  success: Scalars['Boolean']['output']
+}
+
+export type MiniappSettings = {
+  __typename?: 'MiniappSettings'
+  daily_reminder_time?: Maybe<Scalars['String']['output']>
+  haptic_enabled: Scalars['Boolean']['output']
+  language: Scalars['String']['output']
+  notifications_enabled: Scalars['Boolean']['output']
+  share_activity: Scalars['Boolean']['output']
+  sound_enabled: Scalars['Boolean']['output']
+  theme: Scalars['String']['output']
+}
+
+export type MiniappSettingsInput = {
+  daily_reminder_time?: InputMaybe<Scalars['String']['input']>
+  haptic_enabled?: InputMaybe<Scalars['Boolean']['input']>
+  language?: InputMaybe<Scalars['String']['input']>
+  notifications_enabled?: InputMaybe<Scalars['Boolean']['input']>
+  share_activity?: InputMaybe<Scalars['Boolean']['input']>
+  sound_enabled?: InputMaybe<Scalars['Boolean']['input']>
+  theme?: InputMaybe<Scalars['String']['input']>
+}
+
+export type MiniappShareContent = {
+  __typename?: 'MiniappShareContent'
+  share_image_url?: Maybe<Scalars['String']['output']>
+  share_text: Scalars['String']['output']
+  share_url: Scalars['String']['output']
+  telegram_deep_link: Scalars['String']['output']
+}
+
+export type MiniappStreakInfo = {
+  __typename?: 'MiniappStreakInfo'
+  current: Scalars['Int']['output']
+  longest: Scalars['Int']['output']
+  milestone_reward?: Maybe<Scalars['Int']['output']>
+  next_milestone?: Maybe<Scalars['Int']['output']>
+  streak_maintained_today: Scalars['Boolean']['output']
+}
+
 export enum MusicSource {
   Licensed = 'licensed',
   None = 'none',
@@ -583,57 +1524,127 @@ export enum MusicSource {
 export type Mutation = {
   __typename?: 'Mutation'
   _empty?: Maybe<Scalars['String']['output']>
+  abandonChallenge: MutationResponse
   acceptManagerInvitation: EventManager
+  activateChallenge: Challenge
+  addFeatureRequestComment: FeatureRequestComment
   approveOrganizer: User
   awardManualPoints: PointTransaction
   awardPoints: PointTransaction
+  blockTask: DevTask
   cancelEventRegistration: MutationResponse
   checkInEvent: EventAttendance
   checkInParticipant: EventRegistration
   checkOutEvent: EventAttendance
+  checkSystemHealth: Array<SystemHealth>
+  claimChallengeReward: UserChallenge
+  clearGitHubCache: Scalars['Boolean']['output']
+  commentOnActivity: Activity
   completeReferral: Referral
+  completeTask: DevTask
+  createActivity: Activity
+  createAnnouncement: Activity
+  createChallenge: Challenge
+  createChangelogEntry: ChangelogEntry
   createComment: PostComment
   createDanceBond: DanceBond
+  createDevTask: DevTask
   createEvent: Event
+  createEventLeaderboard: EventLeaderboard
+  createFeatureRequest: FeatureRequest
   createFreestyleSession: FreestyleSession
   createNotification: Notification
   createPointAction: PointAction
   createPost: Post
+  createSeason: SeasonalLeaderboard
+  deactivateChallenge: Challenge
   declineManagerInvitation: EventManager
+  deleteActivity: MutationResponse
+  deleteChallenge: MutationResponse
+  deleteChangelogEntry: Scalars['Boolean']['output']
   deleteComment: MutationResponse
   deleteDanceBond: MutationResponse
   deleteDanceSession: MutationResponse
+  deleteDevTask: Scalars['Boolean']['output']
   deleteEvent: MutationResponse
+  deleteFeatureRequest: Scalars['Boolean']['output']
+  deleteFeatureRequestComment: Scalars['Boolean']['output']
   deleteFreestyleSession: MutationResponse
   deleteNotification: MutationResponse
   deletePointAction: MutationResponse
   deletePost: MutationResponse
+  endSeason: MutationResponse
   featureEvent: Event
+  finalizeEventLeaderboard: EventLeaderboard
+  generateAnalyticsReport: Scalars['String']['output']
   generateShareLinks: ShareLinks
+  hideActivity: MutationResponse
+  highlightActivity: Activity
   inviteEventManager: EventManager
   leaveEventAsManager: MutationResponse
+  likeActivity: Activity
   likePost: MutationResponse
+  linkTelegramAccount: TelegramAuthResult
+  markActivitiesRead: MutationResponse
+  markAllActivitiesRead: MutationResponse
   markAllNotificationsRead: MutationResponse
   markNotificationRead: Notification
   markReferralCompleted: Referral
+  miniappClaimChallengeReward: MiniappRewardClaim
+  miniappClaimDailyReward: MiniappRewardClaim
+  miniappEndQuickSession: MutationResponse
+  miniappInviteFriend: MutationResponse
+  miniappMarkAllNotificationsRead: MutationResponse
+  miniappMarkNotificationRead: MutationResponse
+  miniappRegisterPushToken: MutationResponse
+  miniappSendCheer: MutationResponse
+  miniappStartQuickSession: MiniappQuickSession
+  miniappTrackEvent: MutationResponse
+  miniappUpdateSettings: MiniappSettings
+  processExpiredChallenges: MutationResponse
+  refreshAllLeaderboards: MutationResponse
+  refreshAnalyticsCache: MutationResponse
+  refreshDailyChallenges: DailyChallengeset
+  refreshLeaderboard: Leaderboard
   registerForEvent: EventRegistration
+  registerWearableDevice: WearableDevice
   removeEventManager: MutationResponse
+  removeFeatureRequestVote: FeatureRequest
+  removeWearableDevice: MutationResponse
+  reportActivity: MutationResponse
+  requestWearableSync: WearableDevice
   reversePointTransaction: PointTransaction
   reviewOrganizerApplication: OrganizerApplication
   saveDanceSession: DanceSession
   sendAdminBroadcast: MutationResponse
   sendEventBroadcast: MutationResponse
+  setPrimaryWearable: WearableDevice
   shareDanceSession: DanceSession
+  startChallenge: UserChallenge
+  startTask: DevTask
   submitOrganizerApplication: OrganizerApplication
+  syncHealthData: WearableSyncResult
+  syncMotionData: WearableSyncResult
+  syncWearableData: WearableSyncResult
+  telegramAuth: TelegramAuthResult
   togglePointAction: PointAction
   trackAppOpen: DailyActivity
+  trackEvent: MutationResponse
   trackReferralClick: MutationResponse
   transferEventOwnership: EventManager
+  triggerGitHubAction: Scalars['Boolean']['output']
+  unlikeActivity: Activity
   unlikePost: MutationResponse
+  unlinkTelegramAccount: MutationResponse
+  updateChallenge: Challenge
+  updateChallengeProgress: UserChallenge
+  updateChangelogEntry: ChangelogEntry
   updateComment: PostComment
   updateDanceBond: DanceBond
+  updateDevTask: DevTask
   updateEvent: Event
   updateEventManager: EventManager
+  updateFeatureRequest: FeatureRequest
   updateFreestylePreferences: UserPreferences
   updateNotificationPreferences: NotificationPreferences
   updatePointAction: PointAction
@@ -641,12 +1652,28 @@ export type Mutation = {
   updateProfile: User
   updateRegistrationStatus: EventRegistration
   updateUserRole: User
+  updateWearableDevice: WearableDevice
   verifyEventAttendance: EventAttendance
   verifyPointTransaction: PointTransaction
+  voteFeatureRequest: FeatureRequest
+}
+
+export type MutationAbandonChallengeArgs = {
+  challengeId: Scalars['String']['input']
 }
 
 export type MutationAcceptManagerInvitationArgs = {
   manager_id: Scalars['ID']['input']
+}
+
+export type MutationActivateChallengeArgs = {
+  id: Scalars['String']['input']
+}
+
+export type MutationAddFeatureRequestCommentArgs = {
+  content: Scalars['String']['input']
+  feature_request_id: Scalars['ID']['input']
+  is_internal?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 export type MutationApproveOrganizerArgs = {
@@ -660,6 +1687,11 @@ export type MutationAwardManualPointsArgs = {
 
 export type MutationAwardPointsArgs = {
   input: AwardPointsInput
+}
+
+export type MutationBlockTaskArgs = {
+  id: Scalars['ID']['input']
+  reason?: InputMaybe<Scalars['String']['input']>
 }
 
 export type MutationCancelEventRegistrationArgs = {
@@ -679,8 +1711,50 @@ export type MutationCheckOutEventArgs = {
   input: CheckOutEventInput
 }
 
+export type MutationClaimChallengeRewardArgs = {
+  challengeId: Scalars['String']['input']
+}
+
+export type MutationClearGitHubCacheArgs = {
+  cache_key?: InputMaybe<Scalars['String']['input']>
+}
+
+export type MutationCommentOnActivityArgs = {
+  activityId: Scalars['String']['input']
+  comment: Scalars['String']['input']
+}
+
 export type MutationCompleteReferralArgs = {
   input: CompleteReferralInput
+}
+
+export type MutationCompleteTaskArgs = {
+  actual_hours?: InputMaybe<Scalars['Int']['input']>
+  id: Scalars['ID']['input']
+}
+
+export type MutationCreateActivityArgs = {
+  description?: InputMaybe<Scalars['String']['input']>
+  metadata?: InputMaybe<Scalars['JSON']['input']>
+  targetUserId?: InputMaybe<Scalars['String']['input']>
+  title: Scalars['String']['input']
+  type: ActivityType
+  userId: Scalars['String']['input']
+  visibility?: InputMaybe<ActivityVisibility>
+}
+
+export type MutationCreateAnnouncementArgs = {
+  description: Scalars['String']['input']
+  metadata?: InputMaybe<Scalars['JSON']['input']>
+  title: Scalars['String']['input']
+}
+
+export type MutationCreateChallengeArgs = {
+  input: CreateChallengeInput
+}
+
+export type MutationCreateChangelogEntryArgs = {
+  input: CreateChangelogEntryInput
 }
 
 export type MutationCreateCommentArgs = {
@@ -692,8 +1766,21 @@ export type MutationCreateDanceBondArgs = {
   userId: Scalars['String']['input']
 }
 
+export type MutationCreateDevTaskArgs = {
+  input: CreateDevTaskInput
+}
+
 export type MutationCreateEventArgs = {
   input: CreateEventInput
+}
+
+export type MutationCreateEventLeaderboardArgs = {
+  eventId: Scalars['String']['input']
+  prizes?: InputMaybe<Scalars['JSON']['input']>
+}
+
+export type MutationCreateFeatureRequestArgs = {
+  input: CreateFeatureRequestInput
 }
 
 export type MutationCreateFreestyleSessionArgs = {
@@ -712,8 +1799,31 @@ export type MutationCreatePostArgs = {
   input: CreatePostInput
 }
 
+export type MutationCreateSeasonArgs = {
+  endsAt: Scalars['DateTime']['input']
+  name: Scalars['String']['input']
+  rewards: Scalars['JSON']['input']
+  startsAt: Scalars['DateTime']['input']
+}
+
+export type MutationDeactivateChallengeArgs = {
+  id: Scalars['String']['input']
+}
+
 export type MutationDeclineManagerInvitationArgs = {
   manager_id: Scalars['ID']['input']
+}
+
+export type MutationDeleteActivityArgs = {
+  activityId: Scalars['String']['input']
+}
+
+export type MutationDeleteChallengeArgs = {
+  id: Scalars['String']['input']
+}
+
+export type MutationDeleteChangelogEntryArgs = {
+  id: Scalars['ID']['input']
 }
 
 export type MutationDeleteCommentArgs = {
@@ -728,7 +1838,19 @@ export type MutationDeleteDanceSessionArgs = {
   sessionId: Scalars['ID']['input']
 }
 
+export type MutationDeleteDevTaskArgs = {
+  id: Scalars['ID']['input']
+}
+
 export type MutationDeleteEventArgs = {
+  id: Scalars['ID']['input']
+}
+
+export type MutationDeleteFeatureRequestArgs = {
+  id: Scalars['ID']['input']
+}
+
+export type MutationDeleteFeatureRequestCommentArgs = {
   id: Scalars['ID']['input']
 }
 
@@ -748,9 +1870,31 @@ export type MutationDeletePostArgs = {
   postId: Scalars['ID']['input']
 }
 
+export type MutationEndSeasonArgs = {
+  seasonId: Scalars['String']['input']
+}
+
 export type MutationFeatureEventArgs = {
   eventId: Scalars['ID']['input']
   featured: Scalars['Boolean']['input']
+}
+
+export type MutationFinalizeEventLeaderboardArgs = {
+  eventId: Scalars['String']['input']
+}
+
+export type MutationGenerateAnalyticsReportArgs = {
+  format?: InputMaybe<Scalars['String']['input']>
+  options?: InputMaybe<AnalyticsOptions>
+  report_type: Scalars['String']['input']
+}
+
+export type MutationHideActivityArgs = {
+  activityId: Scalars['String']['input']
+}
+
+export type MutationHighlightActivityArgs = {
+  activityId: Scalars['String']['input']
 }
 
 export type MutationInviteEventManagerArgs = {
@@ -761,8 +1905,20 @@ export type MutationLeaveEventAsManagerArgs = {
   event_id: Scalars['ID']['input']
 }
 
+export type MutationLikeActivityArgs = {
+  activityId: Scalars['String']['input']
+}
+
 export type MutationLikePostArgs = {
   postId: Scalars['ID']['input']
+}
+
+export type MutationLinkTelegramAccountArgs = {
+  telegram_init_data: Scalars['String']['input']
+}
+
+export type MutationMarkActivitiesReadArgs = {
+  activityIds: Array<Scalars['String']['input']>
 }
 
 export type MutationMarkNotificationReadArgs = {
@@ -773,13 +1929,81 @@ export type MutationMarkReferralCompletedArgs = {
   referralId: Scalars['ID']['input']
 }
 
+export type MutationMiniappClaimChallengeRewardArgs = {
+  challenge_id: Scalars['String']['input']
+}
+
+export type MutationMiniappEndQuickSessionArgs = {
+  session_id: Scalars['String']['input']
+  stats: Scalars['JSON']['input']
+}
+
+export type MutationMiniappInviteFriendArgs = {
+  telegram_user_id: Scalars['String']['input']
+}
+
+export type MutationMiniappMarkNotificationReadArgs = {
+  notification_id: Scalars['String']['input']
+}
+
+export type MutationMiniappRegisterPushTokenArgs = {
+  token: Scalars['String']['input']
+}
+
+export type MutationMiniappSendCheerArgs = {
+  user_id: Scalars['String']['input']
+}
+
+export type MutationMiniappStartQuickSessionArgs = {
+  input: MiniappQuickSessionInput
+}
+
+export type MutationMiniappTrackEventArgs = {
+  data?: InputMaybe<Scalars['JSON']['input']>
+  event: Scalars['String']['input']
+}
+
+export type MutationMiniappUpdateSettingsArgs = {
+  input: MiniappSettingsInput
+}
+
+export type MutationRefreshAnalyticsCacheArgs = {
+  metrics?: InputMaybe<Array<Scalars['String']['input']>>
+}
+
+export type MutationRefreshLeaderboardArgs = {
+  metric: LeaderboardMetric
+  type: LeaderboardType
+}
+
 export type MutationRegisterForEventArgs = {
   eventId: Scalars['ID']['input']
   notes?: InputMaybe<Scalars['String']['input']>
 }
 
+export type MutationRegisterWearableDeviceArgs = {
+  input: RegisterWearableInput
+}
+
 export type MutationRemoveEventManagerArgs = {
   manager_id: Scalars['ID']['input']
+}
+
+export type MutationRemoveFeatureRequestVoteArgs = {
+  id: Scalars['ID']['input']
+}
+
+export type MutationRemoveWearableDeviceArgs = {
+  deviceId: Scalars['String']['input']
+}
+
+export type MutationReportActivityArgs = {
+  activityId: Scalars['String']['input']
+  reason: Scalars['String']['input']
+}
+
+export type MutationRequestWearableSyncArgs = {
+  deviceId: Scalars['String']['input']
 }
 
 export type MutationReversePointTransactionArgs = {
@@ -803,13 +2027,41 @@ export type MutationSendEventBroadcastArgs = {
   input: SendEventBroadcastInput
 }
 
+export type MutationSetPrimaryWearableArgs = {
+  deviceId: Scalars['String']['input']
+}
+
 export type MutationShareDanceSessionArgs = {
   sessionId: Scalars['ID']['input']
   userIds: Array<Scalars['String']['input']>
 }
 
+export type MutationStartChallengeArgs = {
+  challengeId: Scalars['String']['input']
+}
+
+export type MutationStartTaskArgs = {
+  id: Scalars['ID']['input']
+}
+
 export type MutationSubmitOrganizerApplicationArgs = {
   input: SubmitOrganizerApplicationInput
+}
+
+export type MutationSyncHealthDataArgs = {
+  data: Array<WearableHealthDataInput>
+}
+
+export type MutationSyncMotionDataArgs = {
+  data: Array<WearableMotionDataInput>
+}
+
+export type MutationSyncWearableDataArgs = {
+  input: SyncWearableDataInput
+}
+
+export type MutationTelegramAuthArgs = {
+  input: TelegramAuthInput
 }
 
 export type MutationTogglePointActionArgs = {
@@ -818,6 +2070,12 @@ export type MutationTogglePointActionArgs = {
 
 export type MutationTrackAppOpenArgs = {
   user_id: Scalars['String']['input']
+}
+
+export type MutationTrackEventArgs = {
+  event_type: Scalars['String']['input']
+  metadata?: InputMaybe<Scalars['JSON']['input']>
+  user_id?: InputMaybe<Scalars['String']['input']>
 }
 
 export type MutationTrackReferralClickArgs = {
@@ -829,8 +2087,33 @@ export type MutationTransferEventOwnershipArgs = {
   new_creator_id: Scalars['String']['input']
 }
 
+export type MutationTriggerGitHubActionArgs = {
+  ref?: InputMaybe<Scalars['String']['input']>
+  repo: Scalars['String']['input']
+  workflow_id: Scalars['String']['input']
+}
+
+export type MutationUnlikeActivityArgs = {
+  activityId: Scalars['String']['input']
+}
+
 export type MutationUnlikePostArgs = {
   postId: Scalars['ID']['input']
+}
+
+export type MutationUpdateChallengeArgs = {
+  id: Scalars['String']['input']
+  input: CreateChallengeInput
+}
+
+export type MutationUpdateChallengeProgressArgs = {
+  challengeId: Scalars['String']['input']
+  progress: Scalars['Int']['input']
+}
+
+export type MutationUpdateChangelogEntryArgs = {
+  id: Scalars['ID']['input']
+  input: UpdateChangelogEntryInput
 }
 
 export type MutationUpdateCommentArgs = {
@@ -843,6 +2126,11 @@ export type MutationUpdateDanceBondArgs = {
   userId: Scalars['String']['input']
 }
 
+export type MutationUpdateDevTaskArgs = {
+  id: Scalars['ID']['input']
+  input: UpdateDevTaskInput
+}
+
 export type MutationUpdateEventArgs = {
   id: Scalars['ID']['input']
   input: UpdateEventInput
@@ -850,6 +2138,11 @@ export type MutationUpdateEventArgs = {
 
 export type MutationUpdateEventManagerArgs = {
   input: UpdateEventManagerInput
+}
+
+export type MutationUpdateFeatureRequestArgs = {
+  id: Scalars['ID']['input']
+  input: UpdateFeatureRequestInput
 }
 
 export type MutationUpdateFreestylePreferencesArgs = {
@@ -885,6 +2178,11 @@ export type MutationUpdateUserRoleArgs = {
   userId: Scalars['String']['input']
 }
 
+export type MutationUpdateWearableDeviceArgs = {
+  deviceId: Scalars['String']['input']
+  input: RegisterWearableInput
+}
+
 export type MutationVerifyEventAttendanceArgs = {
   input: VerifyAttendanceInput
 }
@@ -893,11 +2191,26 @@ export type MutationVerifyPointTransactionArgs = {
   transaction_id: Scalars['ID']['input']
 }
 
+export type MutationVoteFeatureRequestArgs = {
+  id: Scalars['ID']['input']
+  vote: Scalars['String']['input']
+}
+
 export type MutationResponse = {
   __typename?: 'MutationResponse'
   code?: Maybe<Scalars['String']['output']>
   message?: Maybe<Scalars['String']['output']>
   success: Scalars['Boolean']['output']
+}
+
+export type NewUsersMetrics = {
+  __typename?: 'NewUsersMetrics'
+  acquisition_channels: Array<AcquisitionChannel>
+  growth_rate: Scalars['Float']['output']
+  this_month: Scalars['Int']['output']
+  this_week: Scalars['Int']['output']
+  today: Scalars['Int']['output']
+  trend: Array<TimeSeriesPoint>
 }
 
 export type Notification = {
@@ -1019,6 +2332,26 @@ export enum PaymentStatus {
   Refunded = 'refunded',
 }
 
+export type PlatformAnalytics = {
+  __typename?: 'PlatformAnalytics'
+  dance_metrics: DanceMetrics
+  economy_metrics: EconomyMetrics
+  event_metrics: EventMetrics
+  overview: PlatformOverview
+  social_metrics: SocialMetrics
+}
+
+export type PlatformOverview = {
+  __typename?: 'PlatformOverview'
+  health_score: Scalars['Float']['output']
+  total_dance_bonds: Scalars['Int']['output']
+  total_dance_minutes: Scalars['Int']['output']
+  total_dance_sessions: Scalars['Int']['output']
+  total_events_hosted: Scalars['Int']['output']
+  total_points_distributed: Scalars['Float']['output']
+  total_xp_distributed: Scalars['Float']['output']
+}
+
 export type PointAction = {
   __typename?: 'PointAction'
   action_key: Scalars['String']['output']
@@ -1080,6 +2413,13 @@ export type PointsOverview = {
   total_active_users: Scalars['Int']['output']
   total_points_issued: Scalars['Int']['output']
   total_points_spent: Scalars['Int']['output']
+}
+
+export type PointsSource = {
+  __typename?: 'PointsSource'
+  amount: Scalars['Float']['output']
+  percentage: Scalars['Float']['output']
+  source: Scalars['String']['output']
 }
 
 export type Post = {
@@ -1145,18 +2485,45 @@ export type PostWithDetails = {
 export type Query = {
   __typename?: 'Query'
   _empty?: Maybe<Scalars['String']['output']>
+  activity?: Maybe<Activity>
+  activityFeed: ActivityFeed
+  activityFeedGrouped: Array<ActivityGroup>
+  activityStats: ActivityStats
+  adminDashboardAnalytics: Scalars['JSON']['output']
   adminStats: AdminStats
+  allChallenges: Array<Challenge>
+  analyticsReport: Scalars['JSON']['output']
+  availableChallenges: Array<Challenge>
+  challengeById?: Maybe<Challenge>
+  challengeLeaderboard: ChallengeLeaderboard
+  changelog: Array<ChangelogVersion>
+  changelogEntry?: Maybe<ChangelogEntry>
   checkEventPermission: Scalars['Boolean']['output']
   checkUsername: Scalars['Boolean']['output']
+  cohortAnalysis: Array<CohortData>
+  compareMetrics: Array<AnalyticsComparison>
   completedFreestyleToday: Scalars['Boolean']['output']
+  currentSeasonLeaderboard?: Maybe<SeasonalLeaderboard>
+  dailyChallenges: DailyChallengeset
+  danceAnalytics: DanceMetrics
   danceSession?: Maybe<DanceSession>
+  devDashboardStats?: Maybe<DevDashboardStats>
+  devTask?: Maybe<DevTask>
+  devTasks: DevTaskConnection
+  economyAnalytics: EconomyMetrics
   event?: Maybe<Event>
+  eventAnalytics: EventMetrics
+  eventLeaderboard?: Maybe<EventLeaderboard>
   eventManager?: Maybe<EventManager>
   eventManagers: EventManagerConnection
   eventRegistrations: Array<EventRegistration>
   events: EventConnection
+  featureRequest?: Maybe<FeatureRequest>
+  featureRequests: FeatureRequestConnection
   freestyleSession?: Maybe<FreestyleSession>
+  friendsActivityFeed: ActivityFeed
   friendsDanceSessions: Array<DanceSession>
+  friendsLeaderboard: Leaderboard
   getAllEventRegistrations: Array<EventRegistration>
   getAllPointActions: Array<PointAction>
   getAllTransactions: TransactionHistory
@@ -1182,14 +2549,52 @@ export type Query = {
   getUserPointsSummaries: Array<UserPointsSummary>
   getUserPosts: Array<Post>
   getUserTransactions: TransactionHistory
+  githubActions: Array<GitHubAction>
+  githubCommits: Array<GitHubCommit>
+  githubPullRequests: Array<GitHubPullRequest>
+  githubRateLimit?: Maybe<GitHubRateLimit>
+  githubReleases: Array<GitHubRelease>
+  githubRepos: Array<GitHubRepo>
+  globalActivityFeed: ActivityFeed
+  globalLeaderboard: Leaderboard
+  latestChangelog?: Maybe<ChangelogVersion>
+  latestWearableReading?: Maybe<WearableHealthData>
+  leaderboard: Leaderboard
   me?: Maybe<User>
+  metricTimeSeries: Array<TimeSeriesPoint>
+  miniappActivities: Array<MiniappActivity>
+  miniappChallenges: Array<MiniappChallenge>
+  miniappDailyStats: MiniappDailyStats
+  miniappFriends: Array<MiniappFriend>
+  miniappHome: MiniappHomeData
+  miniappLeaderboard: Array<MiniappLeaderboardEntry>
+  miniappLevel: Scalars['Int']['output']
+  miniappNotifications: Array<MiniappNotification>
+  miniappOnlineFriends: Array<MiniappFriend>
+  miniappPoints: Scalars['Int']['output']
+  miniappReferralLink: Scalars['String']['output']
+  miniappSettings: MiniappSettings
+  miniappShareContent: MiniappShareContent
+  miniappStreak: MiniappStreakInfo
+  miniappUnreadCount: Scalars['Int']['output']
+  miniappXP: Scalars['Int']['output']
+  monthlyLeaderboard: Leaderboard
+  myActiveChallenges: Array<UserChallenge>
+  myActivityFeed: ActivityFeed
+  myActivityStats: ActivityStats
+  myChallengeProgress?: Maybe<ChallengeProgress>
+  myChallengeStats: ChallengeStats
+  myCompletedChallenges: Array<UserChallenge>
   myDanceBonds: Array<DanceBond>
   myDanceSessionStats: DanceSessionStats
   myDanceSessions: DanceSessionConnection
+  myDevTasks: Array<DevTask>
   myEventManagerRole?: Maybe<EventManager>
   myFreestylePreferences: UserPreferences
   myFreestyleSessions: Array<FreestyleSession>
   myFreestyleStats: FreestyleSessionStats
+  myLeaderboardHistory: LeaderboardHistory
+  myLeaderboardSummary: LeaderboardSummary
   myManagedEvents: Array<Event>
   myNotificationPreferences: NotificationPreferences
   myNotifications: NotificationConnection
@@ -1197,15 +2602,88 @@ export type Query = {
   myReferralCode?: Maybe<ReferralCode>
   myReferralStats: ReferralStats
   myReferrals: Array<Referral>
+  myWearableDevices: Array<WearableDevice>
+  myWearableHealthData: Array<WearableHealthData>
+  myWearableMotionData: Array<WearableMotionData>
+  nearbyUsers: Array<LeaderboardEntry>
   notification?: Maybe<Notification>
   organizerApplication?: Maybe<OrganizerApplication>
   organizerApplications: OrganizerApplicationsResponse
   pendingOrganizerApplications: OrganizerApplicationsResponse
   pendingOrganizers: UserConnection
+  platformAnalytics: PlatformAnalytics
+  realTimeAnalytics: RealTimeAnalytics
+  recentActivities: Array<Activity>
+  regionalLeaderboard: RegionalLeaderboard
   reportedContent?: Maybe<Scalars['JSON']['output']>
+  seasonLeaderboard?: Maybe<SeasonalLeaderboard>
+  socialAnalytics: SocialMetrics
+  specialChallenges: Array<Challenge>
+  sprintTasks: Array<DevTask>
+  systemHealth: Array<SystemHealth>
+  topPerformers: Array<LeaderboardEntry>
+  topVotedFeatures: Array<FeatureRequest>
+  trendAnalysis: Array<TrendAnalysis>
+  trendingActivities: Array<TrendingActivity>
+  trendingNow: Array<Activity>
   unreadNotificationCount: Scalars['Int']['output']
   user?: Maybe<User>
+  userActivities: Array<Activity>
+  userAnalytics: UserAnalytics
   users: UserConnection
+  wearableDevice?: Maybe<WearableDevice>
+  wearableStats?: Maybe<WearableStats>
+  weeklyChallenges: Array<Challenge>
+  weeklyLeaderboard: Leaderboard
+}
+
+export type QueryActivityArgs = {
+  id: Scalars['String']['input']
+}
+
+export type QueryActivityFeedArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  filter?: InputMaybe<ActivityFilter>
+  limit?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type QueryActivityFeedGroupedArgs = {
+  groupBy: Scalars['String']['input']
+  limit?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type QueryAllChallengesArgs = {
+  isActive?: InputMaybe<Scalars['Boolean']['input']>
+  type?: InputMaybe<ChallengeType>
+}
+
+export type QueryAnalyticsReportArgs = {
+  options?: InputMaybe<AnalyticsOptions>
+  report_type: Scalars['String']['input']
+}
+
+export type QueryAvailableChallengesArgs = {
+  category?: InputMaybe<ChallengeCategory>
+  type?: InputMaybe<ChallengeType>
+}
+
+export type QueryChallengeByIdArgs = {
+  id: Scalars['String']['input']
+}
+
+export type QueryChallengeLeaderboardArgs = {
+  period: Scalars['String']['input']
+  type: ChallengeType
+}
+
+export type QueryChangelogArgs = {
+  include_private?: InputMaybe<Scalars['Boolean']['input']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type QueryChangelogEntryArgs = {
+  id: Scalars['ID']['input']
 }
 
 export type QueryCheckEventPermissionArgs = {
@@ -1217,12 +2695,50 @@ export type QueryCheckUsernameArgs = {
   username: Scalars['String']['input']
 }
 
+export type QueryCohortAnalysisArgs = {
+  cohort_type: Scalars['String']['input']
+  options?: InputMaybe<AnalyticsOptions>
+}
+
+export type QueryCompareMetricsArgs = {
+  metrics: Array<Scalars['String']['input']>
+  options?: InputMaybe<AnalyticsOptions>
+}
+
+export type QueryDanceAnalyticsArgs = {
+  options?: InputMaybe<AnalyticsOptions>
+}
+
 export type QueryDanceSessionArgs = {
   id: Scalars['ID']['input']
 }
 
+export type QueryDevTaskArgs = {
+  id: Scalars['ID']['input']
+}
+
+export type QueryDevTasksArgs = {
+  filter?: InputMaybe<DevTaskFilter>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  sort_by?: InputMaybe<Scalars['String']['input']>
+}
+
+export type QueryEconomyAnalyticsArgs = {
+  options?: InputMaybe<AnalyticsOptions>
+}
+
 export type QueryEventArgs = {
   id: Scalars['ID']['input']
+}
+
+export type QueryEventAnalyticsArgs = {
+  options?: InputMaybe<AnalyticsOptions>
+}
+
+export type QueryEventLeaderboardArgs = {
+  eventId: Scalars['String']['input']
+  limit?: InputMaybe<Scalars['Int']['input']>
 }
 
 export type QueryEventManagerArgs = {
@@ -1244,13 +2760,34 @@ export type QueryEventsArgs = {
   sortBy?: InputMaybe<EventSortBy>
 }
 
+export type QueryFeatureRequestArgs = {
+  id: Scalars['ID']['input']
+}
+
+export type QueryFeatureRequestsArgs = {
+  filter?: InputMaybe<FeatureRequestFilter>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  sort_by?: InputMaybe<Scalars['String']['input']>
+}
+
 export type QueryFreestyleSessionArgs = {
   id: Scalars['ID']['input']
+}
+
+export type QueryFriendsActivityFeedArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  limit?: InputMaybe<Scalars['Int']['input']>
 }
 
 export type QueryFriendsDanceSessionsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type QueryFriendsLeaderboardArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  metric: LeaderboardMetric
 }
 
 export type QueryGetAllPointActionsArgs = {
@@ -1351,6 +2888,91 @@ export type QueryGetUserTransactionsArgs = {
   user_id: Scalars['String']['input']
 }
 
+export type QueryGithubActionsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  repo: Scalars['String']['input']
+}
+
+export type QueryGithubCommitsArgs = {
+  branch?: InputMaybe<Scalars['String']['input']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  repo: Scalars['String']['input']
+}
+
+export type QueryGithubPullRequestsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  repo: Scalars['String']['input']
+  state?: InputMaybe<Scalars['String']['input']>
+}
+
+export type QueryGithubReleasesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  repo: Scalars['String']['input']
+}
+
+export type QueryGlobalActivityFeedArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type QueryGlobalLeaderboardArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  metric: LeaderboardMetric
+}
+
+export type QueryLatestWearableReadingArgs = {
+  deviceId?: InputMaybe<Scalars['String']['input']>
+}
+
+export type QueryLeaderboardArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  metric: LeaderboardMetric
+  offset?: InputMaybe<Scalars['Int']['input']>
+  type: LeaderboardType
+}
+
+export type QueryMetricTimeSeriesArgs = {
+  metric: Scalars['String']['input']
+  options?: InputMaybe<AnalyticsOptions>
+}
+
+export type QueryMiniappActivitiesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type QueryMiniappLeaderboardArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  type: Scalars['String']['input']
+}
+
+export type QueryMiniappNotificationsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type QueryMiniappShareContentArgs = {
+  content_id?: InputMaybe<Scalars['String']['input']>
+  content_type: Scalars['String']['input']
+}
+
+export type QueryMonthlyLeaderboardArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  metric: LeaderboardMetric
+}
+
+export type QueryMyActivityFeedArgs = {
+  after?: InputMaybe<Scalars['String']['input']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type QueryMyChallengeProgressArgs = {
+  challengeId: Scalars['String']['input']
+}
+
+export type QueryMyCompletedChallengesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+}
+
 export type QueryMyDanceSessionsArgs = {
   filter?: InputMaybe<DanceSessionFilterInput>
   pagination?: InputMaybe<PaginationInput>
@@ -1365,6 +2987,11 @@ export type QueryMyFreestyleSessionsArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>
 }
 
+export type QueryMyLeaderboardHistoryArgs = {
+  days?: InputMaybe<Scalars['Int']['input']>
+  metric: LeaderboardMetric
+}
+
 export type QueryMyNotificationsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
@@ -1376,6 +3003,26 @@ export type QueryMyReferralsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
   status?: InputMaybe<ReferralStatus>
+}
+
+export type QueryMyWearableHealthDataArgs = {
+  deviceId?: InputMaybe<Scalars['String']['input']>
+  from?: InputMaybe<Scalars['DateTime']['input']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  to?: InputMaybe<Scalars['DateTime']['input']>
+}
+
+export type QueryMyWearableMotionDataArgs = {
+  deviceId?: InputMaybe<Scalars['String']['input']>
+  from?: InputMaybe<Scalars['DateTime']['input']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  sessionId?: InputMaybe<Scalars['String']['input']>
+  to?: InputMaybe<Scalars['DateTime']['input']>
+}
+
+export type QueryNearbyUsersArgs = {
+  metric: LeaderboardMetric
+  range?: InputMaybe<Scalars['Int']['input']>
 }
 
 export type QueryNotificationArgs = {
@@ -1401,19 +3048,100 @@ export type QueryPendingOrganizersArgs = {
   pagination?: InputMaybe<PaginationInput>
 }
 
+export type QueryPlatformAnalyticsArgs = {
+  options?: InputMaybe<AnalyticsOptions>
+}
+
+export type QueryRecentActivitiesArgs = {
+  since: Scalars['DateTime']['input']
+  types?: InputMaybe<Array<ActivityType>>
+}
+
+export type QueryRegionalLeaderboardArgs = {
+  city?: InputMaybe<Scalars['String']['input']>
+  country?: InputMaybe<Scalars['String']['input']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  metric: LeaderboardMetric
+}
+
 export type QueryReportedContentArgs = {
   pagination?: InputMaybe<PaginationInput>
   status?: InputMaybe<Scalars['String']['input']>
   type?: InputMaybe<Scalars['String']['input']>
 }
 
+export type QuerySeasonLeaderboardArgs = {
+  seasonId: Scalars['String']['input']
+}
+
+export type QuerySocialAnalyticsArgs = {
+  options?: InputMaybe<AnalyticsOptions>
+}
+
+export type QuerySprintTasksArgs = {
+  sprint: Scalars['String']['input']
+}
+
+export type QueryTopPerformersArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  metric: LeaderboardMetric
+  period: Scalars['String']['input']
+}
+
+export type QueryTopVotedFeaturesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type QueryTrendAnalysisArgs = {
+  metrics: Array<Scalars['String']['input']>
+  options?: InputMaybe<AnalyticsOptions>
+}
+
+export type QueryTrendingActivitiesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+}
+
 export type QueryUserArgs = {
   id: Scalars['String']['input']
+}
+
+export type QueryUserActivitiesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  userId: Scalars['String']['input']
+}
+
+export type QueryUserAnalyticsArgs = {
+  options?: InputMaybe<AnalyticsOptions>
 }
 
 export type QueryUsersArgs = {
   filter?: InputMaybe<UserFilterInput>
   pagination?: InputMaybe<PaginationInput>
+}
+
+export type QueryWearableDeviceArgs = {
+  deviceId: Scalars['String']['input']
+}
+
+export type QueryWearableStatsArgs = {
+  deviceId?: InputMaybe<Scalars['String']['input']>
+}
+
+export type QueryWeeklyLeaderboardArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  metric: LeaderboardMetric
+}
+
+export type RealTimeAnalytics = {
+  __typename?: 'RealTimeAnalytics'
+  active_dance_sessions: Scalars['Int']['output']
+  api_requests_per_minute: Scalars['Int']['output']
+  current_online_users: Scalars['Int']['output']
+  events_in_progress: Scalars['Int']['output']
+  live_metrics: LiveMetrics
+  recent_sessions: Scalars['Int']['output']
+  recent_signups: Scalars['Int']['output']
+  system_load: Scalars['Float']['output']
 }
 
 export enum RecurrenceType {
@@ -1500,11 +3228,36 @@ export enum ReferralStatus {
   SignedUp = 'signed_up',
 }
 
+export type RegionalLeaderboard = {
+  __typename?: 'RegionalLeaderboard'
+  city?: Maybe<Scalars['String']['output']>
+  country?: Maybe<Scalars['String']['output']>
+  leaderboard: Leaderboard
+  region: Scalars['String']['output']
+}
+
+export type RegisterWearableInput = {
+  capabilities?: InputMaybe<Array<Scalars['String']['input']>>
+  device_model?: InputMaybe<Scalars['String']['input']>
+  device_name?: InputMaybe<Scalars['String']['input']>
+  device_type: WearableDeviceType
+  firmware_version?: InputMaybe<Scalars['String']['input']>
+  is_primary?: InputMaybe<Scalars['Boolean']['input']>
+}
+
 export enum RegistrationStatus {
   Attended = 'attended',
   Cancelled = 'cancelled',
   NoShow = 'no_show',
   Registered = 'registered',
+}
+
+export type RetentionMetrics = {
+  __typename?: 'RetentionMetrics'
+  cohort_analysis: Array<CohortData>
+  day_1: Scalars['Float']['output']
+  day_7: Scalars['Float']['output']
+  day_30: Scalars['Float']['output']
 }
 
 export type ReviewApplicationInput = {
@@ -1529,6 +3282,24 @@ export type SaveDanceSessionInput = {
   shared_with_user_ids?: InputMaybe<Array<Scalars['String']['input']>>
   started_at: Scalars['DateTime']['input']
   xp_earned: Scalars['Int']['input']
+}
+
+export type SeasonReward = {
+  __typename?: 'SeasonReward'
+  max_rank: Scalars['Int']['output']
+  min_rank: Scalars['Int']['output']
+  rewards: Scalars['JSON']['output']
+  tier: Scalars['String']['output']
+}
+
+export type SeasonalLeaderboard = {
+  __typename?: 'SeasonalLeaderboard'
+  current_rewards: Array<SeasonReward>
+  ends_at: Scalars['DateTime']['output']
+  leaderboard: Leaderboard
+  season_id: Scalars['String']['output']
+  season_name: Scalars['String']['output']
+  starts_at: Scalars['DateTime']['output']
 }
 
 export type SendBroadcastInput = {
@@ -1572,6 +3343,32 @@ export enum SkillLevel {
   Intermediate = 'intermediate',
 }
 
+export type SkillLevelMetric = {
+  __typename?: 'SkillLevelMetric'
+  level: Scalars['String']['output']
+  percentage: Scalars['Float']['output']
+  users: Scalars['Int']['output']
+}
+
+export type SocialMetrics = {
+  __typename?: 'SocialMetrics'
+  avg_engagement_rate: Scalars['Float']['output']
+  dance_bonds_created: Scalars['Int']['output']
+  referrals_completed: Scalars['Int']['output']
+  total_comments: Scalars['Int']['output']
+  total_likes: Scalars['Int']['output']
+  total_posts: Scalars['Int']['output']
+  trend: Array<TimeSeriesPoint>
+  viral_posts: Scalars['Int']['output']
+}
+
+export type StyleMetric = {
+  __typename?: 'StyleMetric'
+  percentage: Scalars['Float']['output']
+  sessions: Scalars['Int']['output']
+  style: Scalars['String']['output']
+}
+
 export type SubmitOrganizerApplicationInput = {
   additional_info?: InputMaybe<Scalars['String']['input']>
   dance_styles?: InputMaybe<Array<Scalars['String']['input']>>
@@ -1588,6 +3385,72 @@ export type SubmitOrganizerApplicationInput = {
 export type Subscription = {
   __typename?: 'Subscription'
   _empty?: Maybe<Scalars['String']['output']>
+}
+
+export type SyncWearableDataInput = {
+  device_id: Scalars['String']['input']
+  health_data?: InputMaybe<Array<WearableHealthDataInput>>
+  motion_data?: InputMaybe<Array<WearableMotionDataInput>>
+}
+
+export type SystemHealth = {
+  __typename?: 'SystemHealth'
+  details?: Maybe<Scalars['JSON']['output']>
+  error_message?: Maybe<Scalars['String']['output']>
+  last_checked: Scalars['DateTime']['output']
+  response_time_ms?: Maybe<Scalars['Int']['output']>
+  service: Scalars['String']['output']
+  status: Scalars['String']['output']
+}
+
+export enum TaskPriority {
+  Critical = 'critical',
+  High = 'high',
+  Low = 'low',
+  Medium = 'medium',
+  NiceToHave = 'nice_to_have',
+}
+
+export type TelegramAuthInput = {
+  init_data: Scalars['String']['input']
+  referral_code?: InputMaybe<Scalars['String']['input']>
+}
+
+export type TelegramAuthResult = {
+  __typename?: 'TelegramAuthResult'
+  access_token?: Maybe<Scalars['String']['output']>
+  is_new_user: Scalars['Boolean']['output']
+  message?: Maybe<Scalars['String']['output']>
+  success: Scalars['Boolean']['output']
+  telegram_user: TelegramUser
+  user?: Maybe<User>
+}
+
+export type TelegramUser = {
+  __typename?: 'TelegramUser'
+  danz_user?: Maybe<User>
+  first_name: Scalars['String']['output']
+  is_linked: Scalars['Boolean']['output']
+  is_premium: Scalars['Boolean']['output']
+  language_code?: Maybe<Scalars['String']['output']>
+  last_name?: Maybe<Scalars['String']['output']>
+  photo_url?: Maybe<Scalars['String']['output']>
+  telegram_id: Scalars['String']['output']
+  username?: Maybe<Scalars['String']['output']>
+}
+
+export type TimeSeriesPoint = {
+  __typename?: 'TimeSeriesPoint'
+  label?: Maybe<Scalars['String']['output']>
+  timestamp: Scalars['DateTime']['output']
+  value: Scalars['Float']['output']
+}
+
+export type TopEarner = {
+  __typename?: 'TopEarner'
+  rank: Scalars['Int']['output']
+  user: User
+  xp_earned: Scalars['Float']['output']
 }
 
 export type TrackReferralClickInput = {
@@ -1618,6 +3481,51 @@ export enum TransactionType {
   Penalty = 'penalty',
   Refund = 'refund',
   Spend = 'spend',
+}
+
+export type TrendAnalysis = {
+  __typename?: 'TrendAnalysis'
+  forecast_7_days?: Maybe<Scalars['Float']['output']>
+  forecast_30_days?: Maybe<Scalars['Float']['output']>
+  metric: Scalars['String']['output']
+  seasonality?: Maybe<Scalars['String']['output']>
+  trend_direction: Scalars['String']['output']
+  trend_strength: Scalars['Float']['output']
+}
+
+export type TrendingActivity = {
+  __typename?: 'TrendingActivity'
+  activity: Activity
+  engagement_score: Scalars['Float']['output']
+  trending_rank: Scalars['Int']['output']
+}
+
+export type UpdateChangelogEntryInput = {
+  category?: InputMaybe<ChangelogCategory>
+  description?: InputMaybe<Scalars['String']['input']>
+  feature_request_id?: InputMaybe<Scalars['String']['input']>
+  github_commit_sha?: InputMaybe<Scalars['String']['input']>
+  github_pr_url?: InputMaybe<Scalars['String']['input']>
+  is_highlighted?: InputMaybe<Scalars['Boolean']['input']>
+  is_public?: InputMaybe<Scalars['Boolean']['input']>
+  title?: InputMaybe<Scalars['String']['input']>
+  version?: InputMaybe<Scalars['String']['input']>
+}
+
+export type UpdateDevTaskInput = {
+  actual_hours?: InputMaybe<Scalars['Int']['input']>
+  assigned_to?: InputMaybe<Scalars['String']['input']>
+  description?: InputMaybe<Scalars['String']['input']>
+  due_date?: InputMaybe<Scalars['String']['input']>
+  estimated_hours?: InputMaybe<Scalars['Int']['input']>
+  github_issue_url?: InputMaybe<Scalars['String']['input']>
+  github_pr_url?: InputMaybe<Scalars['String']['input']>
+  priority?: InputMaybe<TaskPriority>
+  sprint?: InputMaybe<Scalars['String']['input']>
+  status?: InputMaybe<DevTaskStatus>
+  tags?: InputMaybe<Array<Scalars['String']['input']>>
+  task_type?: InputMaybe<DevTaskType>
+  title?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateEventInput = {
@@ -1658,6 +3566,21 @@ export type UpdateEventManagerInput = {
   can_send_broadcasts?: InputMaybe<Scalars['Boolean']['input']>
   manager_id: Scalars['ID']['input']
   role?: InputMaybe<EventManagerRole>
+}
+
+export type UpdateFeatureRequestInput = {
+  actual_hours?: InputMaybe<Scalars['Int']['input']>
+  assigned_to?: InputMaybe<Scalars['String']['input']>
+  category?: InputMaybe<FeatureRequestCategory>
+  description?: InputMaybe<Scalars['String']['input']>
+  estimated_hours?: InputMaybe<Scalars['Int']['input']>
+  github_issue_url?: InputMaybe<Scalars['String']['input']>
+  github_pr_url?: InputMaybe<Scalars['String']['input']>
+  priority?: InputMaybe<TaskPriority>
+  status?: InputMaybe<FeatureRequestStatus>
+  tags?: InputMaybe<Array<Scalars['String']['input']>>
+  target_version?: InputMaybe<Scalars['String']['input']>
+  title?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateNotificationPreferencesInput = {
@@ -1818,6 +3741,34 @@ export type User = {
   youtube?: Maybe<Scalars['String']['output']>
 }
 
+export type UserAnalytics = {
+  __typename?: 'UserAnalytics'
+  active_users: ActiveUsersMetrics
+  demographics: DemographicsMetrics
+  engagement: EngagementMetrics
+  new_users: NewUsersMetrics
+  retention: RetentionMetrics
+  total_users: Scalars['Int']['output']
+}
+
+export type UserChallenge = {
+  __typename?: 'UserChallenge'
+  challenge: Challenge
+  challenge_id: Scalars['String']['output']
+  claimed_at?: Maybe<Scalars['DateTime']['output']>
+  completed_at?: Maybe<Scalars['DateTime']['output']>
+  completion_count: Scalars['Int']['output']
+  created_at: Scalars['DateTime']['output']
+  expires_at?: Maybe<Scalars['DateTime']['output']>
+  id: Scalars['ID']['output']
+  progress: Scalars['Int']['output']
+  started_at: Scalars['DateTime']['output']
+  status: ChallengeStatus
+  updated_at: Scalars['DateTime']['output']
+  user?: Maybe<User>
+  user_id: Scalars['String']['output']
+}
+
 export type UserConnection = {
   __typename?: 'UserConnection'
   pageInfo: PageInfo
@@ -1868,6 +3819,7 @@ export type UserReferralInfo = {
 
 export enum UserRole {
   Admin = 'admin',
+  Dev = 'dev',
   Manager = 'manager',
   Organizer = 'organizer',
   User = 'user',
@@ -1876,6 +3828,150 @@ export enum UserRole {
 export type VerifyAttendanceInput = {
   attendance_id: Scalars['ID']['input']
   points_awarded: Scalars['Int']['input']
+}
+
+export type WearableDevice = {
+  __typename?: 'WearableDevice'
+  capabilities: Array<Scalars['String']['output']>
+  created_at: Scalars['DateTime']['output']
+  device_model?: Maybe<Scalars['String']['output']>
+  device_name?: Maybe<Scalars['String']['output']>
+  device_type: WearableDeviceType
+  firmware_version?: Maybe<Scalars['String']['output']>
+  id: Scalars['ID']['output']
+  is_primary: Scalars['Boolean']['output']
+  last_sync_at?: Maybe<Scalars['DateTime']['output']>
+  sync_status: WearableSyncStatus
+  updated_at: Scalars['DateTime']['output']
+  user?: Maybe<User>
+  user_id: Scalars['String']['output']
+}
+
+export enum WearableDeviceType {
+  AppleWatch = 'APPLE_WATCH',
+  Fitbit = 'FITBIT',
+  GalaxyWatch = 'GALAXY_WATCH',
+  Garmin = 'GARMIN',
+  Other = 'OTHER',
+  Oura = 'OURA',
+  Whoop = 'WHOOP',
+  Xiaomi = 'XIAOMI',
+}
+
+export type WearableHealthData = {
+  __typename?: 'WearableHealthData'
+  active_minutes?: Maybe<Scalars['Int']['output']>
+  blood_oxygen?: Maybe<Scalars['Float']['output']>
+  body_temperature?: Maybe<Scalars['Float']['output']>
+  calories_active?: Maybe<Scalars['Int']['output']>
+  calories_total?: Maybe<Scalars['Int']['output']>
+  created_at: Scalars['DateTime']['output']
+  device?: Maybe<WearableDevice>
+  device_id: Scalars['String']['output']
+  distance_meters?: Maybe<Scalars['Float']['output']>
+  floors_climbed?: Maybe<Scalars['Int']['output']>
+  heart_rate?: Maybe<Scalars['Int']['output']>
+  heart_rate_variability?: Maybe<Scalars['Float']['output']>
+  id: Scalars['ID']['output']
+  raw_data?: Maybe<Scalars['JSON']['output']>
+  recorded_at: Scalars['DateTime']['output']
+  sleep_duration_minutes?: Maybe<Scalars['Int']['output']>
+  sleep_quality_score?: Maybe<Scalars['Float']['output']>
+  steps?: Maybe<Scalars['Int']['output']>
+  stress_level?: Maybe<Scalars['Int']['output']>
+  user_id: Scalars['String']['output']
+}
+
+export type WearableHealthDataInput = {
+  active_minutes?: InputMaybe<Scalars['Int']['input']>
+  blood_oxygen?: InputMaybe<Scalars['Float']['input']>
+  body_temperature?: InputMaybe<Scalars['Float']['input']>
+  calories_active?: InputMaybe<Scalars['Int']['input']>
+  calories_total?: InputMaybe<Scalars['Int']['input']>
+  device_id: Scalars['String']['input']
+  distance_meters?: InputMaybe<Scalars['Float']['input']>
+  floors_climbed?: InputMaybe<Scalars['Int']['input']>
+  heart_rate?: InputMaybe<Scalars['Int']['input']>
+  heart_rate_variability?: InputMaybe<Scalars['Float']['input']>
+  raw_data?: InputMaybe<Scalars['JSON']['input']>
+  recorded_at: Scalars['DateTime']['input']
+  sleep_duration_minutes?: InputMaybe<Scalars['Int']['input']>
+  sleep_quality_score?: InputMaybe<Scalars['Float']['input']>
+  steps?: InputMaybe<Scalars['Int']['input']>
+  stress_level?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type WearableMotionData = {
+  __typename?: 'WearableMotionData'
+  accelerometer_x?: Maybe<Scalars['Float']['output']>
+  accelerometer_y?: Maybe<Scalars['Float']['output']>
+  accelerometer_z?: Maybe<Scalars['Float']['output']>
+  bpm_detected?: Maybe<Scalars['Int']['output']>
+  created_at: Scalars['DateTime']['output']
+  dance_session?: Maybe<DanceSession>
+  dance_session_id?: Maybe<Scalars['String']['output']>
+  device?: Maybe<WearableDevice>
+  device_id: Scalars['String']['output']
+  gyroscope_x?: Maybe<Scalars['Float']['output']>
+  gyroscope_y?: Maybe<Scalars['Float']['output']>
+  gyroscope_z?: Maybe<Scalars['Float']['output']>
+  id: Scalars['ID']['output']
+  motion_intensity?: Maybe<Scalars['Float']['output']>
+  movement_type?: Maybe<Scalars['String']['output']>
+  recorded_at: Scalars['DateTime']['output']
+  rhythm_accuracy?: Maybe<Scalars['Float']['output']>
+  user_id: Scalars['String']['output']
+}
+
+export type WearableMotionDataInput = {
+  accelerometer_x?: InputMaybe<Scalars['Float']['input']>
+  accelerometer_y?: InputMaybe<Scalars['Float']['input']>
+  accelerometer_z?: InputMaybe<Scalars['Float']['input']>
+  bpm_detected?: InputMaybe<Scalars['Int']['input']>
+  dance_session_id?: InputMaybe<Scalars['String']['input']>
+  device_id: Scalars['String']['input']
+  gyroscope_x?: InputMaybe<Scalars['Float']['input']>
+  gyroscope_y?: InputMaybe<Scalars['Float']['input']>
+  gyroscope_z?: InputMaybe<Scalars['Float']['input']>
+  motion_intensity?: InputMaybe<Scalars['Float']['input']>
+  movement_type?: InputMaybe<Scalars['String']['input']>
+  recorded_at: Scalars['DateTime']['input']
+  rhythm_accuracy?: InputMaybe<Scalars['Float']['input']>
+}
+
+export type WearableStats = {
+  __typename?: 'WearableStats'
+  average_heart_rate?: Maybe<Scalars['Float']['output']>
+  average_steps_daily?: Maybe<Scalars['Float']['output']>
+  device_id: Scalars['String']['output']
+  last_7_days_activity: Array<DailyWearableActivity>
+  total_active_minutes: Scalars['Int']['output']
+  total_health_records: Scalars['Int']['output']
+  total_motion_records: Scalars['Int']['output']
+  total_syncs: Scalars['Int']['output']
+}
+
+export type WearableSyncResult = {
+  __typename?: 'WearableSyncResult'
+  errors?: Maybe<Array<Scalars['String']['output']>>
+  failed_records: Scalars['Int']['output']
+  last_sync_at?: Maybe<Scalars['DateTime']['output']>
+  success: Scalars['Boolean']['output']
+  synced_records: Scalars['Int']['output']
+}
+
+export enum WearableSyncStatus {
+  Completed = 'COMPLETED',
+  Failed = 'FAILED',
+  Pending = 'PENDING',
+  Syncing = 'SYNCING',
+}
+
+export type XpDistribution = {
+  __typename?: 'XPDistribution'
+  amount: Scalars['Float']['output']
+  percentage: Scalars['Float']['output']
+  source: Scalars['String']['output']
 }
 
 export type PostBasicInfoFragment = {
@@ -2095,6 +4191,69 @@ export type UserFullInfoFragment = {
   created_at?: any | null
   updated_at?: any | null
   last_active_at?: any | null
+}
+
+export type LikeActivityMutationVariables = Exact<{
+  activityId: Scalars['String']['input']
+}>
+
+export type LikeActivityMutation = {
+  __typename?: 'Mutation'
+  likeActivity: {
+    __typename?: 'Activity'
+    id: string
+    likes_count: number
+    is_liked_by_me?: boolean | null
+  }
+}
+
+export type UnlikeActivityMutationVariables = Exact<{
+  activityId: Scalars['String']['input']
+}>
+
+export type UnlikeActivityMutation = {
+  __typename?: 'Mutation'
+  unlikeActivity: {
+    __typename?: 'Activity'
+    id: string
+    likes_count: number
+    is_liked_by_me?: boolean | null
+  }
+}
+
+export type CommentOnActivityMutationVariables = Exact<{
+  activityId: Scalars['String']['input']
+  comment: Scalars['String']['input']
+}>
+
+export type CommentOnActivityMutation = {
+  __typename?: 'Mutation'
+  commentOnActivity: { __typename?: 'Activity'; id: string; comments_count: number }
+}
+
+export type HideActivityMutationVariables = Exact<{
+  activityId: Scalars['String']['input']
+}>
+
+export type HideActivityMutation = {
+  __typename?: 'Mutation'
+  hideActivity: { __typename?: 'MutationResponse'; success: boolean; message?: string | null }
+}
+
+export type MarkActivitiesReadMutationVariables = Exact<{
+  activityIds: Array<Scalars['String']['input']> | Scalars['String']['input']
+}>
+
+export type MarkActivitiesReadMutation = {
+  __typename?: 'Mutation'
+  markActivitiesRead: { __typename?: 'MutationResponse'; success: boolean }
+}
+
+export type MarkAllActivitiesReadMutationVariables = Exact<{ [key: string]: never }>
+
+export type MarkAllActivitiesReadMutation = {
+  __typename?: 'Mutation'
+  markAllActivitiesRead: { __typename?: 'MutationResponse'; success: boolean }
 }
 
 export type CreatePointActionMutationVariables = Exact<{
@@ -2409,6 +4568,70 @@ export type FeatureEventMutation = {
   }
 }
 
+export type StartChallengeMutationVariables = Exact<{
+  challengeId: Scalars['String']['input']
+}>
+
+export type StartChallengeMutation = {
+  __typename?: 'Mutation'
+  startChallenge: {
+    __typename?: 'UserChallenge'
+    id: string
+    challenge_id: string
+    status: ChallengeStatus
+    progress: number
+    started_at: any
+    expires_at?: any | null
+    challenge: {
+      __typename?: 'Challenge'
+      id: string
+      title: string
+      target_value: number
+      xp_reward: number
+    }
+  }
+}
+
+export type UpdateChallengeProgressMutationVariables = Exact<{
+  challengeId: Scalars['String']['input']
+  progress: Scalars['Int']['input']
+}>
+
+export type UpdateChallengeProgressMutation = {
+  __typename?: 'Mutation'
+  updateChallengeProgress: {
+    __typename?: 'UserChallenge'
+    id: string
+    status: ChallengeStatus
+    progress: number
+    completed_at?: any | null
+  }
+}
+
+export type ClaimChallengeRewardMutationVariables = Exact<{
+  challengeId: Scalars['String']['input']
+}>
+
+export type ClaimChallengeRewardMutation = {
+  __typename?: 'Mutation'
+  claimChallengeReward: {
+    __typename?: 'UserChallenge'
+    id: string
+    status: ChallengeStatus
+    claimed_at?: any | null
+    challenge: { __typename?: 'Challenge'; xp_reward: number; points_reward: number }
+  }
+}
+
+export type AbandonChallengeMutationVariables = Exact<{
+  challengeId: Scalars['String']['input']
+}>
+
+export type AbandonChallengeMutation = {
+  __typename?: 'Mutation'
+  abandonChallenge: { __typename?: 'MutationResponse'; success: boolean; message?: string | null }
+}
+
 export type CreateEventMutationVariables = Exact<{
   input: CreateEventInput
 }>
@@ -2463,6 +4686,290 @@ export type RegisterForEventMutation = {
     created_at?: any | null
   }
 }
+
+export type CreateFeatureRequestMutationVariables = Exact<{
+  input: CreateFeatureRequestInput
+}>
+
+export type CreateFeatureRequestMutation = {
+  __typename?: 'Mutation'
+  createFeatureRequest: {
+    __typename?: 'FeatureRequest'
+    id: string
+    title: string
+    description?: string | null
+    category: FeatureRequestCategory
+    status: FeatureRequestStatus
+    priority?: TaskPriority | null
+    votes: number
+    created_at: any
+    requested_by?: { __typename?: 'User'; privy_id: string; username?: string | null } | null
+  }
+}
+
+export type UpdateFeatureRequestMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+  input: UpdateFeatureRequestInput
+}>
+
+export type UpdateFeatureRequestMutation = {
+  __typename?: 'Mutation'
+  updateFeatureRequest: {
+    __typename?: 'FeatureRequest'
+    id: string
+    title: string
+    description?: string | null
+    category: FeatureRequestCategory
+    status: FeatureRequestStatus
+    priority?: TaskPriority | null
+    estimated_hours?: number | null
+    actual_hours?: number | null
+    target_version?: string | null
+    github_issue_url?: string | null
+    github_pr_url?: string | null
+    tags?: Array<string> | null
+    updated_at: any
+    assigned_to?: { __typename?: 'User'; privy_id: string; username?: string | null } | null
+  }
+}
+
+export type DeleteFeatureRequestMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type DeleteFeatureRequestMutation = {
+  __typename?: 'Mutation'
+  deleteFeatureRequest: boolean
+}
+
+export type VoteFeatureRequestMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+  vote: Scalars['String']['input']
+}>
+
+export type VoteFeatureRequestMutation = {
+  __typename?: 'Mutation'
+  voteFeatureRequest: {
+    __typename?: 'FeatureRequest'
+    id: string
+    votes: number
+    user_vote?: string | null
+  }
+}
+
+export type RemoveFeatureRequestVoteMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type RemoveFeatureRequestVoteMutation = {
+  __typename?: 'Mutation'
+  removeFeatureRequestVote: {
+    __typename?: 'FeatureRequest'
+    id: string
+    votes: number
+    user_vote?: string | null
+  }
+}
+
+export type AddFeatureRequestCommentMutationVariables = Exact<{
+  feature_request_id: Scalars['ID']['input']
+  content: Scalars['String']['input']
+  is_internal?: InputMaybe<Scalars['Boolean']['input']>
+}>
+
+export type AddFeatureRequestCommentMutation = {
+  __typename?: 'Mutation'
+  addFeatureRequestComment: {
+    __typename?: 'FeatureRequestComment'
+    id: string
+    content: string
+    is_internal: boolean
+    created_at: any
+    user?: {
+      __typename?: 'User'
+      privy_id: string
+      username?: string | null
+      avatar_url?: string | null
+    } | null
+  }
+}
+
+export type DeleteFeatureRequestCommentMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type DeleteFeatureRequestCommentMutation = {
+  __typename?: 'Mutation'
+  deleteFeatureRequestComment: boolean
+}
+
+export type CreateDevTaskMutationVariables = Exact<{
+  input: CreateDevTaskInput
+}>
+
+export type CreateDevTaskMutation = {
+  __typename?: 'Mutation'
+  createDevTask: {
+    __typename?: 'DevTask'
+    id: string
+    title: string
+    description?: string | null
+    task_type: DevTaskType
+    status: DevTaskStatus
+    priority: TaskPriority
+    due_date?: string | null
+    estimated_hours?: number | null
+    sprint?: string | null
+    created_at: any
+    assigned_to?: { __typename?: 'User'; privy_id: string; username?: string | null } | null
+  }
+}
+
+export type UpdateDevTaskMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+  input: UpdateDevTaskInput
+}>
+
+export type UpdateDevTaskMutation = {
+  __typename?: 'Mutation'
+  updateDevTask: {
+    __typename?: 'DevTask'
+    id: string
+    title: string
+    description?: string | null
+    task_type: DevTaskType
+    status: DevTaskStatus
+    priority: TaskPriority
+    due_date?: string | null
+    estimated_hours?: number | null
+    actual_hours?: number | null
+    github_issue_url?: string | null
+    github_pr_url?: string | null
+    tags?: Array<string> | null
+    sprint?: string | null
+    updated_at: any
+    assigned_to?: { __typename?: 'User'; privy_id: string; username?: string | null } | null
+  }
+}
+
+export type DeleteDevTaskMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type DeleteDevTaskMutation = { __typename?: 'Mutation'; deleteDevTask: boolean }
+
+export type StartTaskMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type StartTaskMutation = {
+  __typename?: 'Mutation'
+  startTask: { __typename?: 'DevTask'; id: string; status: DevTaskStatus; started_at?: any | null }
+}
+
+export type CompleteTaskMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+  actual_hours?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type CompleteTaskMutation = {
+  __typename?: 'Mutation'
+  completeTask: {
+    __typename?: 'DevTask'
+    id: string
+    status: DevTaskStatus
+    actual_hours?: number | null
+    completed_at?: any | null
+  }
+}
+
+export type BlockTaskMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+  reason?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type BlockTaskMutation = {
+  __typename?: 'Mutation'
+  blockTask: { __typename?: 'DevTask'; id: string; status: DevTaskStatus }
+}
+
+export type CreateChangelogEntryMutationVariables = Exact<{
+  input: CreateChangelogEntryInput
+}>
+
+export type CreateChangelogEntryMutation = {
+  __typename?: 'Mutation'
+  createChangelogEntry: {
+    __typename?: 'ChangelogEntry'
+    id: string
+    version: string
+    title: string
+    description?: string | null
+    category: ChangelogCategory
+    github_pr_url?: string | null
+    is_public: boolean
+    is_highlighted: boolean
+    created_at: any
+  }
+}
+
+export type UpdateChangelogEntryMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+  input: UpdateChangelogEntryInput
+}>
+
+export type UpdateChangelogEntryMutation = {
+  __typename?: 'Mutation'
+  updateChangelogEntry: {
+    __typename?: 'ChangelogEntry'
+    id: string
+    version: string
+    title: string
+    description?: string | null
+    category: ChangelogCategory
+    github_pr_url?: string | null
+    is_public: boolean
+    is_highlighted: boolean
+  }
+}
+
+export type DeleteChangelogEntryMutationVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type DeleteChangelogEntryMutation = {
+  __typename?: 'Mutation'
+  deleteChangelogEntry: boolean
+}
+
+export type TriggerGitHubActionMutationVariables = Exact<{
+  repo: Scalars['String']['input']
+  workflow_id: Scalars['String']['input']
+  ref?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type TriggerGitHubActionMutation = { __typename?: 'Mutation'; triggerGitHubAction: boolean }
+
+export type CheckSystemHealthMutationVariables = Exact<{ [key: string]: never }>
+
+export type CheckSystemHealthMutation = {
+  __typename?: 'Mutation'
+  checkSystemHealth: Array<{
+    __typename?: 'SystemHealth'
+    service: string
+    status: string
+    response_time_ms?: number | null
+    last_checked: any
+    error_message?: string | null
+    details?: any | null
+  }>
+}
+
+export type ClearGitHubCacheMutationVariables = Exact<{
+  cache_key?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type ClearGitHubCacheMutation = { __typename?: 'Mutation'; clearGitHubCache: boolean }
 
 export type InviteEventManagerMutationVariables = Exact<{
   input: InviteEventManagerInput
@@ -2940,6 +5447,171 @@ export type UpdateProfileMutation = {
   }
 }
 
+export type GetActivityFeedQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>
+  after?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type GetActivityFeedQuery = {
+  __typename?: 'Query'
+  activityFeed: {
+    __typename?: 'ActivityFeed'
+    total_count: number
+    has_more: boolean
+    last_activity_id?: string | null
+    unread_count: number
+    activities: Array<{
+      __typename?: 'Activity'
+      id: string
+      activity_type: ActivityType
+      user_id: string
+      visibility: ActivityVisibility
+      title: string
+      description?: string | null
+      icon?: string | null
+      color?: string | null
+      xp_earned?: number | null
+      points_earned?: number | null
+      likes_count: number
+      comments_count: number
+      is_liked_by_me?: boolean | null
+      is_highlighted: boolean
+      created_at: any
+      user: {
+        __typename?: 'User'
+        privy_id: string
+        username?: string | null
+        display_name?: string | null
+        avatar_url?: string | null
+      }
+    }>
+  }
+}
+
+export type GetGlobalActivityFeedQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>
+  after?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type GetGlobalActivityFeedQuery = {
+  __typename?: 'Query'
+  globalActivityFeed: {
+    __typename?: 'ActivityFeed'
+    has_more: boolean
+    unread_count: number
+    activities: Array<{
+      __typename?: 'Activity'
+      id: string
+      activity_type: ActivityType
+      title: string
+      description?: string | null
+      icon?: string | null
+      color?: string | null
+      xp_earned?: number | null
+      likes_count: number
+      created_at: any
+      user: {
+        __typename?: 'User'
+        privy_id: string
+        username?: string | null
+        avatar_url?: string | null
+      }
+    }>
+  }
+}
+
+export type GetFriendsActivityFeedQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>
+  after?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type GetFriendsActivityFeedQuery = {
+  __typename?: 'Query'
+  friendsActivityFeed: {
+    __typename?: 'ActivityFeed'
+    has_more: boolean
+    activities: Array<{
+      __typename?: 'Activity'
+      id: string
+      activity_type: ActivityType
+      title: string
+      description?: string | null
+      icon?: string | null
+      color?: string | null
+      created_at: any
+      user: {
+        __typename?: 'User'
+        privy_id: string
+        username?: string | null
+        avatar_url?: string | null
+      }
+    }>
+  }
+}
+
+export type GetMyActivityFeedQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>
+  after?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type GetMyActivityFeedQuery = {
+  __typename?: 'Query'
+  myActivityFeed: {
+    __typename?: 'ActivityFeed'
+    total_count: number
+    has_more: boolean
+    activities: Array<{
+      __typename?: 'Activity'
+      id: string
+      activity_type: ActivityType
+      title: string
+      description?: string | null
+      icon?: string | null
+      color?: string | null
+      xp_earned?: number | null
+      points_earned?: number | null
+      created_at: any
+    }>
+  }
+}
+
+export type GetTrendingActivitiesQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type GetTrendingActivitiesQuery = {
+  __typename?: 'Query'
+  trendingActivities: Array<{
+    __typename?: 'TrendingActivity'
+    engagement_score: number
+    trending_rank: number
+    activity: {
+      __typename?: 'Activity'
+      id: string
+      activity_type: ActivityType
+      title: string
+      icon?: string | null
+      color?: string | null
+      likes_count: number
+      user: { __typename?: 'User'; username?: string | null; avatar_url?: string | null }
+    }
+  }>
+}
+
+export type GetActivityStatsQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetActivityStatsQuery = {
+  __typename?: 'Query'
+  activityStats: {
+    __typename?: 'ActivityStats'
+    today_activities: number
+    this_week_activities: number
+    total_activities: number
+    most_active_type?: ActivityType | null
+    engagement_rate: number
+  }
+}
+
 export type GetAllPointActionsQueryVariables = Exact<{
   category?: InputMaybe<PointActionCategory>
   is_active?: InputMaybe<Scalars['Boolean']['input']>
@@ -3332,6 +6004,775 @@ export type GetPendingOrganizersQuery = {
       endCursor?: string | null
     }
   }
+}
+
+export type GetAdminDashboardAnalyticsQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetAdminDashboardAnalyticsQuery = { __typename?: 'Query'; adminDashboardAnalytics: any }
+
+export type GetUserAnalyticsQueryVariables = Exact<{
+  period?: InputMaybe<AnalyticsPeriod>
+}>
+
+export type GetUserAnalyticsQuery = {
+  __typename?: 'Query'
+  userAnalytics: {
+    __typename?: 'UserAnalytics'
+    total_users: number
+    active_users: {
+      __typename?: 'ActiveUsersMetrics'
+      dau: number
+      wau: number
+      mau: number
+      dau_wau_ratio: number
+      dau_mau_ratio: number
+    }
+    new_users: {
+      __typename?: 'NewUsersMetrics'
+      today: number
+      this_week: number
+      this_month: number
+      growth_rate: number
+      acquisition_channels: Array<{
+        __typename?: 'AcquisitionChannel'
+        channel: string
+        users: number
+        percentage: number
+      }>
+    }
+    retention: { __typename?: 'RetentionMetrics'; day_1: number; day_7: number; day_30: number }
+    engagement: {
+      __typename?: 'EngagementMetrics'
+      avg_session_duration: number
+      avg_sessions_per_user: number
+      avg_dance_time_per_user: number
+      power_users_count: number
+    }
+    demographics: {
+      __typename?: 'DemographicsMetrics'
+      by_country: Array<{
+        __typename?: 'CountryMetric'
+        country: string
+        users: number
+        percentage: number
+      }>
+      by_skill_level: Array<{
+        __typename?: 'SkillLevelMetric'
+        level: string
+        users: number
+        percentage: number
+      }>
+    }
+  }
+}
+
+export type GetPlatformAnalyticsQueryVariables = Exact<{
+  period?: InputMaybe<AnalyticsPeriod>
+}>
+
+export type GetPlatformAnalyticsQuery = {
+  __typename?: 'Query'
+  platformAnalytics: {
+    __typename?: 'PlatformAnalytics'
+    overview: {
+      __typename?: 'PlatformOverview'
+      total_xp_distributed: number
+      total_points_distributed: number
+      total_dance_sessions: number
+      total_dance_minutes: number
+      total_events_hosted: number
+      total_dance_bonds: number
+      health_score: number
+    }
+    dance_metrics: {
+      __typename?: 'DanceMetrics'
+      sessions_today: number
+      sessions_this_week: number
+      avg_session_duration: number
+      avg_movement_score: number
+      total_calories_burned: number
+      peak_hours: Array<{ __typename?: 'HourlyMetric'; hour: number; value: number }>
+    }
+    event_metrics: {
+      __typename?: 'EventMetrics'
+      total_events: number
+      upcoming_events: number
+      completed_events: number
+      avg_attendance: number
+      avg_rating: number
+    }
+    social_metrics: {
+      __typename?: 'SocialMetrics'
+      total_posts: number
+      total_comments: number
+      total_likes: number
+      avg_engagement_rate: number
+      dance_bonds_created: number
+    }
+    economy_metrics: {
+      __typename?: 'EconomyMetrics'
+      total_xp_earned: number
+      total_points_earned: number
+      xp_distribution: Array<{
+        __typename?: 'XPDistribution'
+        source: string
+        amount: number
+        percentage: number
+      }>
+    }
+  }
+}
+
+export type GetRealTimeAnalyticsQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetRealTimeAnalyticsQuery = {
+  __typename?: 'Query'
+  realTimeAnalytics: {
+    __typename?: 'RealTimeAnalytics'
+    current_online_users: number
+    active_dance_sessions: number
+    events_in_progress: number
+    recent_signups: number
+    recent_sessions: number
+    system_load: number
+    api_requests_per_minute: number
+  }
+}
+
+export type GetDailyChallengesQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetDailyChallengesQuery = {
+  __typename?: 'Query'
+  dailyChallenges: {
+    __typename?: 'DailyChallengeset'
+    date: string
+    total_xp_available: number
+    total_points_available: number
+    challenges: Array<{
+      __typename?: 'Challenge'
+      id: string
+      title: string
+      description: string
+      challenge_type: ChallengeType
+      difficulty: ChallengeDifficulty
+      category: ChallengeCategory
+      target_value: number
+      target_unit: string
+      xp_reward: number
+      points_reward: number
+      time_limit_hours?: number | null
+    }>
+    user_progress?: Array<{
+      __typename?: 'UserChallenge'
+      id: string
+      challenge_id: string
+      status: ChallengeStatus
+      progress: number
+      started_at: any
+      completed_at?: any | null
+      expires_at?: any | null
+    }> | null
+  }
+}
+
+export type GetMyChallengesQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetMyChallengesQuery = {
+  __typename?: 'Query'
+  myActiveChallenges: Array<{
+    __typename?: 'UserChallenge'
+    id: string
+    challenge_id: string
+    status: ChallengeStatus
+    progress: number
+    started_at: any
+    expires_at?: any | null
+    challenge: {
+      __typename?: 'Challenge'
+      id: string
+      title: string
+      description: string
+      difficulty: ChallengeDifficulty
+      category: ChallengeCategory
+      target_value: number
+      target_unit: string
+      xp_reward: number
+      points_reward: number
+    }
+  }>
+}
+
+export type GetMyChallengeStatsQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetMyChallengeStatsQuery = {
+  __typename?: 'Query'
+  myChallengeStats: {
+    __typename?: 'ChallengeStats'
+    total_completed: number
+    total_xp_earned: number
+    total_points_earned: number
+    current_streak: number
+    longest_streak: number
+    completion_rate: number
+    challenges_by_difficulty: any
+  }
+}
+
+export type GetMyChallengeProgressQueryVariables = Exact<{
+  challengeId: Scalars['String']['input']
+}>
+
+export type GetMyChallengeProgressQuery = {
+  __typename?: 'Query'
+  myChallengeProgress?: {
+    __typename?: 'ChallengeProgress'
+    current_progress: number
+    target_value: number
+    percentage: number
+    time_remaining?: number | null
+    is_claimable: boolean
+    challenge: {
+      __typename?: 'Challenge'
+      id: string
+      title: string
+      description: string
+      target_value: number
+      target_unit: string
+      xp_reward: number
+    }
+  } | null
+}
+
+export type GetChallengeLeaderboardQueryVariables = Exact<{
+  type: ChallengeType
+  period: Scalars['String']['input']
+}>
+
+export type GetChallengeLeaderboardQuery = {
+  __typename?: 'Query'
+  challengeLeaderboard: {
+    __typename?: 'ChallengeLeaderboard'
+    period: string
+    entries: Array<{
+      __typename?: 'ChallengeLeaderboardEntry'
+      rank: number
+      challenges_completed: number
+      xp_earned: number
+      points_earned: number
+      user: {
+        __typename?: 'User'
+        privy_id: string
+        username?: string | null
+        display_name?: string | null
+        avatar_url?: string | null
+        level?: number | null
+      }
+    }>
+  }
+}
+
+export type GetDevDashboardStatsQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetDevDashboardStatsQuery = {
+  __typename?: 'Query'
+  devDashboardStats?: {
+    __typename?: 'DevDashboardStats'
+    total_feature_requests: number
+    pending_requests: number
+    in_progress_requests: number
+    completed_requests: number
+    total_tasks: number
+    todo_tasks: number
+    in_progress_tasks: number
+    blocked_tasks: number
+    total_changelog_entries: number
+    latest_version?: string | null
+    github_open_prs?: number | null
+    github_open_issues?: number | null
+    github_rate_limit?: {
+      __typename?: 'GitHubRateLimit'
+      limit: number
+      remaining: number
+      reset_at: any
+      used: number
+    } | null
+  } | null
+}
+
+export type GetSystemHealthQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetSystemHealthQuery = {
+  __typename?: 'Query'
+  systemHealth: Array<{
+    __typename?: 'SystemHealth'
+    service: string
+    status: string
+    response_time_ms?: number | null
+    last_checked: any
+    error_message?: string | null
+    details?: any | null
+  }>
+}
+
+export type GetFeatureRequestsQueryVariables = Exact<{
+  filter?: InputMaybe<FeatureRequestFilter>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  sort_by?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type GetFeatureRequestsQuery = {
+  __typename?: 'Query'
+  featureRequests: {
+    __typename?: 'FeatureRequestConnection'
+    total_count: number
+    has_more: boolean
+    requests: Array<{
+      __typename?: 'FeatureRequest'
+      id: string
+      title: string
+      description?: string | null
+      category: FeatureRequestCategory
+      status: FeatureRequestStatus
+      priority?: TaskPriority | null
+      votes: number
+      requested_at: any
+      assigned_at?: any | null
+      estimated_hours?: number | null
+      actual_hours?: number | null
+      target_version?: string | null
+      completed_at?: any | null
+      github_issue_url?: string | null
+      github_pr_url?: string | null
+      tags?: Array<string> | null
+      user_vote?: string | null
+      created_at: any
+      updated_at: any
+      requested_by?: {
+        __typename?: 'User'
+        privy_id: string
+        username?: string | null
+        display_name?: string | null
+        avatar_url?: string | null
+      } | null
+      assigned_to?: {
+        __typename?: 'User'
+        privy_id: string
+        username?: string | null
+        display_name?: string | null
+        avatar_url?: string | null
+      } | null
+    }>
+  }
+}
+
+export type GetFeatureRequestQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type GetFeatureRequestQuery = {
+  __typename?: 'Query'
+  featureRequest?: {
+    __typename?: 'FeatureRequest'
+    id: string
+    title: string
+    description?: string | null
+    category: FeatureRequestCategory
+    status: FeatureRequestStatus
+    priority?: TaskPriority | null
+    votes: number
+    requested_at: any
+    assigned_at?: any | null
+    estimated_hours?: number | null
+    actual_hours?: number | null
+    target_version?: string | null
+    completed_at?: any | null
+    github_issue_url?: string | null
+    github_pr_url?: string | null
+    tags?: Array<string> | null
+    user_vote?: string | null
+    created_at: any
+    updated_at: any
+    requested_by?: {
+      __typename?: 'User'
+      privy_id: string
+      username?: string | null
+      display_name?: string | null
+      avatar_url?: string | null
+    } | null
+    assigned_to?: {
+      __typename?: 'User'
+      privy_id: string
+      username?: string | null
+      display_name?: string | null
+      avatar_url?: string | null
+    } | null
+    comments?: Array<{
+      __typename?: 'FeatureRequestComment'
+      id: string
+      content: string
+      is_internal: boolean
+      created_at: any
+      user?: {
+        __typename?: 'User'
+        privy_id: string
+        username?: string | null
+        display_name?: string | null
+        avatar_url?: string | null
+      } | null
+    }> | null
+  } | null
+}
+
+export type GetTopVotedFeaturesQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type GetTopVotedFeaturesQuery = {
+  __typename?: 'Query'
+  topVotedFeatures: Array<{
+    __typename?: 'FeatureRequest'
+    id: string
+    title: string
+    description?: string | null
+    category: FeatureRequestCategory
+    status: FeatureRequestStatus
+    priority?: TaskPriority | null
+    votes: number
+    user_vote?: string | null
+    created_at: any
+    requested_by?: {
+      __typename?: 'User'
+      privy_id: string
+      username?: string | null
+      avatar_url?: string | null
+    } | null
+  }>
+}
+
+export type GetDevTasksQueryVariables = Exact<{
+  filter?: InputMaybe<DevTaskFilter>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  sort_by?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type GetDevTasksQuery = {
+  __typename?: 'Query'
+  devTasks: {
+    __typename?: 'DevTaskConnection'
+    total_count: number
+    has_more: boolean
+    tasks: Array<{
+      __typename?: 'DevTask'
+      id: string
+      title: string
+      description?: string | null
+      task_type: DevTaskType
+      status: DevTaskStatus
+      priority: TaskPriority
+      due_date?: string | null
+      estimated_hours?: number | null
+      actual_hours?: number | null
+      started_at?: any | null
+      completed_at?: any | null
+      github_issue_url?: string | null
+      github_pr_url?: string | null
+      tags?: Array<string> | null
+      sprint?: string | null
+      created_at: any
+      updated_at: any
+      assigned_to?: {
+        __typename?: 'User'
+        privy_id: string
+        username?: string | null
+        display_name?: string | null
+        avatar_url?: string | null
+      } | null
+      created_by?: {
+        __typename?: 'User'
+        privy_id: string
+        username?: string | null
+        avatar_url?: string | null
+      } | null
+      feature_request?: { __typename?: 'FeatureRequest'; id: string; title: string } | null
+      parent_task?: { __typename?: 'DevTask'; id: string; title: string } | null
+      subtasks?: Array<{
+        __typename?: 'DevTask'
+        id: string
+        title: string
+        status: DevTaskStatus
+      }> | null
+    }>
+  }
+}
+
+export type GetDevTaskQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type GetDevTaskQuery = {
+  __typename?: 'Query'
+  devTask?: {
+    __typename?: 'DevTask'
+    id: string
+    title: string
+    description?: string | null
+    task_type: DevTaskType
+    status: DevTaskStatus
+    priority: TaskPriority
+    due_date?: string | null
+    estimated_hours?: number | null
+    actual_hours?: number | null
+    started_at?: any | null
+    completed_at?: any | null
+    github_issue_url?: string | null
+    github_pr_url?: string | null
+    tags?: Array<string> | null
+    sprint?: string | null
+    created_at: any
+    updated_at: any
+    assigned_to?: {
+      __typename?: 'User'
+      privy_id: string
+      username?: string | null
+      display_name?: string | null
+      avatar_url?: string | null
+    } | null
+    created_by?: {
+      __typename?: 'User'
+      privy_id: string
+      username?: string | null
+      avatar_url?: string | null
+    } | null
+    feature_request?: {
+      __typename?: 'FeatureRequest'
+      id: string
+      title: string
+      status: FeatureRequestStatus
+    } | null
+    parent_task?: { __typename?: 'DevTask'; id: string; title: string } | null
+    subtasks?: Array<{
+      __typename?: 'DevTask'
+      id: string
+      title: string
+      status: DevTaskStatus
+      priority: TaskPriority
+    }> | null
+  } | null
+}
+
+export type GetMyDevTasksQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetMyDevTasksQuery = {
+  __typename?: 'Query'
+  myDevTasks: Array<{
+    __typename?: 'DevTask'
+    id: string
+    title: string
+    task_type: DevTaskType
+    status: DevTaskStatus
+    priority: TaskPriority
+    due_date?: string | null
+    estimated_hours?: number | null
+    sprint?: string | null
+  }>
+}
+
+export type GetSprintTasksQueryVariables = Exact<{
+  sprint: Scalars['String']['input']
+}>
+
+export type GetSprintTasksQuery = {
+  __typename?: 'Query'
+  sprintTasks: Array<{
+    __typename?: 'DevTask'
+    id: string
+    title: string
+    task_type: DevTaskType
+    status: DevTaskStatus
+    priority: TaskPriority
+    estimated_hours?: number | null
+    actual_hours?: number | null
+    assigned_to?: {
+      __typename?: 'User'
+      privy_id: string
+      username?: string | null
+      avatar_url?: string | null
+    } | null
+  }>
+}
+
+export type GetChangelogQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  include_private?: InputMaybe<Scalars['Boolean']['input']>
+}>
+
+export type GetChangelogQuery = {
+  __typename?: 'Query'
+  changelog: Array<{
+    __typename?: 'ChangelogVersion'
+    version: string
+    release_date: any
+    is_current: boolean
+    entries: Array<{
+      __typename?: 'ChangelogEntry'
+      id: string
+      title: string
+      description?: string | null
+      category: ChangelogCategory
+      github_pr_url?: string | null
+      is_public: boolean
+      is_highlighted: boolean
+      created_at: any
+    }>
+  }>
+}
+
+export type GetLatestChangelogQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetLatestChangelogQuery = {
+  __typename?: 'Query'
+  latestChangelog?: {
+    __typename?: 'ChangelogVersion'
+    version: string
+    release_date: any
+    is_current: boolean
+    entries: Array<{
+      __typename?: 'ChangelogEntry'
+      id: string
+      title: string
+      description?: string | null
+      category: ChangelogCategory
+      is_highlighted: boolean
+    }>
+  } | null
+}
+
+export type GetGitHubCommitsQueryVariables = Exact<{
+  repo: Scalars['String']['input']
+  branch?: InputMaybe<Scalars['String']['input']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type GetGitHubCommitsQuery = {
+  __typename?: 'Query'
+  githubCommits: Array<{
+    __typename?: 'GitHubCommit'
+    sha: string
+    message: string
+    author: string
+    author_avatar?: string | null
+    date: any
+    url: string
+    additions?: number | null
+    deletions?: number | null
+  }>
+}
+
+export type GetGitHubPullRequestsQueryVariables = Exact<{
+  repo: Scalars['String']['input']
+  state?: InputMaybe<Scalars['String']['input']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type GetGitHubPullRequestsQuery = {
+  __typename?: 'Query'
+  githubPullRequests: Array<{
+    __typename?: 'GitHubPullRequest'
+    number: number
+    title: string
+    state: string
+    author: string
+    author_avatar?: string | null
+    created_at: any
+    merged_at?: any | null
+    closed_at?: any | null
+    url: string
+    additions?: number | null
+    deletions?: number | null
+    changed_files?: number | null
+    labels?: Array<string> | null
+    draft?: boolean | null
+  }>
+}
+
+export type GetGitHubActionsQueryVariables = Exact<{
+  repo: Scalars['String']['input']
+  limit?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type GetGitHubActionsQuery = {
+  __typename?: 'Query'
+  githubActions: Array<{
+    __typename?: 'GitHubAction'
+    id: string
+    name: string
+    status: string
+    conclusion?: string | null
+    workflow_name: string
+    branch: string
+    commit_sha: string
+    started_at: any
+    completed_at?: any | null
+    url: string
+    duration_seconds?: number | null
+  }>
+}
+
+export type GetGitHubReleasesQueryVariables = Exact<{
+  repo: Scalars['String']['input']
+  limit?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type GetGitHubReleasesQuery = {
+  __typename?: 'Query'
+  githubReleases: Array<{
+    __typename?: 'GitHubRelease'
+    id: string
+    tag_name: string
+    name: string
+    body?: string | null
+    published_at: any
+    author: string
+    author_avatar?: string | null
+    url: string
+    prerelease: boolean
+    draft: boolean
+  }>
+}
+
+export type GetGitHubReposQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetGitHubReposQuery = {
+  __typename?: 'Query'
+  githubRepos: Array<{
+    __typename?: 'GitHubRepo'
+    name: string
+    full_name: string
+    description?: string | null
+    stars: number
+    forks: number
+    open_issues: number
+    open_prs?: number | null
+    last_push: any
+    default_branch: string
+    url: string
+  }>
+}
+
+export type GetGitHubRateLimitQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetGitHubRateLimitQuery = {
+  __typename?: 'Query'
+  githubRateLimit?: {
+    __typename?: 'GitHubRateLimit'
+    limit: number
+    remaining: number
+    reset_at: any
+    used: number
+  } | null
 }
 
 export type GetEventManagersQueryVariables = Exact<{
@@ -3771,6 +7212,162 @@ export type GetEventsQuery = {
       endCursor?: string | null
     }
   }
+}
+
+export type GetGlobalLeaderboardQueryVariables = Exact<{
+  metric: LeaderboardMetric
+  limit?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type GetGlobalLeaderboardQuery = {
+  __typename?: 'Query'
+  globalLeaderboard: {
+    __typename?: 'Leaderboard'
+    type: LeaderboardType
+    metric: LeaderboardMetric
+    period: string
+    updated_at: any
+    total_participants: number
+    entries: Array<{
+      __typename?: 'LeaderboardEntry'
+      rank: number
+      previous_rank?: number | null
+      rank_change?: number | null
+      user_id: string
+      username: string
+      display_name?: string | null
+      avatar_url?: string | null
+      level: number
+      value: number
+      is_current_user: boolean
+      country?: string | null
+    }>
+    current_user_entry?: {
+      __typename?: 'LeaderboardEntry'
+      rank: number
+      value: number
+      is_current_user: boolean
+    } | null
+    nearby_entries?: Array<{
+      __typename?: 'LeaderboardEntry'
+      rank: number
+      username: string
+      avatar_url?: string | null
+      value: number
+      is_current_user: boolean
+    }> | null
+  }
+}
+
+export type GetWeeklyLeaderboardQueryVariables = Exact<{
+  metric: LeaderboardMetric
+  limit?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type GetWeeklyLeaderboardQuery = {
+  __typename?: 'Query'
+  weeklyLeaderboard: {
+    __typename?: 'Leaderboard'
+    type: LeaderboardType
+    metric: LeaderboardMetric
+    period: string
+    total_participants: number
+    entries: Array<{
+      __typename?: 'LeaderboardEntry'
+      rank: number
+      user_id: string
+      username: string
+      display_name?: string | null
+      avatar_url?: string | null
+      level: number
+      value: number
+      is_current_user: boolean
+    }>
+    current_user_entry?: { __typename?: 'LeaderboardEntry'; rank: number; value: number } | null
+  }
+}
+
+export type GetFriendsLeaderboardQueryVariables = Exact<{
+  metric: LeaderboardMetric
+  limit?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type GetFriendsLeaderboardQuery = {
+  __typename?: 'Query'
+  friendsLeaderboard: {
+    __typename?: 'Leaderboard'
+    type: LeaderboardType
+    metric: LeaderboardMetric
+    total_participants: number
+    entries: Array<{
+      __typename?: 'LeaderboardEntry'
+      rank: number
+      user_id: string
+      username: string
+      display_name?: string | null
+      avatar_url?: string | null
+      level: number
+      value: number
+      is_current_user: boolean
+    }>
+  }
+}
+
+export type GetMyLeaderboardSummaryQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetMyLeaderboardSummaryQuery = {
+  __typename?: 'Query'
+  myLeaderboardSummary: {
+    __typename?: 'LeaderboardSummary'
+    global_rank?: number | null
+    regional_rank?: number | null
+    friends_rank?: number | null
+    weekly_change?: number | null
+    top_metric?: LeaderboardMetric | null
+    top_metric_rank?: number | null
+    percentile?: number | null
+  }
+}
+
+export type GetTopPerformersQueryVariables = Exact<{
+  metric: LeaderboardMetric
+  period: Scalars['String']['input']
+  limit?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type GetTopPerformersQuery = {
+  __typename?: 'Query'
+  topPerformers: Array<{
+    __typename?: 'LeaderboardEntry'
+    rank: number
+    user_id: string
+    username: string
+    display_name?: string | null
+    avatar_url?: string | null
+    level: number
+    value: number
+    is_current_user: boolean
+  }>
+}
+
+export type GetNearbyUsersQueryVariables = Exact<{
+  metric: LeaderboardMetric
+  range?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type GetNearbyUsersQuery = {
+  __typename?: 'Query'
+  nearbyUsers: Array<{
+    __typename?: 'LeaderboardEntry'
+    rank: number
+    user_id: string
+    username: string
+    display_name?: string | null
+    avatar_url?: string | null
+    level: number
+    value: number
+    is_current_user: boolean
+  }>
 }
 
 export type GetMyNotificationsQueryVariables = Exact<{
@@ -4434,6 +8031,288 @@ export const UserFullInfoFragmentDoc = gql`
   last_active_at
 }
     `
+export const LikeActivityDocument = gql`
+    mutation LikeActivity($activityId: String!) {
+  likeActivity(activityId: $activityId) {
+    id
+    likes_count
+    is_liked_by_me
+  }
+}
+    `
+export type LikeActivityMutationFn = Apollo.MutationFunction<
+  LikeActivityMutation,
+  LikeActivityMutationVariables
+>
+
+/**
+ * __useLikeActivityMutation__
+ *
+ * To run a mutation, you first call `useLikeActivityMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLikeActivityMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [likeActivityMutation, { data, loading, error }] = useLikeActivityMutation({
+ *   variables: {
+ *      activityId: // value for 'activityId'
+ *   },
+ * });
+ */
+export function useLikeActivityMutation(
+  baseOptions?: Apollo.MutationHookOptions<LikeActivityMutation, LikeActivityMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<LikeActivityMutation, LikeActivityMutationVariables>(
+    LikeActivityDocument,
+    options,
+  )
+}
+export type LikeActivityMutationHookResult = ReturnType<typeof useLikeActivityMutation>
+export type LikeActivityMutationResult = Apollo.MutationResult<LikeActivityMutation>
+export type LikeActivityMutationOptions = Apollo.BaseMutationOptions<
+  LikeActivityMutation,
+  LikeActivityMutationVariables
+>
+export const UnlikeActivityDocument = gql`
+    mutation UnlikeActivity($activityId: String!) {
+  unlikeActivity(activityId: $activityId) {
+    id
+    likes_count
+    is_liked_by_me
+  }
+}
+    `
+export type UnlikeActivityMutationFn = Apollo.MutationFunction<
+  UnlikeActivityMutation,
+  UnlikeActivityMutationVariables
+>
+
+/**
+ * __useUnlikeActivityMutation__
+ *
+ * To run a mutation, you first call `useUnlikeActivityMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnlikeActivityMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unlikeActivityMutation, { data, loading, error }] = useUnlikeActivityMutation({
+ *   variables: {
+ *      activityId: // value for 'activityId'
+ *   },
+ * });
+ */
+export function useUnlikeActivityMutation(
+  baseOptions?: Apollo.MutationHookOptions<UnlikeActivityMutation, UnlikeActivityMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<UnlikeActivityMutation, UnlikeActivityMutationVariables>(
+    UnlikeActivityDocument,
+    options,
+  )
+}
+export type UnlikeActivityMutationHookResult = ReturnType<typeof useUnlikeActivityMutation>
+export type UnlikeActivityMutationResult = Apollo.MutationResult<UnlikeActivityMutation>
+export type UnlikeActivityMutationOptions = Apollo.BaseMutationOptions<
+  UnlikeActivityMutation,
+  UnlikeActivityMutationVariables
+>
+export const CommentOnActivityDocument = gql`
+    mutation CommentOnActivity($activityId: String!, $comment: String!) {
+  commentOnActivity(activityId: $activityId, comment: $comment) {
+    id
+    comments_count
+  }
+}
+    `
+export type CommentOnActivityMutationFn = Apollo.MutationFunction<
+  CommentOnActivityMutation,
+  CommentOnActivityMutationVariables
+>
+
+/**
+ * __useCommentOnActivityMutation__
+ *
+ * To run a mutation, you first call `useCommentOnActivityMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCommentOnActivityMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [commentOnActivityMutation, { data, loading, error }] = useCommentOnActivityMutation({
+ *   variables: {
+ *      activityId: // value for 'activityId'
+ *      comment: // value for 'comment'
+ *   },
+ * });
+ */
+export function useCommentOnActivityMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CommentOnActivityMutation,
+    CommentOnActivityMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<CommentOnActivityMutation, CommentOnActivityMutationVariables>(
+    CommentOnActivityDocument,
+    options,
+  )
+}
+export type CommentOnActivityMutationHookResult = ReturnType<typeof useCommentOnActivityMutation>
+export type CommentOnActivityMutationResult = Apollo.MutationResult<CommentOnActivityMutation>
+export type CommentOnActivityMutationOptions = Apollo.BaseMutationOptions<
+  CommentOnActivityMutation,
+  CommentOnActivityMutationVariables
+>
+export const HideActivityDocument = gql`
+    mutation HideActivity($activityId: String!) {
+  hideActivity(activityId: $activityId) {
+    success
+    message
+  }
+}
+    `
+export type HideActivityMutationFn = Apollo.MutationFunction<
+  HideActivityMutation,
+  HideActivityMutationVariables
+>
+
+/**
+ * __useHideActivityMutation__
+ *
+ * To run a mutation, you first call `useHideActivityMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useHideActivityMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [hideActivityMutation, { data, loading, error }] = useHideActivityMutation({
+ *   variables: {
+ *      activityId: // value for 'activityId'
+ *   },
+ * });
+ */
+export function useHideActivityMutation(
+  baseOptions?: Apollo.MutationHookOptions<HideActivityMutation, HideActivityMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<HideActivityMutation, HideActivityMutationVariables>(
+    HideActivityDocument,
+    options,
+  )
+}
+export type HideActivityMutationHookResult = ReturnType<typeof useHideActivityMutation>
+export type HideActivityMutationResult = Apollo.MutationResult<HideActivityMutation>
+export type HideActivityMutationOptions = Apollo.BaseMutationOptions<
+  HideActivityMutation,
+  HideActivityMutationVariables
+>
+export const MarkActivitiesReadDocument = gql`
+    mutation MarkActivitiesRead($activityIds: [String!]!) {
+  markActivitiesRead(activityIds: $activityIds) {
+    success
+  }
+}
+    `
+export type MarkActivitiesReadMutationFn = Apollo.MutationFunction<
+  MarkActivitiesReadMutation,
+  MarkActivitiesReadMutationVariables
+>
+
+/**
+ * __useMarkActivitiesReadMutation__
+ *
+ * To run a mutation, you first call `useMarkActivitiesReadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMarkActivitiesReadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [markActivitiesReadMutation, { data, loading, error }] = useMarkActivitiesReadMutation({
+ *   variables: {
+ *      activityIds: // value for 'activityIds'
+ *   },
+ * });
+ */
+export function useMarkActivitiesReadMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    MarkActivitiesReadMutation,
+    MarkActivitiesReadMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<MarkActivitiesReadMutation, MarkActivitiesReadMutationVariables>(
+    MarkActivitiesReadDocument,
+    options,
+  )
+}
+export type MarkActivitiesReadMutationHookResult = ReturnType<typeof useMarkActivitiesReadMutation>
+export type MarkActivitiesReadMutationResult = Apollo.MutationResult<MarkActivitiesReadMutation>
+export type MarkActivitiesReadMutationOptions = Apollo.BaseMutationOptions<
+  MarkActivitiesReadMutation,
+  MarkActivitiesReadMutationVariables
+>
+export const MarkAllActivitiesReadDocument = gql`
+    mutation MarkAllActivitiesRead {
+  markAllActivitiesRead {
+    success
+  }
+}
+    `
+export type MarkAllActivitiesReadMutationFn = Apollo.MutationFunction<
+  MarkAllActivitiesReadMutation,
+  MarkAllActivitiesReadMutationVariables
+>
+
+/**
+ * __useMarkAllActivitiesReadMutation__
+ *
+ * To run a mutation, you first call `useMarkAllActivitiesReadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMarkAllActivitiesReadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [markAllActivitiesReadMutation, { data, loading, error }] = useMarkAllActivitiesReadMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMarkAllActivitiesReadMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    MarkAllActivitiesReadMutation,
+    MarkAllActivitiesReadMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<MarkAllActivitiesReadMutation, MarkAllActivitiesReadMutationVariables>(
+    MarkAllActivitiesReadDocument,
+    options,
+  )
+}
+export type MarkAllActivitiesReadMutationHookResult = ReturnType<
+  typeof useMarkAllActivitiesReadMutation
+>
+export type MarkAllActivitiesReadMutationResult =
+  Apollo.MutationResult<MarkAllActivitiesReadMutation>
+export type MarkAllActivitiesReadMutationOptions = Apollo.BaseMutationOptions<
+  MarkAllActivitiesReadMutation,
+  MarkAllActivitiesReadMutationVariables
+>
 export const CreatePointActionDocument = gql`
     mutation CreatePointAction($input: CreatePointActionInput!) {
   createPointAction(input: $input) {
@@ -5267,6 +9146,218 @@ export type FeatureEventMutationOptions = Apollo.BaseMutationOptions<
   FeatureEventMutation,
   FeatureEventMutationVariables
 >
+export const StartChallengeDocument = gql`
+    mutation StartChallenge($challengeId: String!) {
+  startChallenge(challengeId: $challengeId) {
+    id
+    challenge_id
+    status
+    progress
+    started_at
+    expires_at
+    challenge {
+      id
+      title
+      target_value
+      xp_reward
+    }
+  }
+}
+    `
+export type StartChallengeMutationFn = Apollo.MutationFunction<
+  StartChallengeMutation,
+  StartChallengeMutationVariables
+>
+
+/**
+ * __useStartChallengeMutation__
+ *
+ * To run a mutation, you first call `useStartChallengeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartChallengeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startChallengeMutation, { data, loading, error }] = useStartChallengeMutation({
+ *   variables: {
+ *      challengeId: // value for 'challengeId'
+ *   },
+ * });
+ */
+export function useStartChallengeMutation(
+  baseOptions?: Apollo.MutationHookOptions<StartChallengeMutation, StartChallengeMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<StartChallengeMutation, StartChallengeMutationVariables>(
+    StartChallengeDocument,
+    options,
+  )
+}
+export type StartChallengeMutationHookResult = ReturnType<typeof useStartChallengeMutation>
+export type StartChallengeMutationResult = Apollo.MutationResult<StartChallengeMutation>
+export type StartChallengeMutationOptions = Apollo.BaseMutationOptions<
+  StartChallengeMutation,
+  StartChallengeMutationVariables
+>
+export const UpdateChallengeProgressDocument = gql`
+    mutation UpdateChallengeProgress($challengeId: String!, $progress: Int!) {
+  updateChallengeProgress(challengeId: $challengeId, progress: $progress) {
+    id
+    status
+    progress
+    completed_at
+  }
+}
+    `
+export type UpdateChallengeProgressMutationFn = Apollo.MutationFunction<
+  UpdateChallengeProgressMutation,
+  UpdateChallengeProgressMutationVariables
+>
+
+/**
+ * __useUpdateChallengeProgressMutation__
+ *
+ * To run a mutation, you first call `useUpdateChallengeProgressMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateChallengeProgressMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateChallengeProgressMutation, { data, loading, error }] = useUpdateChallengeProgressMutation({
+ *   variables: {
+ *      challengeId: // value for 'challengeId'
+ *      progress: // value for 'progress'
+ *   },
+ * });
+ */
+export function useUpdateChallengeProgressMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateChallengeProgressMutation,
+    UpdateChallengeProgressMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    UpdateChallengeProgressMutation,
+    UpdateChallengeProgressMutationVariables
+  >(UpdateChallengeProgressDocument, options)
+}
+export type UpdateChallengeProgressMutationHookResult = ReturnType<
+  typeof useUpdateChallengeProgressMutation
+>
+export type UpdateChallengeProgressMutationResult =
+  Apollo.MutationResult<UpdateChallengeProgressMutation>
+export type UpdateChallengeProgressMutationOptions = Apollo.BaseMutationOptions<
+  UpdateChallengeProgressMutation,
+  UpdateChallengeProgressMutationVariables
+>
+export const ClaimChallengeRewardDocument = gql`
+    mutation ClaimChallengeReward($challengeId: String!) {
+  claimChallengeReward(challengeId: $challengeId) {
+    id
+    status
+    claimed_at
+    challenge {
+      xp_reward
+      points_reward
+    }
+  }
+}
+    `
+export type ClaimChallengeRewardMutationFn = Apollo.MutationFunction<
+  ClaimChallengeRewardMutation,
+  ClaimChallengeRewardMutationVariables
+>
+
+/**
+ * __useClaimChallengeRewardMutation__
+ *
+ * To run a mutation, you first call `useClaimChallengeRewardMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useClaimChallengeRewardMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [claimChallengeRewardMutation, { data, loading, error }] = useClaimChallengeRewardMutation({
+ *   variables: {
+ *      challengeId: // value for 'challengeId'
+ *   },
+ * });
+ */
+export function useClaimChallengeRewardMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ClaimChallengeRewardMutation,
+    ClaimChallengeRewardMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<ClaimChallengeRewardMutation, ClaimChallengeRewardMutationVariables>(
+    ClaimChallengeRewardDocument,
+    options,
+  )
+}
+export type ClaimChallengeRewardMutationHookResult = ReturnType<
+  typeof useClaimChallengeRewardMutation
+>
+export type ClaimChallengeRewardMutationResult = Apollo.MutationResult<ClaimChallengeRewardMutation>
+export type ClaimChallengeRewardMutationOptions = Apollo.BaseMutationOptions<
+  ClaimChallengeRewardMutation,
+  ClaimChallengeRewardMutationVariables
+>
+export const AbandonChallengeDocument = gql`
+    mutation AbandonChallenge($challengeId: String!) {
+  abandonChallenge(challengeId: $challengeId) {
+    success
+    message
+  }
+}
+    `
+export type AbandonChallengeMutationFn = Apollo.MutationFunction<
+  AbandonChallengeMutation,
+  AbandonChallengeMutationVariables
+>
+
+/**
+ * __useAbandonChallengeMutation__
+ *
+ * To run a mutation, you first call `useAbandonChallengeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAbandonChallengeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [abandonChallengeMutation, { data, loading, error }] = useAbandonChallengeMutation({
+ *   variables: {
+ *      challengeId: // value for 'challengeId'
+ *   },
+ * });
+ */
+export function useAbandonChallengeMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AbandonChallengeMutation,
+    AbandonChallengeMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<AbandonChallengeMutation, AbandonChallengeMutationVariables>(
+    AbandonChallengeDocument,
+    options,
+  )
+}
+export type AbandonChallengeMutationHookResult = ReturnType<typeof useAbandonChallengeMutation>
+export type AbandonChallengeMutationResult = Apollo.MutationResult<AbandonChallengeMutation>
+export type AbandonChallengeMutationOptions = Apollo.BaseMutationOptions<
+  AbandonChallengeMutation,
+  AbandonChallengeMutationVariables
+>
 export const CreateEventDocument = gql`
     mutation CreateEvent($input: CreateEventInput!) {
   createEvent(input: $input) {
@@ -5388,6 +9479,1000 @@ export type RegisterForEventMutationResult = Apollo.MutationResult<RegisterForEv
 export type RegisterForEventMutationOptions = Apollo.BaseMutationOptions<
   RegisterForEventMutation,
   RegisterForEventMutationVariables
+>
+export const CreateFeatureRequestDocument = gql`
+    mutation CreateFeatureRequest($input: CreateFeatureRequestInput!) {
+  createFeatureRequest(input: $input) {
+    id
+    title
+    description
+    category
+    status
+    priority
+    votes
+    requested_by {
+      privy_id
+      username
+    }
+    created_at
+  }
+}
+    `
+export type CreateFeatureRequestMutationFn = Apollo.MutationFunction<
+  CreateFeatureRequestMutation,
+  CreateFeatureRequestMutationVariables
+>
+
+/**
+ * __useCreateFeatureRequestMutation__
+ *
+ * To run a mutation, you first call `useCreateFeatureRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateFeatureRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createFeatureRequestMutation, { data, loading, error }] = useCreateFeatureRequestMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateFeatureRequestMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateFeatureRequestMutation,
+    CreateFeatureRequestMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<CreateFeatureRequestMutation, CreateFeatureRequestMutationVariables>(
+    CreateFeatureRequestDocument,
+    options,
+  )
+}
+export type CreateFeatureRequestMutationHookResult = ReturnType<
+  typeof useCreateFeatureRequestMutation
+>
+export type CreateFeatureRequestMutationResult = Apollo.MutationResult<CreateFeatureRequestMutation>
+export type CreateFeatureRequestMutationOptions = Apollo.BaseMutationOptions<
+  CreateFeatureRequestMutation,
+  CreateFeatureRequestMutationVariables
+>
+export const UpdateFeatureRequestDocument = gql`
+    mutation UpdateFeatureRequest($id: ID!, $input: UpdateFeatureRequestInput!) {
+  updateFeatureRequest(id: $id, input: $input) {
+    id
+    title
+    description
+    category
+    status
+    priority
+    assigned_to {
+      privy_id
+      username
+    }
+    estimated_hours
+    actual_hours
+    target_version
+    github_issue_url
+    github_pr_url
+    tags
+    updated_at
+  }
+}
+    `
+export type UpdateFeatureRequestMutationFn = Apollo.MutationFunction<
+  UpdateFeatureRequestMutation,
+  UpdateFeatureRequestMutationVariables
+>
+
+/**
+ * __useUpdateFeatureRequestMutation__
+ *
+ * To run a mutation, you first call `useUpdateFeatureRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateFeatureRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateFeatureRequestMutation, { data, loading, error }] = useUpdateFeatureRequestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateFeatureRequestMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateFeatureRequestMutation,
+    UpdateFeatureRequestMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<UpdateFeatureRequestMutation, UpdateFeatureRequestMutationVariables>(
+    UpdateFeatureRequestDocument,
+    options,
+  )
+}
+export type UpdateFeatureRequestMutationHookResult = ReturnType<
+  typeof useUpdateFeatureRequestMutation
+>
+export type UpdateFeatureRequestMutationResult = Apollo.MutationResult<UpdateFeatureRequestMutation>
+export type UpdateFeatureRequestMutationOptions = Apollo.BaseMutationOptions<
+  UpdateFeatureRequestMutation,
+  UpdateFeatureRequestMutationVariables
+>
+export const DeleteFeatureRequestDocument = gql`
+    mutation DeleteFeatureRequest($id: ID!) {
+  deleteFeatureRequest(id: $id)
+}
+    `
+export type DeleteFeatureRequestMutationFn = Apollo.MutationFunction<
+  DeleteFeatureRequestMutation,
+  DeleteFeatureRequestMutationVariables
+>
+
+/**
+ * __useDeleteFeatureRequestMutation__
+ *
+ * To run a mutation, you first call `useDeleteFeatureRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteFeatureRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteFeatureRequestMutation, { data, loading, error }] = useDeleteFeatureRequestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteFeatureRequestMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteFeatureRequestMutation,
+    DeleteFeatureRequestMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<DeleteFeatureRequestMutation, DeleteFeatureRequestMutationVariables>(
+    DeleteFeatureRequestDocument,
+    options,
+  )
+}
+export type DeleteFeatureRequestMutationHookResult = ReturnType<
+  typeof useDeleteFeatureRequestMutation
+>
+export type DeleteFeatureRequestMutationResult = Apollo.MutationResult<DeleteFeatureRequestMutation>
+export type DeleteFeatureRequestMutationOptions = Apollo.BaseMutationOptions<
+  DeleteFeatureRequestMutation,
+  DeleteFeatureRequestMutationVariables
+>
+export const VoteFeatureRequestDocument = gql`
+    mutation VoteFeatureRequest($id: ID!, $vote: String!) {
+  voteFeatureRequest(id: $id, vote: $vote) {
+    id
+    votes
+    user_vote
+  }
+}
+    `
+export type VoteFeatureRequestMutationFn = Apollo.MutationFunction<
+  VoteFeatureRequestMutation,
+  VoteFeatureRequestMutationVariables
+>
+
+/**
+ * __useVoteFeatureRequestMutation__
+ *
+ * To run a mutation, you first call `useVoteFeatureRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVoteFeatureRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [voteFeatureRequestMutation, { data, loading, error }] = useVoteFeatureRequestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      vote: // value for 'vote'
+ *   },
+ * });
+ */
+export function useVoteFeatureRequestMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    VoteFeatureRequestMutation,
+    VoteFeatureRequestMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<VoteFeatureRequestMutation, VoteFeatureRequestMutationVariables>(
+    VoteFeatureRequestDocument,
+    options,
+  )
+}
+export type VoteFeatureRequestMutationHookResult = ReturnType<typeof useVoteFeatureRequestMutation>
+export type VoteFeatureRequestMutationResult = Apollo.MutationResult<VoteFeatureRequestMutation>
+export type VoteFeatureRequestMutationOptions = Apollo.BaseMutationOptions<
+  VoteFeatureRequestMutation,
+  VoteFeatureRequestMutationVariables
+>
+export const RemoveFeatureRequestVoteDocument = gql`
+    mutation RemoveFeatureRequestVote($id: ID!) {
+  removeFeatureRequestVote(id: $id) {
+    id
+    votes
+    user_vote
+  }
+}
+    `
+export type RemoveFeatureRequestVoteMutationFn = Apollo.MutationFunction<
+  RemoveFeatureRequestVoteMutation,
+  RemoveFeatureRequestVoteMutationVariables
+>
+
+/**
+ * __useRemoveFeatureRequestVoteMutation__
+ *
+ * To run a mutation, you first call `useRemoveFeatureRequestVoteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveFeatureRequestVoteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeFeatureRequestVoteMutation, { data, loading, error }] = useRemoveFeatureRequestVoteMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveFeatureRequestVoteMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RemoveFeatureRequestVoteMutation,
+    RemoveFeatureRequestVoteMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    RemoveFeatureRequestVoteMutation,
+    RemoveFeatureRequestVoteMutationVariables
+  >(RemoveFeatureRequestVoteDocument, options)
+}
+export type RemoveFeatureRequestVoteMutationHookResult = ReturnType<
+  typeof useRemoveFeatureRequestVoteMutation
+>
+export type RemoveFeatureRequestVoteMutationResult =
+  Apollo.MutationResult<RemoveFeatureRequestVoteMutation>
+export type RemoveFeatureRequestVoteMutationOptions = Apollo.BaseMutationOptions<
+  RemoveFeatureRequestVoteMutation,
+  RemoveFeatureRequestVoteMutationVariables
+>
+export const AddFeatureRequestCommentDocument = gql`
+    mutation AddFeatureRequestComment($feature_request_id: ID!, $content: String!, $is_internal: Boolean) {
+  addFeatureRequestComment(
+    feature_request_id: $feature_request_id
+    content: $content
+    is_internal: $is_internal
+  ) {
+    id
+    content
+    user {
+      privy_id
+      username
+      avatar_url
+    }
+    is_internal
+    created_at
+  }
+}
+    `
+export type AddFeatureRequestCommentMutationFn = Apollo.MutationFunction<
+  AddFeatureRequestCommentMutation,
+  AddFeatureRequestCommentMutationVariables
+>
+
+/**
+ * __useAddFeatureRequestCommentMutation__
+ *
+ * To run a mutation, you first call `useAddFeatureRequestCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddFeatureRequestCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addFeatureRequestCommentMutation, { data, loading, error }] = useAddFeatureRequestCommentMutation({
+ *   variables: {
+ *      feature_request_id: // value for 'feature_request_id'
+ *      content: // value for 'content'
+ *      is_internal: // value for 'is_internal'
+ *   },
+ * });
+ */
+export function useAddFeatureRequestCommentMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AddFeatureRequestCommentMutation,
+    AddFeatureRequestCommentMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    AddFeatureRequestCommentMutation,
+    AddFeatureRequestCommentMutationVariables
+  >(AddFeatureRequestCommentDocument, options)
+}
+export type AddFeatureRequestCommentMutationHookResult = ReturnType<
+  typeof useAddFeatureRequestCommentMutation
+>
+export type AddFeatureRequestCommentMutationResult =
+  Apollo.MutationResult<AddFeatureRequestCommentMutation>
+export type AddFeatureRequestCommentMutationOptions = Apollo.BaseMutationOptions<
+  AddFeatureRequestCommentMutation,
+  AddFeatureRequestCommentMutationVariables
+>
+export const DeleteFeatureRequestCommentDocument = gql`
+    mutation DeleteFeatureRequestComment($id: ID!) {
+  deleteFeatureRequestComment(id: $id)
+}
+    `
+export type DeleteFeatureRequestCommentMutationFn = Apollo.MutationFunction<
+  DeleteFeatureRequestCommentMutation,
+  DeleteFeatureRequestCommentMutationVariables
+>
+
+/**
+ * __useDeleteFeatureRequestCommentMutation__
+ *
+ * To run a mutation, you first call `useDeleteFeatureRequestCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteFeatureRequestCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteFeatureRequestCommentMutation, { data, loading, error }] = useDeleteFeatureRequestCommentMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteFeatureRequestCommentMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteFeatureRequestCommentMutation,
+    DeleteFeatureRequestCommentMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    DeleteFeatureRequestCommentMutation,
+    DeleteFeatureRequestCommentMutationVariables
+  >(DeleteFeatureRequestCommentDocument, options)
+}
+export type DeleteFeatureRequestCommentMutationHookResult = ReturnType<
+  typeof useDeleteFeatureRequestCommentMutation
+>
+export type DeleteFeatureRequestCommentMutationResult =
+  Apollo.MutationResult<DeleteFeatureRequestCommentMutation>
+export type DeleteFeatureRequestCommentMutationOptions = Apollo.BaseMutationOptions<
+  DeleteFeatureRequestCommentMutation,
+  DeleteFeatureRequestCommentMutationVariables
+>
+export const CreateDevTaskDocument = gql`
+    mutation CreateDevTask($input: CreateDevTaskInput!) {
+  createDevTask(input: $input) {
+    id
+    title
+    description
+    task_type
+    status
+    priority
+    assigned_to {
+      privy_id
+      username
+    }
+    due_date
+    estimated_hours
+    sprint
+    created_at
+  }
+}
+    `
+export type CreateDevTaskMutationFn = Apollo.MutationFunction<
+  CreateDevTaskMutation,
+  CreateDevTaskMutationVariables
+>
+
+/**
+ * __useCreateDevTaskMutation__
+ *
+ * To run a mutation, you first call `useCreateDevTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDevTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDevTaskMutation, { data, loading, error }] = useCreateDevTaskMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateDevTaskMutation(
+  baseOptions?: Apollo.MutationHookOptions<CreateDevTaskMutation, CreateDevTaskMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<CreateDevTaskMutation, CreateDevTaskMutationVariables>(
+    CreateDevTaskDocument,
+    options,
+  )
+}
+export type CreateDevTaskMutationHookResult = ReturnType<typeof useCreateDevTaskMutation>
+export type CreateDevTaskMutationResult = Apollo.MutationResult<CreateDevTaskMutation>
+export type CreateDevTaskMutationOptions = Apollo.BaseMutationOptions<
+  CreateDevTaskMutation,
+  CreateDevTaskMutationVariables
+>
+export const UpdateDevTaskDocument = gql`
+    mutation UpdateDevTask($id: ID!, $input: UpdateDevTaskInput!) {
+  updateDevTask(id: $id, input: $input) {
+    id
+    title
+    description
+    task_type
+    status
+    priority
+    assigned_to {
+      privy_id
+      username
+    }
+    due_date
+    estimated_hours
+    actual_hours
+    github_issue_url
+    github_pr_url
+    tags
+    sprint
+    updated_at
+  }
+}
+    `
+export type UpdateDevTaskMutationFn = Apollo.MutationFunction<
+  UpdateDevTaskMutation,
+  UpdateDevTaskMutationVariables
+>
+
+/**
+ * __useUpdateDevTaskMutation__
+ *
+ * To run a mutation, you first call `useUpdateDevTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateDevTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateDevTaskMutation, { data, loading, error }] = useUpdateDevTaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateDevTaskMutation(
+  baseOptions?: Apollo.MutationHookOptions<UpdateDevTaskMutation, UpdateDevTaskMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<UpdateDevTaskMutation, UpdateDevTaskMutationVariables>(
+    UpdateDevTaskDocument,
+    options,
+  )
+}
+export type UpdateDevTaskMutationHookResult = ReturnType<typeof useUpdateDevTaskMutation>
+export type UpdateDevTaskMutationResult = Apollo.MutationResult<UpdateDevTaskMutation>
+export type UpdateDevTaskMutationOptions = Apollo.BaseMutationOptions<
+  UpdateDevTaskMutation,
+  UpdateDevTaskMutationVariables
+>
+export const DeleteDevTaskDocument = gql`
+    mutation DeleteDevTask($id: ID!) {
+  deleteDevTask(id: $id)
+}
+    `
+export type DeleteDevTaskMutationFn = Apollo.MutationFunction<
+  DeleteDevTaskMutation,
+  DeleteDevTaskMutationVariables
+>
+
+/**
+ * __useDeleteDevTaskMutation__
+ *
+ * To run a mutation, you first call `useDeleteDevTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteDevTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteDevTaskMutation, { data, loading, error }] = useDeleteDevTaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteDevTaskMutation(
+  baseOptions?: Apollo.MutationHookOptions<DeleteDevTaskMutation, DeleteDevTaskMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<DeleteDevTaskMutation, DeleteDevTaskMutationVariables>(
+    DeleteDevTaskDocument,
+    options,
+  )
+}
+export type DeleteDevTaskMutationHookResult = ReturnType<typeof useDeleteDevTaskMutation>
+export type DeleteDevTaskMutationResult = Apollo.MutationResult<DeleteDevTaskMutation>
+export type DeleteDevTaskMutationOptions = Apollo.BaseMutationOptions<
+  DeleteDevTaskMutation,
+  DeleteDevTaskMutationVariables
+>
+export const StartTaskDocument = gql`
+    mutation StartTask($id: ID!) {
+  startTask(id: $id) {
+    id
+    status
+    started_at
+  }
+}
+    `
+export type StartTaskMutationFn = Apollo.MutationFunction<
+  StartTaskMutation,
+  StartTaskMutationVariables
+>
+
+/**
+ * __useStartTaskMutation__
+ *
+ * To run a mutation, you first call `useStartTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startTaskMutation, { data, loading, error }] = useStartTaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useStartTaskMutation(
+  baseOptions?: Apollo.MutationHookOptions<StartTaskMutation, StartTaskMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<StartTaskMutation, StartTaskMutationVariables>(
+    StartTaskDocument,
+    options,
+  )
+}
+export type StartTaskMutationHookResult = ReturnType<typeof useStartTaskMutation>
+export type StartTaskMutationResult = Apollo.MutationResult<StartTaskMutation>
+export type StartTaskMutationOptions = Apollo.BaseMutationOptions<
+  StartTaskMutation,
+  StartTaskMutationVariables
+>
+export const CompleteTaskDocument = gql`
+    mutation CompleteTask($id: ID!, $actual_hours: Int) {
+  completeTask(id: $id, actual_hours: $actual_hours) {
+    id
+    status
+    actual_hours
+    completed_at
+  }
+}
+    `
+export type CompleteTaskMutationFn = Apollo.MutationFunction<
+  CompleteTaskMutation,
+  CompleteTaskMutationVariables
+>
+
+/**
+ * __useCompleteTaskMutation__
+ *
+ * To run a mutation, you first call `useCompleteTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCompleteTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [completeTaskMutation, { data, loading, error }] = useCompleteTaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      actual_hours: // value for 'actual_hours'
+ *   },
+ * });
+ */
+export function useCompleteTaskMutation(
+  baseOptions?: Apollo.MutationHookOptions<CompleteTaskMutation, CompleteTaskMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<CompleteTaskMutation, CompleteTaskMutationVariables>(
+    CompleteTaskDocument,
+    options,
+  )
+}
+export type CompleteTaskMutationHookResult = ReturnType<typeof useCompleteTaskMutation>
+export type CompleteTaskMutationResult = Apollo.MutationResult<CompleteTaskMutation>
+export type CompleteTaskMutationOptions = Apollo.BaseMutationOptions<
+  CompleteTaskMutation,
+  CompleteTaskMutationVariables
+>
+export const BlockTaskDocument = gql`
+    mutation BlockTask($id: ID!, $reason: String) {
+  blockTask(id: $id, reason: $reason) {
+    id
+    status
+  }
+}
+    `
+export type BlockTaskMutationFn = Apollo.MutationFunction<
+  BlockTaskMutation,
+  BlockTaskMutationVariables
+>
+
+/**
+ * __useBlockTaskMutation__
+ *
+ * To run a mutation, you first call `useBlockTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBlockTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [blockTaskMutation, { data, loading, error }] = useBlockTaskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      reason: // value for 'reason'
+ *   },
+ * });
+ */
+export function useBlockTaskMutation(
+  baseOptions?: Apollo.MutationHookOptions<BlockTaskMutation, BlockTaskMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<BlockTaskMutation, BlockTaskMutationVariables>(
+    BlockTaskDocument,
+    options,
+  )
+}
+export type BlockTaskMutationHookResult = ReturnType<typeof useBlockTaskMutation>
+export type BlockTaskMutationResult = Apollo.MutationResult<BlockTaskMutation>
+export type BlockTaskMutationOptions = Apollo.BaseMutationOptions<
+  BlockTaskMutation,
+  BlockTaskMutationVariables
+>
+export const CreateChangelogEntryDocument = gql`
+    mutation CreateChangelogEntry($input: CreateChangelogEntryInput!) {
+  createChangelogEntry(input: $input) {
+    id
+    version
+    title
+    description
+    category
+    github_pr_url
+    is_public
+    is_highlighted
+    created_at
+  }
+}
+    `
+export type CreateChangelogEntryMutationFn = Apollo.MutationFunction<
+  CreateChangelogEntryMutation,
+  CreateChangelogEntryMutationVariables
+>
+
+/**
+ * __useCreateChangelogEntryMutation__
+ *
+ * To run a mutation, you first call `useCreateChangelogEntryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateChangelogEntryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createChangelogEntryMutation, { data, loading, error }] = useCreateChangelogEntryMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateChangelogEntryMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateChangelogEntryMutation,
+    CreateChangelogEntryMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<CreateChangelogEntryMutation, CreateChangelogEntryMutationVariables>(
+    CreateChangelogEntryDocument,
+    options,
+  )
+}
+export type CreateChangelogEntryMutationHookResult = ReturnType<
+  typeof useCreateChangelogEntryMutation
+>
+export type CreateChangelogEntryMutationResult = Apollo.MutationResult<CreateChangelogEntryMutation>
+export type CreateChangelogEntryMutationOptions = Apollo.BaseMutationOptions<
+  CreateChangelogEntryMutation,
+  CreateChangelogEntryMutationVariables
+>
+export const UpdateChangelogEntryDocument = gql`
+    mutation UpdateChangelogEntry($id: ID!, $input: UpdateChangelogEntryInput!) {
+  updateChangelogEntry(id: $id, input: $input) {
+    id
+    version
+    title
+    description
+    category
+    github_pr_url
+    is_public
+    is_highlighted
+  }
+}
+    `
+export type UpdateChangelogEntryMutationFn = Apollo.MutationFunction<
+  UpdateChangelogEntryMutation,
+  UpdateChangelogEntryMutationVariables
+>
+
+/**
+ * __useUpdateChangelogEntryMutation__
+ *
+ * To run a mutation, you first call `useUpdateChangelogEntryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateChangelogEntryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateChangelogEntryMutation, { data, loading, error }] = useUpdateChangelogEntryMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateChangelogEntryMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateChangelogEntryMutation,
+    UpdateChangelogEntryMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<UpdateChangelogEntryMutation, UpdateChangelogEntryMutationVariables>(
+    UpdateChangelogEntryDocument,
+    options,
+  )
+}
+export type UpdateChangelogEntryMutationHookResult = ReturnType<
+  typeof useUpdateChangelogEntryMutation
+>
+export type UpdateChangelogEntryMutationResult = Apollo.MutationResult<UpdateChangelogEntryMutation>
+export type UpdateChangelogEntryMutationOptions = Apollo.BaseMutationOptions<
+  UpdateChangelogEntryMutation,
+  UpdateChangelogEntryMutationVariables
+>
+export const DeleteChangelogEntryDocument = gql`
+    mutation DeleteChangelogEntry($id: ID!) {
+  deleteChangelogEntry(id: $id)
+}
+    `
+export type DeleteChangelogEntryMutationFn = Apollo.MutationFunction<
+  DeleteChangelogEntryMutation,
+  DeleteChangelogEntryMutationVariables
+>
+
+/**
+ * __useDeleteChangelogEntryMutation__
+ *
+ * To run a mutation, you first call `useDeleteChangelogEntryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteChangelogEntryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteChangelogEntryMutation, { data, loading, error }] = useDeleteChangelogEntryMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteChangelogEntryMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteChangelogEntryMutation,
+    DeleteChangelogEntryMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<DeleteChangelogEntryMutation, DeleteChangelogEntryMutationVariables>(
+    DeleteChangelogEntryDocument,
+    options,
+  )
+}
+export type DeleteChangelogEntryMutationHookResult = ReturnType<
+  typeof useDeleteChangelogEntryMutation
+>
+export type DeleteChangelogEntryMutationResult = Apollo.MutationResult<DeleteChangelogEntryMutation>
+export type DeleteChangelogEntryMutationOptions = Apollo.BaseMutationOptions<
+  DeleteChangelogEntryMutation,
+  DeleteChangelogEntryMutationVariables
+>
+export const TriggerGitHubActionDocument = gql`
+    mutation TriggerGitHubAction($repo: String!, $workflow_id: String!, $ref: String) {
+  triggerGitHubAction(repo: $repo, workflow_id: $workflow_id, ref: $ref)
+}
+    `
+export type TriggerGitHubActionMutationFn = Apollo.MutationFunction<
+  TriggerGitHubActionMutation,
+  TriggerGitHubActionMutationVariables
+>
+
+/**
+ * __useTriggerGitHubActionMutation__
+ *
+ * To run a mutation, you first call `useTriggerGitHubActionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTriggerGitHubActionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [triggerGitHubActionMutation, { data, loading, error }] = useTriggerGitHubActionMutation({
+ *   variables: {
+ *      repo: // value for 'repo'
+ *      workflow_id: // value for 'workflow_id'
+ *      ref: // value for 'ref'
+ *   },
+ * });
+ */
+export function useTriggerGitHubActionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    TriggerGitHubActionMutation,
+    TriggerGitHubActionMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<TriggerGitHubActionMutation, TriggerGitHubActionMutationVariables>(
+    TriggerGitHubActionDocument,
+    options,
+  )
+}
+export type TriggerGitHubActionMutationHookResult = ReturnType<
+  typeof useTriggerGitHubActionMutation
+>
+export type TriggerGitHubActionMutationResult = Apollo.MutationResult<TriggerGitHubActionMutation>
+export type TriggerGitHubActionMutationOptions = Apollo.BaseMutationOptions<
+  TriggerGitHubActionMutation,
+  TriggerGitHubActionMutationVariables
+>
+export const CheckSystemHealthDocument = gql`
+    mutation CheckSystemHealth {
+  checkSystemHealth {
+    service
+    status
+    response_time_ms
+    last_checked
+    error_message
+    details
+  }
+}
+    `
+export type CheckSystemHealthMutationFn = Apollo.MutationFunction<
+  CheckSystemHealthMutation,
+  CheckSystemHealthMutationVariables
+>
+
+/**
+ * __useCheckSystemHealthMutation__
+ *
+ * To run a mutation, you first call `useCheckSystemHealthMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCheckSystemHealthMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [checkSystemHealthMutation, { data, loading, error }] = useCheckSystemHealthMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCheckSystemHealthMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CheckSystemHealthMutation,
+    CheckSystemHealthMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<CheckSystemHealthMutation, CheckSystemHealthMutationVariables>(
+    CheckSystemHealthDocument,
+    options,
+  )
+}
+export type CheckSystemHealthMutationHookResult = ReturnType<typeof useCheckSystemHealthMutation>
+export type CheckSystemHealthMutationResult = Apollo.MutationResult<CheckSystemHealthMutation>
+export type CheckSystemHealthMutationOptions = Apollo.BaseMutationOptions<
+  CheckSystemHealthMutation,
+  CheckSystemHealthMutationVariables
+>
+export const ClearGitHubCacheDocument = gql`
+    mutation ClearGitHubCache($cache_key: String) {
+  clearGitHubCache(cache_key: $cache_key)
+}
+    `
+export type ClearGitHubCacheMutationFn = Apollo.MutationFunction<
+  ClearGitHubCacheMutation,
+  ClearGitHubCacheMutationVariables
+>
+
+/**
+ * __useClearGitHubCacheMutation__
+ *
+ * To run a mutation, you first call `useClearGitHubCacheMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useClearGitHubCacheMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [clearGitHubCacheMutation, { data, loading, error }] = useClearGitHubCacheMutation({
+ *   variables: {
+ *      cache_key: // value for 'cache_key'
+ *   },
+ * });
+ */
+export function useClearGitHubCacheMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ClearGitHubCacheMutation,
+    ClearGitHubCacheMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<ClearGitHubCacheMutation, ClearGitHubCacheMutationVariables>(
+    ClearGitHubCacheDocument,
+    options,
+  )
+}
+export type ClearGitHubCacheMutationHookResult = ReturnType<typeof useClearGitHubCacheMutation>
+export type ClearGitHubCacheMutationResult = Apollo.MutationResult<ClearGitHubCacheMutation>
+export type ClearGitHubCacheMutationOptions = Apollo.BaseMutationOptions<
+  ClearGitHubCacheMutation,
+  ClearGitHubCacheMutationVariables
 >
 export const InviteEventManagerDocument = gql`
     mutation InviteEventManager($input: InviteEventManagerInput!) {
@@ -6740,6 +11825,511 @@ export type UpdateProfileMutationOptions = Apollo.BaseMutationOptions<
   UpdateProfileMutation,
   UpdateProfileMutationVariables
 >
+export const GetActivityFeedDocument = gql`
+    query GetActivityFeed($limit: Int, $after: String) {
+  activityFeed(limit: $limit, after: $after) {
+    activities {
+      id
+      activity_type
+      user_id
+      visibility
+      title
+      description
+      icon
+      color
+      xp_earned
+      points_earned
+      likes_count
+      comments_count
+      is_liked_by_me
+      is_highlighted
+      created_at
+      user {
+        privy_id
+        username
+        display_name
+        avatar_url
+      }
+    }
+    total_count
+    has_more
+    last_activity_id
+    unread_count
+  }
+}
+    `
+
+/**
+ * __useGetActivityFeedQuery__
+ *
+ * To run a query within a React component, call `useGetActivityFeedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetActivityFeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetActivityFeedQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      after: // value for 'after'
+ *   },
+ * });
+ */
+export function useGetActivityFeedQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetActivityFeedQuery, GetActivityFeedQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetActivityFeedQuery, GetActivityFeedQueryVariables>(
+    GetActivityFeedDocument,
+    options,
+  )
+}
+export function useGetActivityFeedLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetActivityFeedQuery, GetActivityFeedQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetActivityFeedQuery, GetActivityFeedQueryVariables>(
+    GetActivityFeedDocument,
+    options,
+  )
+}
+export function useGetActivityFeedSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetActivityFeedQuery, GetActivityFeedQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetActivityFeedQuery, GetActivityFeedQueryVariables>(
+    GetActivityFeedDocument,
+    options,
+  )
+}
+export type GetActivityFeedQueryHookResult = ReturnType<typeof useGetActivityFeedQuery>
+export type GetActivityFeedLazyQueryHookResult = ReturnType<typeof useGetActivityFeedLazyQuery>
+export type GetActivityFeedSuspenseQueryHookResult = ReturnType<
+  typeof useGetActivityFeedSuspenseQuery
+>
+export type GetActivityFeedQueryResult = Apollo.QueryResult<
+  GetActivityFeedQuery,
+  GetActivityFeedQueryVariables
+>
+export const GetGlobalActivityFeedDocument = gql`
+    query GetGlobalActivityFeed($limit: Int, $after: String) {
+  globalActivityFeed(limit: $limit, after: $after) {
+    activities {
+      id
+      activity_type
+      title
+      description
+      icon
+      color
+      xp_earned
+      likes_count
+      created_at
+      user {
+        privy_id
+        username
+        avatar_url
+      }
+    }
+    has_more
+    unread_count
+  }
+}
+    `
+
+/**
+ * __useGetGlobalActivityFeedQuery__
+ *
+ * To run a query within a React component, call `useGetGlobalActivityFeedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGlobalActivityFeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGlobalActivityFeedQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      after: // value for 'after'
+ *   },
+ * });
+ */
+export function useGetGlobalActivityFeedQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetGlobalActivityFeedQuery,
+    GetGlobalActivityFeedQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetGlobalActivityFeedQuery, GetGlobalActivityFeedQueryVariables>(
+    GetGlobalActivityFeedDocument,
+    options,
+  )
+}
+export function useGetGlobalActivityFeedLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetGlobalActivityFeedQuery,
+    GetGlobalActivityFeedQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetGlobalActivityFeedQuery, GetGlobalActivityFeedQueryVariables>(
+    GetGlobalActivityFeedDocument,
+    options,
+  )
+}
+export function useGetGlobalActivityFeedSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetGlobalActivityFeedQuery,
+        GetGlobalActivityFeedQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetGlobalActivityFeedQuery, GetGlobalActivityFeedQueryVariables>(
+    GetGlobalActivityFeedDocument,
+    options,
+  )
+}
+export type GetGlobalActivityFeedQueryHookResult = ReturnType<typeof useGetGlobalActivityFeedQuery>
+export type GetGlobalActivityFeedLazyQueryHookResult = ReturnType<
+  typeof useGetGlobalActivityFeedLazyQuery
+>
+export type GetGlobalActivityFeedSuspenseQueryHookResult = ReturnType<
+  typeof useGetGlobalActivityFeedSuspenseQuery
+>
+export type GetGlobalActivityFeedQueryResult = Apollo.QueryResult<
+  GetGlobalActivityFeedQuery,
+  GetGlobalActivityFeedQueryVariables
+>
+export const GetFriendsActivityFeedDocument = gql`
+    query GetFriendsActivityFeed($limit: Int, $after: String) {
+  friendsActivityFeed(limit: $limit, after: $after) {
+    activities {
+      id
+      activity_type
+      title
+      description
+      icon
+      color
+      created_at
+      user {
+        privy_id
+        username
+        avatar_url
+      }
+    }
+    has_more
+  }
+}
+    `
+
+/**
+ * __useGetFriendsActivityFeedQuery__
+ *
+ * To run a query within a React component, call `useGetFriendsActivityFeedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFriendsActivityFeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFriendsActivityFeedQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      after: // value for 'after'
+ *   },
+ * });
+ */
+export function useGetFriendsActivityFeedQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetFriendsActivityFeedQuery,
+    GetFriendsActivityFeedQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetFriendsActivityFeedQuery, GetFriendsActivityFeedQueryVariables>(
+    GetFriendsActivityFeedDocument,
+    options,
+  )
+}
+export function useGetFriendsActivityFeedLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetFriendsActivityFeedQuery,
+    GetFriendsActivityFeedQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetFriendsActivityFeedQuery, GetFriendsActivityFeedQueryVariables>(
+    GetFriendsActivityFeedDocument,
+    options,
+  )
+}
+export function useGetFriendsActivityFeedSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetFriendsActivityFeedQuery,
+        GetFriendsActivityFeedQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetFriendsActivityFeedQuery, GetFriendsActivityFeedQueryVariables>(
+    GetFriendsActivityFeedDocument,
+    options,
+  )
+}
+export type GetFriendsActivityFeedQueryHookResult = ReturnType<
+  typeof useGetFriendsActivityFeedQuery
+>
+export type GetFriendsActivityFeedLazyQueryHookResult = ReturnType<
+  typeof useGetFriendsActivityFeedLazyQuery
+>
+export type GetFriendsActivityFeedSuspenseQueryHookResult = ReturnType<
+  typeof useGetFriendsActivityFeedSuspenseQuery
+>
+export type GetFriendsActivityFeedQueryResult = Apollo.QueryResult<
+  GetFriendsActivityFeedQuery,
+  GetFriendsActivityFeedQueryVariables
+>
+export const GetMyActivityFeedDocument = gql`
+    query GetMyActivityFeed($limit: Int, $after: String) {
+  myActivityFeed(limit: $limit, after: $after) {
+    activities {
+      id
+      activity_type
+      title
+      description
+      icon
+      color
+      xp_earned
+      points_earned
+      created_at
+    }
+    total_count
+    has_more
+  }
+}
+    `
+
+/**
+ * __useGetMyActivityFeedQuery__
+ *
+ * To run a query within a React component, call `useGetMyActivityFeedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyActivityFeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyActivityFeedQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      after: // value for 'after'
+ *   },
+ * });
+ */
+export function useGetMyActivityFeedQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetMyActivityFeedQuery, GetMyActivityFeedQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetMyActivityFeedQuery, GetMyActivityFeedQueryVariables>(
+    GetMyActivityFeedDocument,
+    options,
+  )
+}
+export function useGetMyActivityFeedLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetMyActivityFeedQuery,
+    GetMyActivityFeedQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetMyActivityFeedQuery, GetMyActivityFeedQueryVariables>(
+    GetMyActivityFeedDocument,
+    options,
+  )
+}
+export function useGetMyActivityFeedSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetMyActivityFeedQuery, GetMyActivityFeedQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetMyActivityFeedQuery, GetMyActivityFeedQueryVariables>(
+    GetMyActivityFeedDocument,
+    options,
+  )
+}
+export type GetMyActivityFeedQueryHookResult = ReturnType<typeof useGetMyActivityFeedQuery>
+export type GetMyActivityFeedLazyQueryHookResult = ReturnType<typeof useGetMyActivityFeedLazyQuery>
+export type GetMyActivityFeedSuspenseQueryHookResult = ReturnType<
+  typeof useGetMyActivityFeedSuspenseQuery
+>
+export type GetMyActivityFeedQueryResult = Apollo.QueryResult<
+  GetMyActivityFeedQuery,
+  GetMyActivityFeedQueryVariables
+>
+export const GetTrendingActivitiesDocument = gql`
+    query GetTrendingActivities($limit: Int) {
+  trendingActivities(limit: $limit) {
+    activity {
+      id
+      activity_type
+      title
+      icon
+      color
+      likes_count
+      user {
+        username
+        avatar_url
+      }
+    }
+    engagement_score
+    trending_rank
+  }
+}
+    `
+
+/**
+ * __useGetTrendingActivitiesQuery__
+ *
+ * To run a query within a React component, call `useGetTrendingActivitiesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTrendingActivitiesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTrendingActivitiesQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetTrendingActivitiesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetTrendingActivitiesQuery,
+    GetTrendingActivitiesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetTrendingActivitiesQuery, GetTrendingActivitiesQueryVariables>(
+    GetTrendingActivitiesDocument,
+    options,
+  )
+}
+export function useGetTrendingActivitiesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetTrendingActivitiesQuery,
+    GetTrendingActivitiesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetTrendingActivitiesQuery, GetTrendingActivitiesQueryVariables>(
+    GetTrendingActivitiesDocument,
+    options,
+  )
+}
+export function useGetTrendingActivitiesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetTrendingActivitiesQuery,
+        GetTrendingActivitiesQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetTrendingActivitiesQuery, GetTrendingActivitiesQueryVariables>(
+    GetTrendingActivitiesDocument,
+    options,
+  )
+}
+export type GetTrendingActivitiesQueryHookResult = ReturnType<typeof useGetTrendingActivitiesQuery>
+export type GetTrendingActivitiesLazyQueryHookResult = ReturnType<
+  typeof useGetTrendingActivitiesLazyQuery
+>
+export type GetTrendingActivitiesSuspenseQueryHookResult = ReturnType<
+  typeof useGetTrendingActivitiesSuspenseQuery
+>
+export type GetTrendingActivitiesQueryResult = Apollo.QueryResult<
+  GetTrendingActivitiesQuery,
+  GetTrendingActivitiesQueryVariables
+>
+export const GetActivityStatsDocument = gql`
+    query GetActivityStats {
+  activityStats {
+    today_activities
+    this_week_activities
+    total_activities
+    most_active_type
+    engagement_rate
+  }
+}
+    `
+
+/**
+ * __useGetActivityStatsQuery__
+ *
+ * To run a query within a React component, call `useGetActivityStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetActivityStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetActivityStatsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetActivityStatsQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetActivityStatsQuery, GetActivityStatsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetActivityStatsQuery, GetActivityStatsQueryVariables>(
+    GetActivityStatsDocument,
+    options,
+  )
+}
+export function useGetActivityStatsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetActivityStatsQuery, GetActivityStatsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetActivityStatsQuery, GetActivityStatsQueryVariables>(
+    GetActivityStatsDocument,
+    options,
+  )
+}
+export function useGetActivityStatsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetActivityStatsQuery, GetActivityStatsQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetActivityStatsQuery, GetActivityStatsQueryVariables>(
+    GetActivityStatsDocument,
+    options,
+  )
+}
+export type GetActivityStatsQueryHookResult = ReturnType<typeof useGetActivityStatsQuery>
+export type GetActivityStatsLazyQueryHookResult = ReturnType<typeof useGetActivityStatsLazyQuery>
+export type GetActivityStatsSuspenseQueryHookResult = ReturnType<
+  typeof useGetActivityStatsSuspenseQuery
+>
+export type GetActivityStatsQueryResult = Apollo.QueryResult<
+  GetActivityStatsQuery,
+  GetActivityStatsQueryVariables
+>
 export const GetAllPointActionsDocument = gql`
     query GetAllPointActions($category: PointActionCategory, $is_active: Boolean) {
   getAllPointActions(category: $category, is_active: $is_active) {
@@ -7890,6 +13480,2209 @@ export type GetPendingOrganizersQueryResult = Apollo.QueryResult<
   GetPendingOrganizersQuery,
   GetPendingOrganizersQueryVariables
 >
+export const GetAdminDashboardAnalyticsDocument = gql`
+    query GetAdminDashboardAnalytics {
+  adminDashboardAnalytics
+}
+    `
+
+/**
+ * __useGetAdminDashboardAnalyticsQuery__
+ *
+ * To run a query within a React component, call `useGetAdminDashboardAnalyticsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAdminDashboardAnalyticsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAdminDashboardAnalyticsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAdminDashboardAnalyticsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetAdminDashboardAnalyticsQuery,
+    GetAdminDashboardAnalyticsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetAdminDashboardAnalyticsQuery, GetAdminDashboardAnalyticsQueryVariables>(
+    GetAdminDashboardAnalyticsDocument,
+    options,
+  )
+}
+export function useGetAdminDashboardAnalyticsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetAdminDashboardAnalyticsQuery,
+    GetAdminDashboardAnalyticsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    GetAdminDashboardAnalyticsQuery,
+    GetAdminDashboardAnalyticsQueryVariables
+  >(GetAdminDashboardAnalyticsDocument, options)
+}
+export function useGetAdminDashboardAnalyticsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetAdminDashboardAnalyticsQuery,
+        GetAdminDashboardAnalyticsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    GetAdminDashboardAnalyticsQuery,
+    GetAdminDashboardAnalyticsQueryVariables
+  >(GetAdminDashboardAnalyticsDocument, options)
+}
+export type GetAdminDashboardAnalyticsQueryHookResult = ReturnType<
+  typeof useGetAdminDashboardAnalyticsQuery
+>
+export type GetAdminDashboardAnalyticsLazyQueryHookResult = ReturnType<
+  typeof useGetAdminDashboardAnalyticsLazyQuery
+>
+export type GetAdminDashboardAnalyticsSuspenseQueryHookResult = ReturnType<
+  typeof useGetAdminDashboardAnalyticsSuspenseQuery
+>
+export type GetAdminDashboardAnalyticsQueryResult = Apollo.QueryResult<
+  GetAdminDashboardAnalyticsQuery,
+  GetAdminDashboardAnalyticsQueryVariables
+>
+export const GetUserAnalyticsDocument = gql`
+    query GetUserAnalytics($period: AnalyticsPeriod) {
+  userAnalytics(options: {period: $period}) {
+    total_users
+    active_users {
+      dau
+      wau
+      mau
+      dau_wau_ratio
+      dau_mau_ratio
+    }
+    new_users {
+      today
+      this_week
+      this_month
+      growth_rate
+      acquisition_channels {
+        channel
+        users
+        percentage
+      }
+    }
+    retention {
+      day_1
+      day_7
+      day_30
+    }
+    engagement {
+      avg_session_duration
+      avg_sessions_per_user
+      avg_dance_time_per_user
+      power_users_count
+    }
+    demographics {
+      by_country {
+        country
+        users
+        percentage
+      }
+      by_skill_level {
+        level
+        users
+        percentage
+      }
+    }
+  }
+}
+    `
+
+/**
+ * __useGetUserAnalyticsQuery__
+ *
+ * To run a query within a React component, call `useGetUserAnalyticsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserAnalyticsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserAnalyticsQuery({
+ *   variables: {
+ *      period: // value for 'period'
+ *   },
+ * });
+ */
+export function useGetUserAnalyticsQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetUserAnalyticsQuery, GetUserAnalyticsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetUserAnalyticsQuery, GetUserAnalyticsQueryVariables>(
+    GetUserAnalyticsDocument,
+    options,
+  )
+}
+export function useGetUserAnalyticsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetUserAnalyticsQuery, GetUserAnalyticsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetUserAnalyticsQuery, GetUserAnalyticsQueryVariables>(
+    GetUserAnalyticsDocument,
+    options,
+  )
+}
+export function useGetUserAnalyticsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetUserAnalyticsQuery, GetUserAnalyticsQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetUserAnalyticsQuery, GetUserAnalyticsQueryVariables>(
+    GetUserAnalyticsDocument,
+    options,
+  )
+}
+export type GetUserAnalyticsQueryHookResult = ReturnType<typeof useGetUserAnalyticsQuery>
+export type GetUserAnalyticsLazyQueryHookResult = ReturnType<typeof useGetUserAnalyticsLazyQuery>
+export type GetUserAnalyticsSuspenseQueryHookResult = ReturnType<
+  typeof useGetUserAnalyticsSuspenseQuery
+>
+export type GetUserAnalyticsQueryResult = Apollo.QueryResult<
+  GetUserAnalyticsQuery,
+  GetUserAnalyticsQueryVariables
+>
+export const GetPlatformAnalyticsDocument = gql`
+    query GetPlatformAnalytics($period: AnalyticsPeriod) {
+  platformAnalytics(options: {period: $period}) {
+    overview {
+      total_xp_distributed
+      total_points_distributed
+      total_dance_sessions
+      total_dance_minutes
+      total_events_hosted
+      total_dance_bonds
+      health_score
+    }
+    dance_metrics {
+      sessions_today
+      sessions_this_week
+      avg_session_duration
+      avg_movement_score
+      total_calories_burned
+      peak_hours {
+        hour
+        value
+      }
+    }
+    event_metrics {
+      total_events
+      upcoming_events
+      completed_events
+      avg_attendance
+      avg_rating
+    }
+    social_metrics {
+      total_posts
+      total_comments
+      total_likes
+      avg_engagement_rate
+      dance_bonds_created
+    }
+    economy_metrics {
+      total_xp_earned
+      total_points_earned
+      xp_distribution {
+        source
+        amount
+        percentage
+      }
+    }
+  }
+}
+    `
+
+/**
+ * __useGetPlatformAnalyticsQuery__
+ *
+ * To run a query within a React component, call `useGetPlatformAnalyticsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPlatformAnalyticsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPlatformAnalyticsQuery({
+ *   variables: {
+ *      period: // value for 'period'
+ *   },
+ * });
+ */
+export function useGetPlatformAnalyticsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetPlatformAnalyticsQuery,
+    GetPlatformAnalyticsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetPlatformAnalyticsQuery, GetPlatformAnalyticsQueryVariables>(
+    GetPlatformAnalyticsDocument,
+    options,
+  )
+}
+export function useGetPlatformAnalyticsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetPlatformAnalyticsQuery,
+    GetPlatformAnalyticsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetPlatformAnalyticsQuery, GetPlatformAnalyticsQueryVariables>(
+    GetPlatformAnalyticsDocument,
+    options,
+  )
+}
+export function useGetPlatformAnalyticsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetPlatformAnalyticsQuery,
+        GetPlatformAnalyticsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetPlatformAnalyticsQuery, GetPlatformAnalyticsQueryVariables>(
+    GetPlatformAnalyticsDocument,
+    options,
+  )
+}
+export type GetPlatformAnalyticsQueryHookResult = ReturnType<typeof useGetPlatformAnalyticsQuery>
+export type GetPlatformAnalyticsLazyQueryHookResult = ReturnType<
+  typeof useGetPlatformAnalyticsLazyQuery
+>
+export type GetPlatformAnalyticsSuspenseQueryHookResult = ReturnType<
+  typeof useGetPlatformAnalyticsSuspenseQuery
+>
+export type GetPlatformAnalyticsQueryResult = Apollo.QueryResult<
+  GetPlatformAnalyticsQuery,
+  GetPlatformAnalyticsQueryVariables
+>
+export const GetRealTimeAnalyticsDocument = gql`
+    query GetRealTimeAnalytics {
+  realTimeAnalytics {
+    current_online_users
+    active_dance_sessions
+    events_in_progress
+    recent_signups
+    recent_sessions
+    system_load
+    api_requests_per_minute
+  }
+}
+    `
+
+/**
+ * __useGetRealTimeAnalyticsQuery__
+ *
+ * To run a query within a React component, call `useGetRealTimeAnalyticsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRealTimeAnalyticsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRealTimeAnalyticsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetRealTimeAnalyticsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetRealTimeAnalyticsQuery,
+    GetRealTimeAnalyticsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetRealTimeAnalyticsQuery, GetRealTimeAnalyticsQueryVariables>(
+    GetRealTimeAnalyticsDocument,
+    options,
+  )
+}
+export function useGetRealTimeAnalyticsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetRealTimeAnalyticsQuery,
+    GetRealTimeAnalyticsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetRealTimeAnalyticsQuery, GetRealTimeAnalyticsQueryVariables>(
+    GetRealTimeAnalyticsDocument,
+    options,
+  )
+}
+export function useGetRealTimeAnalyticsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetRealTimeAnalyticsQuery,
+        GetRealTimeAnalyticsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetRealTimeAnalyticsQuery, GetRealTimeAnalyticsQueryVariables>(
+    GetRealTimeAnalyticsDocument,
+    options,
+  )
+}
+export type GetRealTimeAnalyticsQueryHookResult = ReturnType<typeof useGetRealTimeAnalyticsQuery>
+export type GetRealTimeAnalyticsLazyQueryHookResult = ReturnType<
+  typeof useGetRealTimeAnalyticsLazyQuery
+>
+export type GetRealTimeAnalyticsSuspenseQueryHookResult = ReturnType<
+  typeof useGetRealTimeAnalyticsSuspenseQuery
+>
+export type GetRealTimeAnalyticsQueryResult = Apollo.QueryResult<
+  GetRealTimeAnalyticsQuery,
+  GetRealTimeAnalyticsQueryVariables
+>
+export const GetDailyChallengesDocument = gql`
+    query GetDailyChallenges {
+  dailyChallenges {
+    date
+    challenges {
+      id
+      title
+      description
+      challenge_type
+      difficulty
+      category
+      target_value
+      target_unit
+      xp_reward
+      points_reward
+      time_limit_hours
+    }
+    user_progress {
+      id
+      challenge_id
+      status
+      progress
+      started_at
+      completed_at
+      expires_at
+    }
+    total_xp_available
+    total_points_available
+  }
+}
+    `
+
+/**
+ * __useGetDailyChallengesQuery__
+ *
+ * To run a query within a React component, call `useGetDailyChallengesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDailyChallengesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDailyChallengesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetDailyChallengesQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetDailyChallengesQuery, GetDailyChallengesQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetDailyChallengesQuery, GetDailyChallengesQueryVariables>(
+    GetDailyChallengesDocument,
+    options,
+  )
+}
+export function useGetDailyChallengesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetDailyChallengesQuery,
+    GetDailyChallengesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetDailyChallengesQuery, GetDailyChallengesQueryVariables>(
+    GetDailyChallengesDocument,
+    options,
+  )
+}
+export function useGetDailyChallengesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetDailyChallengesQuery, GetDailyChallengesQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetDailyChallengesQuery, GetDailyChallengesQueryVariables>(
+    GetDailyChallengesDocument,
+    options,
+  )
+}
+export type GetDailyChallengesQueryHookResult = ReturnType<typeof useGetDailyChallengesQuery>
+export type GetDailyChallengesLazyQueryHookResult = ReturnType<
+  typeof useGetDailyChallengesLazyQuery
+>
+export type GetDailyChallengesSuspenseQueryHookResult = ReturnType<
+  typeof useGetDailyChallengesSuspenseQuery
+>
+export type GetDailyChallengesQueryResult = Apollo.QueryResult<
+  GetDailyChallengesQuery,
+  GetDailyChallengesQueryVariables
+>
+export const GetMyChallengesDocument = gql`
+    query GetMyChallenges {
+  myActiveChallenges {
+    id
+    challenge_id
+    status
+    progress
+    started_at
+    expires_at
+    challenge {
+      id
+      title
+      description
+      difficulty
+      category
+      target_value
+      target_unit
+      xp_reward
+      points_reward
+    }
+  }
+}
+    `
+
+/**
+ * __useGetMyChallengesQuery__
+ *
+ * To run a query within a React component, call `useGetMyChallengesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyChallengesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyChallengesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyChallengesQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetMyChallengesQuery, GetMyChallengesQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetMyChallengesQuery, GetMyChallengesQueryVariables>(
+    GetMyChallengesDocument,
+    options,
+  )
+}
+export function useGetMyChallengesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetMyChallengesQuery, GetMyChallengesQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetMyChallengesQuery, GetMyChallengesQueryVariables>(
+    GetMyChallengesDocument,
+    options,
+  )
+}
+export function useGetMyChallengesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetMyChallengesQuery, GetMyChallengesQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetMyChallengesQuery, GetMyChallengesQueryVariables>(
+    GetMyChallengesDocument,
+    options,
+  )
+}
+export type GetMyChallengesQueryHookResult = ReturnType<typeof useGetMyChallengesQuery>
+export type GetMyChallengesLazyQueryHookResult = ReturnType<typeof useGetMyChallengesLazyQuery>
+export type GetMyChallengesSuspenseQueryHookResult = ReturnType<
+  typeof useGetMyChallengesSuspenseQuery
+>
+export type GetMyChallengesQueryResult = Apollo.QueryResult<
+  GetMyChallengesQuery,
+  GetMyChallengesQueryVariables
+>
+export const GetMyChallengeStatsDocument = gql`
+    query GetMyChallengeStats {
+  myChallengeStats {
+    total_completed
+    total_xp_earned
+    total_points_earned
+    current_streak
+    longest_streak
+    completion_rate
+    challenges_by_difficulty
+  }
+}
+    `
+
+/**
+ * __useGetMyChallengeStatsQuery__
+ *
+ * To run a query within a React component, call `useGetMyChallengeStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyChallengeStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyChallengeStatsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyChallengeStatsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetMyChallengeStatsQuery,
+    GetMyChallengeStatsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetMyChallengeStatsQuery, GetMyChallengeStatsQueryVariables>(
+    GetMyChallengeStatsDocument,
+    options,
+  )
+}
+export function useGetMyChallengeStatsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetMyChallengeStatsQuery,
+    GetMyChallengeStatsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetMyChallengeStatsQuery, GetMyChallengeStatsQueryVariables>(
+    GetMyChallengeStatsDocument,
+    options,
+  )
+}
+export function useGetMyChallengeStatsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetMyChallengeStatsQuery, GetMyChallengeStatsQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetMyChallengeStatsQuery, GetMyChallengeStatsQueryVariables>(
+    GetMyChallengeStatsDocument,
+    options,
+  )
+}
+export type GetMyChallengeStatsQueryHookResult = ReturnType<typeof useGetMyChallengeStatsQuery>
+export type GetMyChallengeStatsLazyQueryHookResult = ReturnType<
+  typeof useGetMyChallengeStatsLazyQuery
+>
+export type GetMyChallengeStatsSuspenseQueryHookResult = ReturnType<
+  typeof useGetMyChallengeStatsSuspenseQuery
+>
+export type GetMyChallengeStatsQueryResult = Apollo.QueryResult<
+  GetMyChallengeStatsQuery,
+  GetMyChallengeStatsQueryVariables
+>
+export const GetMyChallengeProgressDocument = gql`
+    query GetMyChallengeProgress($challengeId: String!) {
+  myChallengeProgress(challengeId: $challengeId) {
+    challenge {
+      id
+      title
+      description
+      target_value
+      target_unit
+      xp_reward
+    }
+    current_progress
+    target_value
+    percentage
+    time_remaining
+    is_claimable
+  }
+}
+    `
+
+/**
+ * __useGetMyChallengeProgressQuery__
+ *
+ * To run a query within a React component, call `useGetMyChallengeProgressQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyChallengeProgressQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyChallengeProgressQuery({
+ *   variables: {
+ *      challengeId: // value for 'challengeId'
+ *   },
+ * });
+ */
+export function useGetMyChallengeProgressQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetMyChallengeProgressQuery,
+    GetMyChallengeProgressQueryVariables
+  > &
+    ({ variables: GetMyChallengeProgressQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetMyChallengeProgressQuery, GetMyChallengeProgressQueryVariables>(
+    GetMyChallengeProgressDocument,
+    options,
+  )
+}
+export function useGetMyChallengeProgressLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetMyChallengeProgressQuery,
+    GetMyChallengeProgressQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetMyChallengeProgressQuery, GetMyChallengeProgressQueryVariables>(
+    GetMyChallengeProgressDocument,
+    options,
+  )
+}
+export function useGetMyChallengeProgressSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetMyChallengeProgressQuery,
+        GetMyChallengeProgressQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetMyChallengeProgressQuery, GetMyChallengeProgressQueryVariables>(
+    GetMyChallengeProgressDocument,
+    options,
+  )
+}
+export type GetMyChallengeProgressQueryHookResult = ReturnType<
+  typeof useGetMyChallengeProgressQuery
+>
+export type GetMyChallengeProgressLazyQueryHookResult = ReturnType<
+  typeof useGetMyChallengeProgressLazyQuery
+>
+export type GetMyChallengeProgressSuspenseQueryHookResult = ReturnType<
+  typeof useGetMyChallengeProgressSuspenseQuery
+>
+export type GetMyChallengeProgressQueryResult = Apollo.QueryResult<
+  GetMyChallengeProgressQuery,
+  GetMyChallengeProgressQueryVariables
+>
+export const GetChallengeLeaderboardDocument = gql`
+    query GetChallengeLeaderboard($type: ChallengeType!, $period: String!) {
+  challengeLeaderboard(type: $type, period: $period) {
+    period
+    entries {
+      rank
+      challenges_completed
+      xp_earned
+      points_earned
+      user {
+        privy_id
+        username
+        display_name
+        avatar_url
+        level
+      }
+    }
+  }
+}
+    `
+
+/**
+ * __useGetChallengeLeaderboardQuery__
+ *
+ * To run a query within a React component, call `useGetChallengeLeaderboardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChallengeLeaderboardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetChallengeLeaderboardQuery({
+ *   variables: {
+ *      type: // value for 'type'
+ *      period: // value for 'period'
+ *   },
+ * });
+ */
+export function useGetChallengeLeaderboardQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetChallengeLeaderboardQuery,
+    GetChallengeLeaderboardQueryVariables
+  > &
+    ({ variables: GetChallengeLeaderboardQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetChallengeLeaderboardQuery, GetChallengeLeaderboardQueryVariables>(
+    GetChallengeLeaderboardDocument,
+    options,
+  )
+}
+export function useGetChallengeLeaderboardLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetChallengeLeaderboardQuery,
+    GetChallengeLeaderboardQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetChallengeLeaderboardQuery, GetChallengeLeaderboardQueryVariables>(
+    GetChallengeLeaderboardDocument,
+    options,
+  )
+}
+export function useGetChallengeLeaderboardSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetChallengeLeaderboardQuery,
+        GetChallengeLeaderboardQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    GetChallengeLeaderboardQuery,
+    GetChallengeLeaderboardQueryVariables
+  >(GetChallengeLeaderboardDocument, options)
+}
+export type GetChallengeLeaderboardQueryHookResult = ReturnType<
+  typeof useGetChallengeLeaderboardQuery
+>
+export type GetChallengeLeaderboardLazyQueryHookResult = ReturnType<
+  typeof useGetChallengeLeaderboardLazyQuery
+>
+export type GetChallengeLeaderboardSuspenseQueryHookResult = ReturnType<
+  typeof useGetChallengeLeaderboardSuspenseQuery
+>
+export type GetChallengeLeaderboardQueryResult = Apollo.QueryResult<
+  GetChallengeLeaderboardQuery,
+  GetChallengeLeaderboardQueryVariables
+>
+export const GetDevDashboardStatsDocument = gql`
+    query GetDevDashboardStats {
+  devDashboardStats {
+    total_feature_requests
+    pending_requests
+    in_progress_requests
+    completed_requests
+    total_tasks
+    todo_tasks
+    in_progress_tasks
+    blocked_tasks
+    total_changelog_entries
+    latest_version
+    github_open_prs
+    github_open_issues
+    github_rate_limit {
+      limit
+      remaining
+      reset_at
+      used
+    }
+  }
+}
+    `
+
+/**
+ * __useGetDevDashboardStatsQuery__
+ *
+ * To run a query within a React component, call `useGetDevDashboardStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDevDashboardStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDevDashboardStatsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetDevDashboardStatsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetDevDashboardStatsQuery,
+    GetDevDashboardStatsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetDevDashboardStatsQuery, GetDevDashboardStatsQueryVariables>(
+    GetDevDashboardStatsDocument,
+    options,
+  )
+}
+export function useGetDevDashboardStatsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetDevDashboardStatsQuery,
+    GetDevDashboardStatsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetDevDashboardStatsQuery, GetDevDashboardStatsQueryVariables>(
+    GetDevDashboardStatsDocument,
+    options,
+  )
+}
+export function useGetDevDashboardStatsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetDevDashboardStatsQuery,
+        GetDevDashboardStatsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetDevDashboardStatsQuery, GetDevDashboardStatsQueryVariables>(
+    GetDevDashboardStatsDocument,
+    options,
+  )
+}
+export type GetDevDashboardStatsQueryHookResult = ReturnType<typeof useGetDevDashboardStatsQuery>
+export type GetDevDashboardStatsLazyQueryHookResult = ReturnType<
+  typeof useGetDevDashboardStatsLazyQuery
+>
+export type GetDevDashboardStatsSuspenseQueryHookResult = ReturnType<
+  typeof useGetDevDashboardStatsSuspenseQuery
+>
+export type GetDevDashboardStatsQueryResult = Apollo.QueryResult<
+  GetDevDashboardStatsQuery,
+  GetDevDashboardStatsQueryVariables
+>
+export const GetSystemHealthDocument = gql`
+    query GetSystemHealth {
+  systemHealth {
+    service
+    status
+    response_time_ms
+    last_checked
+    error_message
+    details
+  }
+}
+    `
+
+/**
+ * __useGetSystemHealthQuery__
+ *
+ * To run a query within a React component, call `useGetSystemHealthQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSystemHealthQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSystemHealthQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetSystemHealthQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetSystemHealthQuery, GetSystemHealthQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetSystemHealthQuery, GetSystemHealthQueryVariables>(
+    GetSystemHealthDocument,
+    options,
+  )
+}
+export function useGetSystemHealthLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetSystemHealthQuery, GetSystemHealthQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetSystemHealthQuery, GetSystemHealthQueryVariables>(
+    GetSystemHealthDocument,
+    options,
+  )
+}
+export function useGetSystemHealthSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetSystemHealthQuery, GetSystemHealthQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetSystemHealthQuery, GetSystemHealthQueryVariables>(
+    GetSystemHealthDocument,
+    options,
+  )
+}
+export type GetSystemHealthQueryHookResult = ReturnType<typeof useGetSystemHealthQuery>
+export type GetSystemHealthLazyQueryHookResult = ReturnType<typeof useGetSystemHealthLazyQuery>
+export type GetSystemHealthSuspenseQueryHookResult = ReturnType<
+  typeof useGetSystemHealthSuspenseQuery
+>
+export type GetSystemHealthQueryResult = Apollo.QueryResult<
+  GetSystemHealthQuery,
+  GetSystemHealthQueryVariables
+>
+export const GetFeatureRequestsDocument = gql`
+    query GetFeatureRequests($filter: FeatureRequestFilter, $limit: Int, $offset: Int, $sort_by: String) {
+  featureRequests(
+    filter: $filter
+    limit: $limit
+    offset: $offset
+    sort_by: $sort_by
+  ) {
+    requests {
+      id
+      title
+      description
+      category
+      status
+      priority
+      votes
+      requested_by {
+        privy_id
+        username
+        display_name
+        avatar_url
+      }
+      requested_at
+      assigned_to {
+        privy_id
+        username
+        display_name
+        avatar_url
+      }
+      assigned_at
+      estimated_hours
+      actual_hours
+      target_version
+      completed_at
+      github_issue_url
+      github_pr_url
+      tags
+      user_vote
+      created_at
+      updated_at
+    }
+    total_count
+    has_more
+  }
+}
+    `
+
+/**
+ * __useGetFeatureRequestsQuery__
+ *
+ * To run a query within a React component, call `useGetFeatureRequestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFeatureRequestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFeatureRequestsQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *      sort_by: // value for 'sort_by'
+ *   },
+ * });
+ */
+export function useGetFeatureRequestsQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetFeatureRequestsQuery, GetFeatureRequestsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetFeatureRequestsQuery, GetFeatureRequestsQueryVariables>(
+    GetFeatureRequestsDocument,
+    options,
+  )
+}
+export function useGetFeatureRequestsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetFeatureRequestsQuery,
+    GetFeatureRequestsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetFeatureRequestsQuery, GetFeatureRequestsQueryVariables>(
+    GetFeatureRequestsDocument,
+    options,
+  )
+}
+export function useGetFeatureRequestsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetFeatureRequestsQuery, GetFeatureRequestsQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetFeatureRequestsQuery, GetFeatureRequestsQueryVariables>(
+    GetFeatureRequestsDocument,
+    options,
+  )
+}
+export type GetFeatureRequestsQueryHookResult = ReturnType<typeof useGetFeatureRequestsQuery>
+export type GetFeatureRequestsLazyQueryHookResult = ReturnType<
+  typeof useGetFeatureRequestsLazyQuery
+>
+export type GetFeatureRequestsSuspenseQueryHookResult = ReturnType<
+  typeof useGetFeatureRequestsSuspenseQuery
+>
+export type GetFeatureRequestsQueryResult = Apollo.QueryResult<
+  GetFeatureRequestsQuery,
+  GetFeatureRequestsQueryVariables
+>
+export const GetFeatureRequestDocument = gql`
+    query GetFeatureRequest($id: ID!) {
+  featureRequest(id: $id) {
+    id
+    title
+    description
+    category
+    status
+    priority
+    votes
+    requested_by {
+      privy_id
+      username
+      display_name
+      avatar_url
+    }
+    requested_at
+    assigned_to {
+      privy_id
+      username
+      display_name
+      avatar_url
+    }
+    assigned_at
+    estimated_hours
+    actual_hours
+    target_version
+    completed_at
+    github_issue_url
+    github_pr_url
+    tags
+    comments {
+      id
+      content
+      user {
+        privy_id
+        username
+        display_name
+        avatar_url
+      }
+      is_internal
+      created_at
+    }
+    user_vote
+    created_at
+    updated_at
+  }
+}
+    `
+
+/**
+ * __useGetFeatureRequestQuery__
+ *
+ * To run a query within a React component, call `useGetFeatureRequestQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFeatureRequestQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFeatureRequestQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetFeatureRequestQuery(
+  baseOptions: Apollo.QueryHookOptions<GetFeatureRequestQuery, GetFeatureRequestQueryVariables> &
+    ({ variables: GetFeatureRequestQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetFeatureRequestQuery, GetFeatureRequestQueryVariables>(
+    GetFeatureRequestDocument,
+    options,
+  )
+}
+export function useGetFeatureRequestLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetFeatureRequestQuery,
+    GetFeatureRequestQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetFeatureRequestQuery, GetFeatureRequestQueryVariables>(
+    GetFeatureRequestDocument,
+    options,
+  )
+}
+export function useGetFeatureRequestSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetFeatureRequestQuery, GetFeatureRequestQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetFeatureRequestQuery, GetFeatureRequestQueryVariables>(
+    GetFeatureRequestDocument,
+    options,
+  )
+}
+export type GetFeatureRequestQueryHookResult = ReturnType<typeof useGetFeatureRequestQuery>
+export type GetFeatureRequestLazyQueryHookResult = ReturnType<typeof useGetFeatureRequestLazyQuery>
+export type GetFeatureRequestSuspenseQueryHookResult = ReturnType<
+  typeof useGetFeatureRequestSuspenseQuery
+>
+export type GetFeatureRequestQueryResult = Apollo.QueryResult<
+  GetFeatureRequestQuery,
+  GetFeatureRequestQueryVariables
+>
+export const GetTopVotedFeaturesDocument = gql`
+    query GetTopVotedFeatures($limit: Int) {
+  topVotedFeatures(limit: $limit) {
+    id
+    title
+    description
+    category
+    status
+    priority
+    votes
+    requested_by {
+      privy_id
+      username
+      avatar_url
+    }
+    user_vote
+    created_at
+  }
+}
+    `
+
+/**
+ * __useGetTopVotedFeaturesQuery__
+ *
+ * To run a query within a React component, call `useGetTopVotedFeaturesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTopVotedFeaturesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTopVotedFeaturesQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetTopVotedFeaturesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetTopVotedFeaturesQuery,
+    GetTopVotedFeaturesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetTopVotedFeaturesQuery, GetTopVotedFeaturesQueryVariables>(
+    GetTopVotedFeaturesDocument,
+    options,
+  )
+}
+export function useGetTopVotedFeaturesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetTopVotedFeaturesQuery,
+    GetTopVotedFeaturesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetTopVotedFeaturesQuery, GetTopVotedFeaturesQueryVariables>(
+    GetTopVotedFeaturesDocument,
+    options,
+  )
+}
+export function useGetTopVotedFeaturesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetTopVotedFeaturesQuery, GetTopVotedFeaturesQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetTopVotedFeaturesQuery, GetTopVotedFeaturesQueryVariables>(
+    GetTopVotedFeaturesDocument,
+    options,
+  )
+}
+export type GetTopVotedFeaturesQueryHookResult = ReturnType<typeof useGetTopVotedFeaturesQuery>
+export type GetTopVotedFeaturesLazyQueryHookResult = ReturnType<
+  typeof useGetTopVotedFeaturesLazyQuery
+>
+export type GetTopVotedFeaturesSuspenseQueryHookResult = ReturnType<
+  typeof useGetTopVotedFeaturesSuspenseQuery
+>
+export type GetTopVotedFeaturesQueryResult = Apollo.QueryResult<
+  GetTopVotedFeaturesQuery,
+  GetTopVotedFeaturesQueryVariables
+>
+export const GetDevTasksDocument = gql`
+    query GetDevTasks($filter: DevTaskFilter, $limit: Int, $offset: Int, $sort_by: String) {
+  devTasks(filter: $filter, limit: $limit, offset: $offset, sort_by: $sort_by) {
+    tasks {
+      id
+      title
+      description
+      task_type
+      status
+      priority
+      assigned_to {
+        privy_id
+        username
+        display_name
+        avatar_url
+      }
+      created_by {
+        privy_id
+        username
+        avatar_url
+      }
+      due_date
+      estimated_hours
+      actual_hours
+      started_at
+      completed_at
+      feature_request {
+        id
+        title
+      }
+      parent_task {
+        id
+        title
+      }
+      subtasks {
+        id
+        title
+        status
+      }
+      github_issue_url
+      github_pr_url
+      tags
+      sprint
+      created_at
+      updated_at
+    }
+    total_count
+    has_more
+  }
+}
+    `
+
+/**
+ * __useGetDevTasksQuery__
+ *
+ * To run a query within a React component, call `useGetDevTasksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDevTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDevTasksQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *      sort_by: // value for 'sort_by'
+ *   },
+ * });
+ */
+export function useGetDevTasksQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetDevTasksQuery, GetDevTasksQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetDevTasksQuery, GetDevTasksQueryVariables>(GetDevTasksDocument, options)
+}
+export function useGetDevTasksLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetDevTasksQuery, GetDevTasksQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetDevTasksQuery, GetDevTasksQueryVariables>(
+    GetDevTasksDocument,
+    options,
+  )
+}
+export function useGetDevTasksSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetDevTasksQuery, GetDevTasksQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetDevTasksQuery, GetDevTasksQueryVariables>(
+    GetDevTasksDocument,
+    options,
+  )
+}
+export type GetDevTasksQueryHookResult = ReturnType<typeof useGetDevTasksQuery>
+export type GetDevTasksLazyQueryHookResult = ReturnType<typeof useGetDevTasksLazyQuery>
+export type GetDevTasksSuspenseQueryHookResult = ReturnType<typeof useGetDevTasksSuspenseQuery>
+export type GetDevTasksQueryResult = Apollo.QueryResult<GetDevTasksQuery, GetDevTasksQueryVariables>
+export const GetDevTaskDocument = gql`
+    query GetDevTask($id: ID!) {
+  devTask(id: $id) {
+    id
+    title
+    description
+    task_type
+    status
+    priority
+    assigned_to {
+      privy_id
+      username
+      display_name
+      avatar_url
+    }
+    created_by {
+      privy_id
+      username
+      avatar_url
+    }
+    due_date
+    estimated_hours
+    actual_hours
+    started_at
+    completed_at
+    feature_request {
+      id
+      title
+      status
+    }
+    parent_task {
+      id
+      title
+    }
+    subtasks {
+      id
+      title
+      status
+      priority
+    }
+    github_issue_url
+    github_pr_url
+    tags
+    sprint
+    created_at
+    updated_at
+  }
+}
+    `
+
+/**
+ * __useGetDevTaskQuery__
+ *
+ * To run a query within a React component, call `useGetDevTaskQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDevTaskQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDevTaskQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetDevTaskQuery(
+  baseOptions: Apollo.QueryHookOptions<GetDevTaskQuery, GetDevTaskQueryVariables> &
+    ({ variables: GetDevTaskQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetDevTaskQuery, GetDevTaskQueryVariables>(GetDevTaskDocument, options)
+}
+export function useGetDevTaskLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetDevTaskQuery, GetDevTaskQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetDevTaskQuery, GetDevTaskQueryVariables>(GetDevTaskDocument, options)
+}
+export function useGetDevTaskSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetDevTaskQuery, GetDevTaskQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetDevTaskQuery, GetDevTaskQueryVariables>(
+    GetDevTaskDocument,
+    options,
+  )
+}
+export type GetDevTaskQueryHookResult = ReturnType<typeof useGetDevTaskQuery>
+export type GetDevTaskLazyQueryHookResult = ReturnType<typeof useGetDevTaskLazyQuery>
+export type GetDevTaskSuspenseQueryHookResult = ReturnType<typeof useGetDevTaskSuspenseQuery>
+export type GetDevTaskQueryResult = Apollo.QueryResult<GetDevTaskQuery, GetDevTaskQueryVariables>
+export const GetMyDevTasksDocument = gql`
+    query GetMyDevTasks {
+  myDevTasks {
+    id
+    title
+    task_type
+    status
+    priority
+    due_date
+    estimated_hours
+    sprint
+  }
+}
+    `
+
+/**
+ * __useGetMyDevTasksQuery__
+ *
+ * To run a query within a React component, call `useGetMyDevTasksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyDevTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyDevTasksQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyDevTasksQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetMyDevTasksQuery, GetMyDevTasksQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetMyDevTasksQuery, GetMyDevTasksQueryVariables>(
+    GetMyDevTasksDocument,
+    options,
+  )
+}
+export function useGetMyDevTasksLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetMyDevTasksQuery, GetMyDevTasksQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetMyDevTasksQuery, GetMyDevTasksQueryVariables>(
+    GetMyDevTasksDocument,
+    options,
+  )
+}
+export function useGetMyDevTasksSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetMyDevTasksQuery, GetMyDevTasksQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetMyDevTasksQuery, GetMyDevTasksQueryVariables>(
+    GetMyDevTasksDocument,
+    options,
+  )
+}
+export type GetMyDevTasksQueryHookResult = ReturnType<typeof useGetMyDevTasksQuery>
+export type GetMyDevTasksLazyQueryHookResult = ReturnType<typeof useGetMyDevTasksLazyQuery>
+export type GetMyDevTasksSuspenseQueryHookResult = ReturnType<typeof useGetMyDevTasksSuspenseQuery>
+export type GetMyDevTasksQueryResult = Apollo.QueryResult<
+  GetMyDevTasksQuery,
+  GetMyDevTasksQueryVariables
+>
+export const GetSprintTasksDocument = gql`
+    query GetSprintTasks($sprint: String!) {
+  sprintTasks(sprint: $sprint) {
+    id
+    title
+    task_type
+    status
+    priority
+    assigned_to {
+      privy_id
+      username
+      avatar_url
+    }
+    estimated_hours
+    actual_hours
+  }
+}
+    `
+
+/**
+ * __useGetSprintTasksQuery__
+ *
+ * To run a query within a React component, call `useGetSprintTasksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSprintTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSprintTasksQuery({
+ *   variables: {
+ *      sprint: // value for 'sprint'
+ *   },
+ * });
+ */
+export function useGetSprintTasksQuery(
+  baseOptions: Apollo.QueryHookOptions<GetSprintTasksQuery, GetSprintTasksQueryVariables> &
+    ({ variables: GetSprintTasksQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetSprintTasksQuery, GetSprintTasksQueryVariables>(
+    GetSprintTasksDocument,
+    options,
+  )
+}
+export function useGetSprintTasksLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetSprintTasksQuery, GetSprintTasksQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetSprintTasksQuery, GetSprintTasksQueryVariables>(
+    GetSprintTasksDocument,
+    options,
+  )
+}
+export function useGetSprintTasksSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetSprintTasksQuery, GetSprintTasksQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetSprintTasksQuery, GetSprintTasksQueryVariables>(
+    GetSprintTasksDocument,
+    options,
+  )
+}
+export type GetSprintTasksQueryHookResult = ReturnType<typeof useGetSprintTasksQuery>
+export type GetSprintTasksLazyQueryHookResult = ReturnType<typeof useGetSprintTasksLazyQuery>
+export type GetSprintTasksSuspenseQueryHookResult = ReturnType<
+  typeof useGetSprintTasksSuspenseQuery
+>
+export type GetSprintTasksQueryResult = Apollo.QueryResult<
+  GetSprintTasksQuery,
+  GetSprintTasksQueryVariables
+>
+export const GetChangelogDocument = gql`
+    query GetChangelog($limit: Int, $offset: Int, $include_private: Boolean) {
+  changelog(limit: $limit, offset: $offset, include_private: $include_private) {
+    version
+    release_date
+    entries {
+      id
+      title
+      description
+      category
+      github_pr_url
+      is_public
+      is_highlighted
+      created_at
+    }
+    is_current
+  }
+}
+    `
+
+/**
+ * __useGetChangelogQuery__
+ *
+ * To run a query within a React component, call `useGetChangelogQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChangelogQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetChangelogQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *      include_private: // value for 'include_private'
+ *   },
+ * });
+ */
+export function useGetChangelogQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetChangelogQuery, GetChangelogQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetChangelogQuery, GetChangelogQueryVariables>(
+    GetChangelogDocument,
+    options,
+  )
+}
+export function useGetChangelogLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetChangelogQuery, GetChangelogQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetChangelogQuery, GetChangelogQueryVariables>(
+    GetChangelogDocument,
+    options,
+  )
+}
+export function useGetChangelogSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetChangelogQuery, GetChangelogQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetChangelogQuery, GetChangelogQueryVariables>(
+    GetChangelogDocument,
+    options,
+  )
+}
+export type GetChangelogQueryHookResult = ReturnType<typeof useGetChangelogQuery>
+export type GetChangelogLazyQueryHookResult = ReturnType<typeof useGetChangelogLazyQuery>
+export type GetChangelogSuspenseQueryHookResult = ReturnType<typeof useGetChangelogSuspenseQuery>
+export type GetChangelogQueryResult = Apollo.QueryResult<
+  GetChangelogQuery,
+  GetChangelogQueryVariables
+>
+export const GetLatestChangelogDocument = gql`
+    query GetLatestChangelog {
+  latestChangelog {
+    version
+    release_date
+    entries {
+      id
+      title
+      description
+      category
+      is_highlighted
+    }
+    is_current
+  }
+}
+    `
+
+/**
+ * __useGetLatestChangelogQuery__
+ *
+ * To run a query within a React component, call `useGetLatestChangelogQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLatestChangelogQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLatestChangelogQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetLatestChangelogQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetLatestChangelogQuery, GetLatestChangelogQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetLatestChangelogQuery, GetLatestChangelogQueryVariables>(
+    GetLatestChangelogDocument,
+    options,
+  )
+}
+export function useGetLatestChangelogLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetLatestChangelogQuery,
+    GetLatestChangelogQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetLatestChangelogQuery, GetLatestChangelogQueryVariables>(
+    GetLatestChangelogDocument,
+    options,
+  )
+}
+export function useGetLatestChangelogSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetLatestChangelogQuery, GetLatestChangelogQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetLatestChangelogQuery, GetLatestChangelogQueryVariables>(
+    GetLatestChangelogDocument,
+    options,
+  )
+}
+export type GetLatestChangelogQueryHookResult = ReturnType<typeof useGetLatestChangelogQuery>
+export type GetLatestChangelogLazyQueryHookResult = ReturnType<
+  typeof useGetLatestChangelogLazyQuery
+>
+export type GetLatestChangelogSuspenseQueryHookResult = ReturnType<
+  typeof useGetLatestChangelogSuspenseQuery
+>
+export type GetLatestChangelogQueryResult = Apollo.QueryResult<
+  GetLatestChangelogQuery,
+  GetLatestChangelogQueryVariables
+>
+export const GetGitHubCommitsDocument = gql`
+    query GetGitHubCommits($repo: String!, $branch: String, $limit: Int) {
+  githubCommits(repo: $repo, branch: $branch, limit: $limit) {
+    sha
+    message
+    author
+    author_avatar
+    date
+    url
+    additions
+    deletions
+  }
+}
+    `
+
+/**
+ * __useGetGitHubCommitsQuery__
+ *
+ * To run a query within a React component, call `useGetGitHubCommitsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGitHubCommitsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGitHubCommitsQuery({
+ *   variables: {
+ *      repo: // value for 'repo'
+ *      branch: // value for 'branch'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetGitHubCommitsQuery(
+  baseOptions: Apollo.QueryHookOptions<GetGitHubCommitsQuery, GetGitHubCommitsQueryVariables> &
+    ({ variables: GetGitHubCommitsQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetGitHubCommitsQuery, GetGitHubCommitsQueryVariables>(
+    GetGitHubCommitsDocument,
+    options,
+  )
+}
+export function useGetGitHubCommitsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetGitHubCommitsQuery, GetGitHubCommitsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetGitHubCommitsQuery, GetGitHubCommitsQueryVariables>(
+    GetGitHubCommitsDocument,
+    options,
+  )
+}
+export function useGetGitHubCommitsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetGitHubCommitsQuery, GetGitHubCommitsQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetGitHubCommitsQuery, GetGitHubCommitsQueryVariables>(
+    GetGitHubCommitsDocument,
+    options,
+  )
+}
+export type GetGitHubCommitsQueryHookResult = ReturnType<typeof useGetGitHubCommitsQuery>
+export type GetGitHubCommitsLazyQueryHookResult = ReturnType<typeof useGetGitHubCommitsLazyQuery>
+export type GetGitHubCommitsSuspenseQueryHookResult = ReturnType<
+  typeof useGetGitHubCommitsSuspenseQuery
+>
+export type GetGitHubCommitsQueryResult = Apollo.QueryResult<
+  GetGitHubCommitsQuery,
+  GetGitHubCommitsQueryVariables
+>
+export const GetGitHubPullRequestsDocument = gql`
+    query GetGitHubPullRequests($repo: String!, $state: String, $limit: Int) {
+  githubPullRequests(repo: $repo, state: $state, limit: $limit) {
+    number
+    title
+    state
+    author
+    author_avatar
+    created_at
+    merged_at
+    closed_at
+    url
+    additions
+    deletions
+    changed_files
+    labels
+    draft
+  }
+}
+    `
+
+/**
+ * __useGetGitHubPullRequestsQuery__
+ *
+ * To run a query within a React component, call `useGetGitHubPullRequestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGitHubPullRequestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGitHubPullRequestsQuery({
+ *   variables: {
+ *      repo: // value for 'repo'
+ *      state: // value for 'state'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetGitHubPullRequestsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetGitHubPullRequestsQuery,
+    GetGitHubPullRequestsQueryVariables
+  > &
+    ({ variables: GetGitHubPullRequestsQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetGitHubPullRequestsQuery, GetGitHubPullRequestsQueryVariables>(
+    GetGitHubPullRequestsDocument,
+    options,
+  )
+}
+export function useGetGitHubPullRequestsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetGitHubPullRequestsQuery,
+    GetGitHubPullRequestsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetGitHubPullRequestsQuery, GetGitHubPullRequestsQueryVariables>(
+    GetGitHubPullRequestsDocument,
+    options,
+  )
+}
+export function useGetGitHubPullRequestsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetGitHubPullRequestsQuery,
+        GetGitHubPullRequestsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetGitHubPullRequestsQuery, GetGitHubPullRequestsQueryVariables>(
+    GetGitHubPullRequestsDocument,
+    options,
+  )
+}
+export type GetGitHubPullRequestsQueryHookResult = ReturnType<typeof useGetGitHubPullRequestsQuery>
+export type GetGitHubPullRequestsLazyQueryHookResult = ReturnType<
+  typeof useGetGitHubPullRequestsLazyQuery
+>
+export type GetGitHubPullRequestsSuspenseQueryHookResult = ReturnType<
+  typeof useGetGitHubPullRequestsSuspenseQuery
+>
+export type GetGitHubPullRequestsQueryResult = Apollo.QueryResult<
+  GetGitHubPullRequestsQuery,
+  GetGitHubPullRequestsQueryVariables
+>
+export const GetGitHubActionsDocument = gql`
+    query GetGitHubActions($repo: String!, $limit: Int) {
+  githubActions(repo: $repo, limit: $limit) {
+    id
+    name
+    status
+    conclusion
+    workflow_name
+    branch
+    commit_sha
+    started_at
+    completed_at
+    url
+    duration_seconds
+  }
+}
+    `
+
+/**
+ * __useGetGitHubActionsQuery__
+ *
+ * To run a query within a React component, call `useGetGitHubActionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGitHubActionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGitHubActionsQuery({
+ *   variables: {
+ *      repo: // value for 'repo'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetGitHubActionsQuery(
+  baseOptions: Apollo.QueryHookOptions<GetGitHubActionsQuery, GetGitHubActionsQueryVariables> &
+    ({ variables: GetGitHubActionsQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetGitHubActionsQuery, GetGitHubActionsQueryVariables>(
+    GetGitHubActionsDocument,
+    options,
+  )
+}
+export function useGetGitHubActionsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetGitHubActionsQuery, GetGitHubActionsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetGitHubActionsQuery, GetGitHubActionsQueryVariables>(
+    GetGitHubActionsDocument,
+    options,
+  )
+}
+export function useGetGitHubActionsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetGitHubActionsQuery, GetGitHubActionsQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetGitHubActionsQuery, GetGitHubActionsQueryVariables>(
+    GetGitHubActionsDocument,
+    options,
+  )
+}
+export type GetGitHubActionsQueryHookResult = ReturnType<typeof useGetGitHubActionsQuery>
+export type GetGitHubActionsLazyQueryHookResult = ReturnType<typeof useGetGitHubActionsLazyQuery>
+export type GetGitHubActionsSuspenseQueryHookResult = ReturnType<
+  typeof useGetGitHubActionsSuspenseQuery
+>
+export type GetGitHubActionsQueryResult = Apollo.QueryResult<
+  GetGitHubActionsQuery,
+  GetGitHubActionsQueryVariables
+>
+export const GetGitHubReleasesDocument = gql`
+    query GetGitHubReleases($repo: String!, $limit: Int) {
+  githubReleases(repo: $repo, limit: $limit) {
+    id
+    tag_name
+    name
+    body
+    published_at
+    author
+    author_avatar
+    url
+    prerelease
+    draft
+  }
+}
+    `
+
+/**
+ * __useGetGitHubReleasesQuery__
+ *
+ * To run a query within a React component, call `useGetGitHubReleasesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGitHubReleasesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGitHubReleasesQuery({
+ *   variables: {
+ *      repo: // value for 'repo'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetGitHubReleasesQuery(
+  baseOptions: Apollo.QueryHookOptions<GetGitHubReleasesQuery, GetGitHubReleasesQueryVariables> &
+    ({ variables: GetGitHubReleasesQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetGitHubReleasesQuery, GetGitHubReleasesQueryVariables>(
+    GetGitHubReleasesDocument,
+    options,
+  )
+}
+export function useGetGitHubReleasesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetGitHubReleasesQuery,
+    GetGitHubReleasesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetGitHubReleasesQuery, GetGitHubReleasesQueryVariables>(
+    GetGitHubReleasesDocument,
+    options,
+  )
+}
+export function useGetGitHubReleasesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetGitHubReleasesQuery, GetGitHubReleasesQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetGitHubReleasesQuery, GetGitHubReleasesQueryVariables>(
+    GetGitHubReleasesDocument,
+    options,
+  )
+}
+export type GetGitHubReleasesQueryHookResult = ReturnType<typeof useGetGitHubReleasesQuery>
+export type GetGitHubReleasesLazyQueryHookResult = ReturnType<typeof useGetGitHubReleasesLazyQuery>
+export type GetGitHubReleasesSuspenseQueryHookResult = ReturnType<
+  typeof useGetGitHubReleasesSuspenseQuery
+>
+export type GetGitHubReleasesQueryResult = Apollo.QueryResult<
+  GetGitHubReleasesQuery,
+  GetGitHubReleasesQueryVariables
+>
+export const GetGitHubReposDocument = gql`
+    query GetGitHubRepos {
+  githubRepos {
+    name
+    full_name
+    description
+    stars
+    forks
+    open_issues
+    open_prs
+    last_push
+    default_branch
+    url
+  }
+}
+    `
+
+/**
+ * __useGetGitHubReposQuery__
+ *
+ * To run a query within a React component, call `useGetGitHubReposQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGitHubReposQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGitHubReposQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetGitHubReposQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetGitHubReposQuery, GetGitHubReposQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetGitHubReposQuery, GetGitHubReposQueryVariables>(
+    GetGitHubReposDocument,
+    options,
+  )
+}
+export function useGetGitHubReposLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetGitHubReposQuery, GetGitHubReposQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetGitHubReposQuery, GetGitHubReposQueryVariables>(
+    GetGitHubReposDocument,
+    options,
+  )
+}
+export function useGetGitHubReposSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetGitHubReposQuery, GetGitHubReposQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetGitHubReposQuery, GetGitHubReposQueryVariables>(
+    GetGitHubReposDocument,
+    options,
+  )
+}
+export type GetGitHubReposQueryHookResult = ReturnType<typeof useGetGitHubReposQuery>
+export type GetGitHubReposLazyQueryHookResult = ReturnType<typeof useGetGitHubReposLazyQuery>
+export type GetGitHubReposSuspenseQueryHookResult = ReturnType<
+  typeof useGetGitHubReposSuspenseQuery
+>
+export type GetGitHubReposQueryResult = Apollo.QueryResult<
+  GetGitHubReposQuery,
+  GetGitHubReposQueryVariables
+>
+export const GetGitHubRateLimitDocument = gql`
+    query GetGitHubRateLimit {
+  githubRateLimit {
+    limit
+    remaining
+    reset_at
+    used
+  }
+}
+    `
+
+/**
+ * __useGetGitHubRateLimitQuery__
+ *
+ * To run a query within a React component, call `useGetGitHubRateLimitQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGitHubRateLimitQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGitHubRateLimitQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetGitHubRateLimitQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetGitHubRateLimitQuery, GetGitHubRateLimitQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetGitHubRateLimitQuery, GetGitHubRateLimitQueryVariables>(
+    GetGitHubRateLimitDocument,
+    options,
+  )
+}
+export function useGetGitHubRateLimitLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetGitHubRateLimitQuery,
+    GetGitHubRateLimitQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetGitHubRateLimitQuery, GetGitHubRateLimitQueryVariables>(
+    GetGitHubRateLimitDocument,
+    options,
+  )
+}
+export function useGetGitHubRateLimitSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetGitHubRateLimitQuery, GetGitHubRateLimitQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetGitHubRateLimitQuery, GetGitHubRateLimitQueryVariables>(
+    GetGitHubRateLimitDocument,
+    options,
+  )
+}
+export type GetGitHubRateLimitQueryHookResult = ReturnType<typeof useGetGitHubRateLimitQuery>
+export type GetGitHubRateLimitLazyQueryHookResult = ReturnType<
+  typeof useGetGitHubRateLimitLazyQuery
+>
+export type GetGitHubRateLimitSuspenseQueryHookResult = ReturnType<
+  typeof useGetGitHubRateLimitSuspenseQuery
+>
+export type GetGitHubRateLimitQueryResult = Apollo.QueryResult<
+  GetGitHubRateLimitQuery,
+  GetGitHubRateLimitQueryVariables
+>
 export const GetEventManagersDocument = gql`
     query GetEventManagers($event_id: ID!) {
   eventManagers(event_id: $event_id) {
@@ -8788,6 +16581,518 @@ export type GetEventsQueryHookResult = ReturnType<typeof useGetEventsQuery>
 export type GetEventsLazyQueryHookResult = ReturnType<typeof useGetEventsLazyQuery>
 export type GetEventsSuspenseQueryHookResult = ReturnType<typeof useGetEventsSuspenseQuery>
 export type GetEventsQueryResult = Apollo.QueryResult<GetEventsQuery, GetEventsQueryVariables>
+export const GetGlobalLeaderboardDocument = gql`
+    query GetGlobalLeaderboard($metric: LeaderboardMetric!, $limit: Int) {
+  globalLeaderboard(metric: $metric, limit: $limit) {
+    type
+    metric
+    period
+    updated_at
+    total_participants
+    entries {
+      rank
+      previous_rank
+      rank_change
+      user_id
+      username
+      display_name
+      avatar_url
+      level
+      value
+      is_current_user
+      country
+    }
+    current_user_entry {
+      rank
+      value
+      is_current_user
+    }
+    nearby_entries {
+      rank
+      username
+      avatar_url
+      value
+      is_current_user
+    }
+  }
+}
+    `
+
+/**
+ * __useGetGlobalLeaderboardQuery__
+ *
+ * To run a query within a React component, call `useGetGlobalLeaderboardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGlobalLeaderboardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGlobalLeaderboardQuery({
+ *   variables: {
+ *      metric: // value for 'metric'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetGlobalLeaderboardQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetGlobalLeaderboardQuery,
+    GetGlobalLeaderboardQueryVariables
+  > &
+    ({ variables: GetGlobalLeaderboardQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetGlobalLeaderboardQuery, GetGlobalLeaderboardQueryVariables>(
+    GetGlobalLeaderboardDocument,
+    options,
+  )
+}
+export function useGetGlobalLeaderboardLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetGlobalLeaderboardQuery,
+    GetGlobalLeaderboardQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetGlobalLeaderboardQuery, GetGlobalLeaderboardQueryVariables>(
+    GetGlobalLeaderboardDocument,
+    options,
+  )
+}
+export function useGetGlobalLeaderboardSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetGlobalLeaderboardQuery,
+        GetGlobalLeaderboardQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetGlobalLeaderboardQuery, GetGlobalLeaderboardQueryVariables>(
+    GetGlobalLeaderboardDocument,
+    options,
+  )
+}
+export type GetGlobalLeaderboardQueryHookResult = ReturnType<typeof useGetGlobalLeaderboardQuery>
+export type GetGlobalLeaderboardLazyQueryHookResult = ReturnType<
+  typeof useGetGlobalLeaderboardLazyQuery
+>
+export type GetGlobalLeaderboardSuspenseQueryHookResult = ReturnType<
+  typeof useGetGlobalLeaderboardSuspenseQuery
+>
+export type GetGlobalLeaderboardQueryResult = Apollo.QueryResult<
+  GetGlobalLeaderboardQuery,
+  GetGlobalLeaderboardQueryVariables
+>
+export const GetWeeklyLeaderboardDocument = gql`
+    query GetWeeklyLeaderboard($metric: LeaderboardMetric!, $limit: Int) {
+  weeklyLeaderboard(metric: $metric, limit: $limit) {
+    type
+    metric
+    period
+    total_participants
+    entries {
+      rank
+      user_id
+      username
+      display_name
+      avatar_url
+      level
+      value
+      is_current_user
+    }
+    current_user_entry {
+      rank
+      value
+    }
+  }
+}
+    `
+
+/**
+ * __useGetWeeklyLeaderboardQuery__
+ *
+ * To run a query within a React component, call `useGetWeeklyLeaderboardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWeeklyLeaderboardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWeeklyLeaderboardQuery({
+ *   variables: {
+ *      metric: // value for 'metric'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetWeeklyLeaderboardQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetWeeklyLeaderboardQuery,
+    GetWeeklyLeaderboardQueryVariables
+  > &
+    ({ variables: GetWeeklyLeaderboardQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetWeeklyLeaderboardQuery, GetWeeklyLeaderboardQueryVariables>(
+    GetWeeklyLeaderboardDocument,
+    options,
+  )
+}
+export function useGetWeeklyLeaderboardLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetWeeklyLeaderboardQuery,
+    GetWeeklyLeaderboardQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetWeeklyLeaderboardQuery, GetWeeklyLeaderboardQueryVariables>(
+    GetWeeklyLeaderboardDocument,
+    options,
+  )
+}
+export function useGetWeeklyLeaderboardSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetWeeklyLeaderboardQuery,
+        GetWeeklyLeaderboardQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetWeeklyLeaderboardQuery, GetWeeklyLeaderboardQueryVariables>(
+    GetWeeklyLeaderboardDocument,
+    options,
+  )
+}
+export type GetWeeklyLeaderboardQueryHookResult = ReturnType<typeof useGetWeeklyLeaderboardQuery>
+export type GetWeeklyLeaderboardLazyQueryHookResult = ReturnType<
+  typeof useGetWeeklyLeaderboardLazyQuery
+>
+export type GetWeeklyLeaderboardSuspenseQueryHookResult = ReturnType<
+  typeof useGetWeeklyLeaderboardSuspenseQuery
+>
+export type GetWeeklyLeaderboardQueryResult = Apollo.QueryResult<
+  GetWeeklyLeaderboardQuery,
+  GetWeeklyLeaderboardQueryVariables
+>
+export const GetFriendsLeaderboardDocument = gql`
+    query GetFriendsLeaderboard($metric: LeaderboardMetric!, $limit: Int) {
+  friendsLeaderboard(metric: $metric, limit: $limit) {
+    type
+    metric
+    total_participants
+    entries {
+      rank
+      user_id
+      username
+      display_name
+      avatar_url
+      level
+      value
+      is_current_user
+    }
+  }
+}
+    `
+
+/**
+ * __useGetFriendsLeaderboardQuery__
+ *
+ * To run a query within a React component, call `useGetFriendsLeaderboardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFriendsLeaderboardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFriendsLeaderboardQuery({
+ *   variables: {
+ *      metric: // value for 'metric'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetFriendsLeaderboardQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetFriendsLeaderboardQuery,
+    GetFriendsLeaderboardQueryVariables
+  > &
+    ({ variables: GetFriendsLeaderboardQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetFriendsLeaderboardQuery, GetFriendsLeaderboardQueryVariables>(
+    GetFriendsLeaderboardDocument,
+    options,
+  )
+}
+export function useGetFriendsLeaderboardLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetFriendsLeaderboardQuery,
+    GetFriendsLeaderboardQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetFriendsLeaderboardQuery, GetFriendsLeaderboardQueryVariables>(
+    GetFriendsLeaderboardDocument,
+    options,
+  )
+}
+export function useGetFriendsLeaderboardSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetFriendsLeaderboardQuery,
+        GetFriendsLeaderboardQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetFriendsLeaderboardQuery, GetFriendsLeaderboardQueryVariables>(
+    GetFriendsLeaderboardDocument,
+    options,
+  )
+}
+export type GetFriendsLeaderboardQueryHookResult = ReturnType<typeof useGetFriendsLeaderboardQuery>
+export type GetFriendsLeaderboardLazyQueryHookResult = ReturnType<
+  typeof useGetFriendsLeaderboardLazyQuery
+>
+export type GetFriendsLeaderboardSuspenseQueryHookResult = ReturnType<
+  typeof useGetFriendsLeaderboardSuspenseQuery
+>
+export type GetFriendsLeaderboardQueryResult = Apollo.QueryResult<
+  GetFriendsLeaderboardQuery,
+  GetFriendsLeaderboardQueryVariables
+>
+export const GetMyLeaderboardSummaryDocument = gql`
+    query GetMyLeaderboardSummary {
+  myLeaderboardSummary {
+    global_rank
+    regional_rank
+    friends_rank
+    weekly_change
+    top_metric
+    top_metric_rank
+    percentile
+  }
+}
+    `
+
+/**
+ * __useGetMyLeaderboardSummaryQuery__
+ *
+ * To run a query within a React component, call `useGetMyLeaderboardSummaryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyLeaderboardSummaryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyLeaderboardSummaryQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyLeaderboardSummaryQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetMyLeaderboardSummaryQuery,
+    GetMyLeaderboardSummaryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetMyLeaderboardSummaryQuery, GetMyLeaderboardSummaryQueryVariables>(
+    GetMyLeaderboardSummaryDocument,
+    options,
+  )
+}
+export function useGetMyLeaderboardSummaryLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetMyLeaderboardSummaryQuery,
+    GetMyLeaderboardSummaryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetMyLeaderboardSummaryQuery, GetMyLeaderboardSummaryQueryVariables>(
+    GetMyLeaderboardSummaryDocument,
+    options,
+  )
+}
+export function useGetMyLeaderboardSummarySuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetMyLeaderboardSummaryQuery,
+        GetMyLeaderboardSummaryQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    GetMyLeaderboardSummaryQuery,
+    GetMyLeaderboardSummaryQueryVariables
+  >(GetMyLeaderboardSummaryDocument, options)
+}
+export type GetMyLeaderboardSummaryQueryHookResult = ReturnType<
+  typeof useGetMyLeaderboardSummaryQuery
+>
+export type GetMyLeaderboardSummaryLazyQueryHookResult = ReturnType<
+  typeof useGetMyLeaderboardSummaryLazyQuery
+>
+export type GetMyLeaderboardSummarySuspenseQueryHookResult = ReturnType<
+  typeof useGetMyLeaderboardSummarySuspenseQuery
+>
+export type GetMyLeaderboardSummaryQueryResult = Apollo.QueryResult<
+  GetMyLeaderboardSummaryQuery,
+  GetMyLeaderboardSummaryQueryVariables
+>
+export const GetTopPerformersDocument = gql`
+    query GetTopPerformers($metric: LeaderboardMetric!, $period: String!, $limit: Int) {
+  topPerformers(metric: $metric, period: $period, limit: $limit) {
+    rank
+    user_id
+    username
+    display_name
+    avatar_url
+    level
+    value
+    is_current_user
+  }
+}
+    `
+
+/**
+ * __useGetTopPerformersQuery__
+ *
+ * To run a query within a React component, call `useGetTopPerformersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTopPerformersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTopPerformersQuery({
+ *   variables: {
+ *      metric: // value for 'metric'
+ *      period: // value for 'period'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetTopPerformersQuery(
+  baseOptions: Apollo.QueryHookOptions<GetTopPerformersQuery, GetTopPerformersQueryVariables> &
+    ({ variables: GetTopPerformersQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetTopPerformersQuery, GetTopPerformersQueryVariables>(
+    GetTopPerformersDocument,
+    options,
+  )
+}
+export function useGetTopPerformersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetTopPerformersQuery, GetTopPerformersQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetTopPerformersQuery, GetTopPerformersQueryVariables>(
+    GetTopPerformersDocument,
+    options,
+  )
+}
+export function useGetTopPerformersSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetTopPerformersQuery, GetTopPerformersQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetTopPerformersQuery, GetTopPerformersQueryVariables>(
+    GetTopPerformersDocument,
+    options,
+  )
+}
+export type GetTopPerformersQueryHookResult = ReturnType<typeof useGetTopPerformersQuery>
+export type GetTopPerformersLazyQueryHookResult = ReturnType<typeof useGetTopPerformersLazyQuery>
+export type GetTopPerformersSuspenseQueryHookResult = ReturnType<
+  typeof useGetTopPerformersSuspenseQuery
+>
+export type GetTopPerformersQueryResult = Apollo.QueryResult<
+  GetTopPerformersQuery,
+  GetTopPerformersQueryVariables
+>
+export const GetNearbyUsersDocument = gql`
+    query GetNearbyUsers($metric: LeaderboardMetric!, $range: Int) {
+  nearbyUsers(metric: $metric, range: $range) {
+    rank
+    user_id
+    username
+    display_name
+    avatar_url
+    level
+    value
+    is_current_user
+  }
+}
+    `
+
+/**
+ * __useGetNearbyUsersQuery__
+ *
+ * To run a query within a React component, call `useGetNearbyUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetNearbyUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetNearbyUsersQuery({
+ *   variables: {
+ *      metric: // value for 'metric'
+ *      range: // value for 'range'
+ *   },
+ * });
+ */
+export function useGetNearbyUsersQuery(
+  baseOptions: Apollo.QueryHookOptions<GetNearbyUsersQuery, GetNearbyUsersQueryVariables> &
+    ({ variables: GetNearbyUsersQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetNearbyUsersQuery, GetNearbyUsersQueryVariables>(
+    GetNearbyUsersDocument,
+    options,
+  )
+}
+export function useGetNearbyUsersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetNearbyUsersQuery, GetNearbyUsersQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetNearbyUsersQuery, GetNearbyUsersQueryVariables>(
+    GetNearbyUsersDocument,
+    options,
+  )
+}
+export function useGetNearbyUsersSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetNearbyUsersQuery, GetNearbyUsersQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetNearbyUsersQuery, GetNearbyUsersQueryVariables>(
+    GetNearbyUsersDocument,
+    options,
+  )
+}
+export type GetNearbyUsersQueryHookResult = ReturnType<typeof useGetNearbyUsersQuery>
+export type GetNearbyUsersLazyQueryHookResult = ReturnType<typeof useGetNearbyUsersLazyQuery>
+export type GetNearbyUsersSuspenseQueryHookResult = ReturnType<
+  typeof useGetNearbyUsersSuspenseQuery
+>
+export type GetNearbyUsersQueryResult = Apollo.QueryResult<
+  GetNearbyUsersQuery,
+  GetNearbyUsersQueryVariables
+>
 export const GetMyNotificationsDocument = gql`
     query GetMyNotifications($limit: Int, $offset: Int, $unread_only: Boolean, $type: NotificationType) {
   myNotifications(
