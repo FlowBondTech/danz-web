@@ -49,6 +49,12 @@ export default defineConfig({
             { text: 'Code Conventions', link: '/guide/conventions' },
             { text: 'Workflows', link: '/guide/workflows' },
           ]
+        },
+        {
+          text: 'Core Systems',
+          items: [
+            { text: 'Point System', link: '/guide/point-system' },
+          ]
         }
       ],
       '/architecture/': [
@@ -122,6 +128,12 @@ export default defineConfig({
             { text: 'Infrastructure', link: '/deployment/infrastructure' },
             { text: 'Environment Variables', link: '/deployment/environment' },
             { text: 'CI/CD', link: '/deployment/cicd' },
+          ]
+        },
+        {
+          text: 'Mobile',
+          items: [
+            { text: 'Testing & Deployment', link: '/deployment/mobile-testing-deployment' },
           ]
         }
       ],
