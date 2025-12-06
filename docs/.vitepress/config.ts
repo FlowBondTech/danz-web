@@ -79,6 +79,17 @@ export default defineConfig({
             { text: 'Achievements', link: '/api/achievements' },
             { text: 'Social', link: '/api/social' },
           ]
+        },
+        {
+          text: 'Cross-Platform APIs',
+          items: [
+            { text: 'Wearables', link: '/api/wearables' },
+            { text: 'Challenges', link: '/api/challenges' },
+            { text: 'Leaderboards', link: '/api/leaderboards' },
+            { text: 'Activity Feed', link: '/api/activity-feed' },
+            { text: 'Analytics', link: '/api/analytics' },
+            { text: 'Telegram Miniapp', link: '/api/miniapp' },
+          ]
         }
       ],
       '/database/': [
@@ -89,6 +100,7 @@ export default defineConfig({
             { text: 'Users Table', link: '/database/users' },
             { text: 'Events Tables', link: '/database/events' },
             { text: 'Social Tables', link: '/database/social' },
+            { text: 'Cross-Platform Tables', link: '/database/cross-platform' },
             { text: 'Indexes & Performance', link: '/database/indexes' },
           ]
         }
