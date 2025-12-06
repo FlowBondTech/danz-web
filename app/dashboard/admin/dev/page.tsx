@@ -2,7 +2,7 @@
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import { useGetMyProfileQuery } from '@/src/generated/graphql'
-import { gql, useQuery } from '@apollo/client'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -10,18 +10,23 @@ import {
   FiActivity,
   FiAlertTriangle,
   FiCheckCircle,
+  FiChevronRight,
   FiClock,
   FiCode,
   FiDatabase,
+  FiEdit2,
   FiGitBranch,
   FiGitPullRequest,
   FiList,
   FiMessageSquare,
+  FiPlus,
   FiRefreshCw,
   FiServer,
   FiSettings,
   FiTag,
   FiTrendingUp,
+  FiUser,
+  FiX,
   FiZap,
 } from 'react-icons/fi'
 
@@ -63,12 +68,95 @@ const GET_SYSTEM_HEALTH = gql`
   }
 `
 
+const GET_DEV_TASKS = gql`
+  query GetDevTasks($filter: DevTaskFilter, $limit: Int, $offset: Int) {
+    devTasks(filter: $filter, limit: $limit, offset: $offset) {
+      tasks {
+        id
+        title
+        description
+        task_type
+        status
+        priority
+        assigned_to {
+          privy_id
+          username
+          display_name
+          avatar_url
+        }
+        due_date
+        estimated_hours
+        sprint
+        tags
+        created_at
+        updated_at
+      }
+      total_count
+      has_more
+    }
+  }
+`
+
+const UPDATE_DEV_TASK = gql`
+  mutation UpdateDevTask($id: ID!, $input: UpdateDevTaskInput!) {
+    updateDevTask(id: $id, input: $input) {
+      id
+      status
+      updated_at
+    }
+  }
+`
+
+const CREATE_DEV_TASK = gql`
+  mutation CreateDevTask($input: CreateDevTaskInput!) {
+    createDevTask(input: $input) {
+      id
+      title
+      description
+      task_type
+      status
+      priority
+      sprint
+      created_at
+    }
+  }
+`
+
 interface SystemHealth {
   service: string
   status: string
   response_time_ms: number | null
   last_checked: string
   error_message: string | null
+}
+
+interface DevTask {
+  id: string
+  title: string
+  description: string | null
+  task_type: string
+  status: 'todo' | 'in_progress' | 'blocked' | 'done'
+  priority: 'low' | 'medium' | 'high' | 'urgent'
+  assigned_to: {
+    privy_id: string
+    username: string | null
+    display_name: string | null
+    avatar_url: string | null
+  } | null
+  due_date: string | null
+  estimated_hours: number | null
+  sprint: string | null
+  tags: string[] | null
+  created_at: string
+  updated_at: string
+}
+
+interface DevTasksData {
+  devTasks: {
+    tasks: DevTask[]
+    total_count: number
+    has_more: boolean
+  }
 }
 
 interface DevStats {
@@ -92,10 +180,39 @@ interface DevStats {
   } | null
 }
 
+// Task status columns for kanban
+const TASK_COLUMNS = [
+  { id: 'todo', label: 'To Do', color: 'gray' },
+  { id: 'in_progress', label: 'In Progress', color: 'blue' },
+  { id: 'blocked', label: 'Blocked', color: 'red' },
+  { id: 'done', label: 'Done', color: 'green' },
+] as const
+
+const PRIORITY_COLORS = {
+  urgent: 'bg-red-500/20 text-red-400 border-red-500/30',
+  high: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+  medium: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+  low: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
+}
+
+const TASK_TYPE_ICONS: Record<string, string> = {
+  feature: '✨',
+  bug: '🐛',
+  improvement: '🔧',
+  documentation: '📝',
+  testing: '🧪',
+  devops: '🚀',
+  design: '🎨',
+  other: '📋',
+}
+
 export default function DevPanelPage() {
   const { authenticated, ready } = usePrivy()
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<'overview' | 'features' | 'tasks' | 'github' | 'system'>('overview')
+  const [showCreateTask, setShowCreateTask] = useState(false)
+  const [selectedTask, setSelectedTask] = useState<DevTask | null>(null)
+  const [taskFilter, setTaskFilter] = useState<string>('all')
 
   const { data: profileData, loading: profileLoading } = useGetMyProfileQuery({
     skip: !authenticated,
@@ -118,6 +235,26 @@ export default function DevPanelPage() {
     }
   )
 
+  const { data: tasksData, loading: tasksLoading, refetch: refetchTasks } = useQuery<DevTasksData>(
+    GET_DEV_TASKS,
+    {
+      variables: { limit: 100 },
+      skip: !authenticated || !['dev', 'admin'].includes(userRole),
+    }
+  )
+
+  const [updateTask] = useMutation(UPDATE_DEV_TASK, {
+    onCompleted: () => refetchTasks(),
+  })
+
+  const [createTask] = useMutation(CREATE_DEV_TASK, {
+    onCompleted: () => {
+      refetchTasks()
+      refetchStats()
+      setShowCreateTask(false)
+    },
+  })
+
   useEffect(() => {
     if (ready && !authenticated) {
       router.push('/')
@@ -139,7 +276,29 @@ export default function DevPanelPage() {
   const handleRefresh = () => {
     refetchStats()
     refetchHealth()
+    refetchTasks()
   }
+
+  const handleTaskStatusChange = async (taskId: string, newStatus: string) => {
+    try {
+      await updateTask({
+        variables: {
+          id: taskId,
+          input: { status: newStatus },
+        },
+      })
+    } catch (error) {
+      console.error('Failed to update task status:', error)
+    }
+  }
+
+  // Group tasks by status for kanban
+  const tasksByStatus = TASK_COLUMNS.reduce((acc, column) => {
+    acc[column.id] = tasksData?.devTasks?.tasks?.filter(
+      task => task.status === column.id && (taskFilter === 'all' || task.priority === taskFilter)
+    ) || []
+    return acc
+  }, {} as Record<string, DevTask[]>)
 
   if (!ready || profileLoading) {
     return (
@@ -543,17 +702,179 @@ export default function DevPanelPage() {
           </div>
         )}
 
-        {/* Tasks Tab */}
+        {/* Tasks Tab - Kanban Board */}
         {activeTab === 'tasks' && (
-          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-8 text-center">
-            <FiList className="text-neon-pink mx-auto mb-4" size={48} />
-            <h3 className="text-lg font-semibold text-text-primary mb-2">Dev Tasks</h3>
-            <p className="text-text-secondary mb-4">
-              This section will display development tasks with sprint management and progress tracking.
-            </p>
-            <p className="text-text-secondary text-sm">
-              Backend deployment required. Coming soon!
-            </p>
+          <div className="space-y-4">
+            {/* Header with filters and actions */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0">
+                <span className="text-text-secondary text-sm whitespace-nowrap">Filter:</span>
+                {['all', 'urgent', 'high', 'medium', 'low'].map(priority => (
+                  <button
+                    key={priority}
+                    onClick={() => setTaskFilter(priority)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
+                      taskFilter === priority
+                        ? 'bg-neon-purple text-white'
+                        : 'bg-bg-secondary text-text-secondary hover:text-text-primary'
+                    }`}
+                  >
+                    {priority.charAt(0).toUpperCase() + priority.slice(1)}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={() => setShowCreateTask(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-neon-purple hover:bg-neon-purple/80 text-white rounded-lg transition-colors text-sm font-medium"
+              >
+                <FiPlus size={16} />
+                New Task
+              </button>
+            </div>
+
+            {/* Kanban Board */}
+            {tasksLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {TASK_COLUMNS.map(column => (
+                  <div key={column.id} className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 min-h-[300px]">
+                    <div className="h-6 bg-white/10 rounded w-1/2 mb-4 animate-pulse" />
+                    <div className="space-y-3">
+                      {[1, 2, 3].map(i => (
+                        <div key={i} className="bg-bg-primary rounded-lg p-4 animate-pulse">
+                          <div className="h-4 bg-white/10 rounded w-3/4 mb-2" />
+                          <div className="h-3 bg-white/10 rounded w-1/2" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : tasksData?.devTasks?.tasks?.length === 0 && !tasksLoading ? (
+              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-8 text-center">
+                <FiList className="text-neon-pink mx-auto mb-4" size={48} />
+                <h3 className="text-lg font-semibold text-text-primary mb-2">No Tasks Yet</h3>
+                <p className="text-text-secondary mb-4">
+                  Create your first task to get started with the kanban board.
+                </p>
+                <button
+                  onClick={() => setShowCreateTask(true)}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-neon-purple hover:bg-neon-purple/80 text-white rounded-lg transition-colors"
+                >
+                  <FiPlus size={16} />
+                  Create First Task
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {TASK_COLUMNS.map(column => (
+                  <div
+                    key={column.id}
+                    className={`bg-bg-secondary rounded-xl border border-${column.color}-400/20 p-4 min-h-[400px]`}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className={`font-semibold text-${column.color}-400 flex items-center gap-2`}>
+                        {column.id === 'todo' && <FiClock size={16} />}
+                        {column.id === 'in_progress' && <FiZap size={16} />}
+                        {column.id === 'blocked' && <FiAlertTriangle size={16} />}
+                        {column.id === 'done' && <FiCheckCircle size={16} />}
+                        {column.label}
+                      </h3>
+                      <span className={`text-xs px-2 py-1 rounded-full bg-${column.color}-400/20 text-${column.color}-400`}>
+                        {tasksByStatus[column.id]?.length || 0}
+                      </span>
+                    </div>
+
+                    <div className="space-y-3 max-h-[calc(100vh-400px)] overflow-y-auto pr-1">
+                      {tasksByStatus[column.id]?.map(task => (
+                        <div
+                          key={task.id}
+                          className="bg-bg-primary rounded-lg p-3 border border-white/5 hover:border-neon-purple/30 transition-colors cursor-pointer group"
+                          onClick={() => setSelectedTask(task)}
+                        >
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="text-base">{TASK_TYPE_ICONS[task.task_type] || TASK_TYPE_ICONS.other}</span>
+                              <h4 className="text-sm font-medium text-text-primary truncate">{task.title}</h4>
+                            </div>
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded border ${PRIORITY_COLORS[task.priority]}`}>
+                              {task.priority}
+                            </span>
+                          </div>
+
+                          {task.description && (
+                            <p className="text-xs text-text-secondary line-clamp-2 mb-2">{task.description}</p>
+                          )}
+
+                          <div className="flex items-center justify-between text-[10px] text-text-secondary">
+                            <div className="flex items-center gap-2">
+                              {task.assigned_to && (
+                                <span className="flex items-center gap-1">
+                                  <FiUser size={10} />
+                                  {task.assigned_to.username || task.assigned_to.display_name || 'Unassigned'}
+                                </span>
+                              )}
+                              {task.sprint && (
+                                <span className="px-1.5 py-0.5 bg-neon-purple/20 text-neon-purple rounded">
+                                  {task.sprint}
+                                </span>
+                              )}
+                            </div>
+                            {task.estimated_hours && (
+                              <span>{task.estimated_hours}h</span>
+                            )}
+                          </div>
+
+                          {/* Quick status change buttons - visible on hover */}
+                          <div className="hidden group-hover:flex items-center gap-1 mt-2 pt-2 border-t border-white/10">
+                            {TASK_COLUMNS.filter(c => c.id !== task.status).map(col => (
+                              <button
+                                key={col.id}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleTaskStatusChange(task.id, col.id)
+                                }}
+                                className={`flex-1 text-[10px] py-1 rounded bg-${col.color}-400/10 text-${col.color}-400 hover:bg-${col.color}-400/20 transition-colors`}
+                              >
+                                → {col.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+
+                      {tasksByStatus[column.id]?.length === 0 && (
+                        <div className="text-center py-8 text-text-secondary text-sm">
+                          No tasks
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Create Task Modal */}
+            {showCreateTask && (
+              <CreateTaskModal
+                onClose={() => setShowCreateTask(false)}
+                onSubmit={async (data) => {
+                  try {
+                    await createTask({ variables: { input: data } })
+                  } catch (error) {
+                    console.error('Failed to create task:', error)
+                  }
+                }}
+              />
+            )}
+
+            {/* Task Detail Modal */}
+            {selectedTask && (
+              <TaskDetailModal
+                task={selectedTask}
+                onClose={() => setSelectedTask(null)}
+                onStatusChange={handleTaskStatusChange}
+              />
+            )}
           </div>
         )}
 
@@ -628,5 +949,288 @@ export default function DevPanelPage() {
         )}
       </div>
     </DashboardLayout>
+  )
+}
+
+// Create Task Modal Component
+function CreateTaskModal({
+  onClose,
+  onSubmit,
+}: {
+  onClose: () => void
+  onSubmit: (data: {
+    title: string
+    description?: string
+    task_type: string
+    priority: string
+    status: string
+    sprint?: string
+    estimated_hours?: number
+  }) => Promise<void>
+}) {
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    task_type: 'feature',
+    priority: 'medium',
+    status: 'todo',
+    sprint: '',
+    estimated_hours: '',
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!formData.title.trim()) return
+
+    setIsSubmitting(true)
+    try {
+      await onSubmit({
+        title: formData.title,
+        description: formData.description || undefined,
+        task_type: formData.task_type,
+        priority: formData.priority,
+        status: formData.status,
+        sprint: formData.sprint || undefined,
+        estimated_hours: formData.estimated_hours ? parseInt(formData.estimated_hours) : undefined,
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-bg-secondary rounded-xl border border-neon-purple/30 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-4 border-b border-white/10">
+          <h2 className="text-lg font-semibold text-text-primary">Create New Task</h2>
+          <button onClick={onClose} className="text-text-secondary hover:text-text-primary">
+            <FiX size={20} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-4 space-y-4">
+          <div>
+            <label className="block text-sm text-text-secondary mb-1">Title *</label>
+            <input
+              type="text"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
+              placeholder="Task title..."
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-text-secondary mb-1">Description</label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none min-h-[100px]"
+              placeholder="Task description..."
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-text-secondary mb-1">Type</label>
+              <select
+                value={formData.task_type}
+                onChange={(e) => setFormData({ ...formData, task_type: e.target.value })}
+                className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
+              >
+                <option value="feature">✨ Feature</option>
+                <option value="bug">🐛 Bug</option>
+                <option value="improvement">🔧 Improvement</option>
+                <option value="documentation">📝 Documentation</option>
+                <option value="testing">🧪 Testing</option>
+                <option value="devops">🚀 DevOps</option>
+                <option value="design">🎨 Design</option>
+                <option value="other">📋 Other</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm text-text-secondary mb-1">Priority</label>
+              <select
+                value={formData.priority}
+                onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
+              >
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="urgent">Urgent</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-text-secondary mb-1">Sprint</label>
+              <input
+                type="text"
+                value={formData.sprint}
+                onChange={(e) => setFormData({ ...formData, sprint: e.target.value })}
+                className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
+                placeholder="Sprint-1"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm text-text-secondary mb-1">Est. Hours</label>
+              <input
+                type="number"
+                value={formData.estimated_hours}
+                onChange={(e) => setFormData({ ...formData, estimated_hours: e.target.value })}
+                className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
+                placeholder="4"
+                min="0"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-text-secondary hover:text-text-primary transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting || !formData.title.trim()}
+              className="px-4 py-2 bg-neon-purple hover:bg-neon-purple/80 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+            >
+              {isSubmitting ? 'Creating...' : 'Create Task'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+// Task Detail Modal Component
+function TaskDetailModal({
+  task,
+  onClose,
+  onStatusChange,
+}: {
+  task: DevTask
+  onClose: () => void
+  onStatusChange: (taskId: string, status: string) => Promise<void>
+}) {
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-bg-secondary rounded-xl border border-neon-purple/30 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-4 border-b border-white/10">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">{TASK_TYPE_ICONS[task.task_type] || TASK_TYPE_ICONS.other}</span>
+            <h2 className="text-lg font-semibold text-text-primary">{task.title}</h2>
+          </div>
+          <button onClick={onClose} className="text-text-secondary hover:text-text-primary">
+            <FiX size={20} />
+          </button>
+        </div>
+
+        <div className="p-4 space-y-4">
+          {/* Status and Priority */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className={`px-2 py-1 rounded text-xs font-medium ${PRIORITY_COLORS[task.priority]}`}>
+              {task.priority.toUpperCase()}
+            </span>
+            <span className={`px-2 py-1 rounded text-xs font-medium ${
+              task.status === 'todo' ? 'bg-gray-400/20 text-gray-400' :
+              task.status === 'in_progress' ? 'bg-blue-400/20 text-blue-400' :
+              task.status === 'blocked' ? 'bg-red-400/20 text-red-400' :
+              'bg-green-400/20 text-green-400'
+            }`}>
+              {task.status.replace('_', ' ').toUpperCase()}
+            </span>
+            {task.sprint && (
+              <span className="px-2 py-1 bg-neon-purple/20 text-neon-purple rounded text-xs">
+                {task.sprint}
+              </span>
+            )}
+          </div>
+
+          {/* Description */}
+          {task.description && (
+            <div>
+              <h3 className="text-sm font-medium text-text-secondary mb-2">Description</h3>
+              <p className="text-text-primary text-sm whitespace-pre-wrap">{task.description}</p>
+            </div>
+          )}
+
+          {/* Details */}
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            {task.assigned_to && (
+              <div>
+                <span className="text-text-secondary">Assigned to:</span>
+                <p className="text-text-primary">{task.assigned_to.display_name || task.assigned_to.username || 'Unknown'}</p>
+              </div>
+            )}
+            {task.estimated_hours && (
+              <div>
+                <span className="text-text-secondary">Estimated:</span>
+                <p className="text-text-primary">{task.estimated_hours} hours</p>
+              </div>
+            )}
+            {task.due_date && (
+              <div>
+                <span className="text-text-secondary">Due date:</span>
+                <p className="text-text-primary">{new Date(task.due_date).toLocaleDateString()}</p>
+              </div>
+            )}
+            <div>
+              <span className="text-text-secondary">Created:</span>
+              <p className="text-text-primary">{new Date(task.created_at).toLocaleDateString()}</p>
+            </div>
+          </div>
+
+          {/* Tags */}
+          {task.tags && task.tags.length > 0 && (
+            <div>
+              <h3 className="text-sm font-medium text-text-secondary mb-2">Tags</h3>
+              <div className="flex flex-wrap gap-2">
+                {task.tags.map(tag => (
+                  <span key={tag} className="px-2 py-1 bg-white/10 text-text-primary rounded text-xs">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Status Change Actions */}
+          <div className="pt-4 border-t border-white/10">
+            <h3 className="text-sm font-medium text-text-secondary mb-3">Move to:</h3>
+            <div className="flex flex-wrap gap-2">
+              {TASK_COLUMNS.filter(col => col.id !== task.status).map(col => (
+                <button
+                  key={col.id}
+                  onClick={() => onStatusChange(task.id, col.id)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
+                    ${col.color === 'gray' ? 'bg-gray-400/20 text-gray-400 hover:bg-gray-400/30' : ''}
+                    ${col.color === 'blue' ? 'bg-blue-400/20 text-blue-400 hover:bg-blue-400/30' : ''}
+                    ${col.color === 'red' ? 'bg-red-400/20 text-red-400 hover:bg-red-400/30' : ''}
+                    ${col.color === 'green' ? 'bg-green-400/20 text-green-400 hover:bg-green-400/30' : ''}
+                  `}
+                >
+                  {col.id === 'todo' && <FiClock className="inline mr-1" size={14} />}
+                  {col.id === 'in_progress' && <FiZap className="inline mr-1" size={14} />}
+                  {col.id === 'blocked' && <FiAlertTriangle className="inline mr-1" size={14} />}
+                  {col.id === 'done' && <FiCheckCircle className="inline mr-1" size={14} />}
+                  {col.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
