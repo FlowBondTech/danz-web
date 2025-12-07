@@ -18,7 +18,7 @@ export default defineConfig({
     siteTitle: 'DANZ Docs',
 
     nav: [
-      { text: 'Guide', link: '/guide/getting-started' },
+      { text: 'Guide', link: '/guide/' },
       { text: 'Architecture', link: '/architecture/overview' },
       { text: 'API Reference', link: '/api/graphql' },
       { text: 'Database', link: '/database/schema' },
@@ -38,6 +38,7 @@ export default defineConfig({
         {
           text: 'Introduction',
           items: [
+            { text: 'Guide Index', link: '/guide/' },
             { text: 'Getting Started', link: '/guide/getting-started' },
             { text: 'Project Overview', link: '/guide/overview' },
             { text: 'Tech Stack', link: '/guide/tech-stack' },
@@ -55,6 +56,12 @@ export default defineConfig({
           text: 'Core Systems',
           items: [
             { text: 'Point System', link: '/guide/point-system' },
+          ]
+        },
+        {
+          text: 'Integration Guides',
+          items: [
+            { text: 'Wearable Integration', link: '/guide/wearable-integration' },
           ]
         },
         {
