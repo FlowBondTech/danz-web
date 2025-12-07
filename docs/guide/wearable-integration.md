@@ -603,6 +603,235 @@ class DANZDataField extends Ui.DataField {
 }
 ```
 
+### Android / Wear OS (Kotlin)
+
+```kotlin
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import androidx.health.services.client.HealthServicesClient
+import androidx.health.services.client.data.DataType
+import kotlinx.coroutines.flow.collect
+
+class DANZWearService : SensorEventListener {
+    private lateinit var sensorManager: SensorManager
+    private lateinit var healthClient: HealthServicesClient
+    private val motionBuffer = mutableListOf<MotionFrame>()
+    private var currentHeartRate = 0
+
+    fun startDanceSession(context: Context) {
+        sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        healthClient = HealthServicesClient.getClient(context)
+
+        // Register accelerometer and gyroscope
+        val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        val gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+
+        sensorManager.registerListener(
+            this,
+            accelerometer,
+            SensorManager.SENSOR_DELAY_GAME  // ~50 Hz
+        )
+        sensorManager.registerListener(
+            this,
+            gyroscope,
+            SensorManager.SENSOR_DELAY_GAME
+        )
+
+        // Start heart rate monitoring via Health Services
+        startHeartRateMonitoring()
+    }
+
+    private fun startHeartRateMonitoring() {
+        val passiveMonitoringClient = healthClient.passiveMonitoringClient
+
+        lifecycleScope.launch {
+            passiveMonitoringClient.getPassiveMonitoringDataFlow()
+                .collect { dataPoints ->
+                    dataPoints.getData(DataType.HEART_RATE_BPM).forEach { point ->
+                        currentHeartRate = point.value.toInt()
+                    }
+                }
+        }
+    }
+
+    private var lastAccel = FloatArray(3)
+    private var lastGyro = FloatArray(3)
+
+    override fun onSensorChanged(event: SensorEvent) {
+        when (event.sensor.type) {
+            Sensor.TYPE_ACCELEROMETER -> {
+                lastAccel = event.values.clone()
+            }
+            Sensor.TYPE_GYROSCOPE -> {
+                lastGyro = event.values.clone()
+
+                // Create motion frame when we have both readings
+                val frame = MotionFrame(
+                    accelerometer_x = lastAccel[0].toDouble(),
+                    accelerometer_y = lastAccel[1].toDouble(),
+                    accelerometer_z = lastAccel[2].toDouble(),
+                    gyroscope_x = lastGyro[0].toDouble(),
+                    gyroscope_y = lastGyro[1].toDouble(),
+                    gyroscope_z = lastGyro[2].toDouble(),
+                    heart_rate = currentHeartRate,
+                    recorded_at = System.currentTimeMillis()
+                )
+
+                motionBuffer.add(frame)
+
+                // Batch sync every 100 frames
+                if (motionBuffer.size >= 100) {
+                    syncToDANZ()
+                }
+            }
+        }
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+
+    private fun syncToDANZ() {
+        val framesToSync = motionBuffer.toList()
+        motionBuffer.clear()
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val response = apolloClient.mutation(
+                    SyncWearableMotionMutation(
+                        data = framesToSync.map { it.toGraphQLInput() }
+                    )
+                ).execute()
+
+                if (response.hasErrors()) {
+                    // Re-queue on failure
+                    motionBuffer.addAll(0, framesToSync)
+                }
+            } catch (e: Exception) {
+                // Handle offline - re-queue data
+                motionBuffer.addAll(0, framesToSync)
+            }
+        }
+    }
+
+    fun stopSession() {
+        sensorManager.unregisterListener(this)
+        // Sync remaining data
+        if (motionBuffer.isNotEmpty()) {
+            syncToDANZ()
+        }
+    }
+}
+
+data class MotionFrame(
+    val accelerometer_x: Double,
+    val accelerometer_y: Double,
+    val accelerometer_z: Double,
+    val gyroscope_x: Double,
+    val gyroscope_y: Double,
+    val gyroscope_z: Double,
+    val heart_rate: Int,
+    val recorded_at: Long
+) {
+    fun toGraphQLInput() = WearableMotionInput(
+        accelerometer_x = accelerometer_x,
+        accelerometer_y = accelerometer_y,
+        accelerometer_z = accelerometer_z,
+        gyroscope_x = gyroscope_x,
+        gyroscope_y = gyroscope_y,
+        gyroscope_z = gyroscope_z,
+        recorded_at = Instant.ofEpochMilli(recorded_at).toString()
+    )
+}
+```
+
+### Android Phone (Companion App)
+
+For users without a smartwatch, use phone sensors:
+
+```kotlin
+class DANZPhoneTracker(private val context: Context) : SensorEventListener {
+    private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    private val motionBuffer = mutableListOf<MotionFrame>()
+
+    fun startTracking() {
+        // Use phone's accelerometer and gyroscope
+        val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
+        val gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+
+        // Register with game delay for smooth tracking
+        accelerometer?.let {
+            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME)
+        }
+        gyroscope?.let {
+            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME)
+        }
+    }
+
+    override fun onSensorChanged(event: SensorEvent) {
+        // Same processing as Wear OS
+        // Buffer and sync motion data to DANZ API
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+
+    fun stopTracking() {
+        sensorManager.unregisterListener(this)
+    }
+}
+```
+
+### Samsung Galaxy Watch (Tizen/Wear OS)
+
+```kotlin
+// For Galaxy Watch 4+ (Wear OS based)
+// Use the same Android/Wear OS implementation above
+
+// For older Galaxy Watch (Tizen)
+// Use Samsung Health SDK:
+import com.samsung.android.sdk.healthdata.*
+
+class DANZSamsungHealth(private val context: Context) {
+    private lateinit var healthDataStore: HealthDataStore
+    private val connectionListener = object : HealthDataStore.ConnectionListener {
+        override fun onConnected() {
+            // Start reading health data
+            startHealthDataSync()
+        }
+        override fun onConnectionFailed(error: HealthConnectionErrorResult) {
+            // Handle connection failure
+        }
+        override fun onDisconnected() {}
+    }
+
+    fun connect() {
+        healthDataStore = HealthDataStore(context, connectionListener)
+        healthDataStore.connectService()
+    }
+
+    private fun startHealthDataSync() {
+        val resolver = HealthDataResolver(healthDataStore, null)
+
+        // Query heart rate data
+        val request = HealthDataResolver.ReadRequest.Builder()
+            .setDataType(HealthConstants.HeartRate.HEALTH_DATA_TYPE)
+            .setProperties(arrayOf(
+                HealthConstants.HeartRate.HEART_RATE,
+                HealthConstants.HeartRate.START_TIME
+            ))
+            .build()
+
+        resolver.read(request).setResultListener { result ->
+            result.forEach { data ->
+                val heartRate = data.getInt(HealthConstants.HeartRate.HEART_RATE)
+                val timestamp = data.getLong(HealthConstants.HeartRate.START_TIME)
+                // Sync to DANZ
+            }
+        }
+    }
+}
+```
+
 ---
 
 ## Part 9: Error Handling & Recovery
