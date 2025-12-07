@@ -56,6 +56,12 @@ export default defineConfig({
           items: [
             { text: 'Point System', link: '/guide/point-system' },
           ]
+        },
+        {
+          text: 'Mobile Development',
+          items: [
+            { text: 'Mobile Onboarding', link: '/guide/mobile-onboarding' },
+          ]
         }
       ],
       '/architecture/': [
