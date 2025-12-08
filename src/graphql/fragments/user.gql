@@ -65,6 +65,8 @@ fragment UserFullInfo on User {
   upcoming_events_count
   total_achievements
   dance_bonds_count
+  referral_count
+  referral_points_earned
   created_at
   updated_at
   last_active_at

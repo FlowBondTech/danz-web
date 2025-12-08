@@ -1,6 +1,8 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
+import { useAuth } from '@/src/contexts/AuthContext'
+import { useUserPoints } from '@/src/hooks/useReferralData'
 import { usePrivy, useWallets, useCreateWallet, useFundWallet } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState, useMemo } from 'react'
@@ -23,6 +25,10 @@ import {
   FiAlertTriangle,
   FiX,
   FiRefreshCw,
+  FiStar,
+  FiGift,
+  FiTrendingUp,
+  FiAward,
 } from 'react-icons/fi'
 import { SiEthereum, SiSolana } from 'react-icons/si'
 import { useWalletBalances } from '@/src/hooks/useWalletBalances'
@@ -37,6 +43,8 @@ interface WalletInfo {
 
 export default function WalletPage() {
   const { authenticated, ready, user, linkWallet, unlinkWallet, exportWallet } = usePrivy()
+  const { user: authUser } = useAuth()
+  const { points, loading: pointsLoading } = useUserPoints(authUser?.username)
   const { wallets: connectedWallets } = useWallets()
   const { createWallet } = useCreateWallet()
   const { fundWallet } = useFundWallet()
@@ -240,6 +248,90 @@ export default function WalletPage() {
             Manage your embedded and linked wallets for $DANZ rewards and NFT claims
           </p>
         </div>
+
+        {/* DANZ Points Section */}
+        <section aria-label="DANZ Points" className="mb-8">
+          <div className="bg-gradient-to-r from-neon-purple/20 via-neon-pink/20 to-yellow-500/20 rounded-2xl p-[1px]">
+            <div className="bg-bg-secondary rounded-2xl p-6">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                {/* Points Balance */}
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-yellow-500/20">
+                    <FiStar className="w-8 h-8 text-white" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <p className="text-text-secondary text-sm mb-1">DANZ Points Balance</p>
+                    {pointsLoading ? (
+                      <div className="w-6 h-6 border-2 border-neon-purple border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <p className="text-4xl font-bold text-white">
+                        {points?.current_points_balance?.toLocaleString() || 0}
+                        <span className="text-lg text-text-secondary ml-2">pts</span>
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Points Stats */}
+                <div className="grid grid-cols-3 gap-4 md:gap-6">
+                  <div className="text-center md:text-right">
+                    <div className="flex items-center justify-center md:justify-end gap-2 mb-1">
+                      <FiTrendingUp className="w-4 h-4 text-green-400" aria-hidden="true" />
+                      <span className="text-xs text-text-secondary">Earned</span>
+                    </div>
+                    <p className="text-lg font-bold text-green-400">
+                      {points?.total_points_earned?.toLocaleString() || 0}
+                    </p>
+                  </div>
+                  <div className="text-center md:text-right">
+                    <div className="flex items-center justify-center md:justify-end gap-2 mb-1">
+                      <FiGift className="w-4 h-4 text-purple-400" aria-hidden="true" />
+                      <span className="text-xs text-text-secondary">Referrals</span>
+                    </div>
+                    <p className="text-lg font-bold text-purple-400">
+                      {points?.referral_points_earned?.toLocaleString() || 0}
+                    </p>
+                  </div>
+                  <div className="text-center md:text-right">
+                    <div className="flex items-center justify-center md:justify-end gap-2 mb-1">
+                      <FiAward className="w-4 h-4 text-red-400" aria-hidden="true" />
+                      <span className="text-xs text-text-secondary">Spent</span>
+                    </div>
+                    <p className="text-lg font-bold text-red-400">
+                      {points?.total_points_spent?.toLocaleString() || 0}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Points Info */}
+              <div className="mt-6 pt-6 border-t border-white/10">
+                <h3 className="text-sm font-medium text-text-primary mb-3">What are DANZ Points?</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                  <div className="flex items-center gap-2 text-text-secondary">
+                    <span className="w-2 h-2 rounded-full bg-green-400" aria-hidden="true" />
+                    <span>+20 per referral</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-text-secondary">
+                    <span className="w-2 h-2 rounded-full bg-blue-400" aria-hidden="true" />
+                    <span>+5 daily login</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-text-secondary">
+                    <span className="w-2 h-2 rounded-full bg-purple-400" aria-hidden="true" />
+                    <span>+10 per session</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-text-secondary">
+                    <span className="w-2 h-2 rounded-full bg-yellow-400" aria-hidden="true" />
+                    <span>+50 per event</span>
+                  </div>
+                </div>
+                <p className="mt-3 text-xs text-text-secondary">
+                  Points can be redeemed for $DANZ tokens, exclusive NFTs, event discounts, and premium features. Stay tuned!
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Alerts */}
         <AnimatePresence>

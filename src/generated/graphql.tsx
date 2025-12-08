@@ -4188,6 +4188,8 @@ export type UserFullInfoFragment = {
   upcoming_events_count?: number | null
   total_achievements?: number | null
   dance_bonds_count?: number | null
+  referral_count?: number | null
+  referral_points_earned?: number | null
   created_at?: any | null
   updated_at?: any | null
   last_active_at?: any | null
@@ -5441,6 +5443,8 @@ export type UpdateProfileMutation = {
     upcoming_events_count?: number | null
     total_achievements?: number | null
     dance_bonds_count?: number | null
+    referral_count?: number | null
+    referral_points_earned?: number | null
     created_at?: any | null
     updated_at?: any | null
     last_active_at?: any | null
@@ -7727,6 +7731,8 @@ export type GetMyProfileQuery = {
     upcoming_events_count?: number | null
     total_achievements?: number | null
     dance_bonds_count?: number | null
+    referral_count?: number | null
+    referral_points_earned?: number | null
     created_at?: any | null
     updated_at?: any | null
     last_active_at?: any | null
@@ -7797,6 +7803,8 @@ export type GetUserByIdQuery = {
     upcoming_events_count?: number | null
     total_achievements?: number | null
     dance_bonds_count?: number | null
+    referral_count?: number | null
+    referral_points_earned?: number | null
     created_at?: any | null
     updated_at?: any | null
     last_active_at?: any | null
@@ -7867,6 +7875,8 @@ export type GetUserByUsernameQuery = {
     upcoming_events_count?: number | null
     total_achievements?: number | null
     dance_bonds_count?: number | null
+    referral_count?: number | null
+    referral_points_earned?: number | null
     created_at?: any | null
     updated_at?: any | null
     last_active_at?: any | null
@@ -8026,6 +8036,8 @@ export const UserFullInfoFragmentDoc = gql`
   upcoming_events_count
   total_achievements
   dance_bonds_count
+  referral_count
+  referral_points_earned
   created_at
   updated_at
   last_active_at
