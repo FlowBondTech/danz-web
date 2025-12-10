@@ -3,7 +3,7 @@
 import { getAllThemes, type Theme } from '@/src/constants/themes'
 import { useTheme } from '@/src/contexts/ThemeContext'
 import { useState } from 'react'
-import { FiCheck, FiMoon, FiPalette, FiSave, FiSun, FiTrash2 } from 'react-icons/fi'
+import { FiCheck, FiDroplet, FiMoon, FiSave, FiSun, FiTrash2 } from 'react-icons/fi'
 
 function ThemeCard({
   theme,
@@ -165,7 +165,7 @@ export default function ThemeSettings() {
   return (
     <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
       <h2 className="text-xl font-bold text-text-primary mb-6 flex items-center gap-3">
-        <FiPalette className="text-neon-purple" />
+        <FiDroplet className="text-neon-purple" />
         Theme & Appearance
       </h2>
 
@@ -208,7 +208,7 @@ export default function ThemeSettings() {
         onClick={() => setShowCustomize(!showCustomize)}
         className="w-full py-3 px-4 rounded-xl border border-neon-purple/30 text-neon-purple hover:bg-neon-purple/10 transition-colors flex items-center justify-center gap-2"
       >
-        <FiPalette className="w-5 h-5" />
+        <FiDroplet className="w-5 h-5" />
         {showCustomize ? 'Hide Color Customization' : 'Customize Colors'}
       </button>
 

@@ -2,10 +2,11 @@
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import ThemeSettings from '@/src/components/dashboard/ThemeSettings'
+import { NotificationPreferences } from '@/src/components/notifications'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { FiBell, FiLock, FiMail, FiSettings, FiShield } from 'react-icons/fi'
+import { FiLock, FiMail, FiSettings, FiShield } from 'react-icons/fi'
 
 export default function SettingsPage() {
   const { authenticated, ready, user } = usePrivy()
@@ -59,74 +60,8 @@ export default function SettingsPage() {
           {/* Theme & Appearance */}
           <ThemeSettings />
 
-          {/* Notifications */}
-          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
-            <h2 className="text-xl font-bold text-text-primary mb-6 flex items-center gap-3">
-              <FiBell className="text-neon-purple" />
-              Notifications
-            </h2>
-            <div className="space-y-4">
-              <label className="flex items-center justify-between cursor-pointer">
-                <div>
-                  <p className="text-text-primary">Email Notifications</p>
-                  <p className="text-text-secondary text-sm">
-                    Receive updates about your account via email
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={settings.emailNotifications}
-                  onChange={() => handleToggle('emailNotifications')}
-                  className="w-5 h-5 rounded border-white/20 bg-white/5 text-neon-purple focus:ring-neon-purple"
-                />
-              </label>
-
-              <label className="flex items-center justify-between cursor-pointer">
-                <div>
-                  <p className="text-text-primary">Dance Reminders</p>
-                  <p className="text-text-secondary text-sm">
-                    Get reminded about upcoming dance events
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={settings.danceReminders}
-                  onChange={() => handleToggle('danceReminders')}
-                  className="w-5 h-5 rounded border-white/20 bg-white/5 text-neon-purple focus:ring-neon-purple"
-                />
-              </label>
-
-              <label className="flex items-center justify-between cursor-pointer">
-                <div>
-                  <p className="text-text-primary">Event Updates</p>
-                  <p className="text-text-secondary text-sm">
-                    Notifications about events you're interested in
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={settings.eventUpdates}
-                  onChange={() => handleToggle('eventUpdates')}
-                  className="w-5 h-5 rounded border-white/20 bg-white/5 text-neon-purple focus:ring-neon-purple"
-                />
-              </label>
-
-              <label className="flex items-center justify-between cursor-pointer">
-                <div>
-                  <p className="text-text-primary">Marketing Emails</p>
-                  <p className="text-text-secondary text-sm">
-                    Promotional content and special offers
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={settings.marketingEmails}
-                  onChange={() => handleToggle('marketingEmails')}
-                  className="w-5 h-5 rounded border-white/20 bg-white/5 text-neon-purple focus:ring-neon-purple"
-                />
-              </label>
-            </div>
-          </div>
+          {/* Notification Preferences */}
+          <NotificationPreferences />
 
           {/* Privacy & Security */}
           <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">

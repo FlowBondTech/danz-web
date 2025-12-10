@@ -1,7 +1,9 @@
 'use client'
 
 import AuthWrapper from '@/src/components/AuthWrapper'
+import { NotificationToast } from '@/src/components/notifications'
 import { AuthProvider } from '@/src/contexts/AuthContext'
+import { NotificationProvider } from '@/src/contexts/NotificationContext'
 import { ThemeProvider } from '@/src/contexts/ThemeContext'
 import { ApolloProvider } from '@/src/providers/ApolloProvider'
 import { PrivyProvider } from '@/src/providers/PrivyProvider'
@@ -13,7 +15,10 @@ export function Providers({ children }: { children: ReactNode }) {
       <PrivyProvider>
         <ApolloProvider>
           <AuthProvider>
-            <AuthWrapper>{children}</AuthWrapper>
+            <NotificationProvider>
+              <AuthWrapper>{children}</AuthWrapper>
+              <NotificationToast />
+            </NotificationProvider>
           </AuthProvider>
         </ApolloProvider>
       </PrivyProvider>

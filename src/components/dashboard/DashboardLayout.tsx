@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import {
+  FiBell,
   FiCalendar,
   FiChevronLeft,
   FiChevronRight,
@@ -21,6 +22,7 @@ import {
   FiUserPlus,
   FiX,
 } from 'react-icons/fi'
+import { NotificationBell, NotificationBellCompact, NotificationPanel } from '@/src/components/notifications'
 import { useGetMyProfileQuery } from '../../generated/graphql'
 
 interface DashboardLayoutProps {
@@ -122,6 +124,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <div className="h-screen bg-bg-primary flex overflow-hidden">
+      {/* Notification Panel (positioned absolutely) */}
+      <NotificationPanel />
+
       {/* Desktop Sidebar */}
       <div
         className={`hidden lg:flex flex-col bg-bg-secondary border-r border-neon-purple/20 transition-all duration-300 ${
@@ -168,6 +173,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               </li>
             ))}
           </ul>
+
+          {/* Notifications - Desktop */}
+          <div className="mt-4 pt-4 border-t border-white/10">
+            <NotificationBell collapsed={!sidebarOpen} />
+          </div>
         </nav>
 
         {/* User Section */}
@@ -230,9 +240,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <Link href="/" className="font-display text-xl font-bold text-text-primary">
             DANZ<span className="text-neon-purple text-2xl">.</span>NOW
           </Link>
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-text-primary">
-            {mobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-          </button>
+          <div className="flex items-center gap-2">
+            <NotificationBellCompact />
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-text-primary p-2">
+              {mobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+            </button>
+          </div>
         </div>
       </div>
 
