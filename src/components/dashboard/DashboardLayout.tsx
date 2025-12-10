@@ -81,6 +81,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       icon: FiCreditCard,
       href: '/dashboard/subscription',
     },
+    {
+      name: 'Settings',
+      icon: FiSettings,
+      href: '/dashboard/settings',
+    },
   ]
 
   const devMenuItems = [
