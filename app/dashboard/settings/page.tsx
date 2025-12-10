@@ -1,6 +1,7 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
+import ThemeSettings from '@/src/components/dashboard/ThemeSettings'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -55,6 +56,9 @@ export default function SettingsPage() {
         </div>
 
         <div className="space-y-6">
+          {/* Theme & Appearance */}
+          <ThemeSettings />
+
           {/* Notifications */}
           <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
             <h2 className="text-xl font-bold text-text-primary mb-6 flex items-center gap-3">
