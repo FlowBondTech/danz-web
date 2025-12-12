@@ -97,12 +97,12 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (currentUnreadCount > prevUnreadCount && prevUnreadCount > 0) {
       // New notification arrived
-      const latestNotification = notificationsData?.myNotifications?.[0]
+      const latestNotification = notificationsData?.myNotifications?.notifications?.[0]
       if (latestNotification && !latestNotification.read) {
         showToast({
           type: 'info',
           title: latestNotification.title,
-          message: latestNotification.message,
+          message: latestNotification.message ?? undefined,
           duration: 5000,
         })
       }
