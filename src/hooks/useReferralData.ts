@@ -78,8 +78,8 @@ export function useReferralData(username: string | null | undefined) {
         return {
           ...user,
           status: hasCompletedSession ? 'completed' : 'signed_up',
-          // Award 20 points for completed referrals
-          points_awarded: hasCompletedSession ? 20 : 0,
+          // Award 250 points for completed referrals
+          points_awarded: hasCompletedSession ? 250 : 0,
         }
       })
 
@@ -101,7 +101,7 @@ export function useReferralData(username: string | null | undefined) {
     totalClicks: 0, // We don't track clicks yet
     totalSignups: referrals.length,
     totalCompleted: referrals.filter(r => r.status === 'completed').length,
-    totalPointsEarned: pointsData?.referral_points_earned || referrals.filter(r => r.status === 'completed').length * 20,
+    totalPointsEarned: pointsData?.referral_points_earned || referrals.filter(r => r.status === 'completed').length * 250,
     conversionRate: referrals.length > 0
       ? Math.round((referrals.filter(r => r.status === 'completed').length / referrals.length) * 100)
       : 0,
