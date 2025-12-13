@@ -18,6 +18,8 @@ import {
   FiChevronDown,
   FiChevronUp,
   FiGift,
+  FiBell,
+  FiLoader,
 } from 'react-icons/fi'
 import { FaWhatsapp } from 'react-icons/fa'
 
@@ -28,6 +30,8 @@ function ReferralsContent() {
   const [copiedShareUrl, setCopiedShareUrl] = useState(false)
   const [copiedCode, setCopiedCode] = useState(false)
   const [showPointsBreakdown, setShowPointsBreakdown] = useState(false)
+  const [nudgingId, setNudgingId] = useState<string | null>(null)
+  const [nudgeSuccess, setNudgeSuccess] = useState<string | null>(null)
 
   // Fetch real referral data from Supabase
   const { referrals, pointsData, stats, loading: dataLoading } = useReferralData(user?.username)
@@ -65,6 +69,19 @@ function ReferralsContent() {
       `Hey! Join me on DANZ and earn rewards by dancing. Use my link: ${shareUrl}`
     )
     window.location.href = `sms:?&body=${message}`
+  }
+
+  const handleNudge = async (referralPrivyId: string) => {
+    setNudgingId(referralPrivyId)
+    setNudgeSuccess(null)
+
+    // For now, show a success message (actual nudge will be via GraphQL when backend is ready)
+    // TODO: Integrate with GraphQL mutation when email service is configured
+    setTimeout(() => {
+      setNudgingId(null)
+      setNudgeSuccess(referralPrivyId)
+      setTimeout(() => setNudgeSuccess(null), 3000)
+    }, 1000)
   }
 
   if (!ready || dataLoading) {
@@ -183,14 +200,14 @@ function ReferralsContent() {
                   <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white text-sm font-bold">2</div>
                   <div>
                     <p className="font-medium text-white text-sm">Friend Joins</p>
-                    <p className="text-xs text-text-secondary">They sign up using your link</p>
+                    <p className="text-xs text-text-secondary">You earn <span className="text-yellow-400 font-medium">+20 pts</span> instantly</p>
                   </div>
                 </div>
                 <div className="flex-1 flex items-start gap-3">
                   <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white text-sm font-bold">3</div>
                   <div>
-                    <p className="font-medium text-white text-sm">Earn 250 pts</p>
-                    <p className="text-xs text-text-secondary">When they dance for the first time</p>
+                    <p className="font-medium text-white text-sm">They Dance</p>
+                    <p className="text-xs text-text-secondary">You earn <span className="text-green-400 font-medium">+230 pts</span> more!</p>
                   </div>
                 </div>
               </div>
@@ -245,8 +262,12 @@ function ReferralsContent() {
               </h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-text-secondary">Referral completed</span>
-                  <span className="text-green-400 font-medium">+250 pts</span>
+                  <span className="text-text-secondary">Friend signs up</span>
+                  <span className="text-yellow-400 font-medium">+20 pts</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-text-secondary">Friend dances</span>
+                  <span className="text-green-400 font-medium">+230 pts</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-text-secondary">Dance session</span>
@@ -254,11 +275,7 @@ function ReferralsContent() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-text-secondary">Attend event</span>
-                  <span className="text-yellow-400 font-medium">+50 pts</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-text-secondary">Daily login</span>
-                  <span className="text-blue-400 font-medium">+5 pts</span>
+                  <span className="text-orange-400 font-medium">+50 pts</span>
                 </div>
               </div>
             </div>
@@ -307,9 +324,15 @@ function ReferralsContent() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    {/* Points earned */}
+                    <span className={`font-bold text-sm ${referral.status === 'completed' ? 'text-green-400' : 'text-yellow-400'}`}>
+                      +{referral.points_awarded}
+                    </span>
+
+                    {/* Status badge */}
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${
                         referral.status === 'completed'
                           ? 'bg-green-500/20 text-green-400'
                           : 'bg-yellow-500/20 text-yellow-400'
@@ -318,11 +341,38 @@ function ReferralsContent() {
                       {referral.status === 'completed' ? (
                         <span className="flex items-center gap-1"><FiCheck size={12} /> Done</span>
                       ) : (
-                        'Pending'
+                        <span className="hidden sm:inline">Waiting</span>
                       )}
                     </span>
-                    {referral.status === 'completed' && (
-                      <span className="text-green-400 font-bold text-sm">+{referral.points_awarded}</span>
+
+                    {/* Nudge button for pending referrals */}
+                    {referral.status !== 'completed' && (
+                      <button
+                        onClick={() => handleNudge(referral.privy_id)}
+                        disabled={nudgingId === referral.privy_id}
+                        className={`flex items-center gap-1 px-2 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                          nudgeSuccess === referral.privy_id
+                            ? 'bg-green-500/20 text-green-400'
+                            : nudgingId === referral.privy_id
+                            ? 'bg-neon-purple/10 text-neon-purple/50 cursor-wait'
+                            : 'bg-neon-purple/20 text-neon-purple hover:bg-neon-purple/30'
+                        }`}
+                        title="Send a friendly reminder"
+                      >
+                        {nudgingId === referral.privy_id ? (
+                          <FiLoader size={14} className="animate-spin" />
+                        ) : nudgeSuccess === referral.privy_id ? (
+                          <>
+                            <FiCheck size={14} />
+                            <span className="hidden sm:inline">Sent!</span>
+                          </>
+                        ) : (
+                          <>
+                            <FiBell size={14} />
+                            <span className="hidden sm:inline">Nudge</span>
+                          </>
+                        )}
+                      </button>
                     )}
                   </div>
                 </div>

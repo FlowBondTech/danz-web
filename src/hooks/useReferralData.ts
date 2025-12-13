@@ -73,13 +73,14 @@ export function useReferralData(username: string | null | undefined) {
       // Status logic:
       // - 'completed' if total_sessions > 0 (completed first dance session)
       // - 'signed_up' if user exists (they signed up)
+      // Points: 20 for signup + 230 for completion = 250 total
       const referralsWithStatus: ReferralWithStatus[] = referredUsers.map(user => {
         const hasCompletedSession = user.total_sessions > 0
         return {
           ...user,
           status: hasCompletedSession ? 'completed' : 'signed_up',
-          // Award 250 points for completed referrals
-          points_awarded: hasCompletedSession ? 250 : 0,
+          // 20 points for signup, 250 total (20+230) for completed
+          points_awarded: hasCompletedSession ? 250 : 20,
         }
       })
 
@@ -97,16 +98,19 @@ export function useReferralData(username: string | null | undefined) {
   }, [fetchData])
 
   // Calculate stats from actual data
+  const completedCount = referrals.filter(r => r.status === 'completed').length
+  const pendingCount = referrals.filter(r => r.status === 'signed_up').length
   const stats = {
     totalClicks: 0, // We don't track clicks yet
     totalSignups: referrals.length,
-    totalCompleted: referrals.filter(r => r.status === 'completed').length,
-    totalPointsEarned: pointsData?.referral_points_earned || referrals.filter(r => r.status === 'completed').length * 250,
+    totalCompleted: completedCount,
+    // 20 points per signup + 230 per completion = 250 total per completed
+    totalPointsEarned: pointsData?.referral_points_earned || ((referrals.length * 20) + (completedCount * 230)),
     conversionRate: referrals.length > 0
-      ? Math.round((referrals.filter(r => r.status === 'completed').length / referrals.length) * 100)
+      ? Math.round((completedCount / referrals.length) * 100)
       : 0,
-    pendingReferrals: referrals.filter(r => r.status === 'signed_up').length,
-    completedReferrals: referrals.filter(r => r.status === 'completed').length,
+    pendingReferrals: pendingCount,
+    completedReferrals: completedCount,
   }
 
   return {
