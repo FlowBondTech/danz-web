@@ -16,7 +16,9 @@ import {
   FiDollarSign,
   FiMapPin,
   FiCheck,
+  FiChevronRight,
 } from 'react-icons/fi'
+import Link from 'next/link'
 import { usePrivy } from '@privy-io/react-auth'
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import OrganizerApplicationForm from '@/src/components/dashboard/OrganizerApplicationForm'
@@ -269,49 +271,103 @@ export default function EventsPage() {
           </div>
         </div>
 
-        {/* Main Content Grid */}
-        <div className={`grid gap-6 ${showLeaderboard ? 'lg:grid-cols-4' : 'lg:grid-cols-1'}`}>
-          {/* Events Section */}
-          <div className={showLeaderboard ? 'lg:col-span-3' : ''}>
-            {viewMode === 'grid' && (
-              <EventsGridView
-                events={filteredEvents as any}
-                onRegister={handleRegister}
-                isLoading={loading}
-              />
-            )}
+        {/* Main Content */}
+        <div>
+          {viewMode === 'grid' && (
+            <EventsGridView
+              events={filteredEvents as any}
+              onRegister={handleRegister}
+              isLoading={loading}
+            />
+          )}
 
-            {viewMode === 'calendar' && (
-              <EventsCalendarView
-                events={filteredEvents as any}
-                onRegister={handleRegister}
-                onEventClick={setSelectedEvent}
-              />
-            )}
+          {viewMode === 'calendar' && (
+            <EventsCalendarView
+              events={filteredEvents as any}
+              onRegister={handleRegister}
+              onEventClick={setSelectedEvent}
+            />
+          )}
 
-            {viewMode === 'map' && (
-              <EventsMapView events={filteredEvents as any} onRegister={handleRegister} />
-            )}
-          </div>
-
-          {/* Leaderboard Sidebar */}
-          <AnimatePresence>
-            {showLeaderboard && (
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="lg:col-span-1"
-              >
-                <Leaderboard
-                  users={MOCK_LEADERBOARD}
-                  currentUserId={profileData?.me?.privy_id}
-                  variant="compact"
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {viewMode === 'map' && (
+            <EventsMapView events={filteredEvents as any} onRegister={handleRegister} />
+          )}
         </div>
+
+        {/* Leaderboard Modal */}
+        <AnimatePresence>
+          {showLeaderboard && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+              onClick={() => setShowLeaderboard(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{
+                  scale: 1,
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 25
+                  }
+                }}
+                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                className="bg-bg-secondary rounded-2xl border border-neon-purple/30 max-w-2xl w-full max-h-[85vh] overflow-hidden shadow-2xl shadow-neon-purple/20"
+                onClick={e => e.stopPropagation()}
+              >
+                {/* Modal Header */}
+                <div className="flex items-center justify-between p-4 border-b border-white/10">
+                  <div className="flex items-center gap-3">
+                    <motion.div
+                      animate={{
+                        rotate: [0, -10, 10, -10, 0],
+                        scale: [1, 1.1, 1]
+                      }}
+                      transition={{
+                        duration: 0.6,
+                        delay: 0.2,
+                        ease: "easeInOut"
+                      }}
+                      className="text-2xl"
+                    >
+                      🏆
+                    </motion.div>
+                    <h2 className="text-xl font-bold text-white">Dance Leaderboard</h2>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href="/dashboard/leaderboard"
+                      className="px-4 py-2 bg-neon-purple/20 text-neon-purple rounded-lg hover:bg-neon-purple/30 transition-colors text-sm font-medium flex items-center gap-2"
+                    >
+                      View Full Page
+                      <FiChevronRight className="w-4 h-4" />
+                    </Link>
+                    <button
+                      onClick={() => setShowLeaderboard(false)}
+                      className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                    >
+                      <FiX className="w-5 h-5 text-text-secondary" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Scrollable Content */}
+                <div className="overflow-y-auto max-h-[calc(85vh-80px)]">
+                  <Leaderboard
+                    users={MOCK_LEADERBOARD}
+                    currentUserId={profileData?.me?.privy_id}
+                    variant="full"
+                  />
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Event Creation Wizard Modal */}
         <EventCreationWizard
