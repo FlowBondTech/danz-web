@@ -23,6 +23,12 @@ export const PrivyProvider: React.FC<PrivyProviderProps> = ({ children }) => {
         logo: '/danz-icon-white.png', // Use DANZ white logo
         showWalletLoginFirst: false,
       },
+      // Disable external wallets to suppress Solana connector warning
+      externalWallets: {
+        solana: {
+          connectors: () => [],
+        },
+      },
     },
   }
 

@@ -11,7 +11,7 @@ import { onError } from '@apollo/client/link/error'
 import { createHttpLink } from '@apollo/client/link/http'
 import { usePrivy } from '@privy-io/react-auth'
 import type React from 'react'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 
 // Cache configuration with proper field policies
 const cache = new InMemoryCache({
@@ -94,7 +94,13 @@ interface ApolloProviderProps {
 }
 
 export const ApolloProvider: React.FC<ApolloProviderProps> = ({ children }) => {
-  const { getAccessToken } = usePrivy()
+  const { getAccessToken, authenticated, ready } = usePrivy()
+
+  // Use refs to access current auth state in error handler closure
+  const authStateRef = useRef({ authenticated, ready })
+  useEffect(() => {
+    authStateRef.current = { authenticated, ready }
+  }, [authenticated, ready])
 
   const client = useMemo(() => {
     // HTTP link for GraphQL endpoint
@@ -127,8 +133,16 @@ export const ApolloProvider: React.FC<ApolloProviderProps> = ({ children }) => {
           )
 
           if (extensions?.code === 'UNAUTHENTICATED') {
-            // Handle unauthenticated error
-            window.location.href = '/login'
+            // Only redirect to login if Privy says user is NOT authenticated
+            // This prevents redirect loops when there's a token timing issue
+            const { authenticated: isAuth, ready: isReady } = authStateRef.current
+            if (isReady && !isAuth) {
+              window.location.href = '/login'
+            } else {
+              // User is authenticated in Privy but token wasn't attached yet
+              // This is a timing issue, don't redirect - let the query retry
+              console.warn('UNAUTHENTICATED error but user is authenticated in Privy - possible token timing issue')
+            }
           } else if (extensions?.code === 'FORBIDDEN') {
             console.error('Access denied')
           }
