@@ -67,7 +67,16 @@ export default function AdminUsersPage() {
       user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.display_name?.toLowerCase().includes(searchTerm.toLowerCase())
 
-    const matchesRole = roleFilter === 'all' || user.role === roleFilter
+    let matchesRole = false
+    if (roleFilter === 'all') {
+      matchesRole = true
+    } else if (roleFilter === 'pending') {
+      matchesRole = user.role === 'organizer' && !user.is_organizer_approved
+    } else if (roleFilter === 'dev') {
+      matchesRole = user.role === 'dev' || user.role === 'admin'
+    } else {
+      matchesRole = user.role === roleFilter
+    }
 
     return matchesSearch && matchesRole
   }) || []
@@ -76,11 +85,22 @@ export default function AdminUsersPage() {
   const stats = {
     totalUsers: usersData?.getAllUsers?.length || 0,
     admins: usersData?.getAllUsers?.filter(u => u.role === 'admin').length || 0,
+    devs: usersData?.getAllUsers?.filter(u => u.role === 'dev' || u.role === 'admin').length || 0,
     organizers: usersData?.getAllUsers?.filter(u => u.role === 'organizer').length || 0,
     pendingOrganizers: usersData?.getAllUsers?.filter(u =>
       u.role === 'organizer' && !u.is_organizer_approved
     ).length || 0,
+    users: usersData?.getAllUsers?.filter(u => u.role === 'user').length || 0,
   }
+
+  // Filter options with counts
+  const filterOptions = [
+    { value: 'all', label: 'All', count: stats.totalUsers },
+    { value: 'pending', label: 'Pending', count: stats.pendingOrganizers, highlight: stats.pendingOrganizers > 0 },
+    { value: 'organizer', label: 'Organizers', count: stats.organizers },
+    { value: 'dev', label: 'Dev/Admin', count: stats.devs },
+    { value: 'user', label: 'Users', count: stats.users },
+  ]
 
   if (profileLoading || usersLoading) {
     return (
@@ -135,8 +155,8 @@ export default function AdminUsersPage() {
           <div className="bg-white/5 backdrop-blur-xl rounded-xl p-4 sm:p-6 border border-purple-500/20">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-xs sm:text-sm">Admins</p>
-                <p className="text-xl sm:text-3xl font-bold text-white mt-1">{stats.admins}</p>
+                <p className="text-gray-400 text-xs sm:text-sm">Dev/Admin</p>
+                <p className="text-xl sm:text-3xl font-bold text-white mt-1">{stats.devs}</p>
               </div>
               <FiShield className="text-purple-400 text-xl sm:text-3xl" />
             </div>
@@ -164,8 +184,9 @@ export default function AdminUsersPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 relative">
+        <div className="space-y-4">
+          {/* Search */}
+          <div className="relative">
             <FiSearch className="absolute left-3 top-3.5 text-gray-400" />
             <input
               type="text"
@@ -176,16 +197,33 @@ export default function AdminUsersPage() {
             />
           </div>
 
-          <select
-            value={roleFilter}
-            onChange={(e) => setRoleFilter(e.target.value)}
-            className="px-4 py-3 bg-black/30 border border-purple-500/30 rounded-xl text-white focus:border-purple-500 focus:outline-none cursor-pointer"
-          >
-            <option value="all">All Roles</option>
-            <option value="user">Users</option>
-            <option value="organizer">Organizers</option>
-            <option value="admin">Admins</option>
-          </select>
+          {/* Role Filter Pills */}
+          <div className="flex flex-wrap gap-2">
+            {filterOptions.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => setRoleFilter(option.value)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+                  roleFilter === option.value
+                    ? 'bg-purple-600 text-white border border-purple-500'
+                    : option.highlight
+                    ? 'bg-yellow-600/20 text-yellow-300 border border-yellow-500/50 hover:bg-yellow-600/30'
+                    : 'bg-white/5 text-gray-300 border border-purple-500/20 hover:bg-white/10 hover:border-purple-500/40'
+                }`}
+              >
+                {option.label}
+                <span className={`px-1.5 py-0.5 rounded-full text-xs ${
+                  roleFilter === option.value
+                    ? 'bg-white/20'
+                    : option.highlight
+                    ? 'bg-yellow-500/30'
+                    : 'bg-white/10'
+                }`}>
+                  {option.count}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Users List - Mobile Cards / Desktop Table */}
@@ -237,6 +275,8 @@ export default function AdminUsersPage() {
                           className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                             user.role === 'admin'
                               ? 'bg-purple-600/30 text-purple-300 border border-purple-500/50 hover:bg-purple-600/40'
+                              : user.role === 'dev'
+                              ? 'bg-cyan-600/30 text-cyan-300 border border-cyan-500/50 hover:bg-cyan-600/40'
                               : user.role === 'organizer'
                               ? 'bg-blue-600/30 text-blue-300 border border-blue-500/50 hover:bg-blue-600/40'
                               : 'bg-gray-600/30 text-gray-300 border border-gray-500/50 hover:bg-gray-600/40'
@@ -259,6 +299,12 @@ export default function AdminUsersPage() {
                               className="block w-full px-4 py-2 text-left text-white hover:bg-purple-600/30 text-sm transition-colors"
                             >
                               Organizer
+                            </button>
+                            <button
+                              onClick={() => handleRoleChange(user.privy_id, 'dev')}
+                              className="block w-full px-4 py-2 text-left text-white hover:bg-purple-600/30 text-sm transition-colors"
+                            >
+                              Dev
                             </button>
                             <button
                               onClick={() => handleRoleChange(user.privy_id, 'admin')}
@@ -370,6 +416,8 @@ export default function AdminUsersPage() {
                         className={`inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                           user.role === 'admin'
                             ? 'bg-purple-600/30 text-purple-300 border border-purple-500/50'
+                            : user.role === 'dev'
+                            ? 'bg-cyan-600/30 text-cyan-300 border border-cyan-500/50'
                             : user.role === 'organizer'
                             ? 'bg-blue-600/30 text-blue-300 border border-blue-500/50'
                             : 'bg-gray-600/30 text-gray-300 border border-gray-500/50'
@@ -392,6 +440,12 @@ export default function AdminUsersPage() {
                             className="block w-full px-4 py-3 text-left text-white hover:bg-purple-600/30 text-sm transition-colors"
                           >
                             Organizer
+                          </button>
+                          <button
+                            onClick={() => handleRoleChange(user.privy_id, 'dev')}
+                            className="block w-full px-4 py-3 text-left text-white hover:bg-purple-600/30 text-sm transition-colors"
+                          >
+                            Dev
                           </button>
                           <button
                             onClick={() => handleRoleChange(user.privy_id, 'admin')}
