@@ -273,19 +273,19 @@ function DashboardContent() {
         {/* ═══════════════════════════════════════════════════════════════════
             QUICK ACTIONS - Primary CTAs
         ═══════════════════════════════════════════════════════════════════ */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
           <button
             onClick={() => router.push('/dashboard/events')}
-            className="group relative bg-gradient-to-br from-neon-purple/20 to-neon-purple/5 hover:from-neon-purple/30 hover:to-neon-purple/10 rounded-2xl border border-neon-purple/30 hover:border-neon-purple/50 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-neon-purple/20 text-left"
+            className="group bg-gradient-to-br from-neon-purple/20 to-neon-purple/5 hover:from-neon-purple/30 hover:to-neon-purple/10 rounded-2xl border border-neon-purple/30 hover:border-neon-purple/50 p-4 sm:p-5 transition-all duration-300 hover:shadow-lg hover:shadow-neon-purple/20 text-left flex flex-col"
           >
-            <div className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-neon-purple/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-neon-purple/20 flex items-center justify-center group-hover:scale-110 transition-transform mb-3">
               <FiCalendar className="text-neon-purple" size={20} />
             </div>
-            <p className="text-2xl font-bold text-text-primary mb-1">
+            <p className="text-xl sm:text-2xl font-bold text-text-primary mb-1">
               {profile?.upcoming_events_count || 0}
             </p>
-            <p className="text-sm text-text-secondary">Upcoming Events</p>
-            <div className="flex items-center gap-1 mt-3 text-neon-purple text-sm font-medium group-hover:gap-2 transition-all">
+            <p className="text-xs sm:text-sm text-text-secondary">Upcoming Events</p>
+            <div className="flex items-center gap-1 mt-auto pt-3 text-neon-purple text-sm font-medium group-hover:gap-2 transition-all">
               <span>View All</span>
               <FiChevronRight size={16} />
             </div>
@@ -293,14 +293,14 @@ function DashboardContent() {
 
           <button
             onClick={() => router.push('/dashboard/events/create')}
-            className="group relative bg-gradient-to-br from-neon-pink/20 to-neon-pink/5 hover:from-neon-pink/30 hover:to-neon-pink/10 rounded-2xl border border-neon-pink/30 hover:border-neon-pink/50 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-neon-pink/20 text-left"
+            className="group bg-gradient-to-br from-neon-pink/20 to-neon-pink/5 hover:from-neon-pink/30 hover:to-neon-pink/10 rounded-2xl border border-neon-pink/30 hover:border-neon-pink/50 p-4 sm:p-5 transition-all duration-300 hover:shadow-lg hover:shadow-neon-pink/20 text-left flex flex-col"
           >
-            <div className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-neon-pink/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-neon-pink/20 flex items-center justify-center group-hover:scale-110 transition-transform mb-3">
               <FiPlus className="text-neon-pink" size={20} />
             </div>
-            <p className="text-lg font-bold text-text-primary mb-1">Host Event</p>
-            <p className="text-sm text-text-secondary">Create a dance session</p>
-            <div className="flex items-center gap-1 mt-3 text-neon-pink text-sm font-medium group-hover:gap-2 transition-all">
+            <p className="text-base sm:text-lg font-bold text-text-primary mb-1">Host Event</p>
+            <p className="text-xs sm:text-sm text-text-secondary">Create a dance session</p>
+            <div className="flex items-center gap-1 mt-auto pt-3 text-neon-pink text-sm font-medium group-hover:gap-2 transition-all">
               <span>Create</span>
               <FiChevronRight size={16} />
             </div>
@@ -308,14 +308,14 @@ function DashboardContent() {
 
           <button
             onClick={() => router.push('/dashboard/feed')}
-            className="group relative bg-gradient-to-br from-blue-500/20 to-blue-500/5 hover:from-blue-500/30 hover:to-blue-500/10 rounded-2xl border border-blue-500/30 hover:border-blue-500/50 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 text-left"
+            className="group bg-gradient-to-br from-blue-500/20 to-blue-500/5 hover:from-blue-500/30 hover:to-blue-500/10 rounded-2xl border border-blue-500/30 hover:border-blue-500/50 p-4 sm:p-5 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 text-left flex flex-col"
           >
-            <div className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform mb-3">
               <FiActivity className="text-blue-400" size={20} />
             </div>
-            <p className="text-lg font-bold text-text-primary mb-1">Activity</p>
-            <p className="text-sm text-text-secondary">See community feed</p>
-            <div className="flex items-center gap-1 mt-3 text-blue-400 text-sm font-medium group-hover:gap-2 transition-all">
+            <p className="text-base sm:text-lg font-bold text-text-primary mb-1">Activity</p>
+            <p className="text-xs sm:text-sm text-text-secondary">See community feed</p>
+            <div className="flex items-center gap-1 mt-auto pt-3 text-blue-400 text-sm font-medium group-hover:gap-2 transition-all">
               <span>Explore</span>
               <FiChevronRight size={16} />
             </div>
@@ -323,14 +323,14 @@ function DashboardContent() {
 
           <button
             onClick={() => router.push('/dashboard/profile')}
-            className="group relative bg-gradient-to-br from-green-500/20 to-green-500/5 hover:from-green-500/30 hover:to-green-500/10 rounded-2xl border border-green-500/30 hover:border-green-500/50 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20 text-left"
+            className="group bg-gradient-to-br from-green-500/20 to-green-500/5 hover:from-green-500/30 hover:to-green-500/10 rounded-2xl border border-green-500/30 hover:border-green-500/50 p-4 sm:p-5 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20 text-left flex flex-col"
           >
-            <div className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center group-hover:scale-110 transition-transform mb-3">
               <FiEdit3 className="text-green-400" size={20} />
             </div>
-            <p className="text-lg font-bold text-text-primary mb-1">Profile</p>
-            <p className="text-sm text-text-secondary">Edit your info</p>
-            <div className="flex items-center gap-1 mt-3 text-green-400 text-sm font-medium group-hover:gap-2 transition-all">
+            <p className="text-base sm:text-lg font-bold text-text-primary mb-1">Profile</p>
+            <p className="text-xs sm:text-sm text-text-secondary">Edit your info</p>
+            <div className="flex items-center gap-1 mt-auto pt-3 text-green-400 text-sm font-medium group-hover:gap-2 transition-all">
               <span>Edit</span>
               <FiChevronRight size={16} />
             </div>
