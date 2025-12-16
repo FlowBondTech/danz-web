@@ -301,22 +301,22 @@ function ReferralsContent() {
               {referrals.map((referral) => (
                 <div
                   key={referral.privy_id}
-                  className="bg-bg-primary rounded-lg p-4 border border-white/10 flex items-center justify-between"
+                  className="bg-bg-primary rounded-lg p-3 sm:p-4 border border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
                     {referral.avatar_url ? (
                       <img
                         src={referral.avatar_url}
                         alt=""
-                        className="w-10 h-10 rounded-full object-cover"
+                        className="w-10 h-10 rounded-full object-cover shrink-0"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white font-bold">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white font-bold shrink-0">
                         {referral.display_name?.charAt(0).toUpperCase() || referral.username?.charAt(0).toUpperCase() || '?'}
                       </div>
                     )}
-                    <div>
-                      <p className="font-medium text-white">
+                    <div className="min-w-0">
+                      <p className="font-medium text-white truncate">
                         {referral.display_name || referral.username}
                       </p>
                       <p className="text-sm text-text-secondary">
@@ -324,7 +324,7 @@ function ReferralsContent() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3 justify-end shrink-0">
                     {/* Points earned */}
                     <span className={`font-bold text-sm ${referral.status === 'completed' ? 'text-green-400' : 'text-yellow-400'}`}>
                       +{referral.points_awarded}

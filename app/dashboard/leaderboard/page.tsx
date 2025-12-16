@@ -128,26 +128,26 @@ export default function LeaderboardPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+        <div className="flex flex-col gap-4 mb-8">
           {/* Time Filter */}
-          <div className="flex items-center gap-2 bg-bg-secondary rounded-xl p-1.5 border border-white/10">
+          <div className="flex items-center gap-2 bg-bg-secondary rounded-xl p-1.5 border border-white/10 overflow-x-auto">
             {(['weekly', 'monthly', 'allTime'] as TimeFilter[]).map(filter => (
               <button
                 key={filter}
                 onClick={() => setTimeFilter(filter)}
-                className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                   timeFilter === filter
                     ? 'bg-neon-purple text-white shadow-lg shadow-neon-purple/30'
                     : 'text-text-secondary hover:text-white hover:bg-white/5'
                 }`}
               >
-                {filter === 'weekly' ? 'This Week' : filter === 'monthly' ? 'This Month' : 'All Time'}
+                {filter === 'weekly' ? 'Week' : filter === 'monthly' ? 'Month' : 'All Time'}
               </button>
             ))}
           </div>
 
           {/* Sort By */}
-          <div className="flex items-center gap-2 bg-bg-secondary rounded-xl p-1.5 border border-white/10">
+          <div className="flex items-center gap-1 sm:gap-2 bg-bg-secondary rounded-xl p-1.5 border border-white/10 overflow-x-auto">
             {([
               { key: 'xp', icon: FiZap, label: 'XP' },
               { key: 'events_created', icon: FiCalendar, label: 'Created' },
@@ -157,14 +157,14 @@ export default function LeaderboardPage() {
               <button
                 key={key}
                 onClick={() => setSortBy(key)}
-                className={`flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                   sortBy === key
                     ? 'bg-neon-purple text-white shadow-lg shadow-neon-purple/30'
                     : 'text-text-secondary hover:text-white hover:bg-white/5'
                 }`}
               >
-                <Icon className="w-4 h-4" />
-                {label}
+                <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="hidden xs:inline">{label}</span>
               </button>
             ))}
           </div>
