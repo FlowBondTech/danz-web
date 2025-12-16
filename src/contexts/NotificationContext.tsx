@@ -188,7 +188,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     setToasts(prev => prev.filter(t => t.id !== id))
   }, [])
 
-  const notifications = (notificationsData?.myNotifications ?? []) as Notification[]
+  const notifications = (notificationsData?.myNotifications?.notifications ?? []) as Notification[]
   const loading = notificationsLoading
   const error = notificationsError?.message ?? null
 
