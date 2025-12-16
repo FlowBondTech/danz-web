@@ -176,10 +176,11 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     setToasts(prev => [...prev, newToast])
 
     // Auto dismiss
-    if (newToast.duration > 0) {
+    const duration = newToast.duration ?? 4000
+    if (duration > 0) {
       setTimeout(() => {
         setToasts(prev => prev.filter(t => t.id !== id))
-      }, newToast.duration)
+      }, duration)
     }
   }, [])
 
