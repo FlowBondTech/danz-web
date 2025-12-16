@@ -424,9 +424,9 @@ export default function ClaimPage() {
                     transition={{ delay: index * 0.1 }}
                     className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 hover:border-neon-purple/40 transition-all"
                   >
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
                           token.type === 'event_reward' ? 'bg-gradient-to-br from-blue-500 to-purple-500' :
                           token.type === 'referral_bonus' ? 'bg-gradient-to-br from-green-500 to-teal-500' :
                           'bg-gradient-to-br from-yellow-500 to-orange-500'
@@ -435,13 +435,13 @@ export default function ClaimPage() {
                           {token.type === 'referral_bonus' && <FiUserPlus className="w-5 h-5 text-white" />}
                           {token.type === 'achievement' && <FiAward className="w-5 h-5 text-white" />}
                         </div>
-                        <div>
-                          <h3 className="text-text-primary font-medium">{token.title}</h3>
-                          <p className="text-text-secondary text-sm">
+                        <div className="min-w-0">
+                          <h3 className="text-text-primary font-medium truncate">{token.title}</h3>
+                          <p className="text-text-secondary text-sm truncate">
                             {token.event || token.referredUser || token.achievement}
                           </p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <FiClock className="w-3 h-3 text-text-secondary" />
+                          <div className="flex items-center gap-2 mt-1 flex-wrap">
+                            <FiClock className="w-3 h-3 text-text-secondary shrink-0" />
                             <span className="text-text-secondary text-xs">
                               Earned {new Date(token.earnedAt).toLocaleDateString()}
                             </span>
@@ -453,15 +453,15 @@ export default function ClaimPage() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-4">
-                        <div className="text-right">
+                      <div className="flex items-center gap-4 justify-between sm:justify-end w-full sm:w-auto shrink-0">
+                        <div className="text-left sm:text-right">
                           <p className="text-2xl font-bold text-neon-purple">{token.amount}</p>
                           <p className="text-text-secondary text-sm">{token.tokenSymbol}</p>
                         </div>
                         <button
                           onClick={() => handleClaim(token.id, 'token')}
                           disabled={claimingId !== null || !selectedWallet}
-                          className="px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-pink text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                          className="px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-pink text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shrink-0"
                         >
                           {claimingId === token.id ? (
                             <>
@@ -579,18 +579,18 @@ export default function ClaimPage() {
                     transition={{ delay: index * 0.1 }}
                     className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6"
                   >
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center shrink-0">
                           <FiCheck className="w-5 h-5 text-green-500" />
                         </div>
-                        <div>
-                          <h3 className="text-text-primary font-medium">{item.title}</h3>
-                          <div className="flex items-center gap-2 mt-1">
+                        <div className="min-w-0">
+                          <h3 className="text-text-primary font-medium truncate">{item.title}</h3>
+                          <div className="flex items-center gap-2 mt-1 flex-wrap">
                             <span className="text-text-secondary text-sm">
                               Claimed {new Date(item.claimedAt).toLocaleDateString()}
                             </span>
-                            <span className="text-text-secondary">•</span>
+                            <span className="text-text-secondary hidden sm:inline">•</span>
                             <a
                               href={`https://etherscan.io/tx/${item.txHash}`}
                               target="_blank"
@@ -603,7 +603,7 @@ export default function ClaimPage() {
                           </div>
                         </div>
                       </div>
-                      <div className="text-right">
+                      <div className="text-left sm:text-right shrink-0">
                         <p className="text-xl font-bold text-green-500">+{item.amount}</p>
                         <p className="text-text-secondary text-sm">{item.tokenSymbol}</p>
                       </div>
