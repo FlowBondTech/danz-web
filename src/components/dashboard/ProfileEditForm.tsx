@@ -2,10 +2,12 @@
 
 import { useMutation } from '@apollo/client'
 import { gql } from 'graphql-tag'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FaTiktok } from 'react-icons/fa'
 import {
+  FiCamera,
   FiCheck,
+  FiEdit3,
   FiInstagram,
   FiLink,
   FiMapPin,
@@ -13,7 +15,6 @@ import {
   FiUser,
   FiYoutube,
 } from 'react-icons/fi'
-import ImageUpload from './ImageUpload'
 
 const UPDATE_PROFILE = gql`
   mutation UpdateProfile($input: UpdateProfileInput!) {
@@ -119,6 +120,11 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
   })
   const [hasChanges, setHasChanges] = useState(false)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const [uploadingCover, setUploadingCover] = useState(false)
+
+  const avatarInputRef = useRef<HTMLInputElement>(null)
+  const coverInputRef = useRef<HTMLInputElement>(null)
 
   const [updateProfile, { loading: saving }] = useMutation(UPDATE_PROFILE, {
     update(cache, { data }) {
@@ -206,6 +212,102 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
     }))
   }
 
+  const handleImageUpload = async (file: File, type: 'avatar' | 'cover') => {
+    const isAvatar = type === 'avatar'
+    const setUploading = isAvatar ? setUploadingAvatar : setUploadingCover
+    const maxSize = isAvatar ? 5 * 1024 * 1024 : 10 * 1024 * 1024
+
+    // Validate file
+    if (!file.type.startsWith('image/')) {
+      setErrors({ [type]: 'Please select an image file' })
+      return
+    }
+
+    if (file.size > maxSize) {
+      setErrors({
+        [type]: `File size must be less than ${isAvatar ? '5MB' : '10MB'}`,
+      })
+      return
+    }
+
+    try {
+      setUploading(true)
+      setErrors({})
+
+      // Get upload URL from GraphQL
+      const response = await fetch(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `
+            query GetUploadUrl($fileName: String!, $mimeType: MimeType!, $uploadType: UploadType!) {
+              getUploadUrl(fileName: $fileName, mimeType: $mimeType, uploadType: $uploadType) {
+                uploadUrl
+                fields
+                publicUrl
+              }
+            }
+          `,
+          variables: {
+            fileName: file.name,
+            mimeType: file.type.replace('/', '_').replace('-', '_').toUpperCase(),
+            uploadType: type.toUpperCase(),
+          },
+        }),
+      })
+
+      const { data } = await response.json()
+      if (!data?.getUploadUrl) {
+        throw new Error('Failed to get upload URL')
+      }
+
+      const { uploadUrl, fields, publicUrl } = data.getUploadUrl
+
+      // Upload to S3
+      const formData = new FormData()
+      Object.entries(fields).forEach(([key, value]) => {
+        formData.append(key, value as string)
+      })
+      formData.append('file', file)
+
+      const uploadResponse = await fetch(uploadUrl, {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload file to S3')
+      }
+
+      // Update form data with new URL
+      setFormData(prev => ({
+        ...prev,
+        [isAvatar ? 'avatar_url' : 'cover_image_url']: publicUrl,
+      }))
+    } catch (err: any) {
+      console.error('Upload error:', err)
+      setErrors({ [type]: err.message || 'Failed to upload image' })
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      handleImageUpload(file, 'avatar')
+    }
+  }
+
+  const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      handleImageUpload(file, 'cover')
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setErrors({})
@@ -245,26 +347,99 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      {/* Profile Images */}
-      <div>
-        <h3 className="text-xl font-bold text-text-primary mb-6">Profile Images</h3>
-        <div className="grid gap-6 md:grid-cols-2">
-          <ImageUpload
-            currentImageUrl={formData.avatar_url}
-            onUploadComplete={url => setFormData({ ...formData, avatar_url: url })}
-            uploadType="avatar"
-            label="Profile Avatar"
-            description="Upload your profile picture (max 5MB)"
-          />
+      {/* Profile Images Preview */}
+      <div className="relative">
+        {/* Cover Image */}
+        <div className="relative h-48 sm:h-64 rounded-2xl overflow-hidden bg-gradient-to-br from-neon-purple/20 to-neon-pink/20 border border-neon-purple/20">
+          {formData.cover_image_url ? (
+            <img
+              src={formData.cover_image_url}
+              alt="Cover"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <FiCamera className="w-12 h-12 mx-auto mb-2 text-text-secondary" />
+                <p className="text-text-secondary text-sm">Add cover image</p>
+              </div>
+            </div>
+          )}
 
-          <ImageUpload
-            currentImageUrl={formData.cover_image_url}
-            onUploadComplete={url => setFormData({ ...formData, cover_image_url: url })}
-            uploadType="cover"
-            label="Cover Image"
-            description="Upload a banner for your profile (max 10MB)"
+          {/* Cover Edit Button */}
+          <button
+            type="button"
+            onClick={() => coverInputRef.current?.click()}
+            disabled={uploadingCover}
+            className="absolute top-4 right-4 p-3 bg-bg-primary/90 hover:bg-bg-primary border border-white/20 hover:border-neon-purple/50 rounded-xl text-text-primary hover:text-neon-purple transition-all backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Edit cover image"
+          >
+            {uploadingCover ? (
+              <div className="w-5 h-5 border-2 border-neon-purple/30 border-t-neon-purple rounded-full animate-spin" />
+            ) : (
+              <FiEdit3 size={20} />
+            )}
+          </button>
+
+          <input
+            ref={coverInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            onChange={handleCoverChange}
+            className="hidden"
           />
         </div>
+
+        {/* Profile Avatar */}
+        <div className="absolute -bottom-16 left-6 sm:left-8">
+          <div className="relative group">
+            {formData.avatar_url ? (
+              <img
+                src={formData.avatar_url}
+                alt="Avatar"
+                className="w-32 h-32 rounded-full object-cover border-4 border-bg-primary"
+              />
+            ) : (
+              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center text-white text-4xl font-bold border-4 border-bg-primary">
+                {formData.username?.charAt(0).toUpperCase() || 'D'}
+              </div>
+            )}
+
+            {/* Avatar Edit Button */}
+            <button
+              type="button"
+              onClick={() => avatarInputRef.current?.click()}
+              disabled={uploadingAvatar}
+              className="absolute bottom-0 right-0 p-2.5 bg-gradient-to-br from-neon-purple to-neon-pink hover:from-neon-purple/90 hover:to-neon-pink/90 rounded-full text-white transition-all shadow-lg hover:shadow-neon-purple/50 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Edit profile picture"
+            >
+              {uploadingAvatar ? (
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <FiCamera size={16} />
+              )}
+            </button>
+
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/gif,image/webp"
+              onChange={handleAvatarChange}
+              className="hidden"
+            />
+          </div>
+        </div>
+
+        {/* Image Upload Errors */}
+        {(errors.avatar || errors.cover) && (
+          <div className="mt-20 space-y-2">
+            {errors.avatar && <p className="text-sm text-red-400">{errors.avatar}</p>}
+            {errors.cover && <p className="text-sm text-red-400">{errors.cover}</p>}
+          </div>
+        )}
+
+        {/* Spacing for avatar overflow */}
+        <div className="h-20" />
       </div>
 
       {/* Basic Information */}
