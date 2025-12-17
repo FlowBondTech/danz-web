@@ -66,7 +66,7 @@ function PostComments({ postId }: { postId: string }) {
     )
   }
 
-  const comments = postData?.getPost.comments || []
+  const comments = postData?.getPost?.comments || []
 
   return (
     <div className="mt-4 pt-4 border-t border-white/5">
