@@ -1,8 +1,17 @@
 'use client'
 
+import AchievementsWidget from '@/src/components/dashboard/AchievementsWidget'
 import ActivityStatsWidget from '@/src/components/dashboard/ActivityStatsWidget'
+import DanceBondsWidget from '@/src/components/dashboard/DanceBondsWidget'
+import DanceStyleProgressWidget from '@/src/components/dashboard/DanceStyleProgressWidget'
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
+import LeaderboardWidget from '@/src/components/dashboard/LeaderboardWidget'
+import NotificationsCenterWidget from '@/src/components/dashboard/NotificationsCenterWidget'
+import PracticeLogWidget from '@/src/components/dashboard/PracticeLogWidget'
+import RecentActivityFeed from '@/src/components/dashboard/RecentActivityFeed'
+import UpcomingEventsWidget from '@/src/components/dashboard/UpcomingEventsWidget'
 import UserStatsCard from '@/src/components/dashboard/UserStatsCard'
+import WeeklyChallengesWidget from '@/src/components/dashboard/WeeklyChallengesWidget'
 import { useGetMyProfileQuery } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -357,14 +366,50 @@ function DashboardContent() {
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            STATS SECTION - Your Activity & Achievements
+            ENHANCED DASHBOARD WIDGETS
         ═══════════════════════════════════════════════════════════════════ */}
-        <div className="space-y-6 mb-8">
-          {/* Recent Activity Trends */}
-          <ActivityStatsWidget />
 
-          {/* All-Time Stats */}
+        {/* Row 1: Upcoming Events + Practice Log */}
+        <div className="grid lg:grid-cols-3 gap-6 mb-6">
+          <div className="lg:col-span-2">
+            <UpcomingEventsWidget />
+          </div>
+          <div>
+            <PracticeLogWidget />
+          </div>
+        </div>
+
+        {/* Row 2: Activity Stats (Full Width) */}
+        <div className="mb-6">
+          <ActivityStatsWidget />
+        </div>
+
+        {/* Row 3: Recent Activity Feed + Notifications */}
+        <div className="grid lg:grid-cols-3 gap-6 mb-6">
+          <div className="lg:col-span-2">
+            <RecentActivityFeed />
+          </div>
+          <div>
+            <NotificationsCenterWidget />
+          </div>
+        </div>
+
+        {/* Row 4: All-Time Stats (Full Width) */}
+        <div className="mb-6">
           <UserStatsCard />
+        </div>
+
+        {/* Row 5: Achievements + Dance Bonds + Leaderboard */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          <AchievementsWidget />
+          <DanceBondsWidget />
+          <LeaderboardWidget />
+        </div>
+
+        {/* Row 6: Weekly Challenges + Dance Style Progress */}
+        <div className="grid lg:grid-cols-2 gap-6 mb-8">
+          <WeeklyChallengesWidget />
+          <DanceStyleProgressWidget />
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════════
