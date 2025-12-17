@@ -14,7 +14,20 @@ import {
   FiTwitter,
   FiUser,
   FiYoutube,
+  FiLock,
+  FiMail,
+  FiEye,
+  FiEyeOff,
+  FiCalendar,
+  FiMusic,
+  FiX,
+  FiAward,
+  FiTrendingUp,
+  FiClock,
+  FiActivity,
 } from 'react-icons/fi'
+import { useToast } from '@/src/hooks/useToast'
+import { ToastContainer } from '@/src/components/ui/Toast'
 
 const UPDATE_PROFILE = gql`
   mutation UpdateProfile($input: UpdateProfileInput!) {
@@ -95,6 +108,7 @@ interface ProfileEditFormProps {
 }
 
 export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditFormProps) {
+  const toast = useToast()
   const [formData, setFormData] = useState({
     username: '',
     display_name: '',
@@ -122,6 +136,9 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const [uploadingCover, setUploadingCover] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState<{ avatar?: number; cover?: number }>({})
+  const [newMusicTag, setNewMusicTag] = useState('')
+  const [showPreview, setShowPreview] = useState(false)
 
   const avatarInputRef = useRef<HTMLInputElement>(null)
   const coverInputRef = useRef<HTMLInputElement>(null)
@@ -141,10 +158,12 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
     },
     onCompleted: () => {
       setHasChanges(false)
+      toast.success('Profile updated successfully!')
       if (onSave) onSave()
     },
     onError: error => {
       console.error('Error updating profile:', error)
+      toast.error('Failed to update profile. Please try again.')
       setErrors({ submit: 'Failed to update profile. Please try again.' })
     },
   })
@@ -219,20 +238,18 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
 
     // Validate file
     if (!file.type.startsWith('image/')) {
-      setErrors({ [type]: 'Please select an image file' })
+      toast.error('Please select an image file')
       return
     }
 
     if (file.size > maxSize) {
-      setErrors({
-        [type]: `File size must be less than ${isAvatar ? '5MB' : '10MB'}`,
-      })
+      toast.error(`File size must be less than ${isAvatar ? '5MB' : '10MB'}`)
       return
     }
 
     try {
       setUploading(true)
-      setErrors({})
+      setUploadProgress({ ...uploadProgress, [type]: 0 })
 
       // Get upload URL from GraphQL
       const response = await fetch(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/graphql', {
@@ -265,6 +282,8 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
 
       const { uploadUrl, fields, publicUrl } = data.getUploadUrl
 
+      setUploadProgress({ ...uploadProgress, [type]: 50 })
+
       // Upload to S3
       const formData = new FormData()
       Object.entries(fields).forEach(([key, value]) => {
@@ -281,16 +300,21 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
         throw new Error('Failed to upload file to S3')
       }
 
+      setUploadProgress({ ...uploadProgress, [type]: 100 })
+
       // Update form data with new URL
       setFormData(prev => ({
         ...prev,
         [isAvatar ? 'avatar_url' : 'cover_image_url']: publicUrl,
       }))
+
+      toast.success(`${isAvatar ? 'Avatar' : 'Cover image'} uploaded successfully!`)
     } catch (err: any) {
       console.error('Upload error:', err)
-      setErrors({ [type]: err.message || 'Failed to upload image' })
+      toast.error(err.message || 'Failed to upload image')
     } finally {
       setUploading(false)
+      setUploadProgress({ ...uploadProgress, [type]: undefined })
     }
   }
 
@@ -308,9 +332,81 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
     }
   }
 
+  // Calculate profile completion percentage
+  const calculateCompletion = () => {
+    const fields = [
+      formData.display_name,
+      formData.bio,
+      formData.avatar_url,
+      formData.cover_image_url,
+      formData.city,
+      formData.location,
+      formData.skill_level,
+      formData.dance_styles.length > 0,
+      formData.age,
+      formData.pronouns,
+      formData.website || formData.instagram || formData.tiktok || formData.youtube || formData.twitter,
+    ]
+    const completed = fields.filter(Boolean).length
+    return Math.round((completed / fields.length) * 100)
+  }
+
+  // Normalize website URL (add https:// if missing)
+  const normalizeWebsiteUrl = (url: string) => {
+    if (!url) return ''
+    if (url.startsWith('http://') || url.startsWith('https://')) return url
+    return `https://${url}`
+  }
+
+  // Validate social media handle
+  const validateSocialHandle = (handle: string, platform: string) => {
+    if (!handle) return true
+    // Remove @ if present
+    const cleaned = handle.replace('@', '')
+    // Check for invalid characters
+    if (!/^[a-zA-Z0-9._-]+$/.test(cleaned)) {
+      toast.warning(`${platform} handle contains invalid characters`)
+      return false
+    }
+    return true
+  }
+
+  // Handle music tag addition
+  const addMusicTag = () => {
+    if (!newMusicTag.trim()) return
+    if (formData.favorite_music.includes(newMusicTag.trim())) {
+      toast.warning('This music genre is already added')
+      return
+    }
+    setFormData(prev => ({
+      ...prev,
+      favorite_music: [...prev.favorite_music, newMusicTag.trim()],
+    }))
+    setNewMusicTag('')
+  }
+
+  const removeMusicTag = (tag: string) => {
+    setFormData(prev => ({
+      ...prev,
+      favorite_music: prev.favorite_music.filter(t => t !== tag),
+    }))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setErrors({})
+
+    // Validate social handles
+    if (!validateSocialHandle(formData.instagram, 'Instagram')) return
+    if (!validateSocialHandle(formData.tiktok, 'TikTok')) return
+    if (!validateSocialHandle(formData.youtube, 'YouTube')) return
+    if (!validateSocialHandle(formData.twitter, 'Twitter')) return
+
+    // Validate age
+    if (formData.age !== null && (formData.age < 13 || formData.age > 120)) {
+      toast.error('Please enter a valid age between 13 and 120')
+      return
+    }
 
     // Only send changed fields
     const changedFields: any = {}
@@ -323,19 +419,32 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
       changedFields.cover_image_url = formData.cover_image_url
     if (formData.location !== user?.location) changedFields.location = formData.location
     if (formData.city !== user?.city) changedFields.city = formData.city
-    if (formData.website !== user?.website) changedFields.website = formData.website
+
+    // Normalize website URL
+    const normalizedWebsite = normalizeWebsiteUrl(formData.website)
+    if (normalizedWebsite !== user?.website) changedFields.website = normalizedWebsite
+
     if (formData.instagram !== user?.instagram) changedFields.instagram = formData.instagram
     if (formData.tiktok !== user?.tiktok) changedFields.tiktok = formData.tiktok
     if (formData.youtube !== user?.youtube) changedFields.youtube = formData.youtube
     if (formData.twitter !== user?.twitter) changedFields.twitter = formData.twitter
     if (formData.pronouns !== user?.pronouns) changedFields.pronouns = formData.pronouns
     if (formData.skill_level !== user?.skill_level) changedFields.skill_level = formData.skill_level
+    if (formData.age !== user?.age) changedFields.age = formData.age
+    if (formData.is_public !== user?.is_public) changedFields.is_public = formData.is_public
+    if (formData.allow_messages !== user?.allow_messages) changedFields.allow_messages = formData.allow_messages
+    if (formData.show_location !== user?.show_location) changedFields.show_location = formData.show_location
+
     if (JSON.stringify(formData.dance_styles) !== JSON.stringify(user?.dance_styles)) {
       changedFields.dance_styles = formData.dance_styles
     }
+    if (JSON.stringify(formData.favorite_music) !== JSON.stringify(user?.favorite_music)) {
+      changedFields.favorite_music = formData.favorite_music
+    }
 
     if (Object.keys(changedFields).length === 0) {
-      return // No changes to save
+      toast.info('No changes to save')
+      return
     }
 
     await updateProfile({
@@ -345,10 +454,72 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
     })
   }
 
+  const completion = calculateCompletion()
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
-      {/* Profile Images Preview */}
-      <div className="relative">
+    <>
+      <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Profile Completion Badge */}
+        <div className="bg-gradient-to-r from-neon-purple/10 to-neon-pink/10 rounded-xl border border-neon-purple/20 p-4">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <FiAward className="text-neon-purple" size={20} />
+              <h3 className="text-sm font-semibold text-text-primary">Profile Completion</h3>
+            </div>
+            <span className="text-lg font-bold text-neon-purple">{completion}%</span>
+          </div>
+          <div className="h-2 bg-bg-primary rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-neon-purple to-neon-pink transition-all duration-500"
+              style={{ width: `${completion}%` }}
+            />
+          </div>
+          {completion < 100 && (
+            <p className="text-xs text-text-secondary mt-2">
+              Complete your profile to unlock all features and increase your visibility!
+            </p>
+          )}
+        </div>
+
+        {/* Profile Stats Display */}
+        {user && (
+          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
+            <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+              <FiActivity className="text-neon-purple" />
+              Your Stats
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-neon-purple">{user.level || 1}</div>
+                <div className="text-xs text-text-secondary">Level</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-neon-pink">{user.xp || 0}</div>
+                <div className="text-xs text-text-secondary">XP</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-400">{user.longest_streak || 0}</div>
+                <div className="text-xs text-text-secondary">Best Streak</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-400">{user.total_sessions || 0}</div>
+                <div className="text-xs text-text-secondary">Sessions</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Last Updated */}
+        {user?.updated_at && (
+          <div className="flex items-center gap-2 text-xs text-text-secondary">
+            <FiClock size={14} />
+            <span>Last updated: {new Date(user.updated_at).toLocaleDateString()}</span>
+          </div>
+        )}
+
+        {/* Profile Images Preview */}
+        <div className="relative">
         {/* Cover Image */}
         <div className="relative h-48 sm:h-64 rounded-2xl overflow-hidden bg-gradient-to-br from-neon-purple/20 to-neon-pink/20 border border-neon-purple/20">
           {formData.cover_image_url ? (
@@ -509,6 +680,26 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
           </div>
 
           <div>
+            <label htmlFor="age" className="block text-text-secondary text-sm mb-2">
+              Age
+            </label>
+            <div className="relative">
+              <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
+              <input
+                id="age"
+                type="number"
+                min="13"
+                max="120"
+                value={formData.age || ''}
+                onChange={e => setFormData(prev => ({ ...prev, age: e.target.value ? Number(e.target.value) : null }))}
+                className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text-primary focus:outline-none focus:border-neon-purple transition-colors"
+                placeholder="Your age"
+              />
+            </div>
+            <p className="text-text-secondary text-xs mt-1">Must be 13 or older</p>
+          </div>
+
+          <div>
             <label htmlFor="skill-level" className="block text-text-secondary text-sm mb-2">
               Skill Level
             </label>
@@ -521,10 +712,15 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
               <option value="">Select skill level</option>
               {SKILL_LEVELS.map(level => (
                 <option key={level.value} value={level.value}>
-                  {level.label}
+                  {level.label} - {level.description}
                 </option>
               ))}
             </select>
+            {formData.skill_level && (
+              <p className="text-text-secondary text-xs mt-1">
+                {SKILL_LEVELS.find(l => l.value === formData.skill_level)?.description}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -689,6 +885,136 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
         </div>
       </div>
 
+      {/* Favorite Music */}
+      <div>
+        <h3 className="text-xl font-bold text-text-primary mb-6 flex items-center gap-2">
+          <FiMusic className="text-neon-purple" />
+          Favorite Music Genres
+        </h3>
+        <div className="space-y-4">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={newMusicTag}
+              onChange={e => setNewMusicTag(e.target.value)}
+              onKeyPress={e => e.key === 'Enter' && (e.preventDefault(), addMusicTag())}
+              className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text-primary focus:outline-none focus:border-neon-purple transition-colors"
+              placeholder="Add a music genre..."
+            />
+            <button
+              type="button"
+              onClick={addMusicTag}
+              className="px-6 py-3 bg-neon-purple/20 hover:bg-neon-purple/30 border border-neon-purple/30 rounded-lg text-neon-purple transition-all"
+            >
+              Add
+            </button>
+          </div>
+          {formData.favorite_music.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {formData.favorite_music.map(tag => (
+                <div
+                  key={tag}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-neon-pink/20 border border-neon-pink/30 rounded-full text-neon-pink text-sm"
+                >
+                  <span>{tag}</span>
+                  <button
+                    type="button"
+                    onClick={() => removeMusicTag(tag)}
+                    className="hover:text-red-400 transition-colors"
+                  >
+                    <FiX size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Privacy Settings */}
+      <div>
+        <h3 className="text-xl font-bold text-text-primary mb-6 flex items-center gap-2">
+          <FiLock className="text-neon-purple" />
+          Privacy Settings
+        </h3>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-lg">
+            <div>
+              <div className="flex items-center gap-2 text-text-primary font-medium">
+                {formData.is_public ? <FiEye size={18} /> : <FiEyeOff size={18} />}
+                <span>Public Profile</span>
+              </div>
+              <p className="text-text-secondary text-sm mt-1">
+                Make your profile visible to everyone
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setFormData(prev => ({ ...prev, is_public: !prev.is_public }))}
+              className={`relative w-14 h-7 rounded-full transition-colors ${
+                formData.is_public ? 'bg-neon-purple' : 'bg-white/20'
+              }`}
+            >
+              <div
+                className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white transition-transform ${
+                  formData.is_public ? 'translate-x-7' : ''
+                }`}
+              />
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-lg">
+            <div>
+              <div className="flex items-center gap-2 text-text-primary font-medium">
+                <FiMail size={18} />
+                <span>Allow Messages</span>
+              </div>
+              <p className="text-text-secondary text-sm mt-1">
+                Let other users send you messages
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setFormData(prev => ({ ...prev, allow_messages: !prev.allow_messages }))}
+              className={`relative w-14 h-7 rounded-full transition-colors ${
+                formData.allow_messages ? 'bg-neon-purple' : 'bg-white/20'
+              }`}
+            >
+              <div
+                className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white transition-transform ${
+                  formData.allow_messages ? 'translate-x-7' : ''
+                }`}
+              />
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-lg">
+            <div>
+              <div className="flex items-center gap-2 text-text-primary font-medium">
+                <FiMapPin size={18} />
+                <span>Show Location</span>
+              </div>
+              <p className="text-text-secondary text-sm mt-1">
+                Display your city on your profile
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setFormData(prev => ({ ...prev, show_location: !prev.show_location }))}
+              className={`relative w-14 h-7 rounded-full transition-colors ${
+                formData.show_location ? 'bg-neon-purple' : 'bg-white/20'
+              }`}
+            >
+              <div
+                className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white transition-transform ${
+                  formData.show_location ? 'translate-x-7' : ''
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Submit Buttons */}
       {errors.submit && (
         <div className="p-4 bg-red-400/10 border border-red-400/20 rounded-lg">
@@ -711,6 +1037,7 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
           </span>
         )}
       </div>
-    </form>
+      </form>
+    </>
   )
 }
