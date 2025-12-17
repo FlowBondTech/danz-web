@@ -205,6 +205,19 @@ function DashboardContent() {
                         {profile?.username?.charAt(0).toUpperCase() || 'D'}
                       </div>
                     )}
+
+                    {/* Avatar Edit Icon - positioned at bottom left to avoid level badge */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        router.push('/dashboard/profile')
+                      }}
+                      className="absolute bottom-0 left-0 p-2 bg-gradient-to-br from-neon-purple to-neon-pink hover:from-neon-purple/90 hover:to-neon-pink/90 rounded-full text-white transition-all shadow-lg hover:shadow-neon-purple/50 hover:scale-110 z-30 border-2 border-bg-secondary"
+                      aria-label="Edit profile picture"
+                    >
+                      <FiEdit3 size={14} />
+                    </button>
+
                     {/* Level Badge */}
                     <div className="absolute -bottom-1 -right-1 w-9 h-9 bg-gradient-to-br from-neon-purple to-neon-pink rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-neon-purple/30 z-20 border-2 border-bg-secondary">
                       {profile?.level || 1}
