@@ -1,5 +1,6 @@
 'use client'
 
+import ActivityStatsWidget from '@/src/components/dashboard/ActivityStatsWidget'
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import UserStatsCard from '@/src/components/dashboard/UserStatsCard'
 import { useGetMyProfileQuery } from '@/src/generated/graphql'
@@ -358,7 +359,11 @@ function DashboardContent() {
         {/* ═══════════════════════════════════════════════════════════════════
             STATS SECTION - Your Activity & Achievements
         ═══════════════════════════════════════════════════════════════════ */}
-        <div className="mb-8">
+        <div className="space-y-6 mb-8">
+          {/* Recent Activity Trends */}
+          <ActivityStatsWidget />
+
+          {/* All-Time Stats */}
           <UserStatsCard />
         </div>
 
