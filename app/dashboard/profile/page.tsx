@@ -7,7 +7,7 @@ import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useEffect } from 'react'
-import { FiEdit3, FiGift, FiZap, FiAward, FiChevronRight } from 'react-icons/fi'
+import { FiCamera, FiEdit3, FiGift, FiZap, FiAward, FiChevronRight } from 'react-icons/fi'
 import { motion } from 'motion/react'
 
 export default function ProfilePage() {
@@ -75,7 +75,7 @@ export default function ProfilePage() {
       <div className="max-w-4xl mx-auto">
         {/* Cover Image Section */}
         <div className="relative mb-8">
-          <div className="h-48 rounded-xl overflow-hidden bg-gradient-to-r from-neon-purple/20 to-neon-pink/20">
+          <div className="relative h-48 rounded-xl overflow-hidden bg-gradient-to-r from-neon-purple/20 to-neon-pink/20">
             {profile?.cover_image_url ? (
               <img
                 src={profile.cover_image_url}
@@ -87,21 +87,47 @@ export default function ProfilePage() {
                 <p className="text-text-secondary">No cover image</p>
               </div>
             )}
+
+            {/* Cover Edit Button */}
+            <button
+              onClick={() => {
+                const form = document.querySelector('[data-profile-form]')
+                form?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+              }}
+              className="absolute top-4 right-4 p-3 bg-bg-primary/90 hover:bg-bg-primary border border-white/20 hover:border-neon-purple/50 rounded-xl text-text-primary hover:text-neon-purple transition-all backdrop-blur-sm z-10"
+              aria-label="Edit cover image"
+            >
+              <FiEdit3 size={20} />
+            </button>
           </div>
 
           {/* Avatar overlay */}
           <div className="absolute -bottom-12 left-8">
-            {profile?.avatar_url ? (
-              <img
-                src={profile.avatar_url}
-                alt={profile.display_name || profile.username || 'User'}
-                className="w-24 h-24 rounded-full object-cover border-4 border-bg-secondary"
-              />
-            ) : (
-              <div className="w-24 h-24 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white text-3xl font-bold border-4 border-bg-secondary">
-                {profile?.username?.charAt(0).toUpperCase() || 'U'}
-              </div>
-            )}
+            <div className="relative">
+              {profile?.avatar_url ? (
+                <img
+                  src={profile.avatar_url}
+                  alt={profile.display_name || profile.username || 'User'}
+                  className="w-24 h-24 rounded-full object-cover border-4 border-bg-secondary"
+                />
+              ) : (
+                <div className="w-24 h-24 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white text-3xl font-bold border-4 border-bg-secondary">
+                  {profile?.username?.charAt(0).toUpperCase() || 'U'}
+                </div>
+              )}
+
+              {/* Avatar Edit Button */}
+              <button
+                onClick={() => {
+                  const form = document.querySelector('[data-profile-form]')
+                  form?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                }}
+                className="absolute bottom-0 right-0 p-2.5 bg-gradient-to-br from-neon-purple to-neon-pink hover:from-neon-purple/90 hover:to-neon-pink/90 rounded-full text-white transition-all shadow-lg hover:shadow-neon-purple/50 z-10"
+                aria-label="Edit profile picture"
+              >
+                <FiCamera size={16} />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -165,7 +191,7 @@ export default function ProfilePage() {
           </Link>
         </motion.div>
 
-        <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-8">
+        <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-8" data-profile-form>
           <ProfileEditForm user={profile} onSave={handleSave} onCancel={handleCancel} />
         </div>
       </div>
