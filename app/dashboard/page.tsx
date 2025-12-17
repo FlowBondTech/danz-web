@@ -19,6 +19,7 @@ import {
   FiMapPin,
   FiMusic,
   FiPlus,
+  FiSettings,
   FiStar,
   FiTarget,
   FiTrendingUp,
@@ -127,6 +128,15 @@ function DashboardContent() {
           <div className="relative bg-gradient-to-br from-bg-secondary/90 via-bg-secondary to-bg-card/90 backdrop-blur-xl rounded-3xl border border-neon-purple/20 overflow-hidden">
             {/* Top Accent Line */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-neon-purple via-neon-pink to-neon-purple" />
+
+            {/* Settings Icon */}
+            <button
+              onClick={() => router.push('/dashboard/profile')}
+              className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2.5 bg-bg-primary/50 hover:bg-bg-primary border border-white/10 hover:border-neon-purple/50 rounded-xl text-text-secondary hover:text-neon-purple transition-all z-10 backdrop-blur-sm"
+              aria-label="Edit Profile"
+            >
+              <FiSettings size={20} />
+            </button>
 
             <div className="p-6 sm:p-8">
               <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-8">
