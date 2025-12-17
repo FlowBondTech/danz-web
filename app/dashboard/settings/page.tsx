@@ -6,7 +6,7 @@ import { NotificationPreferences } from '@/src/components/notifications'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { FiLock, FiMail, FiSettings, FiShield } from 'react-icons/fi'
+import { FiEdit3, FiLock, FiMail, FiSettings, FiShield, FiUser } from 'react-icons/fi'
 
 export default function SettingsPage() {
   const { authenticated, ready, user } = usePrivy()
@@ -57,6 +57,29 @@ export default function SettingsPage() {
         </div>
 
         <div className="space-y-6">
+          {/* Profile Settings */}
+          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
+            <h2 className="text-xl font-bold text-text-primary mb-6 flex items-center gap-3">
+              <FiUser className="text-neon-purple" />
+              Profile Settings
+            </h2>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <p className="text-text-primary font-medium">Edit Your Profile</p>
+                <p className="text-text-secondary text-sm mt-1">
+                  Update your display name, bio, avatar, and other profile information
+                </p>
+              </div>
+              <button
+                onClick={() => router.push('/dashboard/profile')}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-neon-purple to-neon-pink text-white rounded-xl hover:shadow-lg hover:shadow-neon-purple/30 transition-all hover:scale-105 font-medium whitespace-nowrap"
+              >
+                <FiEdit3 size={18} />
+                Edit Profile
+              </button>
+            </div>
+          </div>
+
           {/* Theme & Appearance */}
           <ThemeSettings />
 
