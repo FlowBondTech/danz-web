@@ -128,7 +128,7 @@ export default function AdminUsersPage() {
         {/* Back Navigation */}
         <Link
           href="/dashboard/admin"
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-text-primary transition-colors"
         >
           <FiArrowLeft size={20} />
           <span>Back to Admin</span>
@@ -136,7 +136,7 @@ export default function AdminUsersPage() {
 
         {/* Header */}
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">User Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">User Management</h1>
           <p className="text-gray-400 mt-1 sm:mt-2 text-sm sm:text-base">Manage user roles and permissions</p>
         </div>
 
@@ -146,7 +146,7 @@ export default function AdminUsersPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Total Users</p>
-                <p className="text-xl sm:text-3xl font-bold text-white mt-1">{stats.totalUsers}</p>
+                <p className="text-xl sm:text-3xl font-bold text-text-primary mt-1">{stats.totalUsers}</p>
               </div>
               <FiUsers className="text-purple-400 text-xl sm:text-3xl" />
             </div>
@@ -156,7 +156,7 @@ export default function AdminUsersPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Dev/Admin</p>
-                <p className="text-xl sm:text-3xl font-bold text-white mt-1">{stats.devs}</p>
+                <p className="text-xl sm:text-3xl font-bold text-text-primary mt-1">{stats.devs}</p>
               </div>
               <FiShield className="text-purple-400 text-xl sm:text-3xl" />
             </div>
@@ -166,7 +166,7 @@ export default function AdminUsersPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Organizers</p>
-                <p className="text-xl sm:text-3xl font-bold text-white mt-1">{stats.organizers}</p>
+                <p className="text-xl sm:text-3xl font-bold text-text-primary mt-1">{stats.organizers}</p>
               </div>
               <FiCalendar className="text-purple-400 text-xl sm:text-3xl" />
             </div>
@@ -176,7 +176,7 @@ export default function AdminUsersPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Pending</p>
-                <p className="text-xl sm:text-3xl font-bold text-white mt-1">{stats.pendingOrganizers}</p>
+                <p className="text-xl sm:text-3xl font-bold text-text-primary mt-1">{stats.pendingOrganizers}</p>
               </div>
               <FiUserCheck className="text-yellow-400 text-xl sm:text-3xl" />
             </div>
@@ -193,7 +193,7 @@ export default function AdminUsersPage() {
               placeholder="Search by username or display name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-black/30 border border-purple-500/30 rounded-xl text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none"
+              className="w-full pl-10 pr-4 py-3 bg-black/30 border border-purple-500/30 rounded-xl text-text-primary placeholder-gray-500 focus:border-purple-500 focus:outline-none"
             />
           </div>
 
@@ -205,7 +205,7 @@ export default function AdminUsersPage() {
                 onClick={() => setRoleFilter(option.value)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
                   roleFilter === option.value
-                    ? 'bg-purple-600 text-white border border-purple-500'
+                    ? 'bg-purple-600 text-text-primary border border-purple-500'
                     : option.highlight
                     ? 'bg-yellow-600/20 text-yellow-300 border border-yellow-500/50 hover:bg-yellow-600/30'
                     : 'bg-white/5 text-gray-300 border border-purple-500/20 hover:bg-white/10 hover:border-purple-500/40'
@@ -255,7 +255,7 @@ export default function AdminUsersPage() {
                   <tr key={user.privy_id} className="hover:bg-white/5 transition-colors">
                     <td className="px-6 py-4">
                       <div>
-                        <div className="text-white font-medium">
+                        <div className="text-text-primary font-medium">
                           {user.display_name || user.username || 'No name'}
                         </div>
                         <div className="text-gray-400 text-sm">
@@ -290,25 +290,25 @@ export default function AdminUsersPage() {
                           <div className="absolute z-10 mt-1 bg-black/95 border border-purple-500/30 rounded-lg shadow-lg min-w-[120px]">
                             <button
                               onClick={() => handleRoleChange(user.privy_id, 'user')}
-                              className="block w-full px-4 py-2 text-left text-white hover:bg-purple-600/30 text-sm transition-colors"
+                              className="block w-full px-4 py-2 text-left text-text-primary hover:bg-purple-600/30 text-sm transition-colors"
                             >
                               User
                             </button>
                             <button
                               onClick={() => handleRoleChange(user.privy_id, 'organizer')}
-                              className="block w-full px-4 py-2 text-left text-white hover:bg-purple-600/30 text-sm transition-colors"
+                              className="block w-full px-4 py-2 text-left text-text-primary hover:bg-purple-600/30 text-sm transition-colors"
                             >
                               Organizer
                             </button>
                             <button
                               onClick={() => handleRoleChange(user.privy_id, 'dev')}
-                              className="block w-full px-4 py-2 text-left text-white hover:bg-purple-600/30 text-sm transition-colors"
+                              className="block w-full px-4 py-2 text-left text-text-primary hover:bg-purple-600/30 text-sm transition-colors"
                             >
                               Dev
                             </button>
                             <button
                               onClick={() => handleRoleChange(user.privy_id, 'admin')}
-                              className="block w-full px-4 py-2 text-left text-white hover:bg-purple-600/30 text-sm transition-colors"
+                              className="block w-full px-4 py-2 text-left text-text-primary hover:bg-purple-600/30 text-sm transition-colors"
                             >
                               Admin
                             </button>
@@ -325,14 +325,14 @@ export default function AdminUsersPage() {
                     <td className="px-6 py-4">
                       <div className="text-sm space-y-1">
                         <div className="text-gray-400">
-                          XP: <span className="text-white font-medium">{user.xp || 0}</span>
+                          XP: <span className="text-text-primary font-medium">{user.xp || 0}</span>
                         </div>
                         <div className="text-gray-400">
-                          Referrals: <span className="text-white font-medium">{user.referral_count || 0}</span>
+                          Referrals: <span className="text-text-primary font-medium">{user.referral_count || 0}</span>
                         </div>
                         {user.total_sessions && user.total_sessions > 0 && (
                           <div className="text-gray-400">
-                            Sessions: <span className="text-white font-medium">{user.total_sessions}</span>
+                            Sessions: <span className="text-text-primary font-medium">{user.total_sessions}</span>
                           </div>
                         )}
                       </div>
@@ -375,7 +375,7 @@ export default function AdminUsersPage() {
                 {/* User Info Row */}
                 <div className="flex items-start justify-between">
                   <div>
-                    <div className="text-white font-medium">
+                    <div className="text-text-primary font-medium">
                       {user.display_name || user.username || 'No name'}
                     </div>
                     <div className="text-gray-400 text-sm">
@@ -431,25 +431,25 @@ export default function AdminUsersPage() {
                         <div className="absolute z-10 mt-1 bg-black/95 border border-purple-500/30 rounded-lg shadow-lg min-w-[140px]">
                           <button
                             onClick={() => handleRoleChange(user.privy_id, 'user')}
-                            className="block w-full px-4 py-3 text-left text-white hover:bg-purple-600/30 text-sm transition-colors"
+                            className="block w-full px-4 py-3 text-left text-text-primary hover:bg-purple-600/30 text-sm transition-colors"
                           >
                             User
                           </button>
                           <button
                             onClick={() => handleRoleChange(user.privy_id, 'organizer')}
-                            className="block w-full px-4 py-3 text-left text-white hover:bg-purple-600/30 text-sm transition-colors"
+                            className="block w-full px-4 py-3 text-left text-text-primary hover:bg-purple-600/30 text-sm transition-colors"
                           >
                             Organizer
                           </button>
                           <button
                             onClick={() => handleRoleChange(user.privy_id, 'dev')}
-                            className="block w-full px-4 py-3 text-left text-white hover:bg-purple-600/30 text-sm transition-colors"
+                            className="block w-full px-4 py-3 text-left text-text-primary hover:bg-purple-600/30 text-sm transition-colors"
                           >
                             Dev
                           </button>
                           <button
                             onClick={() => handleRoleChange(user.privy_id, 'admin')}
-                            className="block w-full px-4 py-3 text-left text-white hover:bg-purple-600/30 text-sm transition-colors"
+                            className="block w-full px-4 py-3 text-left text-text-primary hover:bg-purple-600/30 text-sm transition-colors"
                           >
                             Admin
                           </button>

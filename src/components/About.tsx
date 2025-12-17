@@ -83,7 +83,7 @@ export default function About() {
                   <div
                     className={`flex items-center justify-center w-16 h-16 bg-gradient-to-br ${pillar.gradient} rounded-xl mb-6 shadow-lg`}
                   >
-                    <pillar.icon className="w-8 h-8 text-white" />
+                    <pillar.icon className="w-8 h-8 text-text-primary" />
                   </div>
                 </div>
 

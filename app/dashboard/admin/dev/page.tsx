@@ -304,7 +304,7 @@ export default function DevPanelPage() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-white text-2xl">Loading...</div>
+          <div className="text-text-primary text-2xl">Loading...</div>
         </div>
       </DashboardLayout>
     )
@@ -367,7 +367,7 @@ export default function DevPanelPage() {
               <FiRefreshCw size={18} />
             </button>
             <div className="bg-gradient-to-r from-blue-500 to-cyan-500 px-3 sm:px-4 py-2 rounded-full">
-              <span className="text-white font-medium text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
+              <span className="text-text-primary font-medium text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                 <FiCode size={14} />
                 <span className="hidden sm:inline">{userRole === 'admin' ? 'Admin' : 'Dev'}</span>
               </span>
@@ -715,7 +715,7 @@ export default function DevPanelPage() {
                     onClick={() => setTaskFilter(priority)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
                       taskFilter === priority
-                        ? 'bg-neon-purple text-white'
+                        ? 'bg-neon-purple text-text-primary'
                         : 'bg-bg-secondary text-text-secondary hover:text-text-primary'
                     }`}
                   >
@@ -725,7 +725,7 @@ export default function DevPanelPage() {
               </div>
               <button
                 onClick={() => setShowCreateTask(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-neon-purple hover:bg-neon-purple/80 text-white rounded-lg transition-colors text-sm font-medium"
+                className="flex items-center gap-2 px-4 py-2 bg-neon-purple hover:bg-neon-purple/80 text-text-primary rounded-lg transition-colors text-sm font-medium"
               >
                 <FiPlus size={16} />
                 New Task
@@ -758,7 +758,7 @@ export default function DevPanelPage() {
                 </p>
                 <button
                   onClick={() => setShowCreateTask(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-neon-purple hover:bg-neon-purple/80 text-white rounded-lg transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-neon-purple hover:bg-neon-purple/80 text-text-primary rounded-lg transition-colors"
                 >
                   <FiPlus size={16} />
                   Create First Task
@@ -1102,7 +1102,7 @@ function CreateTaskModal({
             <button
               type="submit"
               disabled={isSubmitting || !formData.title.trim()}
-              className="px-4 py-2 bg-neon-purple hover:bg-neon-purple/80 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+              className="px-4 py-2 bg-neon-purple hover:bg-neon-purple/80 disabled:bg-gray-600 disabled:cursor-not-allowed text-text-primary rounded-lg transition-colors"
             >
               {isSubmitting ? 'Creating...' : 'Create Task'}
             </button>

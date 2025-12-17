@@ -88,7 +88,7 @@ function ReferralsContent() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]" role="status" aria-live="polite">
-          <div className="text-white text-2xl">Loading...</div>
+          <div className="text-text-primary text-2xl">Loading...</div>
         </div>
       </DashboardLayout>
     )
@@ -103,7 +103,7 @@ function ReferralsContent() {
             <FiGift size={16} />
             Earn Big Rewards!
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+          <h1 className="text-3xl sm:text-4xl font-bold text-text-primary mb-3">
             Get <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">250 Points</span> Per Referral
           </h1>
           <p className="text-text-secondary max-w-md mx-auto">
@@ -114,7 +114,7 @@ function ReferralsContent() {
         {/* Quick Stats Row */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           <div className="bg-bg-secondary rounded-xl border border-white/10 p-4 text-center">
-            <p className="text-2xl font-bold text-white">{stats.totalSignups}</p>
+            <p className="text-2xl font-bold text-text-primary">{stats.totalSignups}</p>
             <p className="text-xs text-text-secondary">Friends Joined</p>
           </div>
           <div className="bg-bg-secondary rounded-xl border border-white/10 p-4 text-center">
@@ -137,7 +137,7 @@ function ReferralsContent() {
           <div className="lg:col-span-3 space-y-4">
             {/* Share Link Card */}
             <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-5">
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
                 <FiShare2 className="text-neon-purple" />
                 Share Your Link
               </h2>
@@ -147,7 +147,7 @@ function ReferralsContent() {
                 <div className="flex items-center gap-3">
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-text-secondary mb-1">YOUR REFERRAL LINK</p>
-                    <p className="text-sm text-white font-mono truncate">{shareUrl}</p>
+                    <p className="text-sm text-text-primary font-mono truncate">{shareUrl}</p>
                   </div>
                   <button
                     onClick={() => copyToClipboard(shareUrl, 'url')}
@@ -170,14 +170,14 @@ function ReferralsContent() {
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={shareViaWhatsApp}
-                  className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1da851] text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                  className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1da851] text-text-primary font-medium py-3 px-4 rounded-lg transition-colors"
                 >
                   <FaWhatsapp size={20} />
                   WhatsApp
                 </button>
                 <button
                   onClick={shareViaSMS}
-                  className="flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                  className="flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-text-primary font-medium py-3 px-4 rounded-lg transition-colors"
                 >
                   <FiMessageCircle size={18} />
                   SMS
@@ -187,26 +187,26 @@ function ReferralsContent() {
 
             {/* How It Works - Compact */}
             <div className="bg-bg-secondary rounded-xl border border-white/10 p-5">
-              <h2 className="text-lg font-bold text-white mb-4">How It Works</h2>
+              <h2 className="text-lg font-bold text-text-primary mb-4">How It Works</h2>
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1 flex items-start gap-3">
                   <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white text-sm font-bold">1</div>
                   <div>
-                    <p className="font-medium text-white text-sm">Share Link</p>
+                    <p className="font-medium text-text-primary text-sm">Share Link</p>
                     <p className="text-xs text-text-secondary">Send to friends via any app</p>
                   </div>
                 </div>
                 <div className="flex-1 flex items-start gap-3">
                   <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white text-sm font-bold">2</div>
                   <div>
-                    <p className="font-medium text-white text-sm">Friend Joins</p>
+                    <p className="font-medium text-text-primary text-sm">Friend Joins</p>
                     <p className="text-xs text-text-secondary">You earn <span className="text-yellow-400 font-medium">+20 pts</span> instantly</p>
                   </div>
                 </div>
                 <div className="flex-1 flex items-start gap-3">
                   <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white text-sm font-bold">3</div>
                   <div>
-                    <p className="font-medium text-white text-sm">They Dance</p>
+                    <p className="font-medium text-text-primary text-sm">They Dance</p>
                     <p className="text-xs text-text-secondary">You earn <span className="text-green-400 font-medium">+230 pts</span> more!</p>
                   </div>
                 </div>
@@ -222,7 +222,7 @@ function ReferralsContent() {
                 <h3 className="text-sm font-medium text-text-secondary">Your Points Balance</h3>
                 <FiStar className="text-yellow-400" size={20} />
               </div>
-              <p className="text-3xl font-bold text-white mb-1">
+              <p className="text-3xl font-bold text-text-primary mb-1">
                 {pointsData?.current_points_balance?.toLocaleString() || 0}
               </p>
               <p className="text-xs text-text-secondary mb-3">Available points</p>
@@ -240,7 +240,7 @@ function ReferralsContent() {
                 <div className="mt-3 pt-3 border-t border-white/10 space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-text-secondary">Total Earned</span>
-                    <span className="text-white">{pointsData?.total_points_earned?.toLocaleString() || 0}</span>
+                    <span className="text-text-primary">{pointsData?.total_points_earned?.toLocaleString() || 0}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-text-secondary">From Referrals</span>
@@ -256,7 +256,7 @@ function ReferralsContent() {
 
             {/* Earning Tips - Compact */}
             <div className="bg-bg-secondary rounded-xl border border-white/10 p-4">
-              <h3 className="text-sm font-medium text-white mb-3 flex items-center gap-2">
+              <h3 className="text-sm font-medium text-text-primary mb-3 flex items-center gap-2">
                 <FiAward className="text-yellow-400" size={16} />
                 Ways to Earn
               </h3>
@@ -285,7 +285,7 @@ function ReferralsContent() {
         {/* Recent Referrals - Full Width */}
         <div className="mt-6 bg-bg-secondary rounded-xl border border-neon-purple/20 p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+            <h2 className="text-lg font-bold text-text-primary flex items-center gap-2">
               <FiUsers className="text-neon-purple" />
               Recent Referrals
             </h2>
@@ -316,7 +316,7 @@ function ReferralsContent() {
                       </div>
                     )}
                     <div className="min-w-0">
-                      <p className="font-medium text-white truncate">
+                      <p className="font-medium text-text-primary truncate">
                         {referral.display_name || referral.username}
                       </p>
                       <p className="text-sm text-text-secondary">
@@ -401,7 +401,7 @@ export default function ReferralsPage() {
       fallback={
         <DashboardLayout>
           <div className="flex items-center justify-center min-h-[60vh]" role="status" aria-live="polite">
-            <div className="text-white text-2xl">Loading...</div>
+            <div className="text-text-primary text-2xl">Loading...</div>
           </div>
         </DashboardLayout>
       }

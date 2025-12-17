@@ -107,7 +107,7 @@ export default function EventCard({ event, onRegister, variant = 'default' }: Ev
           {categoryEmoji}
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-medium text-white truncate">{event.title}</h3>
+          <h3 className="font-medium text-text-primary truncate">{event.title}</h3>
           <div className="flex items-center gap-3 text-sm text-text-secondary">
             <span className="flex items-center gap-1">
               <FiClock className="w-3 h-3" />
@@ -157,7 +157,7 @@ export default function EventCard({ event, onRegister, variant = 'default' }: Ev
 
       {/* Recurring Badge */}
       {event.is_recurring && (
-        <div className="absolute top-3 right-3 z-10 flex items-center gap-1 px-2 py-1 bg-neon-purple/80 text-white text-xs font-medium rounded-full">
+        <div className="absolute top-3 right-3 z-10 flex items-center gap-1 px-2 py-1 bg-neon-purple/80 text-text-primary text-xs font-medium rounded-full">
           <FiRepeat className="w-3 h-3" />
           Series
         </div>
@@ -191,7 +191,7 @@ export default function EventCard({ event, onRegister, variant = 'default' }: Ev
               setIsLiked(!isLiked)
             }}
             className={`p-3 rounded-full ${
-              isLiked ? 'bg-red-500 text-white' : 'bg-white/20 text-white hover:bg-white/30'
+              isLiked ? 'bg-red-500 text-text-primary' : 'bg-white/20 text-text-primary hover:bg-white/30'
             }`}
           >
             <FiHeart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
@@ -200,20 +200,20 @@ export default function EventCard({ event, onRegister, variant = 'default' }: Ev
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={e => e.stopPropagation()}
-            className="p-3 rounded-full bg-white/20 text-white hover:bg-white/30"
+            className="p-3 rounded-full bg-white/20 text-text-primary hover:bg-white/30"
           >
             <FiShare2 className="w-5 h-5" />
           </motion.button>
         </motion.div>
 
         {/* Time badge */}
-        <div className="absolute bottom-3 left-3 flex items-center gap-1 px-2 py-1 bg-black/60 backdrop-blur-sm text-white text-xs rounded-lg">
+        <div className="absolute bottom-3 left-3 flex items-center gap-1 px-2 py-1 bg-black/60 backdrop-blur-sm text-text-primary text-xs rounded-lg">
           <FiClock className="w-3 h-3 text-neon-purple" />
           {getTimeUntil(event.start_date_time)}
         </div>
 
         {/* Price badge */}
-        <div className="absolute bottom-3 right-3 px-2 py-1 bg-black/60 backdrop-blur-sm text-white text-sm font-bold rounded-lg">
+        <div className="absolute bottom-3 right-3 px-2 py-1 bg-black/60 backdrop-blur-sm text-text-primary text-sm font-bold rounded-lg">
           {event.price_usd && event.price_usd > 0 ? (
             <span className="text-green-400">${event.price_usd}</span>
           ) : (
@@ -224,7 +224,7 @@ export default function EventCard({ event, onRegister, variant = 'default' }: Ev
 
       {/* Content */}
       <div className="p-5">
-        <h3 className="text-lg font-bold text-white mb-2 line-clamp-1 group-hover:text-neon-purple transition-colors">
+        <h3 className="text-lg font-bold text-text-primary mb-2 line-clamp-1 group-hover:text-neon-purple transition-colors">
           {event.title}
         </h3>
 

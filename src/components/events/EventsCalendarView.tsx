@@ -138,7 +138,7 @@ export default function EventsCalendarView({ events, onRegister, onEventClick }:
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <h2 className="text-xl font-bold text-white">
+            <h2 className="text-xl font-bold text-text-primary">
               {MONTHS[currentDate.getMonth()]} {currentDate.getFullYear()}
             </h2>
             <button
@@ -187,9 +187,9 @@ export default function EventsCalendarView({ events, onRegister, onEventClick }:
                 onClick={() => setSelectedDate(date)}
                 className={`
                   aspect-square p-1 rounded-lg relative transition-colors
-                  ${isCurrentMonth(date) ? 'text-white' : 'text-text-secondary/50'}
+                  ${isCurrentMonth(date) ? 'text-text-primary' : 'text-text-secondary/50'}
                   ${isToday(date) ? 'bg-neon-purple/30 border border-neon-purple' : ''}
-                  ${isSelected(date) ? 'bg-neon-purple text-white' : 'hover:bg-white/10'}
+                  ${isSelected(date) ? 'bg-neon-purple text-text-primary' : 'hover:bg-white/10'}
                 `}
               >
                 <span className="text-sm">{date.getDate()}</span>
@@ -226,7 +226,7 @@ export default function EventsCalendarView({ events, onRegister, onEventClick }:
 
       {/* Selected Date Events */}
       <div className="bg-bg-secondary rounded-2xl border border-white/10 p-6">
-        <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+        <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
           <FiCalendar className="w-5 h-5 text-neon-purple" />
           {selectedDate
             ? selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
@@ -256,7 +256,7 @@ export default function EventsCalendarView({ events, onRegister, onEventClick }:
                         CATEGORY_COLORS[event.category || 'class'] || 'bg-neon-purple'
                       }`} />
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-white truncate">{event.title}</h4>
+                        <h4 className="font-medium text-text-primary truncate">{event.title}</h4>
                         <div className="flex items-center gap-2 text-sm text-text-secondary mt-1">
                           <FiClock className="w-3 h-3" />
                           {new Date(event.start_date_time).toLocaleTimeString('en-US', {

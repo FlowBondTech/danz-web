@@ -240,7 +240,7 @@ export default function WalletPage() {
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-text-primary flex items-center gap-2 sm:gap-3">
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center shrink-0">
-              <FiShield className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              <FiShield className="w-4 h-4 sm:w-5 sm:h-5 text-text-primary" />
             </div>
             My Wallets
           </h1>
@@ -257,14 +257,14 @@ export default function WalletPage() {
                 {/* Points Balance */}
                 <div className="flex items-center gap-3 sm:gap-4">
                   <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-yellow-500/20 shrink-0">
-                    <FiStar className="w-6 h-6 sm:w-8 sm:h-8 text-white" aria-hidden="true" />
+                    <FiStar className="w-6 h-6 sm:w-8 sm:h-8 text-text-primary" aria-hidden="true" />
                   </div>
                   <div className="min-w-0">
                     <p className="text-text-secondary text-xs sm:text-sm mb-1">DANZ Points Balance</p>
                     {pointsLoading ? (
                       <div className="w-6 h-6 border-2 border-neon-purple border-t-transparent rounded-full animate-spin" />
                     ) : (
-                      <p className="text-2xl sm:text-4xl font-bold text-white">
+                      <p className="text-2xl sm:text-4xl font-bold text-text-primary">
                         {points?.current_points_balance?.toLocaleString() || 0}
                         <span className="text-sm sm:text-lg text-text-secondary ml-1 sm:ml-2">pts</span>
                       </p>
@@ -533,7 +533,7 @@ export default function WalletPage() {
                     <div className="flex items-start gap-3 sm:gap-4 min-w-0">
                       {/* Wallet Icon */}
                       <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center shrink-0">
-                        <FiShield className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
+                        <FiShield className="w-5 h-5 sm:w-7 sm:h-7 text-text-primary" />
                       </div>
 
                       {/* Wallet Info */}

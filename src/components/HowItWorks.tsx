@@ -94,12 +94,12 @@ export default function HowItWorks() {
                     transition={{ type: 'spring', stiffness: 400 }}
                     className={`w-24 h-24 bg-gradient-to-br ${step.gradient} rounded-3xl flex items-center justify-center shadow-xl`}
                   >
-                    <step.icon className="w-12 h-12 text-white" />
+                    <step.icon className="w-12 h-12 text-text-primary" />
                   </motion.div>
                 </div>
 
                 {/* Step title */}
-                <h3 className="text-xl font-semibold mb-4 text-white">{step.title}</h3>
+                <h3 className="text-xl font-semibold mb-4 text-text-primary">{step.title}</h3>
 
                 {/* Step description */}
                 <p className="text-text-secondary text-sm leading-relaxed px-2">

@@ -54,7 +54,7 @@ export default function AnalyticsPage() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-white text-2xl" role="status" aria-live="polite">Loading...</div>
+          <div className="text-text-primary text-2xl" role="status" aria-live="polite">Loading...</div>
         </div>
       </DashboardLayout>
     )
@@ -88,7 +88,7 @@ export default function AnalyticsPage() {
         {/* Back Navigation */}
         <Link
           href="/dashboard/admin"
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6"
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-text-primary transition-colors mb-6"
         >
           <FiArrowLeft size={20} />
           <span>Back to Admin</span>
@@ -165,7 +165,7 @@ export default function AnalyticsPage() {
                     onClick={() => handleSort(key)}
                     className={`px-3 py-2 rounded-lg text-xs whitespace-nowrap transition-colors min-h-[36px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple ${
                       sortBy === key
-                        ? 'bg-neon-purple text-white'
+                        ? 'bg-neon-purple text-text-primary'
                         : 'bg-white/5 text-text-secondary hover:bg-white/10'
                     }`}
                     aria-pressed={sortBy === key}

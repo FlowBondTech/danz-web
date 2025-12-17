@@ -128,13 +128,13 @@ export default function DatePicker({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none hover:bg-white/10 transition-colors text-left flex items-center gap-3 min-h-[48px] focus-visible:ring-2 focus-visible:ring-neon-purple focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary"
+        className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none hover:bg-white/10 transition-colors text-left flex items-center gap-3 min-h-[48px] focus-visible:ring-2 focus-visible:ring-neon-purple focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary"
         aria-label={`${label || 'Select date'}: ${formatDisplayValue() || 'Not selected'}`}
         aria-expanded={isOpen}
         aria-haspopup="dialog"
       >
         <FiCalendar className="w-5 h-5 text-neon-purple flex-shrink-0" aria-hidden="true" />
-        <span className={value ? 'text-white' : 'text-text-secondary'}>
+        <span className={value ? 'text-text-primary' : 'text-text-secondary'}>
           {formatDisplayValue() || placeholder}
         </span>
       </button>
@@ -161,7 +161,7 @@ export default function DatePicker({
               aria-labelledby="datepicker-title"
             >
               <div className="p-4 border-b border-white/10 flex items-center justify-between">
-                <h3 id="datepicker-title" className="text-lg font-bold text-white">{label || 'Select Date'}</h3>
+                <h3 id="datepicker-title" className="text-lg font-bold text-text-primary">{label || 'Select Date'}</h3>
                 <button
                   onClick={() => setIsOpen(false)}
                   className="p-2 hover:bg-white/10 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple"
@@ -180,7 +180,7 @@ export default function DatePicker({
                   >
                     <FiChevronLeft className="w-5 h-5" aria-hidden="true" />
                   </button>
-                  <h4 className="text-lg font-bold text-white" aria-live="polite">
+                  <h4 className="text-lg font-bold text-text-primary" aria-live="polite">
                     {MONTHS[viewDate.getMonth()]} {viewDate.getFullYear()}
                   </h4>
                   <button
@@ -211,7 +211,7 @@ export default function DatePicker({
                         ${!day.isCurrentMonth ? 'text-text-secondary/30' : ''}
                         ${day.isDisabled ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/10'}
                         ${isToday(day.date) && !isSelected(day.date) ? 'ring-2 ring-neon-purple/50' : ''}
-                        ${isSelected(day.date) ? 'bg-neon-purple text-white' : ''}
+                        ${isSelected(day.date) ? 'bg-neon-purple text-text-primary' : ''}
                       `}
                       aria-label={`${day.date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}${isToday(day.date) ? ', today' : ''}${isSelected(day.date) ? ', selected' : ''}`}
                       aria-selected={isSelected(day.date)}
@@ -226,7 +226,7 @@ export default function DatePicker({
               <div className="p-4 border-t border-white/10 flex gap-3">
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="flex-1 py-3 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-colors font-medium min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+                  className="flex-1 py-3 bg-white/10 text-text-primary rounded-xl hover:bg-white/20 transition-colors font-medium min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
                 >
                   Cancel
                 </button>

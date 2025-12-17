@@ -287,7 +287,7 @@ export default function EnhancedPointsPage() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-white text-2xl" role="status" aria-live="polite">Loading...</div>
+          <div className="text-text-primary text-2xl" role="status" aria-live="polite">Loading...</div>
         </div>
       </DashboardLayout>
     )
@@ -311,7 +311,7 @@ export default function EnhancedPointsPage() {
         {/* Back Navigation */}
         <Link
           href="/dashboard/admin"
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6"
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-text-primary transition-colors mb-6"
         >
           <FiArrowLeft size={20} />
           <span>Back to Admin</span>
@@ -428,7 +428,7 @@ export default function EnhancedPointsPage() {
                 </div>
                 <button
                   onClick={() => setShowSetupWizard(false)}
-                  className="text-gray-400 hover:text-white"
+                  className="text-gray-400 hover:text-text-primary"
                 >
                   <FiX size={20} />
                 </button>
@@ -579,7 +579,7 @@ export default function EnhancedPointsPage() {
                       max_per_month: null,
                     })
                   }}
-                  className="text-gray-400 hover:text-white"
+                  className="text-gray-400 hover:text-text-primary"
                 >
                   <FiX size={20} />
                 </button>
@@ -707,7 +707,7 @@ export default function EnhancedPointsPage() {
                       max_per_month: null,
                     })
                   }}
-                  className="text-sm text-text-secondary hover:text-white transition-colors"
+                  className="text-sm text-text-secondary hover:text-text-primary transition-colors"
                 >
                   Clear Form
                 </button>
@@ -743,7 +743,7 @@ export default function EnhancedPointsPage() {
                 </h2>
                 <button
                   onClick={() => setShowBondingSection(false)}
-                  className="text-gray-400 hover:text-white"
+                  className="text-gray-400 hover:text-text-primary"
                 >
                   <FiX size={20} />
                 </button>
@@ -815,7 +815,7 @@ export default function EnhancedPointsPage() {
                 </h2>
                 <button
                   onClick={() => setShowWearableSection(false)}
-                  className="text-gray-400 hover:text-white"
+                  className="text-gray-400 hover:text-text-primary"
                 >
                   <FiX size={20} />
                 </button>
@@ -913,7 +913,7 @@ export default function EnhancedPointsPage() {
               <button
                 onClick={() => setSelectedCategory(undefined)}
                 className={`px-3 sm:px-4 py-2 rounded-lg transition-colors whitespace-nowrap text-sm min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple ${
-                  !selectedCategory ? 'bg-neon-purple text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  !selectedCategory ? 'bg-neon-purple text-text-primary' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
                 aria-pressed={!selectedCategory}
               >
@@ -924,7 +924,7 @@ export default function EnhancedPointsPage() {
                   key={cat}
                   onClick={() => setSelectedCategory(cat as PointActionCategory)}
                   className={`px-3 sm:px-4 py-2 rounded-lg transition-colors capitalize whitespace-nowrap text-sm min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple ${
-                    selectedCategory === cat ? 'bg-neon-purple text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    selectedCategory === cat ? 'bg-neon-purple text-text-primary' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                   }`}
                   aria-pressed={selectedCategory === cat}
                 >

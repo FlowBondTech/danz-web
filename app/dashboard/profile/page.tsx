@@ -126,7 +126,7 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center">
-                    <FiGift className="w-7 h-7 text-white" />
+                    <FiGift className="w-7 h-7 text-text-primary" />
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-text-primary flex items-center gap-2">

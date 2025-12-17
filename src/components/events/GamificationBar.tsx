@@ -36,16 +36,16 @@ export default function GamificationBar({
             className="relative"
           >
             <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-neon-purple via-neon-pink to-neon-blue flex items-center justify-center shadow-lg shadow-neon-purple/30">
-              <span className="text-2xl font-black text-white">{level}</span>
+              <span className="text-2xl font-black text-text-primary">{level}</span>
             </div>
             <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-yellow-500 flex items-center justify-center">
-              <FiStar className="w-3 h-3 text-white" />
+              <FiStar className="w-3 h-3 text-text-primary" />
             </div>
           </motion.div>
 
           <div>
             <p className="text-xs text-text-secondary uppercase tracking-wide">Level</p>
-            <p className="text-lg font-bold text-white">Dancer Lvl {level}</p>
+            <p className="text-lg font-bold text-text-primary">Dancer Lvl {level}</p>
           </div>
         </div>
 

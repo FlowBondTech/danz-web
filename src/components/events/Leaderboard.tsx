@@ -72,7 +72,7 @@ export default function Leaderboard({
     return (
       <div className="bg-bg-secondary rounded-xl border border-white/10 p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-bold text-white flex items-center gap-2">
+          <h3 className="font-bold text-text-primary flex items-center gap-2">
             <FiTrendingUp className="w-4 h-4 text-neon-purple" />
             Top Dancers
           </h3>
@@ -97,7 +97,7 @@ export default function Leaderboard({
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-white text-sm truncate">
+                <p className="text-text-primary text-sm truncate">
                   {user.display_name || user.username}
                 </p>
               </div>
@@ -115,7 +115,7 @@ export default function Leaderboard({
     return (
       <div className="bg-bg-secondary rounded-2xl border border-white/10 p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
+          <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
             <FiAward className="w-5 h-5 text-yellow-500" />
             Leaderboard
           </h3>
@@ -156,14 +156,14 @@ export default function Leaderboard({
                   {user.avatar_url ? (
                     <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white font-bold">
+                    <div className="w-full h-full flex items-center justify-center text-text-primary font-bold">
                       {user.display_name?.[0] || user.username[0]}
                     </div>
                   )}
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-white truncate">
+                  <p className="font-medium text-text-primary truncate">
                     {user.display_name || user.username}
                     {isCurrentUser && <span className="text-neon-purple ml-2">(You)</span>}
                   </p>
@@ -191,7 +191,7 @@ export default function Leaderboard({
       <div className="p-6 border-b border-white/10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
               <FiAward className="w-6 h-6 text-yellow-500" />
               Dance Leaderboard
             </h2>
@@ -209,7 +209,7 @@ export default function Leaderboard({
               <FiZap className="w-5 h-5 text-yellow-500" />
               <div>
                 <p className="text-sm text-text-secondary">Your Rank</p>
-                <p className="text-xl font-bold text-white">#{currentUserRank}</p>
+                <p className="text-xl font-bold text-text-primary">#{currentUserRank}</p>
               </div>
             </motion.div>
           )}
@@ -225,8 +225,8 @@ export default function Leaderboard({
                 onClick={() => setTimeFilter(filter)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   timeFilter === filter
-                    ? 'bg-neon-purple text-white'
-                    : 'text-text-secondary hover:text-white'
+                    ? 'bg-neon-purple text-text-primary'
+                    : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
                 {filter === 'weekly' ? 'This Week' : filter === 'monthly' ? 'This Month' : 'All Time'}
@@ -247,8 +247,8 @@ export default function Leaderboard({
                 onClick={() => setSortBy(key)}
                 className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   sortBy === key
-                    ? 'bg-neon-purple text-white'
-                    : 'text-text-secondary hover:text-white'
+                    ? 'bg-neon-purple text-text-primary'
+                    : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -275,14 +275,14 @@ export default function Leaderboard({
                   {sortedUsers[1].avatar_url ? (
                     <img src={sortedUsers[1].avatar_url} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white text-xl font-bold">
+                    <div className="w-full h-full flex items-center justify-center text-text-primary text-xl font-bold">
                       {sortedUsers[1].display_name?.[0] || sortedUsers[1].username[0]}
                     </div>
                   )}
                 </div>
                 <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-2xl">🥈</span>
               </div>
-              <p className="font-medium text-white mt-2 truncate max-w-[100px]">
+              <p className="font-medium text-text-primary mt-2 truncate max-w-[100px]">
                 {sortedUsers[1].display_name || sortedUsers[1].username}
               </p>
               <p className="text-sm text-yellow-400">{sortedUsers[1].xp.toLocaleString()} XP</p>
@@ -308,14 +308,14 @@ export default function Leaderboard({
                   {sortedUsers[0].avatar_url ? (
                     <img src={sortedUsers[0].avatar_url} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white text-2xl font-bold">
+                    <div className="w-full h-full flex items-center justify-center text-text-primary text-2xl font-bold">
                       {sortedUsers[0].display_name?.[0] || sortedUsers[0].username[0]}
                     </div>
                   )}
                 </motion.div>
                 <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-3xl">👑</span>
               </div>
-              <p className="font-bold text-white mt-2 truncate max-w-[120px]">
+              <p className="font-bold text-text-primary mt-2 truncate max-w-[120px]">
                 {sortedUsers[0].display_name || sortedUsers[0].username}
               </p>
               <p className="text-sm text-yellow-400 font-medium">{sortedUsers[0].xp.toLocaleString()} XP</p>
@@ -338,14 +338,14 @@ export default function Leaderboard({
                   {sortedUsers[2].avatar_url ? (
                     <img src={sortedUsers[2].avatar_url} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white text-xl font-bold">
+                    <div className="w-full h-full flex items-center justify-center text-text-primary text-xl font-bold">
                       {sortedUsers[2].display_name?.[0] || sortedUsers[2].username[0]}
                     </div>
                   )}
                 </div>
                 <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-2xl">🥉</span>
               </div>
-              <p className="font-medium text-white mt-2 truncate max-w-[100px]">
+              <p className="font-medium text-text-primary mt-2 truncate max-w-[100px]">
                 {sortedUsers[2].display_name || sortedUsers[2].username}
               </p>
               <p className="text-sm text-yellow-400">{sortedUsers[2].xp.toLocaleString()} XP</p>
@@ -387,14 +387,14 @@ export default function Leaderboard({
                   {user.avatar_url ? (
                     <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white font-bold">
+                    <div className="w-full h-full flex items-center justify-center text-text-primary font-bold">
                       {user.display_name?.[0] || user.username[0]}
                     </div>
                   )}
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-white truncate">
+                  <p className="font-medium text-text-primary truncate">
                     {user.display_name || user.username}
                     {isCurrentUser && <span className="text-neon-purple ml-2">(You)</span>}
                   </p>

@@ -28,7 +28,7 @@ function ThemeCard({
     >
       {isActive && (
         <div className="absolute top-3 right-3 w-6 h-6 bg-neon-purple rounded-full flex items-center justify-center">
-          <FiCheck className="w-4 h-4 text-white" />
+          <FiCheck className="w-4 h-4 text-text-primary" />
         </div>
       )}
 

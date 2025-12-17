@@ -227,7 +227,7 @@ export default function EventsPage() {
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search events..."
-                className="w-full pl-10 pr-4 py-2.5 bg-bg-secondary rounded-xl border border-white/10 focus:border-neon-purple/50 focus:outline-none text-white"
+                className="w-full pl-10 pr-4 py-2.5 bg-bg-secondary rounded-xl border border-white/10 focus:border-neon-purple/50 focus:outline-none text-text-primary"
               />
             </div>
 
@@ -235,7 +235,7 @@ export default function EventsPage() {
               <select
                 value={selectedCategory || ''}
                 onChange={e => setSelectedCategory(e.target.value || null)}
-                className="appearance-none pl-4 pr-10 py-2.5 bg-bg-secondary rounded-xl border border-white/10 focus:border-neon-purple/50 focus:outline-none text-white cursor-pointer"
+                className="appearance-none pl-4 pr-10 py-2.5 bg-bg-secondary rounded-xl border border-white/10 focus:border-neon-purple/50 focus:outline-none text-text-primary cursor-pointer"
               >
                 <option value="">All Categories</option>
                 {CATEGORIES.map(cat => (
@@ -260,8 +260,8 @@ export default function EventsPage() {
                 onClick={() => setViewMode(mode)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                   viewMode === mode
-                    ? 'bg-neon-purple text-white'
-                    : 'text-text-secondary hover:text-white hover:bg-white/10'
+                    ? 'bg-neon-purple text-text-primary'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-white/10'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -337,7 +337,7 @@ export default function EventsPage() {
                     >
                       🏆
                     </motion.div>
-                    <h2 className="text-xl font-bold text-white">Dance Leaderboard</h2>
+                    <h2 className="text-xl font-bold text-text-primary">Dance Leaderboard</h2>
                   </div>
                   <div className="flex items-center gap-2">
                     <Link
@@ -404,7 +404,7 @@ export default function EventsPage() {
                 </div>
 
                 <div className="bg-bg-primary rounded-xl p-4 mb-4">
-                  <h4 className="font-bold text-white mb-2">{selectedEvent.title}</h4>
+                  <h4 className="font-bold text-text-primary mb-2">{selectedEvent.title}</h4>
                   <div className="space-y-2 text-sm text-text-secondary">
                     <div className="flex items-center gap-2">
                       <FiCalendar className="w-4 h-4 text-neon-purple" />
@@ -453,7 +453,7 @@ export default function EventsPage() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setSelectedEvent(null)}
-                    className="flex-1 py-3 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-colors"
+                    className="flex-1 py-3 bg-white/10 text-text-primary rounded-xl hover:bg-white/20 transition-colors"
                   >
                     Cancel
                   </button>

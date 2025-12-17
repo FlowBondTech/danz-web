@@ -149,7 +149,7 @@ export default function NotificationPanel() {
                     onClick={() => setFilter(option.value)}
                     className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
                       filter === option.value
-                        ? 'bg-neon-purple text-white'
+                        ? 'bg-neon-purple text-text-primary'
                         : 'bg-bg-card text-text-secondary hover:bg-bg-hover hover:text-text-primary'
                     }`}
                   >

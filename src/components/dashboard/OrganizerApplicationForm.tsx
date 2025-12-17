@@ -363,7 +363,7 @@ export default function OrganizerApplicationForm({ isOpen, onClose, onSuccess }:
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                    className="px-6 py-3 bg-gray-600 text-text-primary rounded-lg hover:bg-gray-700 transition-colors"
                     disabled={isSubmitting}
                   >
                     Cancel

@@ -157,7 +157,7 @@ export default function ForDancers() {
                   className="flex items-start gap-4 text-left"
                 >
                   <div className="flex-shrink-0 w-6 h-6 bg-gradient-neon rounded-full flex items-center justify-center mt-0.5">
-                    <FiCheck className="w-4 h-4 text-white" />
+                    <FiCheck className="w-4 h-4 text-text-primary" />
                   </div>
                   <span className="text-text-secondary leading-relaxed text-lg">{benefit}</span>
                 </motion.li>

@@ -26,7 +26,7 @@ export default function LoginPage() {
   if (!ready) {
     return (
       <div className="min-h-screen bg-bg-primary flex items-center justify-center">
-        <div className="text-white text-xl" role="status" aria-live="polite">
+        <div className="text-text-primary text-xl" role="status" aria-live="polite">
           Loading...
         </div>
       </div>

@@ -125,7 +125,7 @@ export default function OrganizerApplicationsPage() {
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2 rounded-lg font-medium transition-colors capitalize ${
                 activeTab === tab
-                  ? 'bg-neon-purple text-white'
+                  ? 'bg-neon-purple text-text-primary'
                   : 'bg-bg-secondary text-text-secondary hover:text-text-primary'
               }`}
             >
@@ -404,7 +404,7 @@ export default function OrganizerApplicationsPage() {
                 {selectedApplication.status !== 'pending' && (
                   <button
                     onClick={() => setSelectedApplication(null)}
-                    className="w-full py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                    className="w-full py-3 bg-gray-600 text-text-primary rounded-lg hover:bg-gray-700 transition-colors"
                   >
                     Close
                   </button>

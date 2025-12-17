@@ -44,7 +44,7 @@ export default function AdminDashboardPage() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-white text-2xl" role="status" aria-live="polite">Loading...</div>
+          <div className="text-text-primary text-2xl" role="status" aria-live="polite">Loading...</div>
         </div>
       </DashboardLayout>
     )
@@ -71,7 +71,7 @@ export default function AdminDashboardPage() {
             <p className="text-text-secondary mt-1 text-sm sm:text-base">Manage points & analytics</p>
           </div>
           <div className="bg-gradient-neon px-3 sm:px-4 py-1.5 sm:py-2 rounded-full flex-shrink-0" aria-label="Admin role badge">
-            <span className="text-white font-medium text-xs sm:text-sm">⚡ Admin</span>
+            <span className="text-text-primary font-medium text-xs sm:text-sm">⚡ Admin</span>
           </div>
         </div>
 

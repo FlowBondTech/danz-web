@@ -75,7 +75,7 @@ export default function TokenIntroduction() {
                     <feature.icon className="w-6 h-6 text-neon-purple" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-white mb-1">{feature.title}</h3>
+                    <h3 className="text-lg font-semibold text-text-primary mb-1">{feature.title}</h3>
                     <p className="text-text-secondary">{feature.description}</p>
                   </div>
                 </motion.div>
@@ -96,7 +96,7 @@ export default function TokenIntroduction() {
                 type="button"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transition-all"
+                className="bg-white/10 backdrop-blur-sm border border-white/20 text-text-primary px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transition-all"
               >
                 How It Works
               </motion.button>
@@ -164,7 +164,7 @@ export default function TokenIntroduction() {
                     <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
 
                     {/* Token text */}
-                    <div className="text-6xl font-bold text-white transform -rotate-12">$DANZ</div>
+                    <div className="text-6xl font-bold text-text-primary transform -rotate-12">$DANZ</div>
 
                     {/* Sparkle effects */}
                     {[0, 1, 2, 3].map(i => (

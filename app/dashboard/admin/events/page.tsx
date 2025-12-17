@@ -32,7 +32,7 @@ export default function AdminEventsPage() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-white text-2xl">Loading...</div>
+          <div className="text-text-primary text-2xl">Loading...</div>
         </div>
       </DashboardLayout>
     )
@@ -54,7 +54,7 @@ export default function AdminEventsPage() {
         {/* Back Navigation */}
         <Link
           href="/dashboard/admin"
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6"
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-text-primary transition-colors mb-6"
         >
           <FiArrowLeft size={20} />
           <span>Back to Admin</span>

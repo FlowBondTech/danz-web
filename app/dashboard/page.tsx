@@ -462,7 +462,7 @@ function DashboardContent() {
                       href={`https://tiktok.com/@${profile.tiktok}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-10 h-10 rounded-xl bg-bg-primary flex items-center justify-center text-text-secondary hover:text-white transition-colors"
+                      className="w-10 h-10 rounded-xl bg-bg-primary flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors"
                     >
                       <FaTiktok size={18} />
                     </a>
@@ -489,7 +489,7 @@ function DashboardContent() {
               >
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center">
-                    <FiStar className="text-white" size={18} />
+                    <FiStar className="text-text-primary" size={18} />
                   </div>
                   <div>
                     <p className="font-semibold text-text-primary">Go Premium</p>

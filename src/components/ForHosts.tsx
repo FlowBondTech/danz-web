@@ -85,7 +85,7 @@ export default function ForHosts() {
                   {feature.icon}
                 </div>
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-white">{feature.title}</h3>
+              <h3 className="text-xl font-semibold mb-4 text-text-primary">{feature.title}</h3>
               <p className="text-text-secondary leading-relaxed">{feature.description}</p>
             </motion.div>
           ))}
@@ -114,7 +114,7 @@ export default function ForHosts() {
                     {type.icon}
                   </div>
                 </div>
-                <h4 className="text-xl font-semibold mb-4 text-white">{type.title}</h4>
+                <h4 className="text-xl font-semibold mb-4 text-text-primary">{type.title}</h4>
                 <p className="text-text-secondary leading-relaxed">{type.description}</p>
               </motion.div>
             ))}
@@ -202,7 +202,7 @@ export default function ForHosts() {
                   type="button"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transition-all"
+                  className="bg-white/10 backdrop-blur-sm border border-white/20 text-text-primary px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transition-all"
                 >
                   Learn More
                 </motion.button>

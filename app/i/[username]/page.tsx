@@ -70,7 +70,7 @@ export default function InvitePage() {
           {isTracking ? (
             <>
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-white mb-4" />
-              <h2 className="text-2xl font-bold text-white mb-2">
+              <h2 className="text-2xl font-bold text-text-primary mb-2">
                 Processing your invite...
               </h2>
             </>
@@ -80,11 +80,11 @@ export default function InvitePage() {
                 <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
                   <span className="text-3xl">🎉</span>
                 </div>
-                <h1 className="text-3xl font-bold text-white mb-2">
+                <h1 className="text-3xl font-bold text-text-primary mb-2">
                   You're Invited!
                 </h1>
                 <p className="text-purple-200 text-lg">
-                  <span className="font-semibold text-white">{username}</span> has invited you to join DANZ
+                  <span className="font-semibold text-text-primary">{username}</span> has invited you to join DANZ
                 </p>
               </div>
 

@@ -183,7 +183,7 @@ export const RegisterForm = () => {
 
       <form onSubmit={handleProfileSubmit} className="space-y-6">
         <div>
-          <label htmlFor="username" className="block text-white mb-2">
+          <label htmlFor="username" className="block text-text-primary mb-2">
             Username *
           </label>
           <input
@@ -195,14 +195,14 @@ export const RegisterForm = () => {
               setUsernameError('')
             }}
             onBlur={() => validateUsername(formData.username)}
-            className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-lg text-white focus:border-purple-500 focus:outline-none"
+            className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-lg text-text-primary focus:border-purple-500 focus:outline-none"
             required
           />
           {usernameError && <p className="mt-1 text-sm text-red-400">{usernameError}</p>}
         </div>
 
         <div>
-          <label htmlFor="displayName" className="block text-white mb-2">
+          <label htmlFor="displayName" className="block text-text-primary mb-2">
             Display Name
           </label>
           <input
@@ -210,27 +210,27 @@ export const RegisterForm = () => {
             type="text"
             value={formData.displayName}
             onChange={e => setFormData({ ...formData, displayName: e.target.value })}
-            className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-lg text-white focus:border-purple-500 focus:outline-none"
+            className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-lg text-text-primary focus:border-purple-500 focus:outline-none"
             placeholder="How should we display your name?"
           />
         </div>
 
         <div>
-          <label htmlFor="bio" className="block text-white mb-2">
+          <label htmlFor="bio" className="block text-text-primary mb-2">
             Bio
           </label>
           <textarea
             id="bio"
             value={formData.bio}
             onChange={e => setFormData({ ...formData, bio: e.target.value })}
-            className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-lg text-white focus:border-purple-500 focus:outline-none"
+            className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-lg text-text-primary focus:border-purple-500 focus:outline-none"
             rows={3}
             placeholder="Tell us about yourself..."
           />
         </div>
 
         <div>
-          <div className="block text-white mb-2">Dance Styles</div>
+          <div className="block text-text-primary mb-2">Dance Styles</div>
           <div className="grid grid-cols-3 gap-2">
             {danceStyleOptions.map(style => (
               <label key={style} className="flex items-center space-x-2">
@@ -259,14 +259,14 @@ export const RegisterForm = () => {
         </div>
 
         <div>
-          <label htmlFor="skillLevel" className="block text-white mb-2">
+          <label htmlFor="skillLevel" className="block text-text-primary mb-2">
             Skill Level
           </label>
           <select
             id="skillLevel"
             value={formData.skillLevel}
             onChange={e => setFormData({ ...formData, skillLevel: e.target.value })}
-            className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-lg text-white focus:border-purple-500 focus:outline-none"
+            className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-lg text-text-primary focus:border-purple-500 focus:outline-none"
           >
             <option value="beginner">Beginner</option>
             <option value="intermediate">Intermediate</option>

@@ -65,7 +65,7 @@ export default function EventsGridView({ events, onRegister, isLoading }: Events
         className="text-center py-16"
       >
         <div className="text-6xl mb-4">🎭</div>
-        <h3 className="text-xl font-bold text-white mb-2">No events found</h3>
+        <h3 className="text-xl font-bold text-text-primary mb-2">No events found</h3>
         <p className="text-text-secondary mb-6">
           Be the first to create an event and earn bonus XP!
         </p>

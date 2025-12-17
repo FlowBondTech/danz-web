@@ -124,7 +124,7 @@ export default function FlowHostSection() {
                 <div
                   className={`w-16 h-16 bg-gradient-to-br ${benefit.gradient} rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow`}
                 >
-                  <benefit.icon className="w-8 h-8 text-white" />
+                  <benefit.icon className="w-8 h-8 text-text-primary" />
                 </div>
               </motion.div>
               <h3 className="text-xl font-semibold mb-3">{benefit.title}</h3>

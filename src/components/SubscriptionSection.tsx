@@ -118,7 +118,7 @@ export default function SubscriptionSection() {
                 <div className="mt-8">
                   <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-neon-purple/20 to-neon-pink/20 backdrop-blur-sm border border-neon-purple/30 rounded-full mb-4">
                     <FiCreditCard className="text-neon-purple" size={20} />
-                    <span className="text-white font-medium">
+                    <span className="text-text-primary font-medium">
                       You're on the {currentPlan === 'yearly' ? 'Annual' : 'Monthly'} Flow plan
                     </span>
                   </div>
@@ -166,7 +166,7 @@ export default function SubscriptionSection() {
                     {plan.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-start gap-3">
                         <div className="w-5 h-5 rounded-full bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <FiCheck className="w-3 h-3 text-white" />
+                          <FiCheck className="w-3 h-3 text-text-primary" />
                         </div>
                         <span className="text-text-primary">{feature}</span>
                       </li>

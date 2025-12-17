@@ -215,7 +215,7 @@ export default function ClaimPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center">
-              <FiGift className="w-5 h-5 text-white" />
+              <FiGift className="w-5 h-5 text-text-primary" />
             </div>
             Claim Rewards
           </h1>
@@ -431,9 +431,9 @@ export default function ClaimPage() {
                           token.type === 'referral_bonus' ? 'bg-gradient-to-br from-green-500 to-teal-500' :
                           'bg-gradient-to-br from-yellow-500 to-orange-500'
                         }`}>
-                          {token.type === 'event_reward' && <FiCalendar className="w-5 h-5 text-white" />}
-                          {token.type === 'referral_bonus' && <FiUserPlus className="w-5 h-5 text-white" />}
-                          {token.type === 'achievement' && <FiAward className="w-5 h-5 text-white" />}
+                          {token.type === 'event_reward' && <FiCalendar className="w-5 h-5 text-text-primary" />}
+                          {token.type === 'referral_bonus' && <FiUserPlus className="w-5 h-5 text-text-primary" />}
+                          {token.type === 'achievement' && <FiAward className="w-5 h-5 text-text-primary" />}
                         </div>
                         <div className="min-w-0">
                           <h3 className="text-text-primary font-medium truncate">{token.title}</h3>
@@ -510,7 +510,7 @@ export default function ClaimPage() {
                     {/* NFT Image Placeholder */}
                     <div className={`h-48 bg-gradient-to-br ${getRarityColor(nft.rarity).split(' ').slice(0, 2).join(' ')} flex items-center justify-center relative`}>
                       <div className="absolute inset-0 bg-black/30" />
-                      <FiAward className="w-16 h-16 text-white/80 relative z-10" />
+                      <FiAward className="w-16 h-16 text-text-primary/80 relative z-10" />
                       <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-medium bg-black/50 ${getRarityColor(nft.rarity).split(' ').slice(2).join(' ')}`}>
                         {nft.rarity.toUpperCase()}
                       </div>
@@ -633,7 +633,7 @@ export default function ClaimPage() {
                 className="bg-bg-secondary rounded-2xl border border-neon-purple/30 p-8 max-w-md w-full text-center"
               >
                 <div className="w-20 h-20 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mx-auto mb-6">
-                  <FiCheck className="w-10 h-10 text-white" />
+                  <FiCheck className="w-10 h-10 text-text-primary" />
                 </div>
 
                 <h2 className="text-2xl font-bold text-text-primary mb-2">

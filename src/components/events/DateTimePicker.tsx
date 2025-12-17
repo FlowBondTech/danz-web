@@ -183,7 +183,7 @@ export default function DateTimePicker({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="w-full bg-white/5 text-white rounded-xl px-4 py-3.5 border border-white/10 focus:border-neon-purple/50 focus:outline-none hover:bg-white/10 transition-colors text-left flex items-center gap-3"
+        className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3.5 border border-white/10 focus:border-neon-purple/50 focus:outline-none hover:bg-white/10 transition-colors text-left flex items-center gap-3"
       >
         <div className="w-10 h-10 rounded-lg bg-neon-purple/20 flex items-center justify-center flex-shrink-0">
           <FiCalendar className="w-5 h-5 text-neon-purple" />
@@ -192,7 +192,7 @@ export default function DateTimePicker({
           {label && (
             <p className="text-xs text-text-secondary mb-0.5">{label}{required && ' *'}</p>
           )}
-          <p className={`truncate ${value ? 'text-white' : 'text-text-secondary'}`}>
+          <p className={`truncate ${value ? 'text-text-primary' : 'text-text-secondary'}`}>
             {formatDisplayValue() || placeholder}
           </p>
         </div>
@@ -219,7 +219,7 @@ export default function DateTimePicker({
             >
               {/* Header */}
               <div className="p-4 border-b border-white/10 flex items-center justify-between">
-                <h3 className="text-lg font-bold text-white">
+                <h3 className="text-lg font-bold text-text-primary">
                   {label || 'Select Date & Time'}
                 </h3>
                 <button
@@ -236,7 +236,7 @@ export default function DateTimePicker({
                   onClick={() => setActiveTab('date')}
                   className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl transition-all font-medium ${
                     activeTab === 'date'
-                      ? 'bg-neon-purple text-white'
+                      ? 'bg-neon-purple text-text-primary'
                       : 'bg-white/5 text-text-secondary hover:bg-white/10'
                   }`}
                 >
@@ -250,7 +250,7 @@ export default function DateTimePicker({
                   onClick={() => setActiveTab('time')}
                   className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl transition-all font-medium ${
                     activeTab === 'time'
-                      ? 'bg-neon-purple text-white'
+                      ? 'bg-neon-purple text-text-primary'
                       : 'bg-white/5 text-text-secondary hover:bg-white/10'
                   }`}
                 >
@@ -277,7 +277,7 @@ export default function DateTimePicker({
                         >
                           <FiChevronLeft className="w-5 h-5" />
                         </button>
-                        <h4 className="text-lg font-bold text-white">
+                        <h4 className="text-lg font-bold text-text-primary">
                           {MONTHS[viewDate.getMonth()]} {viewDate.getFullYear()}
                         </h4>
                         <button
@@ -309,7 +309,7 @@ export default function DateTimePicker({
                               ${!day.isCurrentMonth ? 'text-text-secondary/30' : ''}
                               ${day.isDisabled ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/10'}
                               ${isToday(day.date) && !isSelected(day.date) ? 'ring-2 ring-neon-purple/50' : ''}
-                              ${isSelected(day.date) ? 'bg-neon-purple text-white' : ''}
+                              ${isSelected(day.date) ? 'bg-neon-purple text-text-primary' : ''}
                             `}
                           >
                             {day.date.getDate()}
@@ -326,7 +326,7 @@ export default function DateTimePicker({
                     >
                       {/* Time Display */}
                       <div className="text-center mb-6">
-                        <p className="text-4xl font-bold text-white mb-2">
+                        <p className="text-4xl font-bold text-text-primary mb-2">
                           {String(tempHour === 0 ? 12 : tempHour > 12 ? tempHour - 12 : tempHour).padStart(2, '0')}
                           :
                           {String(tempMinute).padStart(2, '0')}
@@ -355,7 +355,7 @@ export default function DateTimePicker({
                               onClick={() => setTempHour(h)}
                               className={`py-2 rounded-lg text-sm font-medium transition-all ${
                                 tempHour === h
-                                  ? 'bg-neon-purple text-white'
+                                  ? 'bg-neon-purple text-text-primary'
                                   : 'bg-white/5 text-text-secondary hover:bg-white/10'
                               }`}
                             >
@@ -375,7 +375,7 @@ export default function DateTimePicker({
                               onClick={() => setTempMinute(m)}
                               className={`py-2.5 rounded-lg text-sm font-medium transition-all ${
                                 tempMinute === m
-                                  ? 'bg-neon-purple text-white'
+                                  ? 'bg-neon-purple text-text-primary'
                                   : 'bg-white/5 text-text-secondary hover:bg-white/10'
                               }`}
                             >
@@ -393,7 +393,7 @@ export default function DateTimePicker({
               <div className="p-4 border-t border-white/10 flex gap-3">
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="flex-1 py-3 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-colors font-medium"
+                  className="flex-1 py-3 bg-white/10 text-text-primary rounded-xl hover:bg-white/20 transition-colors font-medium"
                 >
                   Cancel
                 </button>

@@ -641,7 +641,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                   <FiMail className="text-purple-400" />
                   <div>
                     <p className="text-xs sm:text-sm text-gray-400">Signing up with</p>
-                    <p className="text-white font-medium">
+                    <p className="text-text-primary font-medium">
                       {privyUser.email?.address || privyUser.wallet?.address || 'Connected Account'}
                     </p>
                   </div>
@@ -684,11 +684,11 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                   <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
                     isDancer ? 'bg-purple-500 border-purple-500' : 'border-purple-500/50'
                   }`}>
-                    {isDancer && <FiCheck className="text-white text-sm" />}
+                    {isDancer && <FiCheck className="text-text-primary text-sm" />}
                   </div>
                   <div className="flex-1 text-left">
                     <FiUsers className="w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-3 text-purple-400" />
-                    <h3 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">
+                    <h3 className="text-base sm:text-lg font-semibold text-text-primary mb-1 sm:mb-2">
                       I'm a Dancer
                     </h3>
                     <p className="text-xs sm:text-sm text-gray-400">
@@ -711,11 +711,11 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                   <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
                     isOrganizer ? 'bg-purple-500 border-purple-500' : 'border-purple-500/50'
                   }`}>
-                    {isOrganizer && <FiCheck className="text-white text-sm" />}
+                    {isOrganizer && <FiCheck className="text-text-primary text-sm" />}
                   </div>
                   <div className="flex-1 text-left">
                     <FiCalendar className="w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-3 text-purple-400" />
-                    <h3 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">
+                    <h3 className="text-base sm:text-lg font-semibold text-text-primary mb-1 sm:mb-2">
                       I'm an Organizer
                     </h3>
                     <p className="text-xs sm:text-sm text-gray-400">
@@ -738,7 +738,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
                     <FiShield className="text-purple-400 text-sm" />
-                    <span className="text-white text-sm">
+                    <span className="text-text-primary text-sm">
                       I agree to the Terms & Privacy Policy
                     </span>
                   </div>
@@ -755,7 +755,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
                     <FiBell className="text-purple-400 text-sm" />
-                    <span className="text-white text-sm">Email me about new features and events</span>
+                    <span className="text-text-primary text-sm">Email me about new features and events</span>
                   </div>
                 </div>
               </label>
@@ -795,7 +795,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                     type="text"
                     value={formData.username}
                     onChange={e => handleUsernameChange(e.target.value)}
-                    className="w-full px-10 py-3 bg-transparent text-white focus:outline-none pr-12"
+                    className="w-full px-10 py-3 bg-transparent text-text-primary focus:outline-none pr-12"
                     placeholder="username"
                     autoComplete="off"
                     autoCorrect="off"
@@ -812,7 +812,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                         animate={{ scale: 1 }}
                         className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center"
                       >
-                        <FiCheck className="text-white text-sm" />
+                        <FiCheck className="text-text-primary text-sm" />
                       </motion.div>
                     )}
                     {!isCheckingUsername &&
@@ -824,7 +824,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                           animate={{ scale: 1 }}
                           className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center"
                         >
-                          <FiX className="text-white text-sm" />
+                          <FiX className="text-text-primary text-sm" />
                         </motion.div>
                       )}
                   </div>
@@ -860,14 +860,14 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
               </div>
 
               <div>
-                <label className="block text-white mb-2 text-sm">
+                <label className="block text-text-primary mb-2 text-sm">
                   Display Name <span className="text-purple-400">*</span>
                 </label>
                 <input
                   type="text"
                   value={formData.displayName}
                   onChange={e => setFormData({ ...formData, displayName: e.target.value })}
-                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-white focus:border-purple-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-text-primary focus:border-purple-500 focus:outline-none"
                   placeholder="How should we call you?"
                 />
               </div>
@@ -908,7 +908,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                 </div>
 
                 <label className="absolute bottom-0 right-0 bg-purple-600 rounded-full p-2 cursor-pointer hover:bg-purple-700 transition-colors">
-                  <FiUpload className="w-5 h-5 text-white" />
+                  <FiUpload className="w-5 h-5 text-text-primary" />
                   <input
                     type="file"
                     accept="image/*"
@@ -950,13 +950,13 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
 
             <div className="space-y-4">
               <div>
-                <label className="block text-white mb-2 text-sm">
+                <label className="block text-text-primary mb-2 text-sm">
                   Bio <span className="text-purple-400">*</span>
                 </label>
                 <textarea
                   value={formData.bio}
                   onChange={e => setFormData({ ...formData, bio: e.target.value.slice(0, 200) })}
-                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-white focus:border-purple-500 focus:outline-none resize-none"
+                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-text-primary focus:border-purple-500 focus:outline-none resize-none"
                   rows={4}
                   placeholder="Share your dance journey..."
                 />
@@ -964,27 +964,27 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
               </div>
 
               <div>
-                <label className="block text-white mb-2 text-sm">
+                <label className="block text-text-primary mb-2 text-sm">
                   Location <span className="text-purple-400">*</span>
                 </label>
                 <input
                   type="text"
                   value={formData.city}
                   onChange={e => setFormData({ ...formData, city: e.target.value })}
-                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-white focus:border-purple-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-text-primary focus:border-purple-500 focus:outline-none"
                   placeholder="City, Country"
                 />
               </div>
 
               <div>
-                <label className="block text-white mb-2 text-sm">Pronouns</label>
+                <label className="block text-text-primary mb-2 text-sm">Pronouns</label>
                 <input
                   type="text"
                   value={formData.pronouns}
                   onChange={e =>
                     setFormData({ ...formData, pronouns: e.target.value.toLowerCase() })
                   }
-                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-white focus:border-purple-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-text-primary focus:border-purple-500 focus:outline-none"
                   placeholder="he/him, she/her, they/them"
                   autoCapitalize="none"
                   autoCorrect="off"
@@ -1013,7 +1013,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
             <div className="space-y-4">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <label className="block text-white text-sm">
+                  <label className="block text-text-primary text-sm">
                     Dance Styles <span className="text-purple-400">*</span>
                   </label>
                   <button
@@ -1052,7 +1052,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                       }}
                       className={`py-2 px-3 rounded-xl border transition-all flex items-center space-x-2 text-sm ${
                         formData.danceStyles.includes(style)
-                          ? 'bg-purple-600 border-purple-500 text-white'
+                          ? 'bg-purple-600 border-purple-500 text-text-primary'
                           : 'bg-black/30 border-purple-500/30 text-gray-300 hover:border-purple-500/50'
                       }`}
                     >
@@ -1064,7 +1064,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
               </div>
 
               <div>
-                <label className="block text-white mb-3 text-sm">
+                <label className="block text-text-primary mb-3 text-sm">
                   Skill Level <span className="text-purple-400">*</span>
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -1075,7 +1075,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                       onClick={() => setFormData({ ...formData, skillLevel: level })}
                       className={`py-3 px-4 rounded-xl border transition-all ${
                         formData.skillLevel === level
-                          ? 'bg-purple-600 border-purple-500 text-white'
+                          ? 'bg-purple-600 border-purple-500 text-text-primary'
                           : 'bg-black/30 border-purple-500/30 text-gray-300 hover:border-purple-500/50'
                       }`}
                     >
@@ -1106,48 +1106,48 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
 
             <div className="space-y-4">
               <div>
-                <label className="block text-white mb-2 text-sm">Instagram</label>
+                <label className="block text-text-primary mb-2 text-sm">Instagram</label>
                 <input
                   type="text"
                   value={formData.instagram}
                   onChange={e => setFormData({ ...formData, instagram: e.target.value })}
-                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-white focus:border-purple-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-text-primary focus:border-purple-500 focus:outline-none"
                   placeholder="@username"
                   autoCapitalize="none"
                 />
               </div>
 
               <div>
-                <label className="block text-white mb-2 text-sm">TikTok</label>
+                <label className="block text-text-primary mb-2 text-sm">TikTok</label>
                 <input
                   type="text"
                   value={formData.tiktok}
                   onChange={e => setFormData({ ...formData, tiktok: e.target.value })}
-                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-white focus:border-purple-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-text-primary focus:border-purple-500 focus:outline-none"
                   placeholder="@username"
                   autoCapitalize="none"
                 />
               </div>
 
               <div>
-                <label className="block text-white mb-2 text-sm">YouTube</label>
+                <label className="block text-text-primary mb-2 text-sm">YouTube</label>
                 <input
                   type="text"
                   value={formData.youtube}
                   onChange={e => setFormData({ ...formData, youtube: e.target.value })}
-                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-white focus:border-purple-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-text-primary focus:border-purple-500 focus:outline-none"
                   placeholder="Channel name or @handle"
                   autoCapitalize="none"
                 />
               </div>
 
               <div>
-                <label className="block text-white mb-2 text-sm">Twitter</label>
+                <label className="block text-text-primary mb-2 text-sm">Twitter</label>
                 <input
                   type="text"
                   value={formData.twitter}
                   onChange={e => setFormData({ ...formData, twitter: e.target.value })}
-                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-white focus:border-purple-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-text-primary focus:border-purple-500 focus:outline-none"
                   placeholder="@username"
                   autoCapitalize="none"
                 />
@@ -1174,20 +1174,20 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
 
             <div className="space-y-4">
               <div>
-                <label className="block text-white mb-2 text-sm">
+                <label className="block text-text-primary mb-2 text-sm">
                   Company/Organization Name <span className="text-purple-400">*</span>
                 </label>
                 <input
                   type="text"
                   value={formData.companyName}
                   onChange={e => setFormData({ ...formData, companyName: e.target.value })}
-                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-white focus:border-purple-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-text-primary focus:border-purple-500 focus:outline-none"
                   placeholder="Enter your company or organization name"
                 />
               </div>
 
               <div>
-                <label className="block text-white mb-2 text-sm">
+                <label className="block text-text-primary mb-2 text-sm">
                   Event Types <span className="text-purple-400">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -1210,7 +1210,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                       }}
                       className={`py-2 px-3 rounded-xl border transition-all text-sm ${
                         formData.eventTypes.includes(type)
-                          ? 'bg-purple-600 border-purple-500 text-white'
+                          ? 'bg-purple-600 border-purple-500 text-text-primary'
                           : 'bg-black/30 border-purple-500/30 text-gray-300 hover:border-purple-500/50'
                       }`}
                     >
@@ -1221,7 +1221,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
               </div>
 
               <div>
-                <label className="block text-white mb-2 text-sm">
+                <label className="block text-text-primary mb-2 text-sm">
                   Tell us about your events <span className="text-purple-400">*</span>
                 </label>
                 <textarea
@@ -1229,7 +1229,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                   onChange={e =>
                     setFormData({ ...formData, organizerBio: e.target.value.slice(0, 500) })
                   }
-                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-white focus:border-purple-500 focus:outline-none resize-none"
+                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-text-primary focus:border-purple-500 focus:outline-none resize-none"
                   rows={4}
                   placeholder="Describe your events, experience, and what makes them special..."
                 />
@@ -1239,23 +1239,23 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
               </div>
 
               <div>
-                <label className="block text-white mb-2 text-sm">Who invited you? (optional)</label>
+                <label className="block text-text-primary mb-2 text-sm">Who invited you? (optional)</label>
                 <input
                   type="text"
                   value={formData.invitedBy}
                   onChange={e => setFormData({ ...formData, invitedBy: e.target.value })}
-                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-white focus:border-purple-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-text-primary focus:border-purple-500 focus:outline-none"
                   placeholder="Name of person or organization"
                 />
               </div>
 
               <div>
-                <label className="block text-white mb-2 text-sm">Website (optional)</label>
+                <label className="block text-text-primary mb-2 text-sm">Website (optional)</label>
                 <input
                   type="text"
                   value={formData.websiteUrl}
                   onChange={e => setFormData({ ...formData, websiteUrl: e.target.value })}
-                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-white focus:border-purple-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-xl text-text-primary focus:border-purple-500 focus:outline-none"
                   placeholder="https://www.example.com"
                   autoCapitalize="none"
                 />
@@ -1331,7 +1331,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                               : '#374151',
                         }}
                         transition={{ duration: 0.2 }}
-                        className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold ${
+                        className={`w-10 h-10 rounded-full flex items-center justify-center text-text-primary font-semibold ${
                           isCompleted || isCurrent ? '' : 'text-gray-400'
                         }`}
                       >
@@ -1380,7 +1380,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                 <button
                   onClick={handleBack}
                   disabled={isLoading || uploadingAvatar}
-                  className="px-4 sm:px-6 py-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50 text-sm sm:text-base"
+                  className="px-4 sm:px-6 py-2 text-gray-400 hover:text-text-primary transition-colors disabled:opacity-50 text-sm sm:text-base"
                 >
                   Back
                 </button>

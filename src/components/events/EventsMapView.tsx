@@ -102,7 +102,7 @@ export default function EventsMapView({ events, onRegister }: EventsMapViewProps
         <div className="p-4 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <FiMapPin className="w-5 h-5 text-neon-purple" />
-            <h2 className="font-bold text-white">Events Near You</h2>
+            <h2 className="font-bold text-text-primary">Events Near You</h2>
           </div>
           <button className="flex items-center gap-2 px-3 py-1.5 bg-neon-purple/20 text-neon-purple rounded-lg hover:bg-neon-purple/30 transition-colors text-sm">
             <FiNavigation className="w-4 h-4" />
@@ -171,12 +171,12 @@ export default function EventsMapView({ events, onRegister }: EventsMapViewProps
                         : 'bg-neon-pink/80 hover:bg-neon-purple'
                     }`}
                   >
-                    <span className="text-white font-bold text-sm">{cityData.count}</span>
+                    <span className="text-text-primary font-bold text-sm">{cityData.count}</span>
                   </div>
 
                   {/* City label */}
                   <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 whitespace-nowrap">
-                    <span className="text-xs text-white bg-black/60 px-2 py-0.5 rounded">
+                    <span className="text-xs text-text-primary bg-black/60 px-2 py-0.5 rounded">
                       {cityData.city}
                     </span>
                   </div>
@@ -197,10 +197,10 @@ export default function EventsMapView({ events, onRegister }: EventsMapViewProps
                 className="flex items-center gap-3 text-left"
               >
                 <div className="w-10 h-10 rounded-full bg-neon-blue flex items-center justify-center">
-                  <FiGlobe className="w-5 h-5 text-white" />
+                  <FiGlobe className="w-5 h-5 text-text-primary" />
                 </div>
                 <div>
-                  <p className="text-white font-medium">{virtualEvents.length} Virtual Events</p>
+                  <p className="text-text-primary font-medium">{virtualEvents.length} Virtual Events</p>
                   <p className="text-sm text-text-secondary">Join from anywhere</p>
                 </div>
                 <FiChevronRight className="w-5 h-5 text-text-secondary" />
@@ -213,7 +213,7 @@ export default function EventsMapView({ events, onRegister }: EventsMapViewProps
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
                 <div className="text-6xl mb-4">🗺️</div>
-                <h3 className="text-xl font-bold text-white mb-2">No events on the map yet</h3>
+                <h3 className="text-xl font-bold text-text-primary mb-2">No events on the map yet</h3>
                 <p className="text-text-secondary">
                   Create an event and put your city on the dance map!
                 </p>
@@ -231,7 +231,7 @@ export default function EventsMapView({ events, onRegister }: EventsMapViewProps
                 onClick={() => setSelectedCity(cityData.city)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${
                   selectedCity === cityData.city
-                    ? 'bg-neon-purple text-white'
+                    ? 'bg-neon-purple text-text-primary'
                     : 'bg-white/5 text-text-secondary hover:bg-white/10'
                 }`}
               >
@@ -264,7 +264,7 @@ export default function EventsMapView({ events, onRegister }: EventsMapViewProps
               {/* Panel Header */}
               <div className="p-4 border-b border-white/10 flex items-center justify-between">
                 <div>
-                  <h3 className="font-bold text-white flex items-center gap-2">
+                  <h3 className="font-bold text-text-primary flex items-center gap-2">
                     {selectedCityData.city === 'Virtual' ? (
                       <FiGlobe className="w-5 h-5 text-neon-blue" />
                     ) : (
@@ -307,7 +307,7 @@ export default function EventsMapView({ events, onRegister }: EventsMapViewProps
             >
               <div className="text-center">
                 <div className="text-5xl mb-4">📍</div>
-                <h3 className="text-lg font-bold text-white mb-2">
+                <h3 className="text-lg font-bold text-text-primary mb-2">
                   Select a location
                 </h3>
                 <p className="text-sm text-text-secondary">

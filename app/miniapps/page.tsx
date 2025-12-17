@@ -294,7 +294,7 @@ function MiniAppCard({ app, index }: { app: (typeof miniAppIdeas)[0]['apps'][0];
         <div className="relative z-10">
           <div className="flex items-start justify-between mb-4">
             <div className="w-12 h-12 bg-gradient-to-br from-neon-purple to-neon-pink rounded-xl flex items-center justify-center">
-              <app.icon className="w-6 h-6 text-white" />
+              <app.icon className="w-6 h-6 text-text-primary" />
             </div>
             <StatusBadge status={app.status} />
           </div>
@@ -500,7 +500,7 @@ export default function MiniAppsPage() {
                 <div
                   className={`w-14 h-14 bg-gradient-to-br ${category.gradient} rounded-xl flex items-center justify-center`}
                 >
-                  <category.icon className="w-7 h-7 text-white" />
+                  <category.icon className="w-7 h-7 text-text-primary" />
                 </div>
                 <div>
                   <h2 className="text-3xl font-display font-bold">{category.category}</h2>

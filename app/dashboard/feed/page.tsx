@@ -267,7 +267,7 @@ function FeedContent() {
           <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center shadow-lg shadow-neon-purple/25">
-                <FiZap className="w-7 h-7 text-white" />
+                <FiZap className="w-7 h-7 text-text-primary" />
               </div>
               <div>
                 <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">Community Feed</h1>
@@ -317,7 +317,7 @@ function FeedContent() {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center">
-                    <FiSend className="w-5 h-5 text-white" />
+                    <FiSend className="w-5 h-5 text-text-primary" />
                   </div>
                   <h2 className="text-xl font-bold text-text-primary">Create Post</h2>
                 </div>

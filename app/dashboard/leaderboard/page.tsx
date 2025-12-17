@@ -78,7 +78,7 @@ export default function LeaderboardPage() {
         {/* Back Navigation */}
         <Link
           href="/dashboard/events"
-          className="inline-flex items-center gap-2 text-text-secondary hover:text-white transition-colors mb-6"
+          className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors mb-6"
         >
           <FiArrowLeft size={20} />
           <span>Back to Events</span>
@@ -121,7 +121,7 @@ export default function LeaderboardPage() {
               <FiZap className="w-8 h-8 text-yellow-500" />
               <div>
                 <p className="text-sm text-text-secondary">Your Rank</p>
-                <p className="text-3xl font-bold text-white">#{currentUserRank}</p>
+                <p className="text-3xl font-bold text-text-primary">#{currentUserRank}</p>
               </div>
             </motion.div>
           )}
@@ -137,8 +137,8 @@ export default function LeaderboardPage() {
                 onClick={() => setTimeFilter(filter)}
                 className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                   timeFilter === filter
-                    ? 'bg-neon-purple text-white shadow-lg shadow-neon-purple/30'
-                    : 'text-text-secondary hover:text-white hover:bg-white/5'
+                    ? 'bg-neon-purple text-text-primary shadow-lg shadow-neon-purple/30'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-white/5'
                 }`}
               >
                 {filter === 'weekly' ? 'Week' : filter === 'monthly' ? 'Month' : 'All Time'}
@@ -159,8 +159,8 @@ export default function LeaderboardPage() {
                 onClick={() => setSortBy(key)}
                 className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                   sortBy === key
-                    ? 'bg-neon-purple text-white shadow-lg shadow-neon-purple/30'
-                    : 'text-text-secondary hover:text-white hover:bg-white/5'
+                    ? 'bg-neon-purple text-text-primary shadow-lg shadow-neon-purple/30'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-white/5'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -189,7 +189,7 @@ export default function LeaderboardPage() {
                   </div>
                   <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-3xl">🥈</span>
                 </div>
-                <p className="font-bold text-white mt-3 truncate max-w-[120px]">
+                <p className="font-bold text-text-primary mt-3 truncate max-w-[120px]">
                   {sortedUsers[1].display_name || sortedUsers[1].username}
                 </p>
                 <p className="text-lg text-yellow-400 font-medium">{sortedUsers[1].xp.toLocaleString()} XP</p>
@@ -223,7 +223,7 @@ export default function LeaderboardPage() {
                     👑
                   </motion.span>
                 </div>
-                <p className="font-bold text-white text-lg mt-3 truncate max-w-[140px]">
+                <p className="font-bold text-text-primary text-lg mt-3 truncate max-w-[140px]">
                   {sortedUsers[0].display_name || sortedUsers[0].username}
                 </p>
                 <p className="text-xl text-yellow-400 font-bold">{sortedUsers[0].xp.toLocaleString()} XP</p>
@@ -248,7 +248,7 @@ export default function LeaderboardPage() {
                   </div>
                   <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-3xl">🥉</span>
                 </div>
-                <p className="font-bold text-white mt-3 truncate max-w-[120px]">
+                <p className="font-bold text-text-primary mt-3 truncate max-w-[120px]">
                   {sortedUsers[2].display_name || sortedUsers[2].username}
                 </p>
                 <p className="text-lg text-yellow-400 font-medium">{sortedUsers[2].xp.toLocaleString()} XP</p>
@@ -264,7 +264,7 @@ export default function LeaderboardPage() {
         {/* Full Rankings List */}
         <div className="bg-bg-secondary rounded-2xl border border-white/10 overflow-hidden">
           <div className="px-6 py-4 border-b border-white/10">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+            <h2 className="text-lg font-bold text-text-primary flex items-center gap-2">
               <FiAward className="w-5 h-5 text-neon-purple" />
               All Rankings
             </h2>
@@ -296,7 +296,7 @@ export default function LeaderboardPage() {
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-white truncate">
+                    <p className="font-medium text-text-primary truncate">
                       {user.display_name || user.username}
                       {isCurrentUser && <span className="text-neon-purple ml-2">(You)</span>}
                     </p>
@@ -334,7 +334,7 @@ export default function LeaderboardPage() {
 
         {/* How to Climb Section */}
         <div className="mt-8 bg-bg-secondary rounded-2xl border border-white/10 p-6">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+          <h2 className="text-lg font-bold text-text-primary flex items-center gap-2 mb-4">
             <FiTarget className="w-5 h-5 text-neon-purple" />
             How to Climb the Leaderboard
           </h2>
@@ -353,7 +353,7 @@ export default function LeaderboardPage() {
                 className="p-4 bg-white/5 rounded-xl border border-white/10 hover:border-neon-purple/30 transition-colors"
               >
                 <item.icon className="w-6 h-6 text-neon-purple mb-2" />
-                <p className="font-medium text-white">{item.label}</p>
+                <p className="font-medium text-text-primary">{item.label}</p>
                 <p className="text-sm text-yellow-400">{item.xp}</p>
                 <p className="text-xs text-text-secondary mt-1">{item.desc}</p>
               </motion.div>

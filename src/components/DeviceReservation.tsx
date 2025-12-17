@@ -94,7 +94,7 @@ export default function DeviceReservation() {
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-6">
               <span className="gradient-text gradient-text-animate">FlowBond</span>
               <br />
-              <span className="text-3xl md:text-4xl text-white">Technology</span>
+              <span className="text-3xl md:text-4xl text-text-primary">Technology</span>
             </h2>
             <p className="text-lg text-text-secondary mb-10 leading-relaxed">
               Experience revolutionary movement tracking with our next-generation wearable device.
@@ -117,7 +117,7 @@ export default function DeviceReservation() {
                   <div className="text-xs text-text-muted uppercase tracking-wider mb-1">
                     {spec.label}
                   </div>
-                  <div className="text-sm font-semibold text-white">{spec.value}</div>
+                  <div className="text-sm font-semibold text-text-primary">{spec.value}</div>
                 </motion.div>
               ))}
             </div>
@@ -136,9 +136,9 @@ export default function DeviceReservation() {
                   <div
                     className={`w-12 h-12 bg-gradient-to-br ${feature.gradient} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
                   >
-                    <feature.icon className="w-6 h-6 text-white" />
+                    <feature.icon className="w-6 h-6 text-text-primary" />
                   </div>
-                  <h3 className="font-semibold mb-2 text-white">{feature.title}</h3>
+                  <h3 className="font-semibold mb-2 text-text-primary">{feature.title}</h3>
                   <p className="text-text-secondary text-sm leading-relaxed">
                     {feature.description}
                   </p>
@@ -235,7 +235,7 @@ export default function DeviceReservation() {
                     {/* Device screen */}
                     <div className="w-32 h-32 bg-black/30 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/10">
                       <div className="relative">
-                        <FiActivity className="w-12 h-12 text-white" />
+                        <FiActivity className="w-12 h-12 text-text-primary" />
                         {/* Pulse effect */}
                         <motion.div
                           className="absolute inset-0 flex items-center justify-center"
@@ -248,7 +248,7 @@ export default function DeviceReservation() {
                             repeat: Number.POSITIVE_INFINITY,
                           }}
                         >
-                          <FiActivity className="w-12 h-12 text-white/50" />
+                          <FiActivity className="w-12 h-12 text-text-primary/50" />
                         </motion.div>
                       </div>
                     </div>

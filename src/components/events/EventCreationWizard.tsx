@@ -282,10 +282,10 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center">
-                      <FiZap className="w-5 h-5 text-white" />
+                      <FiZap className="w-5 h-5 text-text-primary" />
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold text-white">Create Event</h2>
+                      <h2 className="text-xl font-bold text-text-primary">Create Event</h2>
                       <p className="text-sm text-text-secondary">
                         +{XP_REWARDS.createEvent} XP on completion
                       </p>
@@ -293,7 +293,7 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
                   </div>
                   <button
                     onClick={onClose}
-                    className="p-2 hover:bg-white/10 rounded-lg transition-colors text-text-secondary hover:text-white"
+                    className="p-2 hover:bg-white/10 rounded-lg transition-colors text-text-secondary hover:text-text-primary"
                   >
                     <FiX className="w-5 h-5" />
                   </button>
@@ -314,7 +314,7 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
                         <div
                           className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-all ${
                             currentStep > step.id
-                              ? 'bg-green-500 text-white'
+                              ? 'bg-green-500 text-text-primary'
                               : currentStep === step.id
                               ? 'bg-gradient-to-r from-neon-purple to-neon-pink text-white'
                               : 'bg-white/10 text-text-secondary'
@@ -362,7 +362,7 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
                 <button
                   onClick={() => setCurrentStep(prev => Math.max(1, prev - 1))}
                   disabled={currentStep === 1}
-                  className="flex items-center gap-2 px-4 py-2 text-text-secondary hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 text-text-secondary hover:text-text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 >
                   <FiChevronLeft className="w-5 h-5" />
                   Back
@@ -425,7 +425,7 @@ function StepBasics({
           type="text"
           value={formData.title}
           onChange={e => updateFormData({ title: e.target.value })}
-          className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none focus:ring-2 focus:ring-neon-purple/20 text-lg"
+          className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none focus:ring-2 focus:ring-neon-purple/20 text-lg"
           placeholder="Give your event an exciting name..."
         />
       </div>
@@ -441,8 +441,8 @@ function StepBasics({
               onClick={() => updateFormData({ category: cat.value })}
               className={`p-4 rounded-xl border transition-all text-left ${
                 formData.category === cat.value
-                  ? 'border-neon-purple bg-neon-purple/20 text-white'
-                  : 'border-white/10 hover:border-white/30 text-text-secondary hover:text-white'
+                  ? 'border-neon-purple bg-neon-purple/20 text-text-primary'
+                  : 'border-white/10 hover:border-white/30 text-text-secondary hover:text-text-primary'
               }`}
             >
               <span className="text-2xl mb-1 block">{cat.emoji}</span>
@@ -460,7 +460,7 @@ function StepBasics({
           value={formData.description}
           onChange={e => updateFormData({ description: e.target.value })}
           rows={3}
-          className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none focus:ring-2 focus:ring-neon-purple/20"
+          className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none focus:ring-2 focus:ring-neon-purple/20"
           placeholder="What makes this event special?"
         />
       </div>
@@ -506,7 +506,7 @@ function StepWhenWhere({
           onChange={e => updateFormData({ is_virtual: e.target.checked })}
           className="w-5 h-5 rounded text-neon-purple bg-white/10 border-white/30"
         />
-        <label htmlFor="is_virtual" className="flex items-center gap-2 text-white">
+        <label htmlFor="is_virtual" className="flex items-center gap-2 text-text-primary">
           <FiGlobe className="w-5 h-5 text-neon-purple" />
           This is a virtual event
         </label>
@@ -521,7 +521,7 @@ function StepWhenWhere({
             type="url"
             value={formData.virtual_link}
             onChange={e => updateFormData({ virtual_link: e.target.value })}
-            className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
+            className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
             placeholder="https://zoom.us/..."
           />
         </div>
@@ -535,7 +535,7 @@ function StepWhenWhere({
               type="text"
               value={formData.location_name}
               onChange={e => updateFormData({ location_name: e.target.value })}
-              className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
+              className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
               placeholder="Dance Studio Name"
             />
           </div>
@@ -548,7 +548,7 @@ function StepWhenWhere({
                 type="text"
                 value={formData.location_address}
                 onChange={e => updateFormData({ location_address: e.target.value })}
-                className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
+                className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
                 placeholder="123 Main Street"
               />
             </div>
@@ -560,7 +560,7 @@ function StepWhenWhere({
                 type="text"
                 value={formData.location_city}
                 onChange={e => updateFormData({ location_city: e.target.value })}
-                className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
+                className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
                 placeholder="New York"
               />
             </div>
@@ -590,7 +590,7 @@ function StepDetails({
             type="number"
             value={formData.max_capacity || ''}
             onChange={e => updateFormData({ max_capacity: e.target.value ? parseInt(e.target.value) : null })}
-            className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
+            className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
             placeholder="Leave empty for unlimited"
           />
         </div>
@@ -603,7 +603,7 @@ function StepDetails({
             step="0.01"
             value={formData.price_usd || ''}
             onChange={e => updateFormData({ price_usd: parseFloat(e.target.value) || 0 })}
-            className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
+            className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
             placeholder="0 for free"
           />
         </div>
@@ -620,8 +620,8 @@ function StepDetails({
               onClick={() => updateFormData({ skill_level: level.value })}
               className={`p-3 rounded-xl border transition-all text-left ${
                 formData.skill_level === level.value
-                  ? 'border-neon-purple bg-neon-purple/20 text-white'
-                  : 'border-white/10 hover:border-white/30 text-text-secondary hover:text-white'
+                  ? 'border-neon-purple bg-neon-purple/20 text-text-primary'
+                  : 'border-white/10 hover:border-white/30 text-text-secondary hover:text-text-primary'
               }`}
             >
               <span className="font-medium block">{level.label}</span>
@@ -646,7 +646,7 @@ function StepDetails({
                 .filter(Boolean),
             })
           }
-          className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
+          className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
           placeholder="Salsa, Bachata, Hip Hop..."
         />
       </div>
@@ -674,7 +674,7 @@ function StepExtras({
             onChange={e => updateFormData({ is_recurring: e.target.checked })}
             className="w-5 h-5 rounded text-neon-purple bg-white/10 border-white/30"
           />
-          <label htmlFor="is_recurring" className="flex items-center gap-2 text-white font-medium">
+          <label htmlFor="is_recurring" className="flex items-center gap-2 text-text-primary font-medium">
             <FiRepeat className="w-5 h-5 text-neon-purple" />
             Make this a recurring event
             <span className="text-xs px-2 py-0.5 bg-neon-purple/30 rounded-full text-neon-purple">
@@ -697,7 +697,7 @@ function StepExtras({
                 <select
                   value={formData.recurrence_type}
                   onChange={e => updateFormData({ recurrence_type: e.target.value as RecurrenceType })}
-                  className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
+                  className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
                 >
                   <option value={RecurrenceType.Daily}>Daily</option>
                   <option value={RecurrenceType.Weekly}>Weekly</option>
@@ -735,8 +735,8 @@ function StepExtras({
                       }}
                       className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                         formData.recurrence_days.includes(day.value)
-                          ? 'bg-neon-purple text-white'
-                          : 'bg-white/10 text-text-secondary hover:text-white'
+                          ? 'bg-neon-purple text-text-primary'
+                          : 'bg-white/10 text-text-secondary hover:text-text-primary'
                       }`}
                     >
                       {day.label}
@@ -765,7 +765,7 @@ function StepExtras({
                 .filter(Boolean),
             })
           }
-          className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
+          className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
           placeholder="beginner-friendly, social, workshop..."
         />
       </div>
@@ -779,7 +779,7 @@ function StepExtras({
           value={formData.requirements}
           onChange={e => updateFormData({ requirements: e.target.value })}
           rows={2}
-          className="w-full bg-white/5 text-white rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
+          className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
           placeholder="What should participants bring or know?"
         />
       </div>
@@ -805,7 +805,7 @@ function StepPreview({ formData }: { formData: EventFormData }) {
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h3 className="text-xl font-bold text-white mb-2">Ready to launch? 🚀</h3>
+        <h3 className="text-xl font-bold text-text-primary mb-2">Ready to launch? 🚀</h3>
         <p className="text-text-secondary">Review your event details below</p>
       </div>
 
@@ -817,7 +817,7 @@ function StepPreview({ formData }: { formData: EventFormData }) {
               {category?.emoji || '🎉'}
             </div>
             <div className="flex-1">
-              <h4 className="text-xl font-bold text-white">{formData.title || 'Untitled Event'}</h4>
+              <h4 className="text-xl font-bold text-text-primary">{formData.title || 'Untitled Event'}</h4>
               <p className="text-text-secondary">{category?.label || 'Event'}</p>
             </div>
             {formData.price_usd > 0 ? (
@@ -880,7 +880,7 @@ function StepPreview({ formData }: { formData: EventFormData }) {
       <div className="flex items-center justify-center gap-4 p-4 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-xl border border-yellow-500/30">
         <FiAward className="w-8 h-8 text-yellow-500" />
         <div>
-          <p className="text-white font-bold">
+          <p className="text-text-primary font-bold">
             You&apos;ll earn +{100 + (formData.is_recurring ? 50 : 0)} XP
           </p>
           <p className="text-sm text-text-secondary">
@@ -906,14 +906,14 @@ function SuccessScreen({ earnedXP, eventTitle }: { earnedXP: number; eventTitle:
         transition={{ type: 'spring', delay: 0.2 }}
         className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center"
       >
-        <FiCheck className="w-12 h-12 text-white" />
+        <FiCheck className="w-12 h-12 text-text-primary" />
       </motion.div>
 
       <motion.h2
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="text-3xl font-bold text-white mb-2"
+        className="text-3xl font-bold text-text-primary mb-2"
       >
         Event Created! 🎉
       </motion.h2>
