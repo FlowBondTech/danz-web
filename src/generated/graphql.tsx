@@ -7669,6 +7669,26 @@ export type GetMyReferralsQuery = {
   }>
 }
 
+export type GetUploadUrlQueryVariables = Exact<{
+  fileName: Scalars['String']['input']
+  mimeType: MimeType
+  uploadType: UploadType
+}>
+
+export type GetUploadUrlQuery = {
+  __typename?: 'Query'
+  getUploadUrl: {
+    __typename?: 'UploadUrl'
+    success: boolean
+    uploadUrl: string
+    publicUrl: string
+    fields: any
+    key: string
+    expires: number
+    maxSize: number
+  }
+}
+
 export type GetMyProfileQueryVariables = Exact<{ [key: string]: never }>
 
 export type GetMyProfileQuery = {
@@ -18048,6 +18068,76 @@ export type GetMyReferralsSuspenseQueryHookResult = ReturnType<
 export type GetMyReferralsQueryResult = Apollo.QueryResult<
   GetMyReferralsQuery,
   GetMyReferralsQueryVariables
+>
+export const GetUploadUrlDocument = gql`
+    query GetUploadUrl($fileName: String!, $mimeType: MimeType!, $uploadType: UploadType!) {
+  getUploadUrl(fileName: $fileName, mimeType: $mimeType, uploadType: $uploadType) {
+    success
+    uploadUrl
+    publicUrl
+    fields
+    key
+    expires
+    maxSize
+  }
+}
+    `
+
+/**
+ * __useGetUploadUrlQuery__
+ *
+ * To run a query within a React component, call `useGetUploadUrlQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUploadUrlQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUploadUrlQuery({
+ *   variables: {
+ *      fileName: // value for 'fileName'
+ *      mimeType: // value for 'mimeType'
+ *      uploadType: // value for 'uploadType'
+ *   },
+ * });
+ */
+export function useGetUploadUrlQuery(
+  baseOptions: Apollo.QueryHookOptions<GetUploadUrlQuery, GetUploadUrlQueryVariables> &
+    ({ variables: GetUploadUrlQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetUploadUrlQuery, GetUploadUrlQueryVariables>(
+    GetUploadUrlDocument,
+    options,
+  )
+}
+export function useGetUploadUrlLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetUploadUrlQuery, GetUploadUrlQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetUploadUrlQuery, GetUploadUrlQueryVariables>(
+    GetUploadUrlDocument,
+    options,
+  )
+}
+export function useGetUploadUrlSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetUploadUrlQuery, GetUploadUrlQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetUploadUrlQuery, GetUploadUrlQueryVariables>(
+    GetUploadUrlDocument,
+    options,
+  )
+}
+export type GetUploadUrlQueryHookResult = ReturnType<typeof useGetUploadUrlQuery>
+export type GetUploadUrlLazyQueryHookResult = ReturnType<typeof useGetUploadUrlLazyQuery>
+export type GetUploadUrlSuspenseQueryHookResult = ReturnType<typeof useGetUploadUrlSuspenseQuery>
+export type GetUploadUrlQueryResult = Apollo.QueryResult<
+  GetUploadUrlQuery,
+  GetUploadUrlQueryVariables
 >
 export const GetMyProfileDocument = gql`
     query GetMyProfile {

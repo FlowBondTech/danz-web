@@ -96,7 +96,7 @@ export default function NotificationPanel() {
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: 20, scale: 0.95 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed lg:absolute right-0 top-0 lg:top-auto lg:right-4 lg:mt-2 w-full lg:w-[420px] h-full lg:h-auto lg:max-h-[calc(100vh-100px)] bg-bg-secondary lg:rounded-xl border-l lg:border border-neon-purple/20 shadow-2xl z-50 flex flex-col overflow-hidden"
+            className="fixed lg:absolute right-0 top-14 sm:top-16 lg:top-auto lg:right-4 lg:mt-2 w-full lg:w-[420px] h-[calc(100%-3.5rem)] sm:h-[calc(100%-4rem)] lg:h-auto lg:max-h-[calc(100vh-100px)] bg-bg-secondary lg:rounded-xl border-l lg:border border-neon-purple/20 shadow-2xl z-50 flex flex-col overflow-hidden"
           >
             {/* Header */}
             <div className="flex-shrink-0 p-4 border-b border-white/10">
@@ -134,7 +134,7 @@ export default function NotificationPanel() {
                   </Link>
                   <button
                     onClick={closePanel}
-                    className="p-2 rounded-lg hover:bg-white/5 text-text-secondary hover:text-text-primary transition-colors lg:hidden"
+                    className="p-2 rounded-lg hover:bg-white/5 text-text-secondary hover:text-text-primary transition-colors"
                   >
                     <FiX size={20} />
                   </button>

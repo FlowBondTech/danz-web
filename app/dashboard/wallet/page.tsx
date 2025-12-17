@@ -238,9 +238,9 @@ export default function WalletPage() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-text-primary flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center">
-              <FiShield className="w-5 h-5 text-white" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-text-primary flex items-center gap-2 sm:gap-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center shrink-0">
+              <FiShield className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
             My Wallets
           </h1>
@@ -253,51 +253,51 @@ export default function WalletPage() {
         <section aria-label="DANZ Points" className="mb-8">
           <div className="bg-gradient-to-r from-neon-purple/20 via-neon-pink/20 to-yellow-500/20 rounded-2xl p-[1px]">
             <div className="bg-bg-secondary rounded-2xl p-6">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-6">
                 {/* Points Balance */}
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-yellow-500/20">
-                    <FiStar className="w-8 h-8 text-white" aria-hidden="true" />
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-yellow-500/20 shrink-0">
+                    <FiStar className="w-6 h-6 sm:w-8 sm:h-8 text-white" aria-hidden="true" />
                   </div>
-                  <div>
-                    <p className="text-text-secondary text-sm mb-1">DANZ Points Balance</p>
+                  <div className="min-w-0">
+                    <p className="text-text-secondary text-xs sm:text-sm mb-1">DANZ Points Balance</p>
                     {pointsLoading ? (
                       <div className="w-6 h-6 border-2 border-neon-purple border-t-transparent rounded-full animate-spin" />
                     ) : (
-                      <p className="text-4xl font-bold text-white">
+                      <p className="text-2xl sm:text-4xl font-bold text-white">
                         {points?.current_points_balance?.toLocaleString() || 0}
-                        <span className="text-lg text-text-secondary ml-2">pts</span>
+                        <span className="text-sm sm:text-lg text-text-secondary ml-1 sm:ml-2">pts</span>
                       </p>
                     )}
                   </div>
                 </div>
 
                 {/* Points Stats */}
-                <div className="grid grid-cols-3 gap-4 md:gap-6">
+                <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-6">
                   <div className="text-center md:text-right">
-                    <div className="flex items-center justify-center md:justify-end gap-2 mb-1">
-                      <FiTrendingUp className="w-4 h-4 text-green-400" aria-hidden="true" />
-                      <span className="text-xs text-text-secondary">Earned</span>
+                    <div className="flex items-center justify-center md:justify-end gap-1 sm:gap-2 mb-1">
+                      <FiTrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-green-400" aria-hidden="true" />
+                      <span className="text-[10px] sm:text-xs text-text-secondary">Earned</span>
                     </div>
-                    <p className="text-lg font-bold text-green-400">
+                    <p className="text-sm sm:text-lg font-bold text-green-400">
                       {points?.total_points_earned?.toLocaleString() || 0}
                     </p>
                   </div>
                   <div className="text-center md:text-right">
-                    <div className="flex items-center justify-center md:justify-end gap-2 mb-1">
-                      <FiGift className="w-4 h-4 text-purple-400" aria-hidden="true" />
-                      <span className="text-xs text-text-secondary">Referrals</span>
+                    <div className="flex items-center justify-center md:justify-end gap-1 sm:gap-2 mb-1">
+                      <FiGift className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400" aria-hidden="true" />
+                      <span className="text-[10px] sm:text-xs text-text-secondary">Referrals</span>
                     </div>
-                    <p className="text-lg font-bold text-purple-400">
+                    <p className="text-sm sm:text-lg font-bold text-purple-400">
                       {points?.referral_points_earned?.toLocaleString() || 0}
                     </p>
                   </div>
                   <div className="text-center md:text-right">
-                    <div className="flex items-center justify-center md:justify-end gap-2 mb-1">
-                      <FiAward className="w-4 h-4 text-red-400" aria-hidden="true" />
-                      <span className="text-xs text-text-secondary">Spent</span>
+                    <div className="flex items-center justify-center md:justify-end gap-1 sm:gap-2 mb-1">
+                      <FiAward className="w-3 h-3 sm:w-4 sm:h-4 text-red-400" aria-hidden="true" />
+                      <span className="text-[10px] sm:text-xs text-text-secondary">Spent</span>
                     </div>
-                    <p className="text-lg font-bold text-red-400">
+                    <p className="text-sm sm:text-lg font-bold text-red-400">
                       {points?.total_points_spent?.toLocaleString() || 0}
                     </p>
                   </div>
@@ -455,28 +455,28 @@ export default function WalletPage() {
         </AnimatePresence>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
-            <p className="text-text-secondary text-sm mb-1">Total Wallets</p>
-            <p className="text-3xl font-bold text-text-primary">{allLinkedWallets.length}</p>
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-8">
+          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-6">
+            <p className="text-text-secondary text-xs sm:text-sm mb-1">Total Wallets</p>
+            <p className="text-xl sm:text-3xl font-bold text-text-primary">{allLinkedWallets.length}</p>
           </div>
-          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
-            <p className="text-text-secondary text-sm mb-1">Connected Now</p>
-            <p className="text-3xl font-bold text-neon-purple">
+          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-6">
+            <p className="text-text-secondary text-xs sm:text-sm mb-1">Connected</p>
+            <p className="text-xl sm:text-3xl font-bold text-neon-purple">
               {allLinkedWallets.filter(w => w.isConnected).length}
             </p>
           </div>
-          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 relative">
+          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-6 relative">
             <button
               onClick={() => refetchBalances()}
               disabled={balancesLoading}
-              className="absolute top-4 right-4 p-2 hover:bg-white/5 rounded-lg transition-colors disabled:opacity-50"
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 p-1.5 sm:p-2 hover:bg-white/5 rounded-lg transition-colors disabled:opacity-50"
               title="Refresh balances"
             >
-              <FiRefreshCw className={`w-4 h-4 text-text-secondary ${balancesLoading ? 'animate-spin' : ''}`} />
+              <FiRefreshCw className={`w-3 h-3 sm:w-4 sm:h-4 text-text-secondary ${balancesLoading ? 'animate-spin' : ''}`} />
             </button>
-            <p className="text-text-secondary text-sm mb-1">Embedded Wallets</p>
-            <p className="text-3xl font-bold text-neon-pink">
+            <p className="text-text-secondary text-xs sm:text-sm mb-1">Embedded</p>
+            <p className="text-xl sm:text-3xl font-bold text-neon-pink">
               {embeddedWallets.length}
             </p>
           </div>
@@ -527,19 +527,19 @@ export default function WalletPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="bg-gradient-to-br from-neon-purple/10 to-neon-pink/10 rounded-xl border border-neon-purple/30 p-6"
+                  className="bg-gradient-to-br from-neon-purple/10 to-neon-pink/10 rounded-xl border border-neon-purple/30 p-4 sm:p-6"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-start gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                    <div className="flex items-start gap-3 sm:gap-4 min-w-0">
                       {/* Wallet Icon */}
-                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center">
-                        <FiShield className="w-7 h-7 text-white" />
+                      <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center shrink-0">
+                        <FiShield className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                       </div>
 
                       {/* Wallet Info */}
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-text-primary font-bold text-lg">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <span className="text-text-primary font-bold text-base sm:text-lg">
                             {getWalletClientDisplay(wallet.walletClient)}
                           </span>
                           <span className="px-2 py-0.5 bg-neon-purple/20 text-neon-purple text-xs rounded-full font-medium">
@@ -555,8 +555,8 @@ export default function WalletPage() {
 
                         {/* Address */}
                         <div className="flex items-center gap-2 mt-2">
-                          <code className="text-text-secondary font-mono bg-black/20 px-3 py-1 rounded-lg">
-                            {wallet.address.slice(0, 10)}...{wallet.address.slice(-8)}
+                          <code className="text-text-secondary font-mono bg-black/20 px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm truncate">
+                            {wallet.address.slice(0, 6)}...{wallet.address.slice(-4)}
                           </code>
                           <button
                             onClick={() => copyToClipboard(wallet.address)}
@@ -595,15 +595,15 @@ export default function WalletPage() {
                     </div>
 
                     {/* Balance Display */}
-                    <div className="text-right">
+                    <div className="text-left sm:text-right">
                       {balancesLoading ? (
                         <div className="w-6 h-6 border-2 border-neon-purple border-t-transparent rounded-full animate-spin" />
                       ) : getBalance(wallet.address) ? (
                         <div>
-                          <p className="text-2xl font-bold text-text-primary">
+                          <p className="text-xl sm:text-2xl font-bold text-text-primary">
                             {getBalance(wallet.address)?.balanceFormatted}
                           </p>
-                          <p className="text-sm text-text-secondary">
+                          <p className="text-xs sm:text-sm text-text-secondary">
                             {getBalance(wallet.address)?.symbol}
                           </p>
                         </div>
@@ -614,49 +614,54 @@ export default function WalletPage() {
                   </div>
 
                   {/* Embedded Wallet Actions */}
-                  <div className="mt-6 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+                  <div className="mt-4 sm:mt-6 pt-4 border-t border-white/10 grid grid-cols-2 gap-2 sm:gap-3">
                     {wallet.chainType === 'solana' ? (
                       <button
                         onClick={() => copyToClipboard(wallet.address)}
-                        className="flex items-center justify-center gap-2 px-4 py-3 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 rounded-xl font-medium transition-colors"
+                        className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 rounded-xl font-medium transition-colors text-sm sm:text-base"
                         title="Copy Solana address to receive funds"
                       >
                         {copiedAddress === wallet.address ? (
                           <>
-                            <FiCheck className="w-5 h-5" />
-                            Copied!
+                            <FiCheck className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <span className="hidden sm:inline">Copied!</span>
+                            <span className="sm:hidden">Done</span>
                           </>
                         ) : (
                           <>
-                            <FiCopy className="w-5 h-5" />
-                            Receive SOL
+                            <FiCopy className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <span className="hidden sm:inline">Receive SOL</span>
+                            <span className="sm:hidden">Receive</span>
                           </>
                         )}
                       </button>
                     ) : (
                       <button
                         onClick={() => handleFundWallet(wallet.address, wallet.chainType)}
-                        className="flex items-center justify-center gap-2 px-4 py-3 bg-green-500/10 hover:bg-green-500/20 text-green-500 rounded-xl font-medium transition-colors"
+                        className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 bg-green-500/10 hover:bg-green-500/20 text-green-500 rounded-xl font-medium transition-colors text-sm sm:text-base"
                         title="Add funds via card"
                       >
-                        <FiDollarSign className="w-5 h-5" />
-                        Add Funds
+                        <FiDollarSign className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <span className="hidden sm:inline">Add Funds</span>
+                        <span className="sm:hidden">Fund</span>
                       </button>
                     )}
                     <button
                       onClick={() => showExportWarning(wallet)}
                       disabled={isExporting}
-                      className="flex items-center justify-center gap-2 px-4 py-3 bg-orange-500/10 hover:bg-orange-500/20 text-orange-500 rounded-xl font-medium transition-colors disabled:opacity-50"
+                      className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 bg-orange-500/10 hover:bg-orange-500/20 text-orange-500 rounded-xl font-medium transition-colors disabled:opacity-50 text-sm sm:text-base"
                     >
                       {isExporting ? (
                         <>
-                          <div className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-                          Exporting...
+                          <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+                          <span className="hidden sm:inline">Exporting...</span>
+                          <span className="sm:hidden">...</span>
                         </>
                       ) : (
                         <>
-                          <FiDownload className="w-5 h-5" />
-                          Export Key
+                          <FiDownload className="w-4 h-4 sm:w-5 sm:h-5" />
+                          <span className="hidden sm:inline">Export Key</span>
+                          <span className="sm:hidden">Export</span>
                         </>
                       )}
                     </button>
@@ -702,12 +707,12 @@ export default function WalletPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 hover:border-neon-purple/40 transition-all"
+                  className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6 hover:border-neon-purple/40 transition-all"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-start gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                    <div className="flex items-start gap-3 sm:gap-4 min-w-0">
                       {/* Wallet Icon */}
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 ${
                         wallet.chainType === 'solana'
                           ? 'bg-gradient-to-br from-purple-600 to-green-500'
                           : 'bg-gradient-to-br from-blue-600 to-purple-600'
@@ -716,9 +721,9 @@ export default function WalletPage() {
                       </div>
 
                       {/* Wallet Info */}
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-text-primary font-medium">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <span className="text-text-primary font-medium text-sm sm:text-base">
                             {getWalletClientDisplay(wallet.walletClient)}
                           </span>
                           {wallet.isConnected && (
@@ -731,8 +736,8 @@ export default function WalletPage() {
 
                         {/* Address */}
                         <div className="flex items-center gap-2">
-                          <code className="text-text-secondary text-sm font-mono">
-                            {wallet.address.slice(0, 8)}...{wallet.address.slice(-6)}
+                          <code className="text-text-secondary text-xs sm:text-sm font-mono truncate">
+                            {wallet.address.slice(0, 6)}...{wallet.address.slice(-4)}
                           </code>
                           <button
                             onClick={() => copyToClipboard(wallet.address)}
@@ -771,14 +776,14 @@ export default function WalletPage() {
                     </div>
 
                     {/* Balance + Actions */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 w-full sm:w-auto">
                       {/* Balance */}
-                      <div className="text-right">
+                      <div className="text-left sm:text-right">
                         {balancesLoading ? (
                           <div className="w-5 h-5 border-2 border-neon-purple/50 border-t-transparent rounded-full animate-spin" />
                         ) : getBalance(wallet.address) ? (
                           <div>
-                            <p className="text-lg font-bold text-text-primary">
+                            <p className="text-base sm:text-lg font-bold text-text-primary">
                               {getBalance(wallet.address)?.balanceFormatted}
                             </p>
                             <p className="text-xs text-text-secondary">
@@ -791,7 +796,7 @@ export default function WalletPage() {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                       {wallet.chainType === 'solana' ? (
                         <button
                           onClick={() => copyToClipboard(wallet.address)}

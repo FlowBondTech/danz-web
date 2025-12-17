@@ -13,6 +13,7 @@ import {
   FiUser,
   FiYoutube,
 } from 'react-icons/fi'
+import ImageUpload from './ImageUpload'
 
 const UPDATE_PROFILE = gql`
   mutation UpdateProfile($input: UpdateProfileInput!) {
@@ -248,57 +249,21 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
       <div>
         <h3 className="text-xl font-bold text-text-primary mb-6">Profile Images</h3>
         <div className="grid gap-6 md:grid-cols-2">
-          <div>
-            <label htmlFor="avatar-url" className="block text-text-secondary text-sm mb-2">
-              Avatar URL
-            </label>
-            <input
-              id="avatar-url"
-              type="url"
-              placeholder="https://example.com/avatar.jpg"
-              value={formData.avatar_url}
-              onChange={e => setFormData({ ...formData, avatar_url: e.target.value })}
-              className="w-full px-4 py-3 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:outline-none focus:border-neon-purple transition-colors"
-            />
-            {formData.avatar_url && (
-              <div className="mt-2">
-                <img
-                  src={formData.avatar_url}
-                  alt="Avatar preview"
-                  className="w-20 h-20 rounded-full object-cover border border-neon-purple/50"
-                  onError={e => {
-                    ;(e.target as HTMLImageElement).style.display = 'none'
-                  }}
-                />
-              </div>
-            )}
-          </div>
+          <ImageUpload
+            currentImageUrl={formData.avatar_url}
+            onUploadComplete={url => setFormData({ ...formData, avatar_url: url })}
+            uploadType="avatar"
+            label="Profile Avatar"
+            description="Upload your profile picture (max 5MB)"
+          />
 
-          <div>
-            <label htmlFor="cover-image-url" className="block text-text-secondary text-sm mb-2">
-              Cover Image URL
-            </label>
-            <input
-              id="cover-image-url"
-              type="url"
-              placeholder="https://example.com/cover.jpg"
-              value={formData.cover_image_url}
-              onChange={e => setFormData({ ...formData, cover_image_url: e.target.value })}
-              className="w-full px-4 py-3 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:outline-none focus:border-neon-purple transition-colors"
-            />
-            {formData.cover_image_url && (
-              <div className="mt-2">
-                <img
-                  src={formData.cover_image_url}
-                  alt="Cover preview"
-                  className="w-full h-20 rounded-lg object-cover border border-neon-purple/50"
-                  onError={e => {
-                    ;(e.target as HTMLImageElement).style.display = 'none'
-                  }}
-                />
-              </div>
-            )}
-          </div>
+          <ImageUpload
+            currentImageUrl={formData.cover_image_url}
+            onUploadComplete={url => setFormData({ ...formData, cover_image_url: url })}
+            uploadType="cover"
+            label="Cover Image"
+            description="Upload a banner for your profile (max 10MB)"
+          />
         </div>
       </div>
 

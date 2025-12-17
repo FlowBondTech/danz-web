@@ -1,6 +1,7 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
+import UserStatsCard from '@/src/components/dashboard/UserStatsCard'
 import { useGetMyProfileQuery } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -338,93 +339,10 @@ function DashboardContent() {
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            STATS SECTION - Your Journey
+            STATS SECTION - Your Activity & Achievements
         ═══════════════════════════════════════════════════════════════════ */}
         <div className="mb-8">
-          <h2 className="text-xl font-bold text-text-primary mb-4 flex items-center gap-2">
-            <FiTrendingUp className="text-neon-purple" />
-            Your Dance Journey
-          </h2>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {/* Events Attended */}
-            <div className="bg-bg-secondary rounded-xl border border-neon-purple/10 p-4 hover:border-blue-500/30 transition-colors">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                  <FiCalendar className="text-blue-400" size={16} />
-                </div>
-              </div>
-              <p className="text-2xl font-bold text-text-primary">
-                {profile?.total_events_attended || 0}
-              </p>
-              <p className="text-xs text-text-muted mt-1">Events Attended</p>
-            </div>
-
-            {/* Events Created */}
-            <div className="bg-bg-secondary rounded-xl border border-neon-purple/10 p-4 hover:border-neon-pink/30 transition-colors">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-neon-pink/20 flex items-center justify-center">
-                  <FiPlus className="text-neon-pink" size={16} />
-                </div>
-              </div>
-              <p className="text-2xl font-bold text-text-primary">
-                {profile?.total_events_created || 0}
-              </p>
-              <p className="text-xs text-text-muted mt-1">Events Hosted</p>
-            </div>
-
-            {/* Dance Sessions */}
-            <div className="bg-bg-secondary rounded-xl border border-neon-purple/10 p-4 hover:border-purple-500/30 transition-colors">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                  <FiMusic className="text-purple-400" size={16} />
-                </div>
-              </div>
-              <p className="text-2xl font-bold text-text-primary">
-                {profile?.total_sessions || 0}
-              </p>
-              <p className="text-xs text-text-muted mt-1">Dance Sessions</p>
-            </div>
-
-            {/* Achievements */}
-            <div className="bg-bg-secondary rounded-xl border border-neon-purple/10 p-4 hover:border-amber-500/30 transition-colors">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center">
-                  <FiAward className="text-amber-400" size={16} />
-                </div>
-              </div>
-              <p className="text-2xl font-bold text-text-primary">
-                {profile?.total_achievements || 0}
-              </p>
-              <p className="text-xs text-text-muted mt-1">Achievements</p>
-            </div>
-
-            {/* Dance Time */}
-            <div className="bg-bg-secondary rounded-xl border border-neon-purple/10 p-4 hover:border-cyan-500/30 transition-colors">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center">
-                  <FiClock className="text-cyan-400" size={16} />
-                </div>
-              </div>
-              <p className="text-2xl font-bold text-text-primary">
-                {profile?.total_dance_time ? Math.floor(profile.total_dance_time / 60) : 0}h
-              </p>
-              <p className="text-xs text-text-muted mt-1">Dance Time</p>
-            </div>
-
-            {/* Dance Bonds */}
-            <div className="bg-bg-secondary rounded-xl border border-neon-purple/10 p-4 hover:border-pink-500/30 transition-colors">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center">
-                  <FiUsers className="text-pink-400" size={16} />
-                </div>
-              </div>
-              <p className="text-2xl font-bold text-text-primary">
-                {profile?.dance_bonds_count || 0}
-              </p>
-              <p className="text-xs text-text-muted mt-1">Dance Bonds</p>
-            </div>
-          </div>
+          <UserStatsCard />
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════════

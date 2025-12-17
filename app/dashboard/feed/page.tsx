@@ -2,8 +2,10 @@
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import {
+  useCreateCommentMutation,
   useCreatePostMutation,
   useGetFeedQuery,
+  useGetPostQuery,
   useLikePostMutation,
   useUnlikePostMutation,
 } from '@/src/generated/graphql'
@@ -26,11 +28,109 @@ import {
   FiZap,
 } from 'react-icons/fi'
 
+// Post Comments Component
+function PostComments({ postId }: { postId: string }) {
+  const [commentText, setCommentText] = useState('')
+  const { data: postData, loading } = useGetPostQuery({
+    variables: { id: postId },
+  })
+  const [createComment, { loading: submitting }] = useCreateCommentMutation()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!commentText.trim()) return
+
+    try {
+      await createComment({
+        variables: {
+          input: {
+            post_id: postId,
+            content: commentText,
+          },
+        },
+        refetchQueries: ['GetFeed', 'GetPost'],
+      })
+      setCommentText('')
+    } catch (err) {
+      console.error('Error creating comment:', err)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="mt-4 pt-4 border-t border-white/5">
+        <div className="flex items-center justify-center py-4">
+          <div className="w-5 h-5 border-2 border-neon-purple/30 border-t-neon-purple rounded-full animate-spin" />
+        </div>
+      </div>
+    )
+  }
+
+  const comments = postData?.getPost.comments || []
+
+  return (
+    <div className="mt-4 pt-4 border-t border-white/5">
+      {/* Existing Comments */}
+      {comments.length > 0 && (
+        <div className="space-y-3 mb-4">
+          {comments.map((comment) => (
+            <div key={comment.id} className="flex items-start gap-3 p-3 rounded-xl bg-bg-primary/30">
+              {comment.user?.avatar_url ? (
+                <img
+                  src={comment.user.avatar_url}
+                  alt={comment.user.username || 'User'}
+                  className="w-8 h-8 rounded-lg object-cover flex-shrink-0"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                  {comment.user?.username?.charAt(0).toUpperCase() || 'U'}
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-baseline gap-2">
+                  <span className="font-semibold text-text-primary text-sm">
+                    {comment.user?.display_name || comment.user?.username}
+                  </span>
+                  <span className="text-xs text-text-secondary">
+                    {formatTimeAgo(new Date(comment.created_at))}
+                  </span>
+                </div>
+                <p className="text-text-primary text-sm mt-1 whitespace-pre-wrap">{comment.content}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Add Comment Form */}
+      <form onSubmit={handleSubmit} className="flex items-end gap-2">
+        <div className="flex-1">
+          <textarea
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            placeholder="Write a comment..."
+            className="w-full bg-bg-primary border border-white/10 rounded-xl px-4 py-2 text-text-primary placeholder-text-secondary resize-none focus:outline-none focus:border-neon-purple/50 focus:ring-1 focus:ring-neon-purple/20 transition-all text-sm"
+            rows={2}
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={submitting || !commentText.trim()}
+          className="px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-pink rounded-xl font-semibold text-white text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-neon-purple/25 transition-all flex-shrink-0"
+        >
+          {submitting ? 'Sending...' : 'Send'}
+        </button>
+      </form>
+    </div>
+  )
+}
+
 function FeedContent() {
   const { authenticated, ready } = usePrivy()
   const router = useRouter()
   const [postContent, setPostContent] = useState('')
   const [showCreatePost, setShowCreatePost] = useState(false)
+  const [expandedPostId, setExpandedPostId] = useState<string | null>(null)
 
   const { data, loading, error, fetchMore } = useGetFeedQuery({
     variables: { limit: 20 },
@@ -85,6 +185,10 @@ function FeedContent() {
     } catch (err) {
       console.error('Error toggling like:', err)
     }
+  }
+
+  const toggleComments = (postId: string) => {
+    setExpandedPostId(expandedPostId === postId ? null : postId)
   }
 
   const loadMore = () => {
@@ -354,7 +458,14 @@ function FeedContent() {
                     <span className="font-medium">{post.likes_count}</span>
                   </button>
 
-                  <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-text-secondary hover:bg-white/5 hover:text-neon-purple transition-all duration-200">
+                  <button
+                    onClick={() => toggleComments(post.id)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 ${
+                      expandedPostId === post.id
+                        ? 'bg-neon-purple/10 text-neon-purple'
+                        : 'text-text-secondary hover:bg-white/5 hover:text-neon-purple'
+                    }`}
+                  >
                     <FiMessageCircle size={18} />
                     <span className="font-medium">{post.comments_count}</span>
                   </button>
@@ -364,6 +475,9 @@ function FeedContent() {
                     <span className="font-medium hidden sm:inline">Share</span>
                   </button>
                 </div>
+
+                {/* Comments Section */}
+                {expandedPostId === post.id && <PostComments postId={post.id} />}
               </article>
             ))
           )}
