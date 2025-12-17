@@ -141,65 +141,8 @@ export default function ProfilePage() {
           </p>
         </div>
 
-        {/* Claim Rewards Card - Only show if there are rewards */}
-        {profile?.unclaimed_rewards && (profile.unclaimed_rewards.tokens > 0 || profile.unclaimed_rewards.nfts > 0) && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <Link href="/dashboard/claim">
-              <div className="bg-gradient-to-r from-neon-purple/20 via-neon-pink/20 to-neon-purple/20 rounded-xl border border-neon-purple/30 p-6 hover:border-neon-purple/50 transition-all cursor-pointer group">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center">
-                      <FiGift className="w-7 h-7 text-text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-text-primary flex items-center gap-2">
-                        Claim Your Rewards
-                        {(profile.unclaimed_rewards.new_count || 0) > 0 && (
-                          <span className="px-2 py-0.5 bg-neon-pink/20 text-neon-pink text-xs rounded-full animate-pulse">
-                            {profile.unclaimed_rewards.new_count} NEW
-                          </span>
-                        )}
-                      </h3>
-                      <p className="text-text-secondary">
-                        You have unclaimed $DANZ tokens and NFTs waiting for you!
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-6">
-                    <div className="hidden sm:flex items-center gap-4">
-                      {profile.unclaimed_rewards.tokens > 0 && (
-                        <>
-                          <div className="text-center">
-                            <div className="flex items-center gap-1 text-neon-purple">
-                              <FiZap className="w-4 h-4" />
-                              <span className="text-xl font-bold">{profile.unclaimed_rewards.tokens}</span>
-                            </div>
-                            <span className="text-text-secondary text-xs">$DANZ</span>
-                          </div>
-                          {profile.unclaimed_rewards.nfts > 0 && <div className="w-px h-8 bg-white/10" />}
-                        </>
-                      )}
-                      {profile.unclaimed_rewards.nfts > 0 && (
-                        <div className="text-center">
-                          <div className="flex items-center gap-1 text-neon-pink">
-                            <FiAward className="w-4 h-4" />
-                            <span className="text-xl font-bold">{profile.unclaimed_rewards.nfts}</span>
-                          </div>
-                          <span className="text-text-secondary text-xs">NFTs</span>
-                        </div>
-                      )}
-                    </div>
-                    <FiChevronRight className="w-6 h-6 text-text-secondary group-hover:text-neon-purple group-hover:translate-x-1 transition-all" />
-                  </div>
-                </div>
-              </div>
-            </Link>
-          </motion.div>
-        )}
+        {/* Claim Rewards Card - Hidden until backend support is added */}
+        {/* TODO: Add unclaimed_rewards to User type in backend schema */}
 
         <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-8" data-profile-form>
           <ProfileEditForm user={profile} onSave={handleSave} onCancel={handleCancel} />
