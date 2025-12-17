@@ -5,7 +5,7 @@ import UserStatsCard from '@/src/components/dashboard/UserStatsCard'
 import { useGetMyProfileQuery } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Suspense, useEffect } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { FaTiktok } from 'react-icons/fa'
 import {
   FiActivity,
@@ -25,6 +25,7 @@ import {
   FiTrendingUp,
   FiTwitter,
   FiUsers,
+  FiX,
   FiYoutube,
   FiZap,
 } from 'react-icons/fi'
@@ -54,6 +55,8 @@ function DashboardContent() {
       refetch()
     }
   }, [searchParams, refetch])
+
+  const [showAvatarModal, setShowAvatarModal] = useState(false)
 
   if (!ready || loading) {
     return (
@@ -181,10 +184,14 @@ function DashboardContent() {
                       <img
                         src={profile.avatar_url}
                         alt={profile.display_name || 'Avatar'}
-                        className="w-24 h-24 rounded-full object-cover border-2 border-bg-secondary relative z-10"
+                        onClick={() => setShowAvatarModal(true)}
+                        className="w-24 h-24 rounded-full object-cover border-2 border-bg-secondary relative z-10 cursor-pointer hover:border-neon-purple transition-colors"
                       />
                     ) : (
-                      <div className="w-24 h-24 rounded-full bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center text-white text-3xl font-bold relative z-10 border-2 border-bg-secondary">
+                      <div
+                        onClick={() => setShowAvatarModal(true)}
+                        className="w-24 h-24 rounded-full bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center text-white text-3xl font-bold relative z-10 border-2 border-bg-secondary cursor-pointer hover:opacity-90 transition-opacity"
+                      >
                         {profile?.username?.charAt(0).toUpperCase() || 'D'}
                       </div>
                     )}
@@ -532,6 +539,55 @@ function DashboardContent() {
           </div>
         )}
       </div>
+
+      {/* Avatar View Modal */}
+      {showAvatarModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          onClick={() => setShowAvatarModal(false)}
+        >
+          <div
+            className="relative"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Large Avatar */}
+            <div className="relative w-80 h-80 sm:w-96 sm:h-96">
+              {profile?.avatar_url ? (
+                <img
+                  src={profile.avatar_url}
+                  alt={profile.display_name || 'Avatar'}
+                  className="w-full h-full rounded-full object-cover border-4 border-neon-purple/50 shadow-2xl shadow-neon-purple/30"
+                />
+              ) : (
+                <div className="w-full h-full rounded-full bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center text-white text-9xl font-bold border-4 border-neon-purple/50 shadow-2xl shadow-neon-purple/30">
+                  {profile?.username?.charAt(0).toUpperCase() || 'D'}
+                </div>
+              )}
+
+              {/* Edit Icon */}
+              <button
+                onClick={() => {
+                  setShowAvatarModal(false)
+                  router.push('/dashboard/profile')
+                }}
+                className="absolute bottom-4 right-4 p-4 bg-gradient-to-br from-neon-purple to-neon-pink rounded-full text-white shadow-lg hover:shadow-neon-purple/50 transition-all hover:scale-110"
+                aria-label="Edit Avatar"
+              >
+                <FiEdit3 size={24} />
+              </button>
+            </div>
+
+            {/* Close Button */}
+            <button
+              onClick={() => setShowAvatarModal(false)}
+              className="absolute -top-4 -right-4 p-3 bg-bg-primary border border-white/20 rounded-full text-text-primary hover:text-neon-purple hover:border-neon-purple/50 transition-all shadow-lg"
+              aria-label="Close"
+            >
+              <FiX size={24} />
+            </button>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   )
 }
