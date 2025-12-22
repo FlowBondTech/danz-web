@@ -11,7 +11,7 @@ import {
   FiChevronRight,
   FiGlobe,
 } from 'react-icons/fi'
-import EventCard from './EventCard'
+import EventCard, { type RegistrationStatusType } from './EventCard'
 
 interface Event {
   id: string
@@ -31,6 +31,7 @@ interface Event {
   is_featured?: boolean | null
   is_recurring?: boolean | null
   is_registered?: boolean | null
+  user_registration_status?: RegistrationStatusType
   is_virtual?: boolean | null
   image_url?: string | null
   facilitator?: {

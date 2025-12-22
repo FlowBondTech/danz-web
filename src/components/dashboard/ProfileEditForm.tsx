@@ -2,12 +2,10 @@
 
 import { useMutation } from '@apollo/client'
 import { gql } from 'graphql-tag'
-import { useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { FaTiktok } from 'react-icons/fa'
 import {
-  FiCamera,
   FiCheck,
-  FiEdit3,
   FiInstagram,
   FiLink,
   FiMapPin,
@@ -22,12 +20,16 @@ import {
   FiMusic,
   FiX,
   FiAward,
-  FiTrendingUp,
   FiClock,
   FiActivity,
 } from 'react-icons/fi'
 import { useToast } from '@/src/hooks/useToast'
 import { ToastContainer } from '@/src/components/ui/Toast'
+
+export interface ProfileEditFormRef {
+  triggerAvatarUpload: () => void
+  triggerCoverUpload: () => void
+}
 
 const UPDATE_PROFILE = gql`
   mutation UpdateProfile($input: UpdateProfileInput!) {
@@ -107,7 +109,7 @@ interface ProfileEditFormProps {
   onCancel?: () => void
 }
 
-export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditFormProps) {
+const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ user, onSave, onCancel }, ref) => {
   const toast = useToast()
   const [formData, setFormData] = useState({
     username: '',
@@ -142,6 +144,11 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
 
   const avatarInputRef = useRef<HTMLInputElement>(null)
   const coverInputRef = useRef<HTMLInputElement>(null)
+
+  useImperativeHandle(ref, () => ({
+    triggerAvatarUpload: () => avatarInputRef.current?.click(),
+    triggerCoverUpload: () => coverInputRef.current?.click(),
+  }))
 
   const [updateProfile, { loading: saving }] = useMutation(UPDATE_PROFILE, {
     update(cache, { data }) {
@@ -518,100 +525,21 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
           </div>
         )}
 
-        {/* Profile Images Preview */}
-        <div className="relative">
-        {/* Cover Image */}
-        <div className="relative h-48 sm:h-64 rounded-2xl overflow-hidden bg-gradient-to-br from-neon-purple/20 to-neon-pink/20 border border-neon-purple/20">
-          {formData.cover_image_url ? (
-            <img
-              src={formData.cover_image_url}
-              alt="Cover"
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <FiCamera className="w-12 h-12 mx-auto mb-2 text-text-secondary" />
-                <p className="text-text-secondary text-sm">Add cover image</p>
-              </div>
-            </div>
-          )}
-
-          {/* Cover Edit Button */}
-          <button
-            type="button"
-            onClick={() => coverInputRef.current?.click()}
-            disabled={uploadingCover}
-            className="absolute top-4 right-4 p-3 bg-bg-primary/90 hover:bg-bg-primary border border-white/20 hover:border-neon-purple/50 rounded-xl text-text-primary hover:text-neon-purple transition-all backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="Edit cover image"
-          >
-            {uploadingCover ? (
-              <div className="w-5 h-5 border-2 border-neon-purple/30 border-t-neon-purple rounded-full animate-spin" />
-            ) : (
-              <FiEdit3 size={20} />
-            )}
-          </button>
-
-          <input
-            ref={coverInputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/gif,image/webp"
-            onChange={handleCoverChange}
-            className="hidden"
-          />
-        </div>
-
-        {/* Profile Avatar */}
-        <div className="absolute -bottom-16 left-6 sm:left-8">
-          <div className="relative group">
-            {formData.avatar_url ? (
-              <img
-                src={formData.avatar_url}
-                alt="Avatar"
-                className="w-32 h-32 rounded-full object-cover border-4 border-bg-primary"
-              />
-            ) : (
-              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center text-white text-4xl font-bold border-4 border-bg-primary">
-                {formData.username?.charAt(0).toUpperCase() || 'D'}
-              </div>
-            )}
-
-            {/* Avatar Edit Button */}
-            <button
-              type="button"
-              onClick={() => avatarInputRef.current?.click()}
-              disabled={uploadingAvatar}
-              className="absolute bottom-0 right-0 p-2.5 bg-gradient-to-br from-neon-purple to-neon-pink hover:from-neon-purple/90 hover:to-neon-pink/90 rounded-full text-white transition-all shadow-lg hover:shadow-neon-purple/50 disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-label="Edit profile picture"
-            >
-              {uploadingAvatar ? (
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <FiCamera size={16} />
-              )}
-            </button>
-
-            <input
-              ref={avatarInputRef}
-              type="file"
-              accept="image/jpeg,image/png,image/gif,image/webp"
-              onChange={handleAvatarChange}
-              className="hidden"
-            />
-          </div>
-        </div>
-
-        {/* Image Upload Errors */}
-        {(errors.avatar || errors.cover) && (
-          <div className="mt-20 space-y-2">
-            {errors.avatar && <p className="text-sm text-red-400">{errors.avatar}</p>}
-            {errors.cover && <p className="text-sm text-red-400">{errors.cover}</p>}
-          </div>
-        )}
-
-        {/* Spacing for avatar overflow */}
-        <div className="h-20" />
-      </div>
+        {/* Hidden file inputs for image uploads */}
+        <input
+          ref={avatarInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/gif,image/webp"
+          onChange={handleAvatarChange}
+          className="hidden"
+        />
+        <input
+          ref={coverInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/gif,image/webp"
+          onChange={handleCoverChange}
+          className="hidden"
+        />
 
       {/* Basic Information */}
       <div>
@@ -1040,4 +968,8 @@ export default function ProfileEditForm({ user, onSave, onCancel }: ProfileEditF
       </form>
     </>
   )
-}
+})
+
+ProfileEditForm.displayName = 'ProfileEditForm'
+
+export default ProfileEditForm

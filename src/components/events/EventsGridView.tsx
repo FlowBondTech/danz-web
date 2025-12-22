@@ -3,6 +3,8 @@
 import { motion } from 'motion/react'
 import EventCard from './EventCard'
 
+import type { RegistrationStatusType } from './EventCard'
+
 interface Event {
   id: string
   title: string
@@ -20,6 +22,7 @@ interface Event {
   is_featured?: boolean | null
   is_recurring?: boolean | null
   is_registered?: boolean | null
+  user_registration_status?: RegistrationStatusType
   is_virtual?: boolean | null
   image_url?: string | null
   facilitator?: {
@@ -31,11 +34,13 @@ interface Event {
 
 interface EventsGridViewProps {
   events: Event[]
-  onRegister: (event: Event) => void
+  onRegister: (event: Event, status?: 'registered' | 'maybe') => void
+  onCancel?: (event: Event) => void
+  onUpdateStatus?: (event: Event, status: 'registered' | 'maybe') => void
   isLoading?: boolean
 }
 
-export default function EventsGridView({ events, onRegister, isLoading }: EventsGridViewProps) {
+export default function EventsGridView({ events, onRegister, onCancel, onUpdateStatus, isLoading }: EventsGridViewProps) {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -92,7 +97,12 @@ export default function EventsGridView({ events, onRegister, isLoading }: Events
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.05 }}
         >
-          <EventCard event={event} onRegister={onRegister} />
+          <EventCard
+            event={event}
+            onRegister={onRegister}
+            onCancel={onCancel}
+            onUpdateStatus={onUpdateStatus}
+          />
         </motion.div>
       ))}
     </div>

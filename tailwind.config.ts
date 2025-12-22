@@ -51,10 +51,13 @@ const config: Config = {
           'linear-gradient(135deg, rgb(var(--color-primary-rgb)) 0%, rgb(var(--color-primary-alt-rgb)) 100%)',
         'gradient-neon':
           'linear-gradient(135deg, rgb(var(--color-neon-pink-rgb)) 0%, rgb(var(--color-neon-purple-rgb)) 100%)',
+        'gradient-radial':
+          'radial-gradient(circle at center, var(--tw-gradient-stops))',
       },
       boxShadow: {
         'glow-pink': '0 0 30px rgb(var(--color-neon-pink-rgb) / 0.5)',
         'glow-purple': '0 0 30px rgb(var(--color-neon-purple-rgb) / 0.5)',
+        'glow-blue': '0 0 30px rgb(var(--color-neon-blue-rgb) / 0.5)',
       },
       animation: {
         float: 'float 6s ease-in-out infinite',
@@ -62,6 +65,7 @@ const config: Config = {
         'slide-up': 'slide-up 0.5s ease-out',
         'fade-in': 'fade-in 0.8s ease-out',
         typing: 'typing 3s steps(40) 1s forwards',
+        'spin-slow': 'spin 3s linear infinite',
       },
       keyframes: {
         float: {

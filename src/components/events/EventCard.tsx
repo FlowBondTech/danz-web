@@ -13,8 +13,13 @@ import {
   FiZap,
   FiHeart,
   FiShare2,
+  FiHelpCircle,
+  FiX,
+  FiChevronDown,
 } from 'react-icons/fi'
 import { useState } from 'react'
+
+export type RegistrationStatusType = 'registered' | 'maybe' | 'waitlisted' | 'cancelled' | 'attended' | 'no-show' | null
 
 interface EventCardProps {
   event: {
@@ -34,6 +39,7 @@ interface EventCardProps {
     is_featured?: boolean | null
     is_recurring?: boolean | null
     is_registered?: boolean | null
+    user_registration_status?: RegistrationStatusType
     is_virtual?: boolean | null
     image_url?: string | null
     facilitator?: {
@@ -42,7 +48,9 @@ interface EventCardProps {
       avatar_url?: string | null
     } | null
   }
-  onRegister: (event: any) => void
+  onRegister: (event: any, status?: 'registered' | 'maybe') => void
+  onCancel?: (event: any) => void
+  onUpdateStatus?: (event: any, status: 'registered' | 'maybe') => void
   variant?: 'default' | 'compact' | 'featured'
 }
 
@@ -63,9 +71,16 @@ const CATEGORY_EMOJIS: Record<string, string> = {
   cultural: '🌍',
 }
 
-export default function EventCard({ event, onRegister, variant = 'default' }: EventCardProps) {
+export default function EventCard({ event, onRegister, onCancel, onUpdateStatus, variant = 'default' }: EventCardProps) {
   const [isLiked, setIsLiked] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const [showStatusMenu, setShowStatusMenu] = useState(false)
+
+  // Determine actual registration status
+  const registrationStatus = event.user_registration_status || (event.is_registered ? 'registered' : null)
+  const isGoing = registrationStatus === 'registered' || registrationStatus === 'attended'
+  const isMaybe = registrationStatus === 'maybe'
+  const hasRegistration = isGoing || isMaybe
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -101,7 +116,7 @@ export default function EventCard({ event, onRegister, variant = 'default' }: Ev
       <motion.div
         whileHover={{ scale: 1.02 }}
         className="flex items-center gap-4 p-4 bg-bg-secondary rounded-xl border border-white/10 hover:border-neon-purple/30 transition-colors cursor-pointer"
-        onClick={() => !event.is_registered && !isFull && onRegister(event)}
+        onClick={() => !hasRegistration && !isFull && onRegister(event)}
       >
         <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 flex items-center justify-center text-2xl">
           {categoryEmoji}
@@ -119,10 +134,15 @@ export default function EventCard({ event, onRegister, variant = 'default' }: Ev
             </span>
           </div>
         </div>
-        {event.is_registered ? (
+        {isGoing ? (
           <div className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm flex items-center gap-1">
             <FiCheck className="w-3 h-3" />
-            Joined
+            Going
+          </div>
+        ) : isMaybe ? (
+          <div className="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-sm flex items-center gap-1">
+            <FiHelpCircle className="w-3 h-3" />
+            Maybe
           </div>
         ) : (
           <div className="text-neon-purple font-medium">
@@ -320,31 +340,103 @@ export default function EventCard({ event, onRegister, variant = 'default' }: Ev
         )}
 
         {/* Action Button */}
-        <button
-          onClick={() => onRegister(event)}
-          disabled={event.is_registered || isFull}
-          className={`w-full py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2 ${
-            event.is_registered
-              ? 'bg-green-500/20 text-green-400 cursor-default'
-              : isFull
-              ? 'bg-gray-500/20 text-gray-400 cursor-not-allowed'
-              : 'bg-gradient-to-r from-neon-purple to-neon-pink text-white hover:opacity-90 hover:shadow-lg hover:shadow-neon-purple/30'
-          }`}
-        >
-          {event.is_registered ? (
-            <>
-              <FiCheck className="w-5 h-5" />
-              Registered
-            </>
-          ) : isFull ? (
-            'Sold Out'
-          ) : (
-            <>
-              <FiZap className="w-5 h-5" />
-              Join Event
-            </>
-          )}
-        </button>
+        {hasRegistration ? (
+          <div className="relative">
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowStatusMenu(!showStatusMenu)
+              }}
+              className={`w-full py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2 ${
+                isGoing
+                  ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
+                  : 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'
+              }`}
+            >
+              {isGoing ? (
+                <>
+                  <FiCheck className="w-5 h-5" />
+                  Going
+                </>
+              ) : (
+                <>
+                  <FiHelpCircle className="w-5 h-5" />
+                  Maybe
+                </>
+              )}
+              <FiChevronDown className={`w-4 h-4 ml-1 transition-transform ${showStatusMenu ? 'rotate-180' : ''}`} />
+            </button>
+
+            {/* Status Dropdown Menu */}
+            {showStatusMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                className="absolute bottom-full left-0 right-0 mb-2 bg-bg-primary rounded-xl border border-white/10 overflow-hidden shadow-xl z-20"
+              >
+                {!isGoing && onUpdateStatus && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onUpdateStatus(event, 'registered')
+                      setShowStatusMenu(false)
+                    }}
+                    className="w-full px-4 py-3 flex items-center gap-3 hover:bg-green-500/10 transition-colors text-left"
+                  >
+                    <FiCheck className="w-5 h-5 text-green-400" />
+                    <span className="text-text-primary">Change to Going</span>
+                  </button>
+                )}
+                {!isMaybe && onUpdateStatus && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onUpdateStatus(event, 'maybe')
+                      setShowStatusMenu(false)
+                    }}
+                    className="w-full px-4 py-3 flex items-center gap-3 hover:bg-yellow-500/10 transition-colors text-left"
+                  >
+                    <FiHelpCircle className="w-5 h-5 text-yellow-400" />
+                    <span className="text-text-primary">Change to Maybe</span>
+                  </button>
+                )}
+                {onCancel && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onCancel(event)
+                      setShowStatusMenu(false)
+                    }}
+                    className="w-full px-4 py-3 flex items-center gap-3 hover:bg-red-500/10 transition-colors text-left border-t border-white/5"
+                  >
+                    <FiX className="w-5 h-5 text-red-400" />
+                    <span className="text-red-400">Cancel Registration</span>
+                  </button>
+                )}
+              </motion.div>
+            )}
+          </div>
+        ) : (
+          <button
+            onClick={() => onRegister(event)}
+            disabled={isFull}
+            className={`w-full py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2 ${
+              isFull
+                ? 'bg-gray-500/20 text-gray-400 cursor-not-allowed'
+                : 'bg-gradient-to-r from-neon-purple to-neon-pink text-white hover:opacity-90 hover:shadow-lg hover:shadow-neon-purple/30'
+            }`}
+          >
+            {isFull ? (
+              'Sold Out'
+            ) : (
+              <>
+                <FiZap className="w-5 h-5" />
+                Join Event
+              </>
+            )}
+          </button>
+        )}
       </div>
     </motion.div>
   )

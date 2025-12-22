@@ -2,7 +2,8 @@
 
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { FiChevronLeft, FiChevronRight, FiCalendar, FiClock, FiMapPin } from 'react-icons/fi'
+import { FiChevronLeft, FiChevronRight, FiCalendar, FiClock, FiMapPin, FiHelpCircle, FiCheck } from 'react-icons/fi'
+import type { RegistrationStatusType } from './EventCard'
 
 interface Event {
   id: string
@@ -20,6 +21,7 @@ interface Event {
   is_featured?: boolean | null
   is_recurring?: boolean | null
   is_registered?: boolean | null
+  user_registration_status?: RegistrationStatusType
   is_virtual?: boolean | null
 }
 
@@ -270,21 +272,39 @@ export default function EventsCalendarView({ events, onRegister, onEventClick }:
                             {event.is_virtual ? 'Virtual' : event.location_name || event.location_city}
                           </span>
                         </div>
-                        {event.is_registered ? (
-                          <span className="inline-block mt-2 px-2 py-0.5 bg-green-500/20 text-green-400 text-xs rounded-full">
-                            Registered
-                          </span>
-                        ) : (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              onRegister(event)
-                            }}
-                            className="mt-2 px-3 py-1 bg-neon-purple/20 text-neon-purple text-xs rounded-full hover:bg-neon-purple/30 transition-colors"
-                          >
-                            {event.price_usd && event.price_usd > 0 ? `$${event.price_usd}` : 'Free'} - Join
-                          </button>
-                        )}
+                        {(() => {
+                          const status = event.user_registration_status || (event.is_registered ? 'registered' : null)
+                          const isGoing = status === 'registered' || status === 'attended'
+                          const isMaybe = status === 'maybe'
+
+                          if (isGoing) {
+                            return (
+                              <span className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 bg-green-500/20 text-green-400 text-xs rounded-full">
+                                <FiCheck className="w-3 h-3" />
+                                Going
+                              </span>
+                            )
+                          } else if (isMaybe) {
+                            return (
+                              <span className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs rounded-full">
+                                <FiHelpCircle className="w-3 h-3" />
+                                Maybe
+                              </span>
+                            )
+                          } else {
+                            return (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  onRegister(event)
+                                }}
+                                className="mt-2 px-3 py-1 bg-neon-purple/20 text-neon-purple text-xs rounded-full hover:bg-neon-purple/30 transition-colors"
+                              >
+                                {event.price_usd && event.price_usd > 0 ? `$${event.price_usd}` : 'Free'} - Join
+                              </button>
+                            )
+                          }
+                        })()}
                       </div>
                     </div>
                   </motion.div>

@@ -39,3 +39,25 @@ mutation RegisterForEvent($eventId: ID!, $notes: String) {
     created_at
   }
 }
+
+mutation CancelEventRegistration($eventId: ID!) {
+  cancelEventRegistration(eventId: $eventId) {
+    success
+    message
+  }
+}
+
+# Note: This mutation is for admin use - requires userId parameter
+# For user self-update, backend needs to add a new mutation
+mutation UpdateRegistrationStatus($eventId: ID!, $userId: String!, $status: RegistrationStatus!, $adminNotes: String) {
+  updateRegistrationStatus(eventId: $eventId, userId: $userId, status: $status, adminNotes: $adminNotes) {
+    id
+    event_id
+    user_id
+    status
+    registration_date
+    user_notes
+    admin_notes
+    updated_at
+  }
+}

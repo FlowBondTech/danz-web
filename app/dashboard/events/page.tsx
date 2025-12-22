@@ -31,9 +31,11 @@ import Leaderboard from '@/src/components/events/Leaderboard'
 import {
   useGetEventsQuery,
   useRegisterForEventMutation,
+  useCancelEventRegistrationMutation,
   useGetMyProfileQuery,
   EventStatus,
 } from '@/src/generated/graphql'
+import { FiHelpCircle } from 'react-icons/fi'
 
 type ViewMode = 'grid' | 'calendar' | 'map'
 
@@ -56,8 +58,11 @@ export default function EventsPage() {
   const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState<any>(null)
   const [registrationNotes, setRegistrationNotes] = useState('')
+  const [selectedRsvpStatus, setSelectedRsvpStatus] = useState<'registered' | 'maybe'>('registered')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false)
+  const [eventToCancel, setEventToCancel] = useState<any>(null)
 
   const { data: profileData, refetch: refetchProfile } = useGetMyProfileQuery({
     skip: !authenticated,
@@ -78,6 +83,15 @@ export default function EventsPage() {
     onCompleted: () => {
       setSelectedEvent(null)
       setRegistrationNotes('')
+      setSelectedRsvpStatus('registered')
+      refetch()
+    },
+  })
+
+  const [cancelEventRegistration] = useCancelEventRegistrationMutation({
+    onCompleted: () => {
+      setShowCancelConfirm(false)
+      setEventToCancel(null)
       refetch()
     },
   })
@@ -113,19 +127,51 @@ export default function EventsPage() {
     return matchesSearch && matchesCategory
   })
 
-  const handleRegister = async (event: any) => {
+  const handleRegister = async (event: any, status?: 'registered' | 'maybe') => {
+    if (status) {
+      setSelectedRsvpStatus(status)
+    }
     setSelectedEvent(event)
   }
 
   const handleConfirmRegistration = async () => {
     if (selectedEvent) {
+      // Note: The 'maybe' status will be stored in notes until backend adds status support
+      const notesWithStatus = selectedRsvpStatus === 'maybe'
+        ? `[RSVP: Maybe] ${registrationNotes || ''}`.trim()
+        : registrationNotes || null
+
       await registerForEvent({
         variables: {
           eventId: selectedEvent.id,
-          notes: registrationNotes || null,
+          notes: notesWithStatus,
         },
       })
     }
+  }
+
+  const handleCancelRegistration = (event: any) => {
+    setEventToCancel(event)
+    setShowCancelConfirm(true)
+  }
+
+  const handleConfirmCancel = async () => {
+    if (eventToCancel) {
+      await cancelEventRegistration({
+        variables: {
+          eventId: eventToCancel.id,
+        },
+      })
+    }
+  }
+
+  // Note: Status updates require backend support - for now, users can cancel and re-register
+  const handleUpdateStatus = async (event: any, status: 'registered' | 'maybe') => {
+    // TODO: Implement when backend adds self-service status update mutation
+    // For now, show a message that this feature is coming soon
+    console.log('Status update requested:', event.id, status)
+    // Workaround: Cancel and re-register with new status
+    // This is not ideal as it may affect capacity counts temporarily
   }
 
   const handleEventCreated = () => {
@@ -277,6 +323,8 @@ export default function EventsPage() {
             <EventsGridView
               events={filteredEvents as any}
               onRegister={handleRegister}
+              onCancel={handleCancelRegistration}
+              onUpdateStatus={handleUpdateStatus}
               isLoading={loading}
             />
           )}
@@ -431,10 +479,43 @@ export default function EventsPage() {
                   </div>
                 </div>
 
+                {/* RSVP Status Selection */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-text-secondary mb-3">
+                    Your Response
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={() => setSelectedRsvpStatus('registered')}
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${
+                        selectedRsvpStatus === 'registered'
+                          ? 'border-green-500 bg-green-500/10 text-green-400'
+                          : 'border-white/10 bg-bg-primary text-text-secondary hover:border-white/20'
+                      }`}
+                    >
+                      <FiCheck className="w-5 h-5" />
+                      <span className="font-medium">Going</span>
+                    </button>
+                    <button
+                      onClick={() => setSelectedRsvpStatus('maybe')}
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${
+                        selectedRsvpStatus === 'maybe'
+                          ? 'border-yellow-500 bg-yellow-500/10 text-yellow-400'
+                          : 'border-white/10 bg-bg-primary text-text-secondary hover:border-white/20'
+                      }`}
+                    >
+                      <FiHelpCircle className="w-5 h-5" />
+                      <span className="font-medium">Maybe</span>
+                    </button>
+                  </div>
+                </div>
+
                 {/* XP Reward Preview */}
                 <div className="flex items-center justify-center gap-2 p-3 bg-neon-purple/10 border border-neon-purple/20 rounded-xl mb-4">
-                  <span className="text-yellow-500">+25 XP</span>
-                  <span className="text-text-secondary">for joining this event!</span>
+                  <span className="text-yellow-500">{selectedRsvpStatus === 'registered' ? '+25 XP' : '+10 XP'}</span>
+                  <span className="text-text-secondary">
+                    for {selectedRsvpStatus === 'registered' ? 'joining' : 'showing interest in'} this event!
+                  </span>
                 </div>
 
                 <div className="mb-4">
@@ -463,6 +544,82 @@ export default function EventsPage() {
                   >
                     <FiCheck className="w-5 h-5" />
                     Confirm
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Cancel Registration Confirmation Modal */}
+        <AnimatePresence>
+          {showCancelConfirm && eventToCancel && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+              onClick={() => {
+                setShowCancelConfirm(false)
+                setEventToCancel(null)
+              }}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-bg-secondary rounded-2xl border border-red-500/20 p-6 max-w-md w-full"
+                onClick={e => e.stopPropagation()}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <h3 className="text-xl font-bold text-text-primary">Cancel Registration?</h3>
+                  <button
+                    onClick={() => {
+                      setShowCancelConfirm(false)
+                      setEventToCancel(null)
+                    }}
+                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  >
+                    <FiX className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="bg-bg-primary rounded-xl p-4 mb-4">
+                  <h4 className="font-bold text-text-primary mb-2">{eventToCancel.title}</h4>
+                  <div className="space-y-2 text-sm text-text-secondary">
+                    <div className="flex items-center gap-2">
+                      <FiCalendar className="w-4 h-4 text-neon-purple" />
+                      {new Date(eventToCancel.start_date_time).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-text-secondary mb-6">
+                  Are you sure you want to cancel your registration for this event? You can always register again if spots are available.
+                </p>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setShowCancelConfirm(false)
+                      setEventToCancel(null)
+                    }}
+                    className="flex-1 py-3 bg-white/10 text-text-primary rounded-xl hover:bg-white/20 transition-colors"
+                  >
+                    Keep Registration
+                  </button>
+                  <button
+                    onClick={handleConfirmCancel}
+                    className="flex-1 py-3 bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <FiX className="w-5 h-5" />
+                    Cancel Registration
                   </button>
                 </div>
               </motion.div>

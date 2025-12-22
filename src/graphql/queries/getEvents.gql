@@ -33,6 +33,7 @@ query GetEvents($filter: EventFilterInput, $pagination: PaginationInput) {
       updated_at
       status
       is_registered
+      user_registration_status
       registration_count
       is_recurring
       recurrence_type

@@ -1,18 +1,19 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
-import ProfileEditForm from '@/src/components/dashboard/ProfileEditForm'
+import ProfileEditForm, { type ProfileEditFormRef } from '@/src/components/dashboard/ProfileEditForm'
 import { useGetMyProfileQuery } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { FiCamera, FiEdit3, FiGift, FiZap, FiAward, FiChevronRight } from 'react-icons/fi'
 import { motion } from 'motion/react'
 
 export default function ProfilePage() {
   const { authenticated, ready } = usePrivy()
   const router = useRouter()
+  const formRef = useRef<ProfileEditFormRef>(null)
 
   const { data, loading, error, refetch } = useGetMyProfileQuery({
     skip: !authenticated,
@@ -90,10 +91,7 @@ export default function ProfilePage() {
 
             {/* Cover Edit Button */}
             <button
-              onClick={() => {
-                const form = document.querySelector('[data-profile-form]')
-                form?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-              }}
+              onClick={() => formRef.current?.triggerCoverUpload()}
               className="absolute top-4 right-4 p-3 bg-bg-primary/90 hover:bg-bg-primary border border-white/20 hover:border-neon-purple/50 rounded-xl text-text-primary hover:text-neon-purple transition-all backdrop-blur-sm z-10"
               aria-label="Edit cover image"
             >
@@ -118,10 +116,7 @@ export default function ProfilePage() {
 
               {/* Avatar Edit Button */}
               <button
-                onClick={() => {
-                  const form = document.querySelector('[data-profile-form]')
-                  form?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                }}
+                onClick={() => formRef.current?.triggerAvatarUpload()}
                 className="absolute bottom-0 right-0 p-2.5 bg-gradient-to-br from-neon-purple to-neon-pink hover:from-neon-purple/90 hover:to-neon-pink/90 rounded-full text-white transition-all shadow-lg hover:shadow-neon-purple/50 z-10"
                 aria-label="Edit profile picture"
               >
@@ -145,7 +140,7 @@ export default function ProfilePage() {
         {/* TODO: Add unclaimed_rewards to User type in backend schema */}
 
         <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-8" data-profile-form>
-          <ProfileEditForm user={profile} onSave={handleSave} onCancel={handleCancel} />
+          <ProfileEditForm ref={formRef} user={profile} onSave={handleSave} onCancel={handleCancel} />
         </div>
       </div>
     </DashboardLayout>
