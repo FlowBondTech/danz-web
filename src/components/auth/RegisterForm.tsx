@@ -25,6 +25,12 @@ const REGISTER_USER = gql`
   }
 `
 
+// Helper to extract Farcaster account from Privy user
+const getFarcasterAccount = (user: any) => {
+  if (!user?.linkedAccounts) return null
+  return user.linkedAccounts.find((account: any) => account.type === 'farcaster')
+}
+
 export const RegisterForm = () => {
   const { login, ready, authenticated, user } = usePrivy()
   const router = useRouter()
@@ -35,6 +41,8 @@ export const RegisterForm = () => {
     username: '',
     displayName: '',
     bio: '',
+    avatarUrl: '',
+    fid: null as number | null,
     danceStyles: [] as string[],
     skillLevel: 'beginner',
   })
@@ -45,9 +53,23 @@ export const RegisterForm = () => {
     skip: true,
   })
 
+  // Pre-fill form with Farcaster data when user authenticates
   useEffect(() => {
     if (authenticated && user) {
       setStep('profile')
+
+      // Try to get Farcaster account data
+      const farcasterAccount = getFarcasterAccount(user)
+      if (farcasterAccount) {
+        setFormData(prev => ({
+          ...prev,
+          username: farcasterAccount.username || prev.username,
+          displayName: farcasterAccount.displayName || farcasterAccount.username || prev.displayName,
+          bio: farcasterAccount.bio || prev.bio,
+          avatarUrl: farcasterAccount.pfpUrl || prev.avatarUrl,
+          fid: farcasterAccount.fid || null,
+        }))
+      }
     }
   }, [authenticated, user])
 
@@ -105,6 +127,8 @@ export const RegisterForm = () => {
             username: formData.username,
             display_name: formData.displayName || formData.username,
             bio: formData.bio,
+            avatar_url: formData.avatarUrl || null,
+            farcaster_fid: formData.fid,
             dance_styles: formData.danceStyles,
             skill_level: formData.skillLevel,
           },
@@ -180,6 +204,20 @@ export const RegisterForm = () => {
         Complete Your Profile
       </h2>
       <p className="text-gray-400 text-center mb-8">Tell us about yourself</p>
+
+      {/* Farcaster Avatar Preview */}
+      {formData.avatarUrl && (
+        <div className="flex flex-col items-center mb-6">
+          <img
+            src={formData.avatarUrl}
+            alt="Profile"
+            className="w-20 h-20 rounded-full border-4 border-purple-500/50 mb-2"
+          />
+          {formData.fid && (
+            <p className="text-sm text-purple-400">Connected via Farcaster (FID: {formData.fid})</p>
+          )}
+        </div>
+      )}
 
       <form onSubmit={handleProfileSubmit} className="space-y-6">
         <div>
