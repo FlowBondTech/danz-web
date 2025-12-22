@@ -15,8 +15,8 @@ export const PrivyProvider: React.FC<PrivyProviderProps> = ({ children }) => {
   const privyConfig: any = {
     appId,
     config: {
-      // Only allow email and Google login
-      loginMethods: ['email', 'google'],
+      // Farcaster + Google login (for Farcaster-first experience)
+      loginMethods: ['farcaster', 'google'],
       appearance: {
         theme: 'dark',
         accentColor: '#B967FF', // DANZ purple color
