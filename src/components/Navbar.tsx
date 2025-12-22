@@ -117,6 +117,14 @@ export default function Navbar() {
               FAQ
             </a>
           </li>
+          <li>
+            <a
+              href="/depth-anything"
+              className="text-text-secondary hover:text-text-primary transition-colors"
+            >
+              Depth-Anything Model
+            </a>
+          </li>
         </ul>
 
         {/* Desktop Auth Section */}
@@ -297,6 +305,15 @@ export default function Navbar() {
                   className="text-lg text-text-secondary hover:text-text-primary transition-colors"
                 >
                   FAQ
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/depth-anything"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-lg text-text-secondary hover:text-text-primary transition-colors"
+                >
+                  Depth-Anything Model
                 </a>
               </li>
               <li className="mt-8">
