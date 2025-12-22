@@ -4634,6 +4634,51 @@ export type AbandonChallengeMutation = {
   abandonChallenge: { __typename?: 'MutationResponse'; success: boolean; message?: string | null }
 }
 
+export type StartQuickSessionMutationVariables = Exact<{
+  input: MiniappQuickSessionInput
+}>
+
+export type StartQuickSessionMutation = {
+  __typename?: 'Mutation'
+  miniappStartQuickSession: {
+    __typename?: 'MiniappQuickSession'
+    session_id: string
+    mode: string
+    start_time: any
+    target_duration?: number | null
+  }
+}
+
+export type EndQuickSessionMutationVariables = Exact<{
+  sessionId: Scalars['String']['input']
+  stats: Scalars['JSON']['input']
+}>
+
+export type EndQuickSessionMutation = {
+  __typename?: 'Mutation'
+  miniappEndQuickSession: {
+    __typename?: 'MutationResponse'
+    success: boolean
+    message?: string | null
+  }
+}
+
+export type CreateFreestyleSessionMutationVariables = Exact<{
+  input: CreateFreestyleSessionInput
+}>
+
+export type CreateFreestyleSessionMutation = {
+  __typename?: 'Mutation'
+  createFreestyleSession: {
+    __typename?: 'FreestyleSession'
+    id: string
+    duration_seconds: number
+    movement_score: number
+    completed: boolean
+    created_at: any
+  }
+}
+
 export type CreateEventMutationVariables = Exact<{
   input: CreateEventInput
 }>
@@ -4686,6 +4731,41 @@ export type RegisterForEventMutation = {
     registration_date?: any | null
     user_notes?: string | null
     created_at?: any | null
+  }
+}
+
+export type CancelEventRegistrationMutationVariables = Exact<{
+  eventId: Scalars['ID']['input']
+}>
+
+export type CancelEventRegistrationMutation = {
+  __typename?: 'Mutation'
+  cancelEventRegistration: {
+    __typename?: 'MutationResponse'
+    success: boolean
+    message?: string | null
+  }
+}
+
+export type UpdateRegistrationStatusMutationVariables = Exact<{
+  eventId: Scalars['ID']['input']
+  userId: Scalars['String']['input']
+  status: RegistrationStatus
+  adminNotes?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type UpdateRegistrationStatusMutation = {
+  __typename?: 'Mutation'
+  updateRegistrationStatus: {
+    __typename?: 'EventRegistration'
+    id: string
+    event_id: string
+    user_id: string
+    status?: RegistrationStatus | null
+    registration_date?: any | null
+    user_notes?: string | null
+    admin_notes?: string | null
+    updated_at?: any | null
   }
 }
 
@@ -6275,6 +6355,51 @@ export type GetChallengeLeaderboardQuery = {
   }
 }
 
+export type GetCheckinStatusQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetCheckinStatusQuery = {
+  __typename?: 'Query'
+  completedFreestyleToday: boolean
+  myFreestyleStats: {
+    __typename?: 'FreestyleSessionStats'
+    total_sessions: number
+    total_duration_seconds: number
+    total_points: number
+    current_streak: number
+    longest_streak: number
+    last_session_date?: any | null
+  }
+}
+
+export type GetMiniappStreakQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetMiniappStreakQuery = {
+  __typename?: 'Query'
+  miniappStreak: {
+    __typename?: 'MiniappStreakInfo'
+    current: number
+    longest: number
+    streak_maintained_today: boolean
+    next_milestone?: number | null
+    milestone_reward?: number | null
+  }
+}
+
+export type GetMiniappDailyStatsQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetMiniappDailyStatsQuery = {
+  __typename?: 'Query'
+  miniappDailyStats: {
+    __typename?: 'MiniappDailyStats'
+    sessions_count: number
+    daily_goal_progress: number
+    dance_minutes: number
+    xp_earned: number
+    points_earned: number
+    calories_burned: number
+  }
+}
+
 export type GetDevDashboardStatsQueryVariables = Exact<{ [key: string]: never }>
 
 export type GetDevDashboardStatsQuery = {
@@ -7194,6 +7319,7 @@ export type GetEventsQuery = {
       updated_at: any
       status?: EventStatus | null
       is_registered?: boolean | null
+      user_registration_status?: RegistrationStatus | null
       registration_count?: number | null
       is_recurring?: boolean | null
       recurrence_type?: RecurrenceType | null
@@ -9390,6 +9516,159 @@ export type AbandonChallengeMutationOptions = Apollo.BaseMutationOptions<
   AbandonChallengeMutation,
   AbandonChallengeMutationVariables
 >
+export const StartQuickSessionDocument = gql`
+    mutation StartQuickSession($input: MiniappQuickSessionInput!) {
+  miniappStartQuickSession(input: $input) {
+    session_id
+    mode
+    start_time
+    target_duration
+  }
+}
+    `
+export type StartQuickSessionMutationFn = Apollo.MutationFunction<
+  StartQuickSessionMutation,
+  StartQuickSessionMutationVariables
+>
+
+/**
+ * __useStartQuickSessionMutation__
+ *
+ * To run a mutation, you first call `useStartQuickSessionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartQuickSessionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startQuickSessionMutation, { data, loading, error }] = useStartQuickSessionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useStartQuickSessionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    StartQuickSessionMutation,
+    StartQuickSessionMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<StartQuickSessionMutation, StartQuickSessionMutationVariables>(
+    StartQuickSessionDocument,
+    options,
+  )
+}
+export type StartQuickSessionMutationHookResult = ReturnType<typeof useStartQuickSessionMutation>
+export type StartQuickSessionMutationResult = Apollo.MutationResult<StartQuickSessionMutation>
+export type StartQuickSessionMutationOptions = Apollo.BaseMutationOptions<
+  StartQuickSessionMutation,
+  StartQuickSessionMutationVariables
+>
+export const EndQuickSessionDocument = gql`
+    mutation EndQuickSession($sessionId: String!, $stats: JSON!) {
+  miniappEndQuickSession(session_id: $sessionId, stats: $stats) {
+    success
+    message
+  }
+}
+    `
+export type EndQuickSessionMutationFn = Apollo.MutationFunction<
+  EndQuickSessionMutation,
+  EndQuickSessionMutationVariables
+>
+
+/**
+ * __useEndQuickSessionMutation__
+ *
+ * To run a mutation, you first call `useEndQuickSessionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEndQuickSessionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [endQuickSessionMutation, { data, loading, error }] = useEndQuickSessionMutation({
+ *   variables: {
+ *      sessionId: // value for 'sessionId'
+ *      stats: // value for 'stats'
+ *   },
+ * });
+ */
+export function useEndQuickSessionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    EndQuickSessionMutation,
+    EndQuickSessionMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<EndQuickSessionMutation, EndQuickSessionMutationVariables>(
+    EndQuickSessionDocument,
+    options,
+  )
+}
+export type EndQuickSessionMutationHookResult = ReturnType<typeof useEndQuickSessionMutation>
+export type EndQuickSessionMutationResult = Apollo.MutationResult<EndQuickSessionMutation>
+export type EndQuickSessionMutationOptions = Apollo.BaseMutationOptions<
+  EndQuickSessionMutation,
+  EndQuickSessionMutationVariables
+>
+export const CreateFreestyleSessionDocument = gql`
+    mutation CreateFreestyleSession($input: CreateFreestyleSessionInput!) {
+  createFreestyleSession(input: $input) {
+    id
+    duration_seconds
+    movement_score
+    completed
+    created_at
+  }
+}
+    `
+export type CreateFreestyleSessionMutationFn = Apollo.MutationFunction<
+  CreateFreestyleSessionMutation,
+  CreateFreestyleSessionMutationVariables
+>
+
+/**
+ * __useCreateFreestyleSessionMutation__
+ *
+ * To run a mutation, you first call `useCreateFreestyleSessionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateFreestyleSessionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createFreestyleSessionMutation, { data, loading, error }] = useCreateFreestyleSessionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateFreestyleSessionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateFreestyleSessionMutation,
+    CreateFreestyleSessionMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    CreateFreestyleSessionMutation,
+    CreateFreestyleSessionMutationVariables
+  >(CreateFreestyleSessionDocument, options)
+}
+export type CreateFreestyleSessionMutationHookResult = ReturnType<
+  typeof useCreateFreestyleSessionMutation
+>
+export type CreateFreestyleSessionMutationResult =
+  Apollo.MutationResult<CreateFreestyleSessionMutation>
+export type CreateFreestyleSessionMutationOptions = Apollo.BaseMutationOptions<
+  CreateFreestyleSessionMutation,
+  CreateFreestyleSessionMutationVariables
+>
 export const CreateEventDocument = gql`
     mutation CreateEvent($input: CreateEventInput!) {
   createEvent(input: $input) {
@@ -9511,6 +9790,122 @@ export type RegisterForEventMutationResult = Apollo.MutationResult<RegisterForEv
 export type RegisterForEventMutationOptions = Apollo.BaseMutationOptions<
   RegisterForEventMutation,
   RegisterForEventMutationVariables
+>
+export const CancelEventRegistrationDocument = gql`
+    mutation CancelEventRegistration($eventId: ID!) {
+  cancelEventRegistration(eventId: $eventId) {
+    success
+    message
+  }
+}
+    `
+export type CancelEventRegistrationMutationFn = Apollo.MutationFunction<
+  CancelEventRegistrationMutation,
+  CancelEventRegistrationMutationVariables
+>
+
+/**
+ * __useCancelEventRegistrationMutation__
+ *
+ * To run a mutation, you first call `useCancelEventRegistrationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCancelEventRegistrationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [cancelEventRegistrationMutation, { data, loading, error }] = useCancelEventRegistrationMutation({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useCancelEventRegistrationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CancelEventRegistrationMutation,
+    CancelEventRegistrationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    CancelEventRegistrationMutation,
+    CancelEventRegistrationMutationVariables
+  >(CancelEventRegistrationDocument, options)
+}
+export type CancelEventRegistrationMutationHookResult = ReturnType<
+  typeof useCancelEventRegistrationMutation
+>
+export type CancelEventRegistrationMutationResult =
+  Apollo.MutationResult<CancelEventRegistrationMutation>
+export type CancelEventRegistrationMutationOptions = Apollo.BaseMutationOptions<
+  CancelEventRegistrationMutation,
+  CancelEventRegistrationMutationVariables
+>
+export const UpdateRegistrationStatusDocument = gql`
+    mutation UpdateRegistrationStatus($eventId: ID!, $userId: String!, $status: RegistrationStatus!, $adminNotes: String) {
+  updateRegistrationStatus(
+    eventId: $eventId
+    userId: $userId
+    status: $status
+    adminNotes: $adminNotes
+  ) {
+    id
+    event_id
+    user_id
+    status
+    registration_date
+    user_notes
+    admin_notes
+    updated_at
+  }
+}
+    `
+export type UpdateRegistrationStatusMutationFn = Apollo.MutationFunction<
+  UpdateRegistrationStatusMutation,
+  UpdateRegistrationStatusMutationVariables
+>
+
+/**
+ * __useUpdateRegistrationStatusMutation__
+ *
+ * To run a mutation, you first call `useUpdateRegistrationStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateRegistrationStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateRegistrationStatusMutation, { data, loading, error }] = useUpdateRegistrationStatusMutation({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *      userId: // value for 'userId'
+ *      status: // value for 'status'
+ *      adminNotes: // value for 'adminNotes'
+ *   },
+ * });
+ */
+export function useUpdateRegistrationStatusMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateRegistrationStatusMutation,
+    UpdateRegistrationStatusMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    UpdateRegistrationStatusMutation,
+    UpdateRegistrationStatusMutationVariables
+  >(UpdateRegistrationStatusDocument, options)
+}
+export type UpdateRegistrationStatusMutationHookResult = ReturnType<
+  typeof useUpdateRegistrationStatusMutation
+>
+export type UpdateRegistrationStatusMutationResult =
+  Apollo.MutationResult<UpdateRegistrationStatusMutation>
+export type UpdateRegistrationStatusMutationOptions = Apollo.BaseMutationOptions<
+  UpdateRegistrationStatusMutation,
+  UpdateRegistrationStatusMutationVariables
 >
 export const CreateFeatureRequestDocument = gql`
     mutation CreateFeatureRequest($input: CreateFeatureRequestInput!) {
@@ -14309,6 +14704,218 @@ export type GetChallengeLeaderboardQueryResult = Apollo.QueryResult<
   GetChallengeLeaderboardQuery,
   GetChallengeLeaderboardQueryVariables
 >
+export const GetCheckinStatusDocument = gql`
+    query GetCheckinStatus {
+  myFreestyleStats {
+    total_sessions
+    total_duration_seconds
+    total_points
+    current_streak
+    longest_streak
+    last_session_date
+  }
+  completedFreestyleToday
+}
+    `
+
+/**
+ * __useGetCheckinStatusQuery__
+ *
+ * To run a query within a React component, call `useGetCheckinStatusQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCheckinStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCheckinStatusQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCheckinStatusQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetCheckinStatusQuery, GetCheckinStatusQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetCheckinStatusQuery, GetCheckinStatusQueryVariables>(
+    GetCheckinStatusDocument,
+    options,
+  )
+}
+export function useGetCheckinStatusLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetCheckinStatusQuery, GetCheckinStatusQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetCheckinStatusQuery, GetCheckinStatusQueryVariables>(
+    GetCheckinStatusDocument,
+    options,
+  )
+}
+export function useGetCheckinStatusSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetCheckinStatusQuery, GetCheckinStatusQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetCheckinStatusQuery, GetCheckinStatusQueryVariables>(
+    GetCheckinStatusDocument,
+    options,
+  )
+}
+export type GetCheckinStatusQueryHookResult = ReturnType<typeof useGetCheckinStatusQuery>
+export type GetCheckinStatusLazyQueryHookResult = ReturnType<typeof useGetCheckinStatusLazyQuery>
+export type GetCheckinStatusSuspenseQueryHookResult = ReturnType<
+  typeof useGetCheckinStatusSuspenseQuery
+>
+export type GetCheckinStatusQueryResult = Apollo.QueryResult<
+  GetCheckinStatusQuery,
+  GetCheckinStatusQueryVariables
+>
+export const GetMiniappStreakDocument = gql`
+    query GetMiniappStreak {
+  miniappStreak {
+    current
+    longest
+    streak_maintained_today
+    next_milestone
+    milestone_reward
+  }
+}
+    `
+
+/**
+ * __useGetMiniappStreakQuery__
+ *
+ * To run a query within a React component, call `useGetMiniappStreakQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMiniappStreakQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMiniappStreakQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMiniappStreakQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetMiniappStreakQuery, GetMiniappStreakQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetMiniappStreakQuery, GetMiniappStreakQueryVariables>(
+    GetMiniappStreakDocument,
+    options,
+  )
+}
+export function useGetMiniappStreakLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetMiniappStreakQuery, GetMiniappStreakQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetMiniappStreakQuery, GetMiniappStreakQueryVariables>(
+    GetMiniappStreakDocument,
+    options,
+  )
+}
+export function useGetMiniappStreakSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetMiniappStreakQuery, GetMiniappStreakQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetMiniappStreakQuery, GetMiniappStreakQueryVariables>(
+    GetMiniappStreakDocument,
+    options,
+  )
+}
+export type GetMiniappStreakQueryHookResult = ReturnType<typeof useGetMiniappStreakQuery>
+export type GetMiniappStreakLazyQueryHookResult = ReturnType<typeof useGetMiniappStreakLazyQuery>
+export type GetMiniappStreakSuspenseQueryHookResult = ReturnType<
+  typeof useGetMiniappStreakSuspenseQuery
+>
+export type GetMiniappStreakQueryResult = Apollo.QueryResult<
+  GetMiniappStreakQuery,
+  GetMiniappStreakQueryVariables
+>
+export const GetMiniappDailyStatsDocument = gql`
+    query GetMiniappDailyStats {
+  miniappDailyStats {
+    sessions_count
+    daily_goal_progress
+    dance_minutes
+    xp_earned
+    points_earned
+    calories_burned
+  }
+}
+    `
+
+/**
+ * __useGetMiniappDailyStatsQuery__
+ *
+ * To run a query within a React component, call `useGetMiniappDailyStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMiniappDailyStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMiniappDailyStatsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMiniappDailyStatsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetMiniappDailyStatsQuery,
+    GetMiniappDailyStatsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetMiniappDailyStatsQuery, GetMiniappDailyStatsQueryVariables>(
+    GetMiniappDailyStatsDocument,
+    options,
+  )
+}
+export function useGetMiniappDailyStatsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetMiniappDailyStatsQuery,
+    GetMiniappDailyStatsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetMiniappDailyStatsQuery, GetMiniappDailyStatsQueryVariables>(
+    GetMiniappDailyStatsDocument,
+    options,
+  )
+}
+export function useGetMiniappDailyStatsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetMiniappDailyStatsQuery,
+        GetMiniappDailyStatsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetMiniappDailyStatsQuery, GetMiniappDailyStatsQueryVariables>(
+    GetMiniappDailyStatsDocument,
+    options,
+  )
+}
+export type GetMiniappDailyStatsQueryHookResult = ReturnType<typeof useGetMiniappDailyStatsQuery>
+export type GetMiniappDailyStatsLazyQueryHookResult = ReturnType<
+  typeof useGetMiniappDailyStatsLazyQuery
+>
+export type GetMiniappDailyStatsSuspenseQueryHookResult = ReturnType<
+  typeof useGetMiniappDailyStatsSuspenseQuery
+>
+export type GetMiniappDailyStatsQueryResult = Apollo.QueryResult<
+  GetMiniappDailyStatsQuery,
+  GetMiniappDailyStatsQueryVariables
+>
 export const GetDevDashboardStatsDocument = gql`
     query GetDevDashboardStats {
   devDashboardStats {
@@ -16549,6 +17156,7 @@ export const GetEventsDocument = gql`
       updated_at
       status
       is_registered
+      user_registration_status
       registration_count
       is_recurring
       recurrence_type
