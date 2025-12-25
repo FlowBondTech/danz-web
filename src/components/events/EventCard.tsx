@@ -18,6 +18,7 @@ import {
   FiChevronDown,
 } from 'react-icons/fi'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export type RegistrationStatusType = 'registered' | 'maybe' | 'waitlisted' | 'cancelled' | 'attended' | 'no-show' | null
 
@@ -72,9 +73,16 @@ const CATEGORY_EMOJIS: Record<string, string> = {
 }
 
 export default function EventCard({ event, onRegister, onCancel, onUpdateStatus, variant = 'default' }: EventCardProps) {
+  const router = useRouter()
   const [isLiked, setIsLiked] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const [showStatusMenu, setShowStatusMenu] = useState(false)
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't navigate if clicking on action buttons
+    if ((e.target as HTMLElement).closest('button')) return
+    router.push(`/dashboard/events/${event.id}`)
+  }
 
   // Determine actual registration status
   const registrationStatus = event.user_registration_status || (event.is_registered ? 'registered' : null)
@@ -116,7 +124,7 @@ export default function EventCard({ event, onRegister, onCancel, onUpdateStatus,
       <motion.div
         whileHover={{ scale: 1.02 }}
         className="flex items-center gap-4 p-4 bg-bg-secondary rounded-xl border border-white/10 hover:border-neon-purple/30 transition-colors cursor-pointer"
-        onClick={() => !hasRegistration && !isFull && onRegister(event)}
+        onClick={() => router.push(`/dashboard/events/${event.id}`)}
       >
         <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 flex items-center justify-center text-2xl">
           {categoryEmoji}
@@ -161,7 +169,8 @@ export default function EventCard({ event, onRegister, onCancel, onUpdateStatus,
       whileHover={{ y: -4 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      className={`group relative bg-bg-secondary rounded-2xl border overflow-hidden transition-all duration-300 ${
+      onClick={handleCardClick}
+      className={`group relative bg-bg-secondary rounded-2xl border overflow-hidden transition-all duration-300 cursor-pointer ${
         event.is_featured
           ? 'border-yellow-500/50 shadow-lg shadow-yellow-500/10'
           : 'border-white/10 hover:border-neon-purple/40'
