@@ -9,7 +9,7 @@ query GetEventByCheckinCode($code: String!) {
     is_registered
     checkin_code
     facilitator {
-      id
+      privy_id
       display_name
       username
       avatar_url
