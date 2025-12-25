@@ -3,7 +3,7 @@
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import type React from 'react'
-import { type ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { type ReactNode, createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react'
 import type { User } from '../generated/graphql'
 import {
   useGetMyProfileQuery,
@@ -28,18 +28,39 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 // Provider Component
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const router = useRouter()
-  const { login: privyLogin, logout: privyLogout, authenticated, ready } = usePrivy()
+  const { login: privyLogin, logout: privyLogout, authenticated, ready, getAccessToken } = usePrivy()
 
   const [hasCheckedProfile, setHasCheckedProfile] = useState(false)
+  const [tokenReady, setTokenReady] = useState(false)
 
-  // Use GraphQL for user profile
+  // Wait for access token to be ready before making profile queries
+  useEffect(() => {
+    const checkToken = async () => {
+      if (authenticated && ready) {
+        try {
+          const token = await getAccessToken()
+          if (token) {
+            setTokenReady(true)
+          }
+        } catch (error) {
+          console.warn('Error getting access token:', error)
+          setTokenReady(false)
+        }
+      } else {
+        setTokenReady(false)
+      }
+    }
+    checkToken()
+  }, [authenticated, ready, getAccessToken])
+
+  // Use GraphQL for user profile - only query when token is ready
   const {
     data: profileData,
     loading: profileLoading,
     error: profileError,
     refetch: refetchProfile,
   } = useGetMyProfileQuery({
-    skip: !authenticated || !ready,
+    skip: !authenticated || !ready || !tokenReady,
     fetchPolicy: 'network-only',
     errorPolicy: 'all', // Continue even if user doesn't exist
   })
@@ -76,49 +97,57 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Handle authentication and profile checks
   useEffect(() => {
     const checkProfileAndRedirect = async () => {
-      if (authenticated && ready && !profileLoading && !hasCheckedProfile) {
+      // Wait for token to be ready before checking profile
+      if (authenticated && ready && tokenReady && !profileLoading && !hasCheckedProfile) {
         setHasCheckedProfile(true)
 
         // Refetch to ensure we have latest data
-        const result = await refetchProfile()
-        const data = result.data
+        try {
+          const result = await refetchProfile()
+          const data = result.data
 
-        // Track daily login for points (if user exists)
-        if (data?.me?.privy_id) {
-          try {
-            await trackAppOpen({
-              variables: { user_id: data.me.privy_id },
-            })
-            console.log('Daily login tracked')
-          } catch (error) {
-            // Already handled in mutation error callback
+          // Track daily login for points (if user exists)
+          if (data?.me?.privy_id) {
+            try {
+              await trackAppOpen({
+                variables: { user_id: data.me.privy_id },
+              })
+              console.log('Daily login tracked')
+            } catch (error) {
+              // Already handled in mutation error callback
+            }
           }
-        }
 
-        // Get current path
-        const currentPath = window.location.pathname
-        const isDashboardPath = currentPath.startsWith('/dashboard')
+          // Get current path
+          const currentPath = window.location.pathname
+          const isDashboardPath = currentPath.startsWith('/dashboard')
 
-        // If no profile or no username, redirect to register (unless already there)
-        if ((!data?.me || !data.me.username) && currentPath !== '/register') {
-          console.log('User needs onboarding, redirecting to /register')
-          router.push('/register')
-        }
-        // If has username and not already on dashboard, redirect to dashboard
-        else if (data?.me?.username && !isDashboardPath) {
-          console.log('User logged in, redirecting to dashboard')
-          router.push('/dashboard')
+          // If no profile or no username, redirect to register (unless already there)
+          if ((!data?.me || !data.me.username) && currentPath !== '/register') {
+            console.log('User needs onboarding, redirecting to /register')
+            router.push('/register')
+          }
+          // If has username and not already on dashboard, redirect to dashboard
+          else if (data?.me?.username && !isDashboardPath) {
+            console.log('User logged in, redirecting to dashboard')
+            router.push('/dashboard')
+          }
+        } catch (error) {
+          console.error('Error checking profile:', error)
+          // Reset check flag to retry on next render
+          setHasCheckedProfile(false)
         }
       }
     }
 
     checkProfileAndRedirect()
-  }, [authenticated, ready, profileLoading, hasCheckedProfile, refetchProfile, router, trackAppOpen])
+  }, [authenticated, ready, tokenReady, profileLoading, hasCheckedProfile, refetchProfile, router, trackAppOpen])
 
   const login = async () => {
     try {
       await privyLogin()
       setHasCheckedProfile(false) // Reset check flag for new login
+      setTokenReady(false) // Reset token ready flag to force re-check
     } catch (error) {
       console.error('Login failed:', error)
       throw error
@@ -129,6 +158,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       await privyLogout()
       setHasCheckedProfile(false)
+      setTokenReady(false)
       router.push('/')
     } catch (error) {
       console.error('Logout error:', error)
@@ -155,7 +185,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const contextValue: AuthContextType = {
     user,
     isAuthenticated: !!authenticated && ready,
-    isLoading: profileLoading || !ready,
+    isLoading: profileLoading || !ready || (authenticated && !tokenReady),
     error: profileError ? profileError.message : null,
     login,
     logout,
