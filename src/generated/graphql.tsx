@@ -156,6 +156,11 @@ export enum ActivityVisibility {
   Public = 'PUBLIC',
 }
 
+export type AddParticipantsInput = {
+  conversation_id: Scalars['ID']['input']
+  user_ids: Array<Scalars['String']['input']>
+}
+
 export type AdminStats = {
   __typename?: 'AdminStats'
   activeUsers: Scalars['Int']['output']
@@ -172,6 +177,18 @@ export type AgeGroupMetric = {
   group: Scalars['String']['output']
   percentage: Scalars['Float']['output']
   users: Scalars['Int']['output']
+}
+
+export enum AllowBondRequestsFrom {
+  Everyone = 'everyone',
+  MutualEvents = 'mutual_events',
+  None = 'none',
+}
+
+export enum AllowMessagesFrom {
+  BondsOnly = 'bonds_only',
+  Everyone = 'everyone',
+  None = 'none',
 }
 
 export type AnalyticsComparison = {
@@ -234,6 +251,13 @@ export enum BroadcastTarget {
   Dancers = 'dancers',
   EventParticipants = 'event_participants',
   Organizers = 'organizers',
+}
+
+/** Profile visibility check result */
+export type CanViewResult = {
+  __typename?: 'CanViewResult'
+  can_view: Scalars['Boolean']['output']
+  reason?: Maybe<Scalars['String']['output']>
 }
 
 export type CategoryMetric = {
@@ -407,6 +431,64 @@ export type CompleteReferralInput = {
   referral_code: Scalars['String']['input']
 }
 
+export enum ComponentStatus {
+  Complete = 'complete',
+  NotStarted = 'not_started',
+  Partial = 'partial',
+}
+
+export type Conversation = {
+  __typename?: 'Conversation'
+  created_at: Scalars['DateTime']['output']
+  created_by?: Maybe<User>
+  id: Scalars['ID']['output']
+  is_archived: Scalars['Boolean']['output']
+  is_group: Scalars['Boolean']['output']
+  is_muted: Scalars['Boolean']['output']
+  last_message?: Maybe<Message>
+  last_message_at?: Maybe<Scalars['DateTime']['output']>
+  last_message_preview?: Maybe<Scalars['String']['output']>
+  my_unread_count: Scalars['Int']['output']
+  participant_count: Scalars['Int']['output']
+  participants: Array<ConversationParticipant>
+  title?: Maybe<Scalars['String']['output']>
+  updated_at?: Maybe<Scalars['DateTime']['output']>
+}
+
+export type ConversationConnection = {
+  __typename?: 'ConversationConnection'
+  conversations: Array<Conversation>
+  has_more: Scalars['Boolean']['output']
+  total_count: Scalars['Int']['output']
+  unread_conversations: Scalars['Int']['output']
+}
+
+export type ConversationFilter = {
+  has_unread?: InputMaybe<Scalars['Boolean']['input']>
+  is_archived?: InputMaybe<Scalars['Boolean']['input']>
+  is_group?: InputMaybe<Scalars['Boolean']['input']>
+  is_muted?: InputMaybe<Scalars['Boolean']['input']>
+  search?: InputMaybe<Scalars['String']['input']>
+}
+
+export type ConversationParticipant = {
+  __typename?: 'ConversationParticipant'
+  id: Scalars['ID']['output']
+  is_archived: Scalars['Boolean']['output']
+  is_muted: Scalars['Boolean']['output']
+  joined_at: Scalars['DateTime']['output']
+  last_read_at?: Maybe<Scalars['DateTime']['output']>
+  nickname?: Maybe<Scalars['String']['output']>
+  role: ConversationParticipantRole
+  unread_count: Scalars['Int']['output']
+  user: User
+}
+
+export enum ConversationParticipantRole {
+  Admin = 'admin',
+  Member = 'member',
+}
+
 export type CountryMetric = {
   __typename?: 'CountryMetric'
   country: Scalars['String']['output']
@@ -457,6 +539,23 @@ export type CreateDanceBondInput = {
   user_id: Scalars['String']['input']
 }
 
+export type CreateDevAlertInput = {
+  action_label?: InputMaybe<Scalars['String']['input']>
+  action_url?: InputMaybe<Scalars['String']['input']>
+  alert_type: DevAlertType
+  category?: InputMaybe<DevAlertCategory>
+  expires_at?: InputMaybe<Scalars['DateTime']['input']>
+  is_actionable?: InputMaybe<Scalars['Boolean']['input']>
+  message: Scalars['String']['input']
+  metadata?: InputMaybe<Scalars['JSON']['input']>
+  priority?: InputMaybe<DevAlertPriority>
+  source_id?: InputMaybe<Scalars['String']['input']>
+  source_type?: InputMaybe<Scalars['String']['input']>
+  target_roles?: InputMaybe<Array<Scalars['String']['input']>>
+  target_users?: InputMaybe<Array<Scalars['String']['input']>>
+  title: Scalars['String']['input']
+}
+
 export type CreateDevTaskInput = {
   assigned_to?: InputMaybe<Scalars['String']['input']>
   description?: InputMaybe<Scalars['String']['input']>
@@ -500,6 +599,27 @@ export type CreateEventInput = {
   tags?: InputMaybe<Array<Scalars['String']['input']>>
   title: Scalars['String']['input']
   virtual_link?: InputMaybe<Scalars['String']['input']>
+}
+
+export type CreateFeatureInventoryInput = {
+  api_docs_url?: InputMaybe<Scalars['String']['input']>
+  backend_status?: InputMaybe<ComponentStatus>
+  category: FeatureInventoryCategory
+  completion_percentage?: InputMaybe<Scalars['Int']['input']>
+  database_status?: InputMaybe<ComponentStatus>
+  dependencies?: InputMaybe<Array<Scalars['String']['input']>>
+  description?: InputMaybe<Scalars['String']['input']>
+  estimated_hours?: InputMaybe<Scalars['Int']['input']>
+  frontend_status?: InputMaybe<ComponentStatus>
+  is_miniapp_ready?: InputMaybe<Scalars['Boolean']['input']>
+  miniapp_api_available?: InputMaybe<Scalars['Boolean']['input']>
+  name: Scalars['String']['input']
+  notes?: InputMaybe<Scalars['String']['input']>
+  priority?: InputMaybe<TaskPriority>
+  related_files?: InputMaybe<Array<Scalars['String']['input']>>
+  slug: Scalars['String']['input']
+  status?: InputMaybe<FeatureImplementationStatus>
+  target_version?: InputMaybe<Scalars['String']['input']>
 }
 
 export type CreateFeatureRequestInput = {
@@ -694,21 +814,94 @@ export type DemographicsMetrics = {
   by_skill_level: Array<SkillLevelMetric>
 }
 
+export type DevAlert = {
+  __typename?: 'DevAlert'
+  action_label?: Maybe<Scalars['String']['output']>
+  action_url?: Maybe<Scalars['String']['output']>
+  alert_type: DevAlertType
+  category: DevAlertCategory
+  created_at: Scalars['DateTime']['output']
+  expires_at?: Maybe<Scalars['DateTime']['output']>
+  id: Scalars['ID']['output']
+  is_actionable: Scalars['Boolean']['output']
+  is_dismissed: Scalars['Boolean']['output']
+  is_read: Scalars['Boolean']['output']
+  message: Scalars['String']['output']
+  metadata?: Maybe<Scalars['JSON']['output']>
+  priority: DevAlertPriority
+  source_id?: Maybe<Scalars['String']['output']>
+  source_type?: Maybe<Scalars['String']['output']>
+  target_roles?: Maybe<Array<Scalars['String']['output']>>
+  target_users?: Maybe<Array<Scalars['String']['output']>>
+  title: Scalars['String']['output']
+}
+
+export enum DevAlertCategory {
+  Api = 'api',
+  Database = 'database',
+  Deployment = 'deployment',
+  FeatureRequest = 'feature_request',
+  General = 'general',
+  Payment = 'payment',
+  Performance = 'performance',
+  Security = 'security',
+  System = 'system',
+  UserReport = 'user_report',
+}
+
+export type DevAlertConnection = {
+  __typename?: 'DevAlertConnection'
+  alerts: Array<DevAlert>
+  has_more: Scalars['Boolean']['output']
+  total_count: Scalars['Int']['output']
+  unread_count: Scalars['Int']['output']
+}
+
+export type DevAlertFilter = {
+  alert_type?: InputMaybe<Array<DevAlertType>>
+  category?: InputMaybe<Array<DevAlertCategory>>
+  is_dismissed?: InputMaybe<Scalars['Boolean']['input']>
+  is_read?: InputMaybe<Scalars['Boolean']['input']>
+  priority?: InputMaybe<Array<DevAlertPriority>>
+}
+
+export enum DevAlertPriority {
+  High = 'high',
+  Low = 'low',
+  Normal = 'normal',
+  Urgent = 'urgent',
+}
+
+export enum DevAlertType {
+  Critical = 'critical',
+  Error = 'error',
+  Info = 'info',
+  Success = 'success',
+  System = 'system',
+  Warning = 'warning',
+}
+
 export type DevDashboardStats = {
   __typename?: 'DevDashboardStats'
   blocked_tasks: Scalars['Int']['output']
   completed_requests: Scalars['Int']['output']
+  critical_alerts?: Maybe<Scalars['Int']['output']>
   github_open_issues?: Maybe<Scalars['Int']['output']>
   github_open_prs?: Maybe<Scalars['Int']['output']>
   github_rate_limit?: Maybe<GitHubRateLimit>
+  implemented_features?: Maybe<Scalars['Int']['output']>
+  in_progress_features?: Maybe<Scalars['Int']['output']>
   in_progress_requests: Scalars['Int']['output']
   in_progress_tasks: Scalars['Int']['output']
   latest_version?: Maybe<Scalars['String']['output']>
   pending_requests: Scalars['Int']['output']
+  planned_features?: Maybe<Scalars['Int']['output']>
   todo_tasks: Scalars['Int']['output']
   total_changelog_entries: Scalars['Int']['output']
   total_feature_requests: Scalars['Int']['output']
+  total_features?: Maybe<Scalars['Int']['output']>
   total_tasks: Scalars['Int']['output']
+  unread_alerts?: Maybe<Scalars['Int']['output']>
 }
 
 export type DevTask = {
@@ -1026,6 +1219,81 @@ export enum EventStatus {
   Ongoing = 'ongoing',
   Past = 'past',
   Upcoming = 'upcoming',
+}
+
+export enum FeatureImplementationStatus {
+  Implemented = 'implemented',
+  InProgress = 'in_progress',
+  NeedsRefactor = 'needs_refactor',
+  NotStarted = 'not_started',
+  PartiallyImplemented = 'partially_implemented',
+  Planned = 'planned',
+}
+
+export type FeatureInventory = {
+  __typename?: 'FeatureInventory'
+  actual_hours?: Maybe<Scalars['Int']['output']>
+  api_docs_url?: Maybe<Scalars['String']['output']>
+  backend_status: ComponentStatus
+  category: FeatureInventoryCategory
+  completion_percentage: Scalars['Int']['output']
+  created_at: Scalars['DateTime']['output']
+  database_status: ComponentStatus
+  dependencies?: Maybe<Array<Scalars['String']['output']>>
+  description?: Maybe<Scalars['String']['output']>
+  estimated_hours?: Maybe<Scalars['Int']['output']>
+  frontend_status: ComponentStatus
+  id: Scalars['ID']['output']
+  is_miniapp_ready: Scalars['Boolean']['output']
+  miniapp_api_available: Scalars['Boolean']['output']
+  name: Scalars['String']['output']
+  notes?: Maybe<Scalars['String']['output']>
+  priority?: Maybe<TaskPriority>
+  related_files?: Maybe<Array<Scalars['String']['output']>>
+  slug: Scalars['String']['output']
+  status: FeatureImplementationStatus
+  target_version?: Maybe<Scalars['String']['output']>
+  updated_at: Scalars['DateTime']['output']
+}
+
+export enum FeatureInventoryCategory {
+  Admin = 'admin',
+  Analytics = 'analytics',
+  DanceSessions = 'dance_sessions',
+  Developer = 'developer',
+  Events = 'events',
+  Integrations = 'integrations',
+  Miniapps = 'miniapps',
+  Notifications = 'notifications',
+  Payments = 'payments',
+  Referral = 'referral',
+  Social = 'social',
+  UserManagement = 'user_management',
+}
+
+export type FeatureInventoryConnection = {
+  __typename?: 'FeatureInventoryConnection'
+  features: Array<FeatureInventory>
+  has_more: Scalars['Boolean']['output']
+  total_count: Scalars['Int']['output']
+}
+
+export type FeatureInventoryFilter = {
+  category?: InputMaybe<Array<FeatureInventoryCategory>>
+  is_miniapp_ready?: InputMaybe<Scalars['Boolean']['input']>
+  miniapp_api_available?: InputMaybe<Scalars['Boolean']['input']>
+  priority?: InputMaybe<Array<TaskPriority>>
+  search?: InputMaybe<Scalars['String']['input']>
+  status?: InputMaybe<Array<FeatureImplementationStatus>>
+}
+
+export type FeatureInventoryStats = {
+  __typename?: 'FeatureInventoryStats'
+  average_completion: Scalars['Float']['output']
+  by_category: Scalars['JSON']['output']
+  by_status: Scalars['JSON']['output']
+  miniapp_ready_count: Scalars['Int']['output']
+  total: Scalars['Int']['output']
 }
 
 export type FeatureRequest = {
@@ -1356,6 +1624,51 @@ export enum MediaType {
   Video = 'video',
 }
 
+export type Message = {
+  __typename?: 'Message'
+  content: Scalars['String']['output']
+  content_type: MessageContentType
+  conversation_id: Scalars['ID']['output']
+  created_at: Scalars['DateTime']['output']
+  edited_at?: Maybe<Scalars['DateTime']['output']>
+  id: Scalars['ID']['output']
+  is_deleted: Scalars['Boolean']['output']
+  is_edited: Scalars['Boolean']['output']
+  is_read_by_me: Scalars['Boolean']['output']
+  media_metadata?: Maybe<Scalars['JSON']['output']>
+  media_type?: Maybe<Scalars['String']['output']>
+  media_url?: Maybe<Scalars['String']['output']>
+  reaction_counts?: Maybe<Scalars['JSON']['output']>
+  reactions: Array<MessageReaction>
+  read_by_count: Scalars['Int']['output']
+  reply_to?: Maybe<Message>
+  sender: User
+}
+
+export type MessageConnection = {
+  __typename?: 'MessageConnection'
+  has_more: Scalars['Boolean']['output']
+  messages: Array<Message>
+  newest_message_id?: Maybe<Scalars['ID']['output']>
+  oldest_message_id?: Maybe<Scalars['ID']['output']>
+  total_count: Scalars['Int']['output']
+}
+
+export enum MessageContentType {
+  File = 'file',
+  Image = 'image',
+  System = 'system',
+  Text = 'text',
+}
+
+export type MessageReaction = {
+  __typename?: 'MessageReaction'
+  created_at: Scalars['DateTime']['output']
+  emoji: Scalars['String']['output']
+  id: Scalars['ID']['output']
+  user: User
+}
+
 export enum MimeType {
   ApplicationMsword = 'APPLICATION_MSWORD',
   ApplicationPdf = 'APPLICATION_PDF',
@@ -1528,11 +1841,17 @@ export type Mutation = {
   acceptManagerInvitation: EventManager
   activateChallenge: Challenge
   addFeatureRequestComment: FeatureRequestComment
+  addParticipants: Conversation
+  addReaction: Message
+  applyPrivacyPreset: PrivacySettings
   approveOrganizer: User
   awardManualPoints: PointTransaction
   awardPoints: PointTransaction
   blockTask: DevTask
+  blockUser: UserBlock
   cancelEventRegistration: MutationResponse
+  /** Cancel a pending username change request */
+  cancelUsernameChangeRequest: MutationResponse
   checkInEvent: EventAttendance
   checkInParticipant: EventRegistration
   checkOutEvent: EventAttendance
@@ -1548,9 +1867,11 @@ export type Mutation = {
   createChangelogEntry: ChangelogEntry
   createComment: PostComment
   createDanceBond: DanceBond
+  createDevAlert: DevAlert
   createDevTask: DevTask
   createEvent: Event
   createEventLeaderboard: EventLeaderboard
+  createFeatureInventory: FeatureInventory
   createFeatureRequest: FeatureRequest
   createFreestyleSession: FreestyleSession
   createNotification: Notification
@@ -1563,16 +1884,22 @@ export type Mutation = {
   deleteChallenge: MutationResponse
   deleteChangelogEntry: Scalars['Boolean']['output']
   deleteComment: MutationResponse
+  deleteConversation: Scalars['Boolean']['output']
   deleteDanceBond: MutationResponse
   deleteDanceSession: MutationResponse
+  deleteDevAlert: Scalars['Boolean']['output']
   deleteDevTask: Scalars['Boolean']['output']
   deleteEvent: MutationResponse
+  deleteFeatureInventory: Scalars['Boolean']['output']
   deleteFeatureRequest: Scalars['Boolean']['output']
   deleteFeatureRequestComment: Scalars['Boolean']['output']
   deleteFreestyleSession: MutationResponse
+  deleteMessage: Scalars['Boolean']['output']
   deleteNotification: MutationResponse
   deletePointAction: MutationResponse
   deletePost: MutationResponse
+  dismissAllSuggestions: Scalars['Boolean']['output']
+  dismissSuggestion: Scalars['Boolean']['output']
   endSeason: MutationResponse
   featureEvent: Event
   finalizeEventLeaderboard: EventLeaderboard
@@ -1581,13 +1908,19 @@ export type Mutation = {
   hideActivity: MutationResponse
   highlightActivity: Activity
   inviteEventManager: EventManager
+  leaveConversation: Scalars['Boolean']['output']
   leaveEventAsManager: MutationResponse
   likeActivity: Activity
   likePost: MutationResponse
   linkTelegramAccount: TelegramAuthResult
   markActivitiesRead: MutationResponse
+  markAlertDismissed: DevAlert
+  markAlertRead: DevAlert
   markAllActivitiesRead: MutationResponse
+  markAllAlertsRead: Scalars['Boolean']['output']
   markAllNotificationsRead: MutationResponse
+  markConversationRead: Conversation
+  markMessageRead: Message
   markNotificationRead: Notification
   markReferralCompleted: Referral
   miniappClaimChallengeReward: MiniappRewardClaim
@@ -1601,26 +1934,38 @@ export type Mutation = {
   miniappStartQuickSession: MiniappQuickSession
   miniappTrackEvent: MutationResponse
   miniappUpdateSettings: MiniappSettings
+  nudgeReferral: MutationResponse
   processExpiredChallenges: MutationResponse
+  promoteToAdmin: Conversation
   refreshAllLeaderboards: MutationResponse
   refreshAnalyticsCache: MutationResponse
   refreshDailyChallenges: DailyChallengeset
   refreshLeaderboard: Leaderboard
+  refreshSuggestions: UserSuggestionConnection
   registerForEvent: EventRegistration
   registerWearableDevice: WearableDevice
   removeEventManager: MutationResponse
   removeFeatureRequestVote: FeatureRequest
+  removeParticipant: Conversation
+  removeReaction: Message
   removeWearableDevice: MutationResponse
   reportActivity: MutationResponse
+  /** Request a username change. First change is auto-approved, subsequent changes require admin review. */
+  requestUsernameChange: UsernameChangeResult
   requestWearableSync: WearableDevice
+  resetPrivacyToDefaults: PrivacySettings
   reversePointTransaction: PointTransaction
   reviewOrganizerApplication: OrganizerApplication
+  /** Admin: Review (approve/reject) a username change request */
+  reviewUsernameChangeRequest: UsernameChangeRequest
   saveDanceSession: DanceSession
   sendAdminBroadcast: MutationResponse
   sendEventBroadcast: MutationResponse
+  sendMessage: Message
   setPrimaryWearable: WearableDevice
   shareDanceSession: DanceSession
   startChallenge: UserChallenge
+  startConversation: Conversation
   startTask: DevTask
   submitOrganizerApplication: OrganizerApplication
   syncHealthData: WearableSyncResult
@@ -1633,6 +1978,7 @@ export type Mutation = {
   trackReferralClick: MutationResponse
   transferEventOwnership: EventManager
   triggerGitHubAction: Scalars['Boolean']['output']
+  unblockUser: Scalars['Boolean']['output']
   unlikeActivity: Activity
   unlikePost: MutationResponse
   unlinkTelegramAccount: MutationResponse
@@ -1640,15 +1986,19 @@ export type Mutation = {
   updateChallengeProgress: UserChallenge
   updateChangelogEntry: ChangelogEntry
   updateComment: PostComment
+  updateConversation: Conversation
   updateDanceBond: DanceBond
   updateDevTask: DevTask
   updateEvent: Event
   updateEventManager: EventManager
+  updateFeatureInventory: FeatureInventory
   updateFeatureRequest: FeatureRequest
   updateFreestylePreferences: UserPreferences
+  updateMessage: Message
   updateNotificationPreferences: NotificationPreferences
   updatePointAction: PointAction
   updatePost: Post
+  updatePrivacySettings: PrivacySettings
   updateProfile: User
   updateRegistrationStatus: EventRegistration
   updateUserRole: User
@@ -1676,6 +2026,19 @@ export type MutationAddFeatureRequestCommentArgs = {
   is_internal?: InputMaybe<Scalars['Boolean']['input']>
 }
 
+export type MutationAddParticipantsArgs = {
+  input: AddParticipantsInput
+}
+
+export type MutationAddReactionArgs = {
+  emoji: Scalars['String']['input']
+  message_id: Scalars['ID']['input']
+}
+
+export type MutationApplyPrivacyPresetArgs = {
+  preset: PrivacyPresetType
+}
+
 export type MutationApproveOrganizerArgs = {
   approved: Scalars['Boolean']['input']
   userId: Scalars['String']['input']
@@ -1694,8 +2057,17 @@ export type MutationBlockTaskArgs = {
   reason?: InputMaybe<Scalars['String']['input']>
 }
 
+export type MutationBlockUserArgs = {
+  reason?: InputMaybe<Scalars['String']['input']>
+  user_id: Scalars['String']['input']
+}
+
 export type MutationCancelEventRegistrationArgs = {
   eventId: Scalars['ID']['input']
+}
+
+export type MutationCancelUsernameChangeRequestArgs = {
+  request_id: Scalars['ID']['input']
 }
 
 export type MutationCheckInEventArgs = {
@@ -1766,6 +2138,10 @@ export type MutationCreateDanceBondArgs = {
   userId: Scalars['String']['input']
 }
 
+export type MutationCreateDevAlertArgs = {
+  input: CreateDevAlertInput
+}
+
 export type MutationCreateDevTaskArgs = {
   input: CreateDevTaskInput
 }
@@ -1777,6 +2153,10 @@ export type MutationCreateEventArgs = {
 export type MutationCreateEventLeaderboardArgs = {
   eventId: Scalars['String']['input']
   prizes?: InputMaybe<Scalars['JSON']['input']>
+}
+
+export type MutationCreateFeatureInventoryArgs = {
+  input: CreateFeatureInventoryInput
 }
 
 export type MutationCreateFeatureRequestArgs = {
@@ -1830,6 +2210,10 @@ export type MutationDeleteCommentArgs = {
   commentId: Scalars['ID']['input']
 }
 
+export type MutationDeleteConversationArgs = {
+  id: Scalars['ID']['input']
+}
+
 export type MutationDeleteDanceBondArgs = {
   bondId: Scalars['ID']['input']
 }
@@ -1838,11 +2222,19 @@ export type MutationDeleteDanceSessionArgs = {
   sessionId: Scalars['ID']['input']
 }
 
+export type MutationDeleteDevAlertArgs = {
+  id: Scalars['ID']['input']
+}
+
 export type MutationDeleteDevTaskArgs = {
   id: Scalars['ID']['input']
 }
 
 export type MutationDeleteEventArgs = {
+  id: Scalars['ID']['input']
+}
+
+export type MutationDeleteFeatureInventoryArgs = {
   id: Scalars['ID']['input']
 }
 
@@ -1858,6 +2250,10 @@ export type MutationDeleteFreestyleSessionArgs = {
   sessionId: Scalars['ID']['input']
 }
 
+export type MutationDeleteMessageArgs = {
+  id: Scalars['ID']['input']
+}
+
 export type MutationDeleteNotificationArgs = {
   id: Scalars['ID']['input']
 }
@@ -1868,6 +2264,10 @@ export type MutationDeletePointActionArgs = {
 
 export type MutationDeletePostArgs = {
   postId: Scalars['ID']['input']
+}
+
+export type MutationDismissSuggestionArgs = {
+  suggestion_id: Scalars['ID']['input']
 }
 
 export type MutationEndSeasonArgs = {
@@ -1901,6 +2301,10 @@ export type MutationInviteEventManagerArgs = {
   input: InviteEventManagerInput
 }
 
+export type MutationLeaveConversationArgs = {
+  id: Scalars['ID']['input']
+}
+
 export type MutationLeaveEventAsManagerArgs = {
   event_id: Scalars['ID']['input']
 }
@@ -1919,6 +2323,22 @@ export type MutationLinkTelegramAccountArgs = {
 
 export type MutationMarkActivitiesReadArgs = {
   activityIds: Array<Scalars['String']['input']>
+}
+
+export type MutationMarkAlertDismissedArgs = {
+  id: Scalars['ID']['input']
+}
+
+export type MutationMarkAlertReadArgs = {
+  id: Scalars['ID']['input']
+}
+
+export type MutationMarkConversationReadArgs = {
+  conversation_id: Scalars['ID']['input']
+}
+
+export type MutationMarkMessageReadArgs = {
+  message_id: Scalars['ID']['input']
 }
 
 export type MutationMarkNotificationReadArgs = {
@@ -1967,6 +2387,16 @@ export type MutationMiniappUpdateSettingsArgs = {
   input: MiniappSettingsInput
 }
 
+export type MutationNudgeReferralArgs = {
+  message?: InputMaybe<Scalars['String']['input']>
+  referralId: Scalars['ID']['input']
+}
+
+export type MutationPromoteToAdminArgs = {
+  conversation_id: Scalars['ID']['input']
+  user_id: Scalars['String']['input']
+}
+
 export type MutationRefreshAnalyticsCacheArgs = {
   metrics?: InputMaybe<Array<Scalars['String']['input']>>
 }
@@ -1993,6 +2423,16 @@ export type MutationRemoveFeatureRequestVoteArgs = {
   id: Scalars['ID']['input']
 }
 
+export type MutationRemoveParticipantArgs = {
+  conversation_id: Scalars['ID']['input']
+  user_id: Scalars['String']['input']
+}
+
+export type MutationRemoveReactionArgs = {
+  emoji: Scalars['String']['input']
+  message_id: Scalars['ID']['input']
+}
+
 export type MutationRemoveWearableDeviceArgs = {
   deviceId: Scalars['String']['input']
 }
@@ -2000,6 +2440,10 @@ export type MutationRemoveWearableDeviceArgs = {
 export type MutationReportActivityArgs = {
   activityId: Scalars['String']['input']
   reason: Scalars['String']['input']
+}
+
+export type MutationRequestUsernameChangeArgs = {
+  input: RequestUsernameChangeInput
 }
 
 export type MutationRequestWearableSyncArgs = {
@@ -2015,6 +2459,10 @@ export type MutationReviewOrganizerApplicationArgs = {
   input: ReviewApplicationInput
 }
 
+export type MutationReviewUsernameChangeRequestArgs = {
+  input: ReviewUsernameChangeInput
+}
+
 export type MutationSaveDanceSessionArgs = {
   input: SaveDanceSessionInput
 }
@@ -2025,6 +2473,10 @@ export type MutationSendAdminBroadcastArgs = {
 
 export type MutationSendEventBroadcastArgs = {
   input: SendEventBroadcastInput
+}
+
+export type MutationSendMessageArgs = {
+  input: SendMessageInput
 }
 
 export type MutationSetPrimaryWearableArgs = {
@@ -2038,6 +2490,10 @@ export type MutationShareDanceSessionArgs = {
 
 export type MutationStartChallengeArgs = {
   challengeId: Scalars['String']['input']
+}
+
+export type MutationStartConversationArgs = {
+  input: StartConversationInput
 }
 
 export type MutationStartTaskArgs = {
@@ -2093,6 +2549,10 @@ export type MutationTriggerGitHubActionArgs = {
   workflow_id: Scalars['String']['input']
 }
 
+export type MutationUnblockUserArgs = {
+  user_id: Scalars['String']['input']
+}
+
 export type MutationUnlikeActivityArgs = {
   activityId: Scalars['String']['input']
 }
@@ -2121,6 +2581,11 @@ export type MutationUpdateCommentArgs = {
   content: Scalars['String']['input']
 }
 
+export type MutationUpdateConversationArgs = {
+  id: Scalars['ID']['input']
+  input: UpdateConversationInput
+}
+
 export type MutationUpdateDanceBondArgs = {
   level: Scalars['Int']['input']
   userId: Scalars['String']['input']
@@ -2140,6 +2605,11 @@ export type MutationUpdateEventManagerArgs = {
   input: UpdateEventManagerInput
 }
 
+export type MutationUpdateFeatureInventoryArgs = {
+  id: Scalars['ID']['input']
+  input: UpdateFeatureInventoryInput
+}
+
 export type MutationUpdateFeatureRequestArgs = {
   id: Scalars['ID']['input']
   input: UpdateFeatureRequestInput
@@ -2147,6 +2617,11 @@ export type MutationUpdateFeatureRequestArgs = {
 
 export type MutationUpdateFreestylePreferencesArgs = {
   input: UpdateUserPreferencesInput
+}
+
+export type MutationUpdateMessageArgs = {
+  id: Scalars['ID']['input']
+  input: UpdateMessageInput
 }
 
 export type MutationUpdateNotificationPreferencesArgs = {
@@ -2160,6 +2635,10 @@ export type MutationUpdatePointActionArgs = {
 export type MutationUpdatePostArgs = {
   input: UpdatePostInput
   postId: Scalars['ID']['input']
+}
+
+export type MutationUpdatePrivacySettingsArgs = {
+  input: UpdatePrivacySettingsInput
 }
 
 export type MutationUpdateProfileArgs = {
@@ -2482,6 +2961,73 @@ export type PostWithDetails = {
   user_id: Scalars['String']['output']
 }
 
+/** Simplified privacy presets for quick setup */
+export type PrivacyPreset = {
+  __typename?: 'PrivacyPreset'
+  allow_messages: AllowMessagesFrom
+  appear_in_suggestions: Scalars['Boolean']['output']
+  description: Scalars['String']['output']
+  name: Scalars['String']['output']
+  profile_visibility: ProfileVisibility
+  searchable: Scalars['Boolean']['output']
+}
+
+/** Quick privacy preset - applies multiple settings at once */
+export enum PrivacyPresetType {
+  /** Ghost: Completely hidden, no interactions */
+  Ghost = 'ghost',
+  /** Open: Public profile, everyone can find and message you */
+  Open = 'open',
+  /** Private: Hidden profile, no suggestions, bonds-only messages */
+  PrivateMode = 'private_mode',
+  /** Selective: Bonds-only profile, appear in suggestions */
+  Selective = 'selective',
+  /** Social: Public profile, only bonds can message */
+  Social = 'social',
+}
+
+/**
+ * User privacy settings - controls visibility and discoverability
+ * Simplified into logical groups for better UX
+ */
+export type PrivacySettings = {
+  __typename?: 'PrivacySettings'
+  allow_bond_requests: AllowBondRequestsFrom
+  allow_event_invites: Scalars['Boolean']['output']
+  allow_messages: AllowMessagesFrom
+  appear_in_event_attendees: Scalars['Boolean']['output']
+  appear_in_nearby: Scalars['Boolean']['output']
+  appear_in_suggestions: Scalars['Boolean']['output']
+  id: Scalars['ID']['output']
+  notify_bonds_on_achievement: Scalars['Boolean']['output']
+  notify_bonds_on_check_in: Scalars['Boolean']['output']
+  /** Who can see your profile: public, bonds_only, or private */
+  profile_visibility: ProfileVisibility
+  searchable_by_username: Scalars['Boolean']['output']
+  show_avatar: Scalars['Boolean']['output']
+  show_badges: Scalars['Boolean']['output']
+  show_bio: Scalars['Boolean']['output']
+  show_check_ins: Scalars['Boolean']['output']
+  show_city: Scalars['Boolean']['output']
+  show_comments: Scalars['Boolean']['output']
+  show_dance_styles: Scalars['Boolean']['output']
+  show_events_attended: Scalars['Boolean']['output']
+  show_events_attending: Scalars['Boolean']['output']
+  show_leaderboard_rank: Scalars['Boolean']['output']
+  show_likes: Scalars['Boolean']['output']
+  show_posts: Scalars['Boolean']['output']
+  show_real_name: Scalars['Boolean']['output']
+  show_stats: Scalars['Boolean']['output']
+  updated_at?: Maybe<Scalars['DateTime']['output']>
+  user_id: Scalars['String']['output']
+}
+
+export enum ProfileVisibility {
+  BondsOnly = 'bonds_only',
+  Private = 'private',
+  Public = 'public',
+}
+
 export type Query = {
   __typename?: 'Query'
   _empty?: Maybe<Scalars['String']['output']>
@@ -2492,8 +3038,13 @@ export type Query = {
   adminDashboardAnalytics: Scalars['JSON']['output']
   adminStats: AdminStats
   allChallenges: Array<Challenge>
+  /** Admin: Get all username change requests with optional filters */
+  allUsernameChangeRequests: UsernameChangeRequestConnection
   analyticsReport: Scalars['JSON']['output']
   availableChallenges: Array<Challenge>
+  canMessageUser: CanViewResult
+  canSendBondRequest: CanViewResult
+  canViewProfile: CanViewResult
   challengeById?: Maybe<Challenge>
   challengeLeaderboard: ChallengeLeaderboard
   changelog: Array<ChangelogVersion>
@@ -2503,13 +3054,18 @@ export type Query = {
   cohortAnalysis: Array<CohortData>
   compareMetrics: Array<AnalyticsComparison>
   completedFreestyleToday: Scalars['Boolean']['output']
+  conversation?: Maybe<Conversation>
   currentSeasonLeaderboard?: Maybe<SeasonalLeaderboard>
   dailyChallenges: DailyChallengeset
   danceAnalytics: DanceMetrics
   danceSession?: Maybe<DanceSession>
+  devAlert?: Maybe<DevAlert>
+  devAlerts: DevAlertConnection
   devDashboardStats?: Maybe<DevDashboardStats>
   devTask?: Maybe<DevTask>
   devTasks: DevTaskConnection
+  /** Get or create a DM conversation with a user */
+  dmConversation?: Maybe<Conversation>
   economyAnalytics: EconomyMetrics
   event?: Maybe<Event>
   eventAnalytics: EventMetrics
@@ -2518,6 +3074,10 @@ export type Query = {
   eventManagers: EventManagerConnection
   eventRegistrations: Array<EventRegistration>
   events: EventConnection
+  featureInventory: FeatureInventoryConnection
+  featureInventoryBySlug?: Maybe<FeatureInventory>
+  featureInventoryItem?: Maybe<FeatureInventory>
+  featureInventoryStats: FeatureInventoryStats
   featureRequest?: Maybe<FeatureRequest>
   featureRequests: FeatureRequestConnection
   freestyleSession?: Maybe<FreestyleSession>
@@ -2548,6 +3108,7 @@ export type Query = {
   getUserEventAttendance: Array<EventAttendance>
   getUserPointsSummaries: Array<UserPointsSummary>
   getUserPosts: Array<Post>
+  getUserStats: UserStats
   getUserTransactions: TransactionHistory
   githubActions: Array<GitHubAction>
   githubCommits: Array<GitHubCommit>
@@ -2557,10 +3118,14 @@ export type Query = {
   githubRepos: Array<GitHubRepo>
   globalActivityFeed: ActivityFeed
   globalLeaderboard: Leaderboard
+  isUserBlocked: Scalars['Boolean']['output']
   latestChangelog?: Maybe<ChangelogVersion>
   latestWearableReading?: Maybe<WearableHealthData>
   leaderboard: Leaderboard
+  leaderboardNearMe: Array<User>
   me?: Maybe<User>
+  message?: Maybe<Message>
+  messages: MessageConnection
   metricTimeSeries: Array<TimeSeriesPoint>
   miniappActivities: Array<MiniappActivity>
   miniappChallenges: Array<MiniappChallenge>
@@ -2572,6 +3137,7 @@ export type Query = {
   miniappNotifications: Array<MiniappNotification>
   miniappOnlineFriends: Array<MiniappFriend>
   miniappPoints: Scalars['Int']['output']
+  miniappReadyFeatures: Array<FeatureInventory>
   miniappReferralLink: Scalars['String']['output']
   miniappSettings: MiniappSettings
   miniappShareContent: MiniappShareContent
@@ -2582,12 +3148,16 @@ export type Query = {
   myActiveChallenges: Array<UserChallenge>
   myActivityFeed: ActivityFeed
   myActivityStats: ActivityStats
+  myBlockedUsers: Array<UserBlock>
+  myBonds: Array<User>
   myChallengeProgress?: Maybe<ChallengeProgress>
   myChallengeStats: ChallengeStats
   myCompletedChallenges: Array<UserChallenge>
+  myConversations: ConversationConnection
   myDanceBonds: Array<DanceBond>
   myDanceSessionStats: DanceSessionStats
   myDanceSessions: DanceSessionConnection
+  myDevAlerts: DevAlertConnection
   myDevTasks: Array<DevTask>
   myEventManagerRole?: Maybe<EventManager>
   myFreestylePreferences: UserPreferences
@@ -2599,9 +3169,14 @@ export type Query = {
   myNotificationPreferences: NotificationPreferences
   myNotifications: NotificationConnection
   myOrganizerApplication?: Maybe<OrganizerApplication>
+  myPrivacySettings: PrivacySettings
   myReferralCode?: Maybe<ReferralCode>
   myReferralStats: ReferralStats
   myReferrals: Array<Referral>
+  /** Get the current user's username change eligibility status */
+  myUsernameChangeEligibility: UsernameChangeEligibility
+  /** Get the current user's username change history */
+  myUsernameChangeHistory: Array<UsernameChangeRequest>
   myWearableDevices: Array<WearableDevice>
   myWearableHealthData: Array<WearableHealthData>
   myWearableMotionData: Array<WearableMotionData>
@@ -2611,26 +3186,34 @@ export type Query = {
   organizerApplications: OrganizerApplicationsResponse
   pendingOrganizerApplications: OrganizerApplicationsResponse
   pendingOrganizers: UserConnection
+  /** Admin: Get all pending username change requests */
+  pendingUsernameChangeRequests: UsernameChangeRequestConnection
   platformAnalytics: PlatformAnalytics
+  privacyPresets: Array<PrivacyPreset>
   realTimeAnalytics: RealTimeAnalytics
   recentActivities: Array<Activity>
   regionalLeaderboard: RegionalLeaderboard
   reportedContent?: Maybe<Scalars['JSON']['output']>
+  searchMessages: MessageConnection
+  searchUsers: UserSearchConnection
   seasonLeaderboard?: Maybe<SeasonalLeaderboard>
   socialAnalytics: SocialMetrics
   specialChallenges: Array<Challenge>
   sprintTasks: Array<DevTask>
+  suggestedUsers: UserSuggestionConnection
   systemHealth: Array<SystemHealth>
   topPerformers: Array<LeaderboardEntry>
   topVotedFeatures: Array<FeatureRequest>
   trendAnalysis: Array<TrendAnalysis>
   trendingActivities: Array<TrendingActivity>
   trendingNow: Array<Activity>
+  unreadMessageCount: Scalars['Int']['output']
   unreadNotificationCount: Scalars['Int']['output']
   user?: Maybe<User>
   userActivities: Array<Activity>
   userAnalytics: UserAnalytics
   users: UserConnection
+  usersAtEvent: Array<User>
   wearableDevice?: Maybe<WearableDevice>
   wearableStats?: Maybe<WearableStats>
   weeklyChallenges: Array<Challenge>
@@ -2657,6 +3240,11 @@ export type QueryAllChallengesArgs = {
   type?: InputMaybe<ChallengeType>
 }
 
+export type QueryAllUsernameChangeRequestsArgs = {
+  pagination?: InputMaybe<PaginationInput>
+  status?: InputMaybe<UsernameChangeStatus>
+}
+
 export type QueryAnalyticsReportArgs = {
   options?: InputMaybe<AnalyticsOptions>
   report_type: Scalars['String']['input']
@@ -2665,6 +3253,18 @@ export type QueryAnalyticsReportArgs = {
 export type QueryAvailableChallengesArgs = {
   category?: InputMaybe<ChallengeCategory>
   type?: InputMaybe<ChallengeType>
+}
+
+export type QueryCanMessageUserArgs = {
+  user_id: Scalars['String']['input']
+}
+
+export type QueryCanSendBondRequestArgs = {
+  user_id: Scalars['String']['input']
+}
+
+export type QueryCanViewProfileArgs = {
+  user_id: Scalars['String']['input']
 }
 
 export type QueryChallengeByIdArgs = {
@@ -2705,12 +3305,26 @@ export type QueryCompareMetricsArgs = {
   options?: InputMaybe<AnalyticsOptions>
 }
 
+export type QueryConversationArgs = {
+  id: Scalars['ID']['input']
+}
+
 export type QueryDanceAnalyticsArgs = {
   options?: InputMaybe<AnalyticsOptions>
 }
 
 export type QueryDanceSessionArgs = {
   id: Scalars['ID']['input']
+}
+
+export type QueryDevAlertArgs = {
+  id: Scalars['ID']['input']
+}
+
+export type QueryDevAlertsArgs = {
+  filter?: InputMaybe<DevAlertFilter>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
 }
 
 export type QueryDevTaskArgs = {
@@ -2722,6 +3336,10 @@ export type QueryDevTasksArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
   sort_by?: InputMaybe<Scalars['String']['input']>
+}
+
+export type QueryDmConversationArgs = {
+  user_id: Scalars['String']['input']
 }
 
 export type QueryEconomyAnalyticsArgs = {
@@ -2758,6 +3376,21 @@ export type QueryEventsArgs = {
   filter?: InputMaybe<EventFilterInput>
   pagination?: InputMaybe<PaginationInput>
   sortBy?: InputMaybe<EventSortBy>
+}
+
+export type QueryFeatureInventoryArgs = {
+  filter?: InputMaybe<FeatureInventoryFilter>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  sort_by?: InputMaybe<Scalars['String']['input']>
+}
+
+export type QueryFeatureInventoryBySlugArgs = {
+  slug: Scalars['String']['input']
+}
+
+export type QueryFeatureInventoryItemArgs = {
+  id: Scalars['ID']['input']
 }
 
 export type QueryFeatureRequestArgs = {
@@ -2881,6 +3514,10 @@ export type QueryGetUserPostsArgs = {
   userId: Scalars['String']['input']
 }
 
+export type QueryGetUserStatsArgs = {
+  userId?: InputMaybe<Scalars['String']['input']>
+}
+
 export type QueryGetUserTransactionsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   offset?: InputMaybe<Scalars['Int']['input']>
@@ -2920,6 +3557,10 @@ export type QueryGlobalLeaderboardArgs = {
   metric: LeaderboardMetric
 }
 
+export type QueryIsUserBlockedArgs = {
+  user_id: Scalars['String']['input']
+}
+
 export type QueryLatestWearableReadingArgs = {
   deviceId?: InputMaybe<Scalars['String']['input']>
 }
@@ -2929,6 +3570,21 @@ export type QueryLeaderboardArgs = {
   metric: LeaderboardMetric
   offset?: InputMaybe<Scalars['Int']['input']>
   type: LeaderboardType
+}
+
+export type QueryLeaderboardNearMeArgs = {
+  range?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type QueryMessageArgs = {
+  id: Scalars['ID']['input']
+}
+
+export type QueryMessagesArgs = {
+  after_id?: InputMaybe<Scalars['ID']['input']>
+  before_id?: InputMaybe<Scalars['ID']['input']>
+  conversation_id: Scalars['ID']['input']
+  limit?: InputMaybe<Scalars['Int']['input']>
 }
 
 export type QueryMetricTimeSeriesArgs = {
@@ -2964,6 +3620,11 @@ export type QueryMyActivityFeedArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
 }
 
+export type QueryMyBondsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+}
+
 export type QueryMyChallengeProgressArgs = {
   challengeId: Scalars['String']['input']
 }
@@ -2973,9 +3634,20 @@ export type QueryMyCompletedChallengesArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>
 }
 
+export type QueryMyConversationsArgs = {
+  filter?: InputMaybe<ConversationFilter>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+}
+
 export type QueryMyDanceSessionsArgs = {
   filter?: InputMaybe<DanceSessionFilterInput>
   pagination?: InputMaybe<PaginationInput>
+}
+
+export type QueryMyDevAlertsArgs = {
+  include_dismissed?: InputMaybe<Scalars['Boolean']['input']>
+  limit?: InputMaybe<Scalars['Int']['input']>
 }
 
 export type QueryMyEventManagerRoleArgs = {
@@ -3048,6 +3720,10 @@ export type QueryPendingOrganizersArgs = {
   pagination?: InputMaybe<PaginationInput>
 }
 
+export type QueryPendingUsernameChangeRequestsArgs = {
+  pagination?: InputMaybe<PaginationInput>
+}
+
 export type QueryPlatformAnalyticsArgs = {
   options?: InputMaybe<AnalyticsOptions>
 }
@@ -3070,6 +3746,16 @@ export type QueryReportedContentArgs = {
   type?: InputMaybe<Scalars['String']['input']>
 }
 
+export type QuerySearchMessagesArgs = {
+  conversation_id?: InputMaybe<Scalars['ID']['input']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  query: Scalars['String']['input']
+}
+
+export type QuerySearchUsersArgs = {
+  input: SearchUsersInput
+}
+
 export type QuerySeasonLeaderboardArgs = {
   seasonId: Scalars['String']['input']
 }
@@ -3080,6 +3766,11 @@ export type QuerySocialAnalyticsArgs = {
 
 export type QuerySprintTasksArgs = {
   sprint: Scalars['String']['input']
+}
+
+export type QuerySuggestedUsersArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
 }
 
 export type QueryTopPerformersArgs = {
@@ -3117,6 +3808,10 @@ export type QueryUserAnalyticsArgs = {
 export type QueryUsersArgs = {
   filter?: InputMaybe<UserFilterInput>
   pagination?: InputMaybe<PaginationInput>
+}
+
+export type QueryUsersAtEventArgs = {
+  event_id: Scalars['ID']['input']
 }
 
 export type QueryWearableDeviceArgs = {
@@ -3252,6 +3947,13 @@ export enum RegistrationStatus {
   Registered = 'registered',
 }
 
+export type RequestUsernameChangeInput = {
+  /** The new username being requested */
+  new_username: Scalars['String']['input']
+  /** Optional reason for the change (helpful for review) */
+  reason?: InputMaybe<Scalars['String']['input']>
+}
+
 export type RetentionMetrics = {
   __typename?: 'RetentionMetrics'
   cohort_analysis: Array<CohortData>
@@ -3264,6 +3966,15 @@ export type ReviewApplicationInput = {
   admin_notes?: InputMaybe<Scalars['String']['input']>
   application_id: Scalars['ID']['input']
   status: ApplicationStatus
+}
+
+export type ReviewUsernameChangeInput = {
+  /** Admin note explaining the decision */
+  admin_note?: InputMaybe<Scalars['String']['input']>
+  /** Whether to approve or reject */
+  approved: Scalars['Boolean']['input']
+  /** The request ID to review */
+  request_id: Scalars['ID']['input']
 }
 
 export type SaveDanceSessionInput = {
@@ -3282,6 +3993,17 @@ export type SaveDanceSessionInput = {
   shared_with_user_ids?: InputMaybe<Array<Scalars['String']['input']>>
   started_at: Scalars['DateTime']['input']
   xp_earned: Scalars['Int']['input']
+}
+
+export type SearchUsersInput = {
+  /** Limit results */
+  limit?: InputMaybe<Scalars['Int']['input']>
+  /** Only show users you can message */
+  messageable_only?: InputMaybe<Scalars['Boolean']['input']>
+  /** Offset for pagination */
+  offset?: InputMaybe<Scalars['Int']['input']>
+  /** Username or display name to search */
+  query: Scalars['String']['input']
 }
 
 export type SeasonReward = {
@@ -3318,6 +4040,16 @@ export type SendEventBroadcastInput = {
   event_id: Scalars['ID']['input']
   message: Scalars['String']['input']
   title: Scalars['String']['input']
+}
+
+export type SendMessageInput = {
+  content: Scalars['String']['input']
+  content_type?: InputMaybe<MessageContentType>
+  conversation_id: Scalars['ID']['input']
+  media_type?: InputMaybe<Scalars['String']['input']>
+  media_url?: InputMaybe<Scalars['String']['input']>
+  metadata?: InputMaybe<Scalars['JSON']['input']>
+  reply_to_id?: InputMaybe<Scalars['ID']['input']>
 }
 
 export enum SenderType {
@@ -3362,6 +4094,17 @@ export type SocialMetrics = {
   viral_posts: Scalars['Int']['output']
 }
 
+export type StartConversationInput = {
+  /** Initial message content */
+  initial_message?: InputMaybe<Scalars['String']['input']>
+  /** User IDs for group conversations */
+  participant_ids?: InputMaybe<Array<Scalars['String']['input']>>
+  /** User ID to start conversation with (for DMs) */
+  recipient_id?: InputMaybe<Scalars['String']['input']>
+  /** Optional title for group conversations */
+  title?: InputMaybe<Scalars['String']['input']>
+}
+
 export type StyleMetric = {
   __typename?: 'StyleMetric'
   percentage: Scalars['Float']['output']
@@ -3385,6 +4128,30 @@ export type SubmitOrganizerApplicationInput = {
 export type Subscription = {
   __typename?: 'Subscription'
   _empty?: Maybe<Scalars['String']['output']>
+  /** Conversation updated (new participant, title change, etc) */
+  conversationUpdated: Conversation
+  /** New message in any of user's conversations */
+  messageReceived: Message
+  /** Message updated or deleted */
+  messageUpdated: Message
+  /** Typing indicator */
+  userTyping: TypingIndicator
+}
+
+export type SubscriptionMessageUpdatedArgs = {
+  conversation_id: Scalars['ID']['input']
+}
+
+export type SubscriptionUserTypingArgs = {
+  conversation_id: Scalars['ID']['input']
+}
+
+export enum SuggestionSource {
+  LeaderboardProximity = 'leaderboard_proximity',
+  MutualBonds = 'mutual_bonds',
+  SameCity = 'same_city',
+  SameEvents = 'same_events',
+  SimilarStyles = 'similar_styles',
 }
 
 export type SyncWearableDataInput = {
@@ -3500,6 +4267,13 @@ export type TrendingActivity = {
   trending_rank: Scalars['Int']['output']
 }
 
+export type TypingIndicator = {
+  __typename?: 'TypingIndicator'
+  conversation_id: Scalars['ID']['output']
+  is_typing: Scalars['Boolean']['output']
+  user: User
+}
+
 export type UpdateChangelogEntryInput = {
   category?: InputMaybe<ChangelogCategory>
   description?: InputMaybe<Scalars['String']['input']>
@@ -3510,6 +4284,13 @@ export type UpdateChangelogEntryInput = {
   is_public?: InputMaybe<Scalars['Boolean']['input']>
   title?: InputMaybe<Scalars['String']['input']>
   version?: InputMaybe<Scalars['String']['input']>
+}
+
+export type UpdateConversationInput = {
+  is_archived?: InputMaybe<Scalars['Boolean']['input']>
+  is_muted?: InputMaybe<Scalars['Boolean']['input']>
+  nickname?: InputMaybe<Scalars['String']['input']>
+  title?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateDevTaskInput = {
@@ -3568,6 +4349,27 @@ export type UpdateEventManagerInput = {
   role?: InputMaybe<EventManagerRole>
 }
 
+export type UpdateFeatureInventoryInput = {
+  actual_hours?: InputMaybe<Scalars['Int']['input']>
+  api_docs_url?: InputMaybe<Scalars['String']['input']>
+  backend_status?: InputMaybe<ComponentStatus>
+  category?: InputMaybe<FeatureInventoryCategory>
+  completion_percentage?: InputMaybe<Scalars['Int']['input']>
+  database_status?: InputMaybe<ComponentStatus>
+  dependencies?: InputMaybe<Array<Scalars['String']['input']>>
+  description?: InputMaybe<Scalars['String']['input']>
+  estimated_hours?: InputMaybe<Scalars['Int']['input']>
+  frontend_status?: InputMaybe<ComponentStatus>
+  is_miniapp_ready?: InputMaybe<Scalars['Boolean']['input']>
+  miniapp_api_available?: InputMaybe<Scalars['Boolean']['input']>
+  name?: InputMaybe<Scalars['String']['input']>
+  notes?: InputMaybe<Scalars['String']['input']>
+  priority?: InputMaybe<TaskPriority>
+  related_files?: InputMaybe<Array<Scalars['String']['input']>>
+  status?: InputMaybe<FeatureImplementationStatus>
+  target_version?: InputMaybe<Scalars['String']['input']>
+}
+
 export type UpdateFeatureRequestInput = {
   actual_hours?: InputMaybe<Scalars['Int']['input']>
   assigned_to?: InputMaybe<Scalars['String']['input']>
@@ -3581,6 +4383,10 @@ export type UpdateFeatureRequestInput = {
   tags?: InputMaybe<Array<Scalars['String']['input']>>
   target_version?: InputMaybe<Scalars['String']['input']>
   title?: InputMaybe<Scalars['String']['input']>
+}
+
+export type UpdateMessageInput = {
+  content: Scalars['String']['input']
 }
 
 export type UpdateNotificationPreferencesInput = {
@@ -3616,6 +4422,33 @@ export type UpdatePostInput = {
   location?: InputMaybe<Scalars['String']['input']>
   media_type?: InputMaybe<MediaType>
   media_url?: InputMaybe<Scalars['String']['input']>
+}
+
+export type UpdatePrivacySettingsInput = {
+  allow_bond_requests?: InputMaybe<AllowBondRequestsFrom>
+  allow_event_invites?: InputMaybe<Scalars['Boolean']['input']>
+  allow_messages?: InputMaybe<AllowMessagesFrom>
+  appear_in_event_attendees?: InputMaybe<Scalars['Boolean']['input']>
+  appear_in_nearby?: InputMaybe<Scalars['Boolean']['input']>
+  appear_in_suggestions?: InputMaybe<Scalars['Boolean']['input']>
+  notify_bonds_on_achievement?: InputMaybe<Scalars['Boolean']['input']>
+  notify_bonds_on_check_in?: InputMaybe<Scalars['Boolean']['input']>
+  profile_visibility?: InputMaybe<ProfileVisibility>
+  searchable_by_username?: InputMaybe<Scalars['Boolean']['input']>
+  show_avatar?: InputMaybe<Scalars['Boolean']['input']>
+  show_badges?: InputMaybe<Scalars['Boolean']['input']>
+  show_bio?: InputMaybe<Scalars['Boolean']['input']>
+  show_check_ins?: InputMaybe<Scalars['Boolean']['input']>
+  show_city?: InputMaybe<Scalars['Boolean']['input']>
+  show_comments?: InputMaybe<Scalars['Boolean']['input']>
+  show_dance_styles?: InputMaybe<Scalars['Boolean']['input']>
+  show_events_attended?: InputMaybe<Scalars['Boolean']['input']>
+  show_events_attending?: InputMaybe<Scalars['Boolean']['input']>
+  show_leaderboard_rank?: InputMaybe<Scalars['Boolean']['input']>
+  show_likes?: InputMaybe<Scalars['Boolean']['input']>
+  show_posts?: InputMaybe<Scalars['Boolean']['input']>
+  show_real_name?: InputMaybe<Scalars['Boolean']['input']>
+  show_stats?: InputMaybe<Scalars['Boolean']['input']>
 }
 
 export type UpdateProfileInput = {
@@ -3751,6 +4584,14 @@ export type UserAnalytics = {
   total_users: Scalars['Int']['output']
 }
 
+export type UserBlock = {
+  __typename?: 'UserBlock'
+  blocked_user: User
+  created_at: Scalars['DateTime']['output']
+  id: Scalars['ID']['output']
+  reason?: Maybe<Scalars['String']['output']>
+}
+
 export type UserChallenge = {
   __typename?: 'UserChallenge'
   challenge: Challenge
@@ -3823,6 +4664,117 @@ export enum UserRole {
   Manager = 'manager',
   Organizer = 'organizer',
   User = 'user',
+}
+
+export type UserSearchConnection = {
+  __typename?: 'UserSearchConnection'
+  has_more: Scalars['Boolean']['output']
+  results: Array<UserSearchResult>
+  total_count: Scalars['Int']['output']
+}
+
+/** Search result with privacy-aware user info */
+export type UserSearchResult = {
+  __typename?: 'UserSearchResult'
+  /** Whether you can message them */
+  can_message: Scalars['Boolean']['output']
+  /** Whether you can see their full profile */
+  can_view_profile: Scalars['Boolean']['output']
+  /** Whether you have a bond */
+  is_bond: Scalars['Boolean']['output']
+  /** Mutual bonds count */
+  mutual_bonds_count: Scalars['Int']['output']
+  user: User
+}
+
+export type UserStats = {
+  __typename?: 'UserStats'
+  current_points_balance: Scalars['Int']['output']
+  current_streak: Scalars['Int']['output']
+  longest_streak: Scalars['Int']['output']
+  points_earned: Scalars['Int']['output']
+  referral_points_earned: Scalars['Int']['output']
+  total_comments_made: Scalars['Int']['output']
+  total_dance_bonds: Scalars['Int']['output']
+  total_events_attended: Scalars['Int']['output']
+  total_events_hosted: Scalars['Int']['output']
+  total_likes_given: Scalars['Int']['output']
+  total_likes_received: Scalars['Int']['output']
+  total_posts_created: Scalars['Int']['output']
+}
+
+/** User suggestion with reason and score */
+export type UserSuggestion = {
+  __typename?: 'UserSuggestion'
+  created_at: Scalars['DateTime']['output']
+  id: Scalars['ID']['output']
+  reason: Scalars['String']['output']
+  score: Scalars['Float']['output']
+  source: SuggestionSource
+  user: User
+}
+
+export type UserSuggestionConnection = {
+  __typename?: 'UserSuggestionConnection'
+  has_more: Scalars['Boolean']['output']
+  suggestions: Array<UserSuggestion>
+  total_count: Scalars['Int']['output']
+}
+
+/** User's username change eligibility and history */
+export type UsernameChangeEligibility = {
+  __typename?: 'UsernameChangeEligibility'
+  can_request: Scalars['Boolean']['output']
+  change_count: Scalars['Int']['output']
+  cooldown_ends_at?: Maybe<Scalars['DateTime']['output']>
+  is_first_change: Scalars['Boolean']['output']
+  last_change_at?: Maybe<Scalars['DateTime']['output']>
+  message?: Maybe<Scalars['String']['output']>
+  pending_request?: Maybe<UsernameChangeRequest>
+  will_auto_approve: Scalars['Boolean']['output']
+}
+
+/** A request to change a user's username */
+export type UsernameChangeRequest = {
+  __typename?: 'UsernameChangeRequest'
+  admin_note?: Maybe<Scalars['String']['output']>
+  created_at: Scalars['DateTime']['output']
+  current_username: Scalars['String']['output']
+  id: Scalars['ID']['output']
+  reason?: Maybe<Scalars['String']['output']>
+  requested_username: Scalars['String']['output']
+  reviewed_at?: Maybe<Scalars['DateTime']['output']>
+  reviewed_by?: Maybe<Scalars['String']['output']>
+  reviewer?: Maybe<User>
+  status: UsernameChangeStatus
+  updated_at: Scalars['DateTime']['output']
+  user?: Maybe<User>
+  user_id: Scalars['String']['output']
+}
+
+/** Admin view of pending username change requests */
+export type UsernameChangeRequestConnection = {
+  __typename?: 'UsernameChangeRequestConnection'
+  pageInfo: PageInfo
+  requests: Array<UsernameChangeRequest>
+  totalCount: Scalars['Int']['output']
+}
+
+/** Result of a username change request submission */
+export type UsernameChangeResult = {
+  __typename?: 'UsernameChangeResult'
+  auto_approved: Scalars['Boolean']['output']
+  message: Scalars['String']['output']
+  request?: Maybe<UsernameChangeRequest>
+  success: Scalars['Boolean']['output']
+}
+
+/** Status of a username change request */
+export enum UsernameChangeStatus {
+  Approved = 'approved',
+  AutoApproved = 'auto_approved',
+  Pending = 'pending',
+  Rejected = 'rejected',
 }
 
 export type VerifyAttendanceInput = {
@@ -5528,6 +6480,41 @@ export type UpdateProfileMutation = {
     created_at?: any | null
     updated_at?: any | null
     last_active_at?: any | null
+  }
+}
+
+export type RequestUsernameChangeMutationVariables = Exact<{
+  input: RequestUsernameChangeInput
+}>
+
+export type RequestUsernameChangeMutation = {
+  __typename?: 'Mutation'
+  requestUsernameChange: {
+    __typename?: 'UsernameChangeResult'
+    success: boolean
+    message: string
+    auto_approved: boolean
+    request?: {
+      __typename?: 'UsernameChangeRequest'
+      id: string
+      current_username: string
+      requested_username: string
+      status: UsernameChangeStatus
+      created_at: any
+    } | null
+  }
+}
+
+export type CancelUsernameChangeRequestMutationVariables = Exact<{
+  requestId: Scalars['ID']['input']
+}>
+
+export type CancelUsernameChangeRequestMutation = {
+  __typename?: 'Mutation'
+  cancelUsernameChangeRequest: {
+    __typename?: 'MutationResponse'
+    success: boolean
+    message?: string | null
   }
 }
 
@@ -8034,6 +9021,49 @@ export type CheckUsernameQueryVariables = Exact<{
 }>
 
 export type CheckUsernameQuery = { __typename?: 'Query'; checkUsername: boolean }
+
+export type GetUsernameChangeEligibilityQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetUsernameChangeEligibilityQuery = {
+  __typename?: 'Query'
+  myUsernameChangeEligibility: {
+    __typename?: 'UsernameChangeEligibility'
+    can_request: boolean
+    is_first_change: boolean
+    will_auto_approve: boolean
+    change_count: number
+    last_change_at?: any | null
+    cooldown_ends_at?: any | null
+    message?: string | null
+    pending_request?: {
+      __typename?: 'UsernameChangeRequest'
+      id: string
+      current_username: string
+      requested_username: string
+      reason?: string | null
+      status: UsernameChangeStatus
+      admin_note?: string | null
+      created_at: any
+    } | null
+  }
+}
+
+export type GetUsernameChangeHistoryQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetUsernameChangeHistoryQuery = {
+  __typename?: 'Query'
+  myUsernameChangeHistory: Array<{
+    __typename?: 'UsernameChangeRequest'
+    id: string
+    current_username: string
+    requested_username: string
+    reason?: string | null
+    status: UsernameChangeStatus
+    admin_note?: string | null
+    reviewed_at?: any | null
+    created_at: any
+  }>
+}
 
 export const PostBasicInfoFragmentDoc = gql`
     fragment PostBasicInfo on Post {
@@ -12251,6 +13281,116 @@ export type UpdateProfileMutationResult = Apollo.MutationResult<UpdateProfileMut
 export type UpdateProfileMutationOptions = Apollo.BaseMutationOptions<
   UpdateProfileMutation,
   UpdateProfileMutationVariables
+>
+export const RequestUsernameChangeDocument = gql`
+    mutation RequestUsernameChange($input: RequestUsernameChangeInput!) {
+  requestUsernameChange(input: $input) {
+    success
+    message
+    auto_approved
+    request {
+      id
+      current_username
+      requested_username
+      status
+      created_at
+    }
+  }
+}
+    `
+export type RequestUsernameChangeMutationFn = Apollo.MutationFunction<
+  RequestUsernameChangeMutation,
+  RequestUsernameChangeMutationVariables
+>
+
+/**
+ * __useRequestUsernameChangeMutation__
+ *
+ * To run a mutation, you first call `useRequestUsernameChangeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRequestUsernameChangeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [requestUsernameChangeMutation, { data, loading, error }] = useRequestUsernameChangeMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRequestUsernameChangeMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RequestUsernameChangeMutation,
+    RequestUsernameChangeMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<RequestUsernameChangeMutation, RequestUsernameChangeMutationVariables>(
+    RequestUsernameChangeDocument,
+    options,
+  )
+}
+export type RequestUsernameChangeMutationHookResult = ReturnType<
+  typeof useRequestUsernameChangeMutation
+>
+export type RequestUsernameChangeMutationResult =
+  Apollo.MutationResult<RequestUsernameChangeMutation>
+export type RequestUsernameChangeMutationOptions = Apollo.BaseMutationOptions<
+  RequestUsernameChangeMutation,
+  RequestUsernameChangeMutationVariables
+>
+export const CancelUsernameChangeRequestDocument = gql`
+    mutation CancelUsernameChangeRequest($requestId: ID!) {
+  cancelUsernameChangeRequest(request_id: $requestId) {
+    success
+    message
+  }
+}
+    `
+export type CancelUsernameChangeRequestMutationFn = Apollo.MutationFunction<
+  CancelUsernameChangeRequestMutation,
+  CancelUsernameChangeRequestMutationVariables
+>
+
+/**
+ * __useCancelUsernameChangeRequestMutation__
+ *
+ * To run a mutation, you first call `useCancelUsernameChangeRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCancelUsernameChangeRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [cancelUsernameChangeRequestMutation, { data, loading, error }] = useCancelUsernameChangeRequestMutation({
+ *   variables: {
+ *      requestId: // value for 'requestId'
+ *   },
+ * });
+ */
+export function useCancelUsernameChangeRequestMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CancelUsernameChangeRequestMutation,
+    CancelUsernameChangeRequestMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    CancelUsernameChangeRequestMutation,
+    CancelUsernameChangeRequestMutationVariables
+  >(CancelUsernameChangeRequestDocument, options)
+}
+export type CancelUsernameChangeRequestMutationHookResult = ReturnType<
+  typeof useCancelUsernameChangeRequestMutation
+>
+export type CancelUsernameChangeRequestMutationResult =
+  Apollo.MutationResult<CancelUsernameChangeRequestMutation>
+export type CancelUsernameChangeRequestMutationOptions = Apollo.BaseMutationOptions<
+  CancelUsernameChangeRequestMutation,
+  CancelUsernameChangeRequestMutationVariables
 >
 export const GetActivityFeedDocument = gql`
     query GetActivityFeed($limit: Int, $after: String) {
@@ -18989,6 +20129,178 @@ export type CheckUsernameSuspenseQueryHookResult = ReturnType<typeof useCheckUse
 export type CheckUsernameQueryResult = Apollo.QueryResult<
   CheckUsernameQuery,
   CheckUsernameQueryVariables
+>
+export const GetUsernameChangeEligibilityDocument = gql`
+    query GetUsernameChangeEligibility {
+  myUsernameChangeEligibility {
+    can_request
+    is_first_change
+    will_auto_approve
+    pending_request {
+      id
+      current_username
+      requested_username
+      reason
+      status
+      admin_note
+      created_at
+    }
+    change_count
+    last_change_at
+    cooldown_ends_at
+    message
+  }
+}
+    `
+
+/**
+ * __useGetUsernameChangeEligibilityQuery__
+ *
+ * To run a query within a React component, call `useGetUsernameChangeEligibilityQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsernameChangeEligibilityQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUsernameChangeEligibilityQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUsernameChangeEligibilityQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetUsernameChangeEligibilityQuery,
+    GetUsernameChangeEligibilityQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    GetUsernameChangeEligibilityQuery,
+    GetUsernameChangeEligibilityQueryVariables
+  >(GetUsernameChangeEligibilityDocument, options)
+}
+export function useGetUsernameChangeEligibilityLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetUsernameChangeEligibilityQuery,
+    GetUsernameChangeEligibilityQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    GetUsernameChangeEligibilityQuery,
+    GetUsernameChangeEligibilityQueryVariables
+  >(GetUsernameChangeEligibilityDocument, options)
+}
+export function useGetUsernameChangeEligibilitySuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetUsernameChangeEligibilityQuery,
+        GetUsernameChangeEligibilityQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    GetUsernameChangeEligibilityQuery,
+    GetUsernameChangeEligibilityQueryVariables
+  >(GetUsernameChangeEligibilityDocument, options)
+}
+export type GetUsernameChangeEligibilityQueryHookResult = ReturnType<
+  typeof useGetUsernameChangeEligibilityQuery
+>
+export type GetUsernameChangeEligibilityLazyQueryHookResult = ReturnType<
+  typeof useGetUsernameChangeEligibilityLazyQuery
+>
+export type GetUsernameChangeEligibilitySuspenseQueryHookResult = ReturnType<
+  typeof useGetUsernameChangeEligibilitySuspenseQuery
+>
+export type GetUsernameChangeEligibilityQueryResult = Apollo.QueryResult<
+  GetUsernameChangeEligibilityQuery,
+  GetUsernameChangeEligibilityQueryVariables
+>
+export const GetUsernameChangeHistoryDocument = gql`
+    query GetUsernameChangeHistory {
+  myUsernameChangeHistory {
+    id
+    current_username
+    requested_username
+    reason
+    status
+    admin_note
+    reviewed_at
+    created_at
+  }
+}
+    `
+
+/**
+ * __useGetUsernameChangeHistoryQuery__
+ *
+ * To run a query within a React component, call `useGetUsernameChangeHistoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsernameChangeHistoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUsernameChangeHistoryQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUsernameChangeHistoryQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetUsernameChangeHistoryQuery,
+    GetUsernameChangeHistoryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetUsernameChangeHistoryQuery, GetUsernameChangeHistoryQueryVariables>(
+    GetUsernameChangeHistoryDocument,
+    options,
+  )
+}
+export function useGetUsernameChangeHistoryLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetUsernameChangeHistoryQuery,
+    GetUsernameChangeHistoryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetUsernameChangeHistoryQuery, GetUsernameChangeHistoryQueryVariables>(
+    GetUsernameChangeHistoryDocument,
+    options,
+  )
+}
+export function useGetUsernameChangeHistorySuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetUsernameChangeHistoryQuery,
+        GetUsernameChangeHistoryQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    GetUsernameChangeHistoryQuery,
+    GetUsernameChangeHistoryQueryVariables
+  >(GetUsernameChangeHistoryDocument, options)
+}
+export type GetUsernameChangeHistoryQueryHookResult = ReturnType<
+  typeof useGetUsernameChangeHistoryQuery
+>
+export type GetUsernameChangeHistoryLazyQueryHookResult = ReturnType<
+  typeof useGetUsernameChangeHistoryLazyQuery
+>
+export type GetUsernameChangeHistorySuspenseQueryHookResult = ReturnType<
+  typeof useGetUsernameChangeHistorySuspenseQuery
+>
+export type GetUsernameChangeHistoryQueryResult = Apollo.QueryResult<
+  GetUsernameChangeHistoryQuery,
+  GetUsernameChangeHistoryQueryVariables
 >
 
 export interface PossibleTypesResultData {

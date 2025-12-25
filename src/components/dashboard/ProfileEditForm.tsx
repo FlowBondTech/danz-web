@@ -22,9 +22,11 @@ import {
   FiAward,
   FiClock,
   FiActivity,
+  FiEdit3,
 } from 'react-icons/fi'
 import { useToast } from '@/src/hooks/useToast'
 import { ToastContainer } from '@/src/components/ui/Toast'
+import UsernameChangeModal from './UsernameChangeModal'
 
 export interface ProfileEditFormRef {
   triggerAvatarUpload: () => void
@@ -141,6 +143,7 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
   const [uploadProgress, setUploadProgress] = useState<{ avatar?: number; cover?: number }>({})
   const [newMusicTag, setNewMusicTag] = useState('')
   const [showPreview, setShowPreview] = useState(false)
+  const [showUsernameModal, setShowUsernameModal] = useState(false)
 
   const avatarInputRef = useRef<HTMLInputElement>(null)
   const coverInputRef = useRef<HTMLInputElement>(null)
@@ -549,17 +552,30 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
             <label htmlFor="username" className="block text-text-secondary text-sm mb-2">
               Username
             </label>
-            <div className="relative">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">@</div>
-              <input
-                id="username"
-                type="text"
-                value={formData.username}
-                disabled
-                className="w-full pl-8 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text-secondary cursor-not-allowed"
-              />
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">@</div>
+                <input
+                  id="username"
+                  type="text"
+                  value={formData.username}
+                  disabled
+                  className="w-full pl-8 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text-secondary cursor-not-allowed"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowUsernameModal(true)}
+                className="px-4 py-3 bg-neon-purple/10 hover:bg-neon-purple/20 border border-neon-purple/30 rounded-lg text-neon-purple transition-colors flex items-center gap-2"
+                title="Request username change"
+              >
+                <FiEdit3 size={16} />
+                <span className="hidden sm:inline">Request Change</span>
+              </button>
             </div>
-            <p className="text-text-secondary text-xs mt-1">Username cannot be changed</p>
+            <p className="text-text-secondary text-xs mt-1">
+              Username changes require approval after the first change
+            </p>
           </div>
 
           <div>
@@ -966,6 +982,18 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
         )}
       </div>
       </form>
+
+      {/* Username Change Modal */}
+      <UsernameChangeModal
+        isOpen={showUsernameModal}
+        onClose={() => setShowUsernameModal(false)}
+        currentUsername={formData.username}
+        onSuccess={() => {
+          toast.success('Username changed successfully!')
+          // Refetch user data
+          window.location.reload()
+        }}
+      />
     </>
   )
 })
