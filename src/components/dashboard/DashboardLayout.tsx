@@ -21,8 +21,10 @@ import {
   FiUser,
   FiUserPlus,
   FiX,
+  FiZap,
 } from 'react-icons/fi'
 import { NotificationBell, NotificationBellCompact, NotificationPanel } from '@/src/components/notifications'
+import { useExperimental } from '@/src/contexts/ExperimentalContext'
 import { useGetMyProfileQuery } from '../../generated/graphql'
 
 interface DashboardLayoutProps {
@@ -35,6 +37,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname()
   const router = useRouter()
   const { logout, user, authenticated, ready } = usePrivy()
+  const { experimentalEnabled } = useExperimental()
 
   const { data: profileData, loading: profileLoading } = useGetMyProfileQuery({
     skip: !authenticated || !ready,
@@ -106,6 +109,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     },
   ]
 
+  const experimentalMenuItems = [
+    {
+      name: 'Experimental',
+      icon: FiZap,
+      href: '/dashboard/experimental',
+    },
+  ]
+
   // Cast to string for comparison since 'dev' role may not be in generated types yet
   const userRole = profileData?.me?.role as string | undefined
   const isDevOrAdmin = userRole === 'dev' || userRole === 'admin'
@@ -113,6 +124,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const menuItems = [
     ...baseMenuItems,
+    ...(experimentalEnabled ? experimentalMenuItems : []),
     ...(isDevOrAdmin ? devMenuItems : []),
     ...(isAdmin ? adminMenuItems : []),
   ]

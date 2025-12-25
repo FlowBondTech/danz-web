@@ -22,13 +22,46 @@ export const metadata: Metadata = {
   },
 }
 
+// Inline script to prevent flash of unstyled content (FOUC)
+// Sets initial theme before React hydrates
+const themeInitScript = `
+(function() {
+  try {
+    var stored = localStorage.getItem('danz-theme-mode');
+    var useSystem = localStorage.getItem('danz-use-system-theme') === 'true';
+    var mode = 'dark'; // default to dark
+
+    if (useSystem) {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    } else if (stored) {
+      mode = stored;
+    }
+
+    document.documentElement.classList.add('theme-' + mode);
+    document.documentElement.style.colorScheme = mode;
+
+    // Apply dark fallback background immediately
+    if (mode === 'dark') {
+      document.documentElement.style.setProperty('--color-bg-primary-rgb', '10 10 15');
+      document.documentElement.style.setProperty('--color-text-primary-rgb', '255 255 255');
+    } else {
+      document.documentElement.style.setProperty('--color-bg-primary-rgb', '248 250 252');
+      document.documentElement.style.setProperty('--color-text-primary-rgb', '15 23 42');
+    }
+  } catch (e) {}
+})();
+`
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="theme-dark" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="antialiased">
         <Providers>{children}</Providers>
       </body>

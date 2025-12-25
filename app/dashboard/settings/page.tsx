@@ -1,6 +1,7 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
+import ExperimentalSettings from '@/src/components/dashboard/ExperimentalSettings'
 import ThemeSettings from '@/src/components/dashboard/ThemeSettings'
 import { NotificationPreferences } from '@/src/components/notifications'
 import { usePrivy } from '@privy-io/react-auth'
@@ -85,6 +86,9 @@ export default function SettingsPage() {
 
           {/* Notification Preferences */}
           <NotificationPreferences />
+
+          {/* Experimental Features */}
+          <ExperimentalSettings />
 
           {/* Privacy & Security */}
           <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">

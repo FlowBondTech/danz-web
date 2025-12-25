@@ -1,9 +1,9 @@
 'use client'
 
-import { getAllThemes, type Theme } from '@/src/constants/themes'
+import { getDarkThemes, getLightThemes, type Theme } from '@/src/constants/themes'
 import { useTheme } from '@/src/contexts/ThemeContext'
 import { useState } from 'react'
-import { FiCheck, FiDroplet, FiMoon, FiSave, FiSun, FiTrash2 } from 'react-icons/fi'
+import { FiCheck, FiDroplet, FiMonitor, FiMoon, FiSave, FiSun, FiTrash2 } from 'react-icons/fi'
 
 function ThemeCard({
   theme,
@@ -120,20 +120,25 @@ export default function ThemeSettings() {
     theme,
     themeId,
     customColors,
+    mode,
+    useSystemTheme,
     setTheme,
     setCustomColor,
     resetCustomColors,
     saveCustomTheme,
     deleteCustomTheme,
     getCustomThemes,
+    toggleMode,
+    setUseSystemTheme,
   } = useTheme()
 
   const [showCustomize, setShowCustomize] = useState(false)
   const [saveName, setSaveName] = useState('')
   const [showSaveModal, setShowSaveModal] = useState(false)
 
-  const presetThemes = getAllThemes()
-  const customThemes = getCustomThemes()
+  // Show themes matching current mode
+  const presetThemes = mode === 'dark' ? getDarkThemes() : getLightThemes()
+  const customThemes = getCustomThemes().filter(t => t.isDark === (mode === 'dark'))
   const hasCustomColors = Object.keys(customColors).length > 0
 
   const currentColors = { ...theme.colors, ...customColors }
@@ -169,9 +174,65 @@ export default function ThemeSettings() {
         Theme & Appearance
       </h2>
 
+      {/* Mode Toggle */}
+      <div className="mb-6">
+        <h3 className="text-text-secondary text-sm font-medium mb-3">Appearance Mode</h3>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setUseSystemTheme(false)
+              if (mode !== 'dark') toggleMode()
+            }}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 transition-all ${
+              !useSystemTheme && mode === 'dark'
+                ? 'border-neon-purple bg-neon-purple/10 text-neon-purple'
+                : 'border-white/10 text-text-secondary hover:border-white/20'
+            }`}
+          >
+            <FiMoon className="w-5 h-5" />
+            Dark
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setUseSystemTheme(false)
+              if (mode !== 'light') toggleMode()
+            }}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 transition-all ${
+              !useSystemTheme && mode === 'light'
+                ? 'border-neon-purple bg-neon-purple/10 text-neon-purple'
+                : 'border-white/10 text-text-secondary hover:border-white/20'
+            }`}
+          >
+            <FiSun className="w-5 h-5" />
+            Light
+          </button>
+          <button
+            type="button"
+            onClick={() => setUseSystemTheme(!useSystemTheme)}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 transition-all ${
+              useSystemTheme
+                ? 'border-neon-purple bg-neon-purple/10 text-neon-purple'
+                : 'border-white/10 text-text-secondary hover:border-white/20'
+            }`}
+          >
+            <FiMonitor className="w-5 h-5" />
+            System
+          </button>
+        </div>
+        {useSystemTheme && (
+          <p className="text-text-muted text-xs mt-2">
+            Automatically matches your device's appearance settings
+          </p>
+        )}
+      </div>
+
       {/* Preset Themes */}
       <div className="mb-6">
-        <h3 className="text-text-secondary text-sm font-medium mb-3">Preset Themes</h3>
+        <h3 className="text-text-secondary text-sm font-medium mb-3">
+          {mode === 'dark' ? 'Dark' : 'Light'} Themes
+        </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {presetThemes.map(t => (
             <ThemeCard

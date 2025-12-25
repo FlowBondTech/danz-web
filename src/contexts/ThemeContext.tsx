@@ -1,6 +1,6 @@
 'use client'
 
-import { type Theme, defaultThemeId, getTheme, themes } from '@/src/constants/themes'
+import { type Theme, defaultThemeId, getDarkThemes, getLightThemes, getTheme, themes } from '@/src/constants/themes'
 import {
   type ReactNode,
   createContext,
@@ -14,16 +14,23 @@ interface CustomColors {
   [key: string]: string
 }
 
+type ThemeMode = 'dark' | 'light'
+
 interface ThemeContextType {
   theme: Theme
   themeId: string
   customColors: CustomColors
+  mode: ThemeMode
+  useSystemTheme: boolean
   setTheme: (id: string) => void
   setCustomColor: (key: string, value: string) => void
   resetCustomColors: () => void
   saveCustomTheme: (name: string) => void
   deleteCustomTheme: (id: string) => void
   getCustomThemes: () => Theme[]
+  toggleMode: () => void
+  setMode: (mode: ThemeMode) => void
+  setUseSystemTheme: (use: boolean) => void
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
@@ -31,6 +38,8 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 const THEME_STORAGE_KEY = 'danz-theme'
 const CUSTOM_COLORS_KEY = 'danz-custom-colors'
 const CUSTOM_THEMES_KEY = 'danz-custom-themes'
+const MODE_STORAGE_KEY = 'danz-theme-mode'
+const USE_SYSTEM_KEY = 'danz-use-system-theme'
 
 // Convert hex to RGB values (space-separated for CSS)
 function hexToRgb(hex: string): string {
@@ -65,18 +74,63 @@ function applyThemeToDOM(theme: Theme, customColors: CustomColors = {}) {
   root.classList.add(theme.isDark ? 'theme-dark' : 'theme-light')
 }
 
+// Get system preference
+function getSystemThemePreference(): ThemeMode {
+  if (typeof window === 'undefined') return 'dark'
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
+
+// Get a theme matching the mode
+function getThemeForMode(currentThemeId: string, targetMode: ThemeMode): string {
+  const currentTheme = getTheme(currentThemeId)
+  // If current theme already matches mode, keep it
+  if (currentTheme.isDark === (targetMode === 'dark')) {
+    return currentThemeId
+  }
+  // Otherwise, switch to a theme of the target mode
+  if (targetMode === 'dark') {
+    return 'neon-dark' // Default dark theme
+  }
+  return 'clean-light' // Default light theme
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [themeId, setThemeId] = useState(defaultThemeId)
   const [customColors, setCustomColors] = useState<CustomColors>({})
+  const [mode, setModeState] = useState<ThemeMode>('dark')
+  const [useSystemTheme, setUseSystemThemeState] = useState(false)
   const [mounted, setMounted] = useState(false)
 
-  // Load saved theme on mount
+  // Load saved settings on mount
   useEffect(() => {
     const savedThemeId = localStorage.getItem(THEME_STORAGE_KEY)
     const savedCustomColors = localStorage.getItem(CUSTOM_COLORS_KEY)
+    const savedMode = localStorage.getItem(MODE_STORAGE_KEY) as ThemeMode | null
+    const savedUseSystem = localStorage.getItem(USE_SYSTEM_KEY) === 'true'
 
+    setUseSystemThemeState(savedUseSystem)
+
+    // Determine mode
+    let effectiveMode: ThemeMode = 'dark' // default
+    if (savedUseSystem) {
+      effectiveMode = getSystemThemePreference()
+    } else if (savedMode) {
+      effectiveMode = savedMode
+    }
+    setModeState(effectiveMode)
+
+    // Set theme based on mode
     if (savedThemeId && themes[savedThemeId]) {
-      setThemeId(savedThemeId)
+      const savedTheme = themes[savedThemeId]
+      // If saved theme matches current mode, use it
+      if (savedTheme.isDark === (effectiveMode === 'dark')) {
+        setThemeId(savedThemeId)
+      } else {
+        // Switch to appropriate theme for mode
+        setThemeId(getThemeForMode(savedThemeId, effectiveMode))
+      }
+    } else {
+      setThemeId(effectiveMode === 'dark' ? 'neon-dark' : 'clean-light')
     }
 
     if (savedCustomColors) {
@@ -90,10 +144,25 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setMounted(true)
   }, [])
 
+  // Listen for system theme changes
+  useEffect(() => {
+    if (!useSystemTheme) return
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleChange = (e: MediaQueryListEvent) => {
+      const newMode = e.matches ? 'dark' : 'light'
+      setModeState(newMode)
+      setThemeId(getThemeForMode(themeId, newMode))
+    }
+
+    mediaQuery.addEventListener('change', handleChange)
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [useSystemTheme, themeId])
+
   // Apply theme whenever it changes
   useEffect(() => {
     if (mounted) {
-      const theme = getTheme(themeId)
+      const theme = getTheme(themeId) || getStoredCustomThemes()[themeId] || getTheme(defaultThemeId)
       applyThemeToDOM(theme, customColors)
     }
   }, [themeId, customColors, mounted])
@@ -103,10 +172,38 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (allThemes[id]) {
       setThemeId(id)
       localStorage.setItem(THEME_STORAGE_KEY, id)
+      // Update mode based on theme
+      const newMode = allThemes[id].isDark ? 'dark' : 'light'
+      setModeState(newMode)
+      localStorage.setItem(MODE_STORAGE_KEY, newMode)
       setCustomColors({})
       localStorage.removeItem(CUSTOM_COLORS_KEY)
     }
   }, [])
+
+  const setMode = useCallback((newMode: ThemeMode) => {
+    setModeState(newMode)
+    localStorage.setItem(MODE_STORAGE_KEY, newMode)
+    // Switch to appropriate theme for mode
+    setThemeId(getThemeForMode(themeId, newMode))
+  }, [themeId])
+
+  const toggleMode = useCallback(() => {
+    const newMode = mode === 'dark' ? 'light' : 'dark'
+    setMode(newMode)
+  }, [mode, setMode])
+
+  const setUseSystemTheme = useCallback((use: boolean) => {
+    setUseSystemThemeState(use)
+    localStorage.setItem(USE_SYSTEM_KEY, use.toString())
+    if (use) {
+      // Apply system preference immediately
+      const systemMode = getSystemThemePreference()
+      setModeState(systemMode)
+      localStorage.setItem(MODE_STORAGE_KEY, systemMode)
+      setThemeId(getThemeForMode(themeId, systemMode))
+    }
+  }, [themeId])
 
   const setCustomColor = useCallback((key: string, value: string) => {
     setCustomColors(prev => {
@@ -174,12 +271,17 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         theme,
         themeId,
         customColors,
+        mode,
+        useSystemTheme,
         setTheme,
         setCustomColor,
         resetCustomColors,
         saveCustomTheme,
         deleteCustomTheme,
         getCustomThemes,
+        toggleMode,
+        setMode,
+        setUseSystemTheme,
       }}
     >
       {children}
