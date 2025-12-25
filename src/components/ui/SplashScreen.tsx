@@ -15,94 +15,95 @@ export function SplashScreen({
   onComplete,
   duration = 1500
 }: SplashScreenProps) {
-  const [progress, setProgress] = useState(0)
+  const [fadeIn, setFadeIn] = useState(false)
 
   useEffect(() => {
-    // Animate progress bar
-    const interval = setInterval(() => {
-      setProgress(p => Math.min(p + 5, 100))
-    }, duration / 20)
+    // Fade in on mount
+    requestAnimationFrame(() => setFadeIn(true))
 
     // Call onComplete after duration
     const timer = setTimeout(() => {
       onComplete?.()
     }, duration)
 
-    return () => {
-      clearInterval(interval)
-      clearTimeout(timer)
-    }
+    return () => clearTimeout(timer)
   }, [duration, onComplete])
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-bg-primary">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-b from-bg-primary to-[#0f0f1e]">
       {/* Logo Container */}
-      <div className="relative w-32 h-32 mb-8">
-        {/* Outer glow ring */}
-        <div className="absolute inset-0 bg-gradient-to-r from-neon-pink to-neon-purple rounded-full opacity-20 animate-pulse" />
+      <div
+        className={`relative w-[150px] h-[150px] mb-10 transition-all duration-500 ${
+          fadeIn ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
+        }`}
+      >
+        {/* Glow effect */}
+        <div className="absolute inset-[-15px] bg-neon-pink rounded-full opacity-10 blur-xl animate-pulse-slow" />
 
-        {/* Inner circle with logo */}
-        <div className="absolute inset-2 bg-bg-primary rounded-full flex items-center justify-center">
-          <svg
-            width="64"
-            height="64"
-            viewBox="0 0 64 64"
-            fill="none"
-            style={{ animation: 'float 3s ease-in-out infinite' }}
-          >
-            <circle
-              cx="32"
-              cy="32"
-              r="28"
-              stroke="url(#splash-gradient)"
-              strokeWidth="3"
-              fill="none"
-            />
-            <path
-              d="M24 20 L32 44 L40 20"
-              stroke="url(#splash-gradient)"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-            />
-            <defs>
-              <linearGradient id="splash-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="rgb(var(--color-neon-pink-rgb))" />
-                <stop offset="100%" stopColor="rgb(var(--color-neon-purple-rgb))" />
-              </linearGradient>
-            </defs>
-          </svg>
+        {/* Outer spinning ring */}
+        <div className="absolute inset-0 animate-spin-slow">
+          <div className="w-full h-full rounded-full p-[3px] bg-gradient-to-br from-neon-pink to-neon-purple">
+            <div className="w-full h-full rounded-full bg-transparent border-[3px] border-transparent" />
+          </div>
+        </div>
+
+        {/* Inner circle with $DANZ */}
+        <div className="absolute inset-[15px] rounded-full bg-bg-secondary flex flex-col items-center justify-center border-2 border-neon-pink">
+          <span className="text-neon-pink text-2xl font-bold -mb-1">$</span>
+          <span className="text-text-primary text-[28px] font-bold tracking-[2px]">DANZ</span>
         </div>
       </div>
 
-      {/* Brand Text */}
-      <h1 className="text-3xl font-bold bg-gradient-to-r from-neon-pink to-neon-purple bg-clip-text text-transparent mb-2">
-        {title}
-      </h1>
-      <p className="text-white/50 text-sm mb-8">{subtitle}</p>
+      {/* Tagline */}
+      <p
+        className={`text-text-secondary text-lg tracking-[1px] mb-10 transition-opacity duration-500 ${
+          fadeIn ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        {subtitle}
+      </p>
 
-      {/* Progress Bar */}
-      <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden">
-        <div
-          className="h-full bg-gradient-to-r from-neon-pink to-neon-purple transition-all duration-100 ease-out"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
-
-      {/* Loading Dots */}
-      <div className="flex gap-1.5 mt-4">
+      {/* Loading dots */}
+      <div
+        className={`flex gap-2 transition-opacity duration-500 ${
+          fadeIn ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
         {[0, 1, 2].map(i => (
           <div
             key={i}
-            className="w-2 h-2 rounded-full bg-neon-pink/50 animate-pulse"
+            className="w-2 h-2 rounded-full bg-neon-pink animate-bounce-dot"
             style={{
-              animationDelay: `${i * 200}ms`,
+              animationDelay: `${i * 150}ms`,
             }}
           />
         ))}
       </div>
 
+      {/* Add custom animations via style tag */}
+      <style jsx>{`
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 0.1; transform: scale(1); }
+          50% { opacity: 0.2; transform: scale(1.1); }
+        }
+        @keyframes bounce-dot {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-5px); }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 2s linear infinite;
+        }
+        .animate-pulse-slow {
+          animation: pulse-slow 2s ease-in-out infinite;
+        }
+        .animate-bounce-dot {
+          animation: bounce-dot 1s ease-in-out infinite;
+        }
+      `}</style>
     </div>
   )
 }
