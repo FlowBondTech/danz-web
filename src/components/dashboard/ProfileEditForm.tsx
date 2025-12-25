@@ -105,6 +105,39 @@ const SKILL_LEVELS = [
   { value: 'professional', label: 'Professional', description: 'Teaching or performing' },
 ]
 
+const MUSIC_GENRES = [
+  'Hip Hop',
+  'R&B',
+  'Pop',
+  'Electronic',
+  'House',
+  'Techno',
+  'Afrobeats',
+  'Dancehall',
+  'Reggaeton',
+  'Latin',
+  'Salsa',
+  'Bachata',
+  'K-Pop',
+  'J-Pop',
+  'Funk',
+  'Soul',
+  'Jazz',
+  'Classical',
+  'EDM',
+  'Drum & Bass',
+  'Trap',
+  'Dubstep',
+  'Disco',
+  'Rock',
+  'Indie',
+  'Alternative',
+  'World Music',
+  'Gospel',
+  'Country',
+  'Bollywood',
+]
+
 interface ProfileEditFormProps {
   user: any
   onSave?: () => void
@@ -144,6 +177,9 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
   const [newMusicTag, setNewMusicTag] = useState('')
   const [showPreview, setShowPreview] = useState(false)
   const [showUsernameModal, setShowUsernameModal] = useState(false)
+  const [showMusicSuggestions, setShowMusicSuggestions] = useState(false)
+  const musicInputRef = useRef<HTMLInputElement>(null)
+  const musicDropdownRef = useRef<HTMLDivElement>(null)
 
   const avatarInputRef = useRef<HTMLInputElement>(null)
   const coverInputRef = useRef<HTMLInputElement>(null)
@@ -381,18 +417,48 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
     return true
   }
 
+  // Close music suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        musicDropdownRef.current &&
+        !musicDropdownRef.current.contains(event.target as Node) &&
+        musicInputRef.current &&
+        !musicInputRef.current.contains(event.target as Node)
+      ) {
+        setShowMusicSuggestions(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // Filter music suggestions based on input
+  const filteredMusicSuggestions = MUSIC_GENRES.filter(
+    genre =>
+      !formData.favorite_music.includes(genre) &&
+      genre.toLowerCase().includes(newMusicTag.toLowerCase())
+  )
+
   // Handle music tag addition
-  const addMusicTag = () => {
-    if (!newMusicTag.trim()) return
-    if (formData.favorite_music.includes(newMusicTag.trim())) {
+  const addMusicTag = (genre?: string) => {
+    const tagToAdd = genre || newMusicTag.trim()
+    if (!tagToAdd) {
+      // If empty, show suggestions dropdown
+      setShowMusicSuggestions(true)
+      musicInputRef.current?.focus()
+      return
+    }
+    if (formData.favorite_music.includes(tagToAdd)) {
       toast.warning('This music genre is already added')
       return
     }
     setFormData(prev => ({
       ...prev,
-      favorite_music: [...prev.favorite_music, newMusicTag.trim()],
+      favorite_music: [...prev.favorite_music, tagToAdd],
     }))
     setNewMusicTag('')
+    setShowMusicSuggestions(false)
   }
 
   const removeMusicTag = (tag: string) => {
@@ -836,22 +902,60 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
           Favorite Music Genres
         </h3>
         <div className="space-y-4">
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={newMusicTag}
-              onChange={e => setNewMusicTag(e.target.value)}
-              onKeyPress={e => e.key === 'Enter' && (e.preventDefault(), addMusicTag())}
-              className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text-primary focus:outline-none focus:border-neon-purple transition-colors"
-              placeholder="Add a music genre..."
-            />
-            <button
-              type="button"
-              onClick={addMusicTag}
-              className="px-6 py-3 bg-neon-purple/20 hover:bg-neon-purple/30 border border-neon-purple/30 rounded-lg text-neon-purple transition-all"
-            >
-              Add
-            </button>
+          <div className="relative">
+            <div className="flex gap-2">
+              <input
+                ref={musicInputRef}
+                type="text"
+                value={newMusicTag}
+                onChange={e => {
+                  setNewMusicTag(e.target.value)
+                  setShowMusicSuggestions(true)
+                }}
+                onFocus={() => setShowMusicSuggestions(true)}
+                onKeyPress={e => e.key === 'Enter' && (e.preventDefault(), addMusicTag())}
+                className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text-primary focus:outline-none focus:border-neon-purple transition-colors"
+                placeholder="Add a music genre..."
+              />
+              <button
+                type="button"
+                onClick={() => addMusicTag()}
+                className="px-6 py-3 bg-neon-purple/20 hover:bg-neon-purple/30 border border-neon-purple/30 rounded-lg text-neon-purple transition-all"
+              >
+                Add
+              </button>
+            </div>
+
+            {/* Suggestions Dropdown */}
+            {showMusicSuggestions && filteredMusicSuggestions.length > 0 && (
+              <div
+                ref={musicDropdownRef}
+                className="absolute z-20 w-full mt-2 bg-bg-secondary border border-neon-purple/30 rounded-lg shadow-xl max-h-64 overflow-y-auto"
+              >
+                <div className="p-2">
+                  <p className="text-xs text-text-secondary px-2 py-1 mb-1">
+                    {newMusicTag ? 'Matching genres' : 'Suggested genres'}
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
+                    {filteredMusicSuggestions.slice(0, 12).map(genre => (
+                      <button
+                        key={genre}
+                        type="button"
+                        onClick={() => addMusicTag(genre)}
+                        className="px-3 py-2 text-left text-sm text-text-primary hover:bg-neon-purple/20 rounded-lg transition-colors truncate"
+                      >
+                        {genre}
+                      </button>
+                    ))}
+                  </div>
+                  {filteredMusicSuggestions.length > 12 && (
+                    <p className="text-xs text-text-secondary px-2 pt-2 border-t border-white/10 mt-2">
+                      +{filteredMusicSuggestions.length - 12} more - type to filter
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
           {formData.favorite_music.length > 0 && (
             <div className="flex flex-wrap gap-2">
