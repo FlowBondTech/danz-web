@@ -23,6 +23,9 @@ import {
   FiClock,
   FiActivity,
   FiEdit3,
+  FiPlus,
+  FiStar,
+  FiTrash2,
 } from 'react-icons/fi'
 import { useToast } from '@/src/hooks/useToast'
 import { ToastContainer } from '@/src/components/ui/Toast'
@@ -63,6 +66,7 @@ const UPDATE_PROFILE = gql`
       level
       subscription_tier
       is_premium
+      social_media_links
       total_dance_time
       total_sessions
       longest_streak
@@ -168,7 +172,11 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
     is_public: true,
     allow_messages: true,
     show_location: true,
+    additional_websites: [] as { label: string; url: string }[],
   })
+
+  // Check if user is premium
+  const isPremium = user?.is_premium === 'active' || user?.subscription_tier === 'premium' || user?.subscription_tier === 'pro'
   const [hasChanges, setHasChanges] = useState(false)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
@@ -216,6 +224,12 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
 
   useEffect(() => {
     if (user) {
+      // Parse additional websites from social_media_links
+      let additionalWebsites: { label: string; url: string }[] = []
+      if (user.social_media_links?.additional_websites) {
+        additionalWebsites = user.social_media_links.additional_websites
+      }
+
       setFormData({
         username: user.username || '',
         display_name: user.display_name || '',
@@ -238,6 +252,7 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
         is_public: user.is_public ?? true,
         allow_messages: user.allow_messages ?? true,
         show_location: user.show_location ?? true,
+        additional_websites: additionalWebsites,
       })
     }
   }, [user])
@@ -468,6 +483,38 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
     }))
   }
 
+  // Additional websites management (premium feature)
+  const addAdditionalWebsite = () => {
+    if (!isPremium) {
+      toast.info('Upgrade to Premium to add multiple websites!')
+      return
+    }
+    if (formData.additional_websites.length >= 5) {
+      toast.warning('Maximum 5 additional websites allowed')
+      return
+    }
+    setFormData(prev => ({
+      ...prev,
+      additional_websites: [...prev.additional_websites, { label: '', url: '' }],
+    }))
+  }
+
+  const updateAdditionalWebsite = (index: number, field: 'label' | 'url', value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      additional_websites: prev.additional_websites.map((site, i) =>
+        i === index ? { ...site, [field]: value } : site
+      ),
+    }))
+  }
+
+  const removeAdditionalWebsite = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      additional_websites: prev.additional_websites.filter((_, i) => i !== index),
+    }))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setErrors({})
@@ -516,6 +563,19 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
     }
     if (JSON.stringify(formData.favorite_music) !== JSON.stringify(user?.favorite_music)) {
       changedFields.favorite_music = formData.favorite_music
+    }
+
+    // Save additional websites to social_media_links (premium feature)
+    const currentAdditionalWebsites = user?.social_media_links?.additional_websites || []
+    const validAdditionalWebsites = formData.additional_websites.filter(site => site.url.trim())
+    if (JSON.stringify(validAdditionalWebsites) !== JSON.stringify(currentAdditionalWebsites)) {
+      changedFields.social_media_links = {
+        ...(user?.social_media_links || {}),
+        additional_websites: validAdditionalWebsites.map(site => ({
+          label: site.label || 'Website',
+          url: normalizeWebsiteUrl(site.url),
+        })),
+      }
     }
 
     if (Object.keys(changedFields).length === 0) {
@@ -776,10 +836,18 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
       <div>
         <h3 className="text-xl font-bold text-text-primary mb-6">Social Links</h3>
         <div className="grid gap-6 md:grid-cols-2">
-          <div>
-            <label htmlFor="website" className="block text-text-secondary text-sm mb-2">
-              Website
-            </label>
+          <div className="md:col-span-2">
+            <div className="flex items-center justify-between mb-2">
+              <label htmlFor="website" className="block text-text-secondary text-sm">
+                Primary Website
+              </label>
+              {isPremium && (
+                <span className="flex items-center gap-1 text-xs text-neon-purple">
+                  <FiStar size={12} />
+                  Premium
+                </span>
+              )}
+            </div>
             <div className="relative">
               <FiLink className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
               <input
@@ -791,6 +859,69 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
                 placeholder="https://yourwebsite.com"
               />
             </div>
+          </div>
+
+          {/* Additional Websites (Premium Feature) */}
+          {formData.additional_websites.length > 0 && (
+            <div className="md:col-span-2 space-y-3">
+              <label className="block text-text-secondary text-sm">Additional Websites</label>
+              {formData.additional_websites.map((site, index) => (
+                <div key={index} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={site.label}
+                    onChange={e => updateAdditionalWebsite(index, 'label', e.target.value)}
+                    className="w-32 px-3 py-3 bg-white/5 border border-white/10 rounded-lg text-text-primary focus:outline-none focus:border-neon-purple transition-colors text-sm"
+                    placeholder="Label"
+                  />
+                  <div className="relative flex-1">
+                    <FiLink className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
+                    <input
+                      type="url"
+                      value={site.url}
+                      onChange={e => updateAdditionalWebsite(index, 'url', e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text-primary focus:outline-none focus:border-neon-purple transition-colors"
+                      placeholder="https://..."
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeAdditionalWebsite(index)}
+                    className="p-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 transition-colors"
+                    title="Remove website"
+                  >
+                    <FiTrash2 size={18} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Add Website Button */}
+          <div className="md:col-span-2">
+            <button
+              type="button"
+              onClick={addAdditionalWebsite}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all text-sm ${
+                isPremium
+                  ? 'bg-neon-purple/10 hover:bg-neon-purple/20 border-neon-purple/30 text-neon-purple'
+                  : 'bg-white/5 hover:bg-white/10 border-white/10 text-text-secondary'
+              }`}
+            >
+              <FiPlus size={16} />
+              {isPremium ? 'Add Another Website' : 'Add More Websites'}
+              {!isPremium && (
+                <span className="flex items-center gap-1 ml-2 px-2 py-0.5 bg-neon-purple/20 rounded-full text-xs text-neon-purple">
+                  <FiStar size={10} />
+                  Premium
+                </span>
+              )}
+            </button>
+            {!isPremium && formData.additional_websites.length === 0 && (
+              <p className="text-xs text-text-secondary mt-2">
+                Upgrade to Premium to add multiple website links to your profile
+              </p>
+            )}
           </div>
 
           <div>
