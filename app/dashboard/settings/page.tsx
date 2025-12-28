@@ -7,11 +7,14 @@ import { NotificationPreferences } from '@/src/components/notifications'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { FiEdit3, FiLock, FiMail, FiSettings, FiShield, FiUser } from 'react-icons/fi'
+import { FiCheck, FiEdit3, FiLock, FiMail, FiSettings, FiShield, FiStar, FiUser } from 'react-icons/fi'
+import { useGetMyProfileQuery } from '@/src/generated/graphql'
 
 export default function SettingsPage() {
   const { authenticated, ready, user } = usePrivy()
   const router = useRouter()
+  const { data: profileData } = useGetMyProfileQuery({ skip: !authenticated })
+  const profile = profileData?.me
 
   const [settings, setSettings] = useState({
     emailNotifications: true,
@@ -156,6 +159,74 @@ export default function SettingsPage() {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Subscription */}
+          <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6">
+            <h2 className="text-xl font-bold text-text-primary mb-6 flex items-center gap-3">
+              <FiStar className="text-amber-400" />
+              Subscription
+            </h2>
+
+            {profile?.is_premium === 'active' ? (
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border border-amber-500/20 rounded-xl">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center">
+                    <FiStar className="text-white" size={24} />
+                  </div>
+                  <div>
+                    <p className="text-text-primary font-semibold">Premium Active</p>
+                    <p className="text-text-secondary text-sm">You have access to all premium features</p>
+                  </div>
+                </div>
+                <div className="grid gap-2">
+                  <div className="flex items-center gap-2 text-text-secondary text-sm">
+                    <FiCheck className="text-green-400" size={16} />
+                    <span>Unlimited event check-ins</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-text-secondary text-sm">
+                    <FiCheck className="text-green-400" size={16} />
+                    <span>Priority support</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-text-secondary text-sm">
+                    <FiCheck className="text-green-400" size={16} />
+                    <span>Exclusive dance content</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => router.push('/dashboard/subscription')}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 text-text-secondary rounded-xl hover:bg-white/10 transition-all"
+                >
+                  Manage Subscription
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <p className="text-text-secondary">
+                  Upgrade to Premium to unlock exclusive features and enhance your dance journey.
+                </p>
+                <div className="grid gap-2">
+                  <div className="flex items-center gap-2 text-text-secondary text-sm">
+                    <FiStar className="text-amber-400" size={16} />
+                    <span>Unlimited event check-ins</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-text-secondary text-sm">
+                    <FiStar className="text-amber-400" size={16} />
+                    <span>Priority support</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-text-secondary text-sm">
+                    <FiStar className="text-amber-400" size={16} />
+                    <span>Exclusive dance content</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => router.push('/dashboard/subscription')}
+                  className="w-full px-6 py-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-white rounded-xl hover:shadow-lg hover:shadow-amber-500/30 transition-all hover:scale-[1.02] font-medium"
+                >
+                  Upgrade to Premium
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Danger Zone */}

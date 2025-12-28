@@ -561,27 +561,6 @@ function DashboardContent() {
               </div>
             )}
 
-            {/* Premium Upgrade CTA */}
-            {profile?.is_premium !== 'active' && (
-              <button
-                onClick={() => router.push('/dashboard/subscription')}
-                className="w-full bg-gradient-to-r from-amber-500/20 to-yellow-500/20 hover:from-amber-500/30 hover:to-yellow-500/30 border border-amber-500/30 rounded-2xl p-5 text-left transition-all group"
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center">
-                    <FiStar className="text-text-primary" size={18} />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-text-primary">Go Premium</p>
-                    <p className="text-xs text-text-muted">Unlock exclusive features</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 text-amber-400 text-sm font-medium group-hover:gap-2 transition-all">
-                  <span>Learn More</span>
-                  <FiChevronRight size={16} />
-                </div>
-              </button>
-            )}
           </div>
         </div>
 
