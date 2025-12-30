@@ -12,19 +12,24 @@ import {
   FiChevronRight,
   FiCode,
   FiCreditCard,
+  FiDownload,
   FiGrid,
   FiHeart,
   FiLogOut,
   FiMenu,
   FiSettings,
+  FiShare,
   FiShield,
+  FiSmartphone,
   FiUser,
   FiUserPlus,
   FiX,
   FiZap,
 } from 'react-icons/fi'
 import { NotificationBell, NotificationBellCompact, NotificationPanel } from '@/src/components/notifications'
+import InstallBanner from '@/src/components/ui/InstallBanner'
 import { useExperimental } from '@/src/contexts/ExperimentalContext'
+import { useInstallPrompt } from '@/src/hooks/useInstallPrompt'
 import { useGetMyProfileQuery } from '../../generated/graphql'
 
 interface DashboardLayoutProps {
@@ -38,6 +43,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const router = useRouter()
   const { logout, user, authenticated, ready } = usePrivy()
   const { experimentalEnabled } = useExperimental()
+  const { isInstallable, isInstalled, isIOS, promptInstall, isMobile } = useInstallPrompt()
 
   const { data: profileData, loading: profileLoading } = useGetMyProfileQuery({
     skip: !authenticated || !ready,
@@ -146,7 +152,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         } h-full`}
       >
         {/* Sidebar Header */}
-        <div className="p-6 border-b border-white/10">
+        <div className={`shrink-0 border-b border-white/10 ${sidebarOpen ? 'p-6' : 'p-4 py-3'}`}>
           <div className="flex items-center justify-between">
             <Link href="/" className={`flex items-center ${!sidebarOpen && 'justify-center'}`}>
               {sidebarOpen ? (
@@ -167,7 +173,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4">
+        <nav className="flex-1 p-4 overflow-y-auto">
           <ul className="space-y-2">
             {menuItems.map(item => (
               <li key={item.name}>
@@ -193,7 +199,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </nav>
 
         {/* User Section */}
-        <div className="p-4 border-t border-white/10">
+        <div className={`shrink-0 mt-auto p-4 border-t border-white/10 ${!sidebarOpen && 'pt-6'}`}>
           <div className={`flex items-center gap-3 mb-4 ${!sidebarOpen && 'justify-center'}`}>
             {profileData?.me?.avatar_url ? (
               <div className="relative">
@@ -339,6 +345,25 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     </p>
                   </div>
                 </div>
+                {/* Add to Home Screen - Only show if installable and not already installed */}
+                {isMobile && isInstallable && !isInstalled && (
+                  <button
+                    onClick={() => {
+                      if (isIOS) {
+                        // Show instructions for iOS
+                        alert('To install: Tap the Share button, then "Add to Home Screen"')
+                      } else {
+                        promptInstall()
+                      }
+                      setMobileMenuOpen(false)
+                    }}
+                    className="flex items-center gap-3 w-full px-4 py-2 text-neon-purple hover:text-neon-pink transition-colors mb-2"
+                  >
+                    <FiSmartphone size={20} />
+                    <span>Add to Home Screen</span>
+                  </button>
+                )}
+
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-3 w-full px-4 py-2 text-text-secondary hover:text-red-400 transition-colors"
@@ -353,9 +378,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8 overflow-y-auto">{children}</main>
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+        <main className="flex-1 px-4 pb-4 sm:px-6 sm:pb-6 lg:px-8 lg:pb-8 pt-20 lg:pt-8 overflow-auto">{children}</main>
       </div>
+
+      {/* Install Banner for Mobile */}
+      <InstallBanner />
     </div>
   )
 }

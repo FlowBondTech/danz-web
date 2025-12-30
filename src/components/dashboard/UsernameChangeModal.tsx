@@ -11,6 +11,8 @@ import {
   FiAlertCircle,
   FiInfo,
   FiLoader,
+  FiLock,
+  FiShield,
 } from 'react-icons/fi'
 
 const GET_USERNAME_ELIGIBILITY = gql`
@@ -73,6 +75,7 @@ interface UsernameChangeModalProps {
   onClose: () => void
   currentUsername: string
   onSuccess?: () => void
+  isMinted?: boolean
 }
 
 export default function UsernameChangeModal({
@@ -80,6 +83,7 @@ export default function UsernameChangeModal({
   onClose,
   currentUsername,
   onSuccess,
+  isMinted = false,
 }: UsernameChangeModalProps) {
   const [newUsername, setNewUsername] = useState('')
   const [reason, setReason] = useState('')
@@ -224,7 +228,48 @@ export default function UsernameChangeModal({
 
         {/* Content */}
         <div className="p-6">
-          {eligibilityLoading ? (
+          {isMinted ? (
+            /* Minted Username - Cannot Change */
+            <div className="space-y-4">
+              <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl">
+                <div className="flex items-start gap-3">
+                  <FiLock className="text-amber-500 mt-0.5" size={24} />
+                  <div>
+                    <h3 className="font-bold text-amber-500 text-lg">
+                      Username Permanently Minted
+                    </h3>
+                    <p className="text-sm text-text-secondary mt-1">
+                      Your username has been minted as an on-chain identity and cannot be changed.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
+                <div className="flex items-center gap-3">
+                  <FiShield className="text-green-500" size={20} />
+                  <div>
+                    <p className="text-text-secondary text-sm">Your permanent identity:</p>
+                    <p className="text-green-400 font-bold text-xl mt-1">{currentUsername}.danz.eth</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-3 bg-white/5 border border-white/10 rounded-lg">
+                <p className="text-xs text-text-secondary">
+                  Minted usernames are permanently recorded on the blockchain. This ensures your
+                  identity is unique and verifiable across the DANZ ecosystem forever.
+                </p>
+              </div>
+
+              <button
+                onClick={onClose}
+                className="w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl text-text-primary font-medium transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          ) : eligibilityLoading ? (
             <div className="flex items-center justify-center py-8">
               <FiLoader className="animate-spin text-neon-purple" size={32} />
             </div>

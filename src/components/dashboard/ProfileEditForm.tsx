@@ -26,10 +26,12 @@ import {
   FiPlus,
   FiStar,
   FiTrash2,
+  FiShield,
 } from 'react-icons/fi'
 import { useToast } from '@/src/hooks/useToast'
 import { ToastContainer } from '@/src/components/ui/Toast'
 import UsernameChangeModal from './UsernameChangeModal'
+import UsernameMintModal from './UsernameMintModal'
 
 export interface ProfileEditFormRef {
   triggerAvatarUpload: () => void
@@ -185,6 +187,7 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
   const [newMusicTag, setNewMusicTag] = useState('')
   const [showPreview, setShowPreview] = useState(false)
   const [showUsernameModal, setShowUsernameModal] = useState(false)
+  const [showMintModal, setShowMintModal] = useState(false)
   const [showMusicSuggestions, setShowMusicSuggestions] = useState(false)
   const musicInputRef = useRef<HTMLInputElement>(null)
   const musicDropdownRef = useRef<HTMLDivElement>(null)
@@ -596,6 +599,48 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
     <>
       <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />
       <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Sticky Save Header */}
+        <div className="sticky top-0 z-10 bg-bg-primary/95 backdrop-blur-sm -mx-4 px-4 py-3 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 border-b border-white/10">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              {hasChanges ? (
+                <span className="text-amber-400 text-sm flex items-center gap-2">
+                  <span className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" />
+                  Unsaved changes
+                </span>
+              ) : (
+                <span className="text-text-secondary text-sm flex items-center gap-2">
+                  <FiCheck className="text-green-500" />
+                  All changes saved
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-3">
+              {onCancel && (
+                <button type="button" onClick={onCancel} className="px-4 py-2 text-text-secondary hover:text-text-primary transition-colors" disabled={saving}>
+                  Cancel
+                </button>
+              )}
+              <button
+                type="submit"
+                disabled={saving || !hasChanges}
+                className={`px-6 py-2 rounded-lg font-medium transition-all ${
+                  hasChanges
+                    ? 'bg-gradient-to-r from-neon-purple to-neon-pink text-white hover:opacity-90'
+                    : 'bg-white/10 text-text-secondary cursor-not-allowed'
+                }`}
+              >
+                {saving ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+          </div>
+          {errors.submit && (
+            <div className="mt-2 p-2 bg-red-400/10 border border-red-400/20 rounded-lg">
+              <p className="text-red-400 text-sm">{errors.submit}</p>
+            </div>
+          )}
+        </div>
+
         {/* Profile Completion Badge */}
         <div className="bg-gradient-to-r from-neon-purple/10 to-neon-pink/10 rounded-xl border border-neon-purple/20 p-4">
           <div className="flex items-center justify-between mb-2">
@@ -678,30 +723,74 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
             <label htmlFor="username" className="block text-text-secondary text-sm mb-2">
               Username
             </label>
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">@</div>
-                <input
-                  id="username"
-                  type="text"
-                  value={formData.username}
-                  disabled
-                  className="w-full pl-8 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text-secondary cursor-not-allowed"
-                />
+            {user?.username_minted ? (
+              /* Minted Username Display */
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 px-4 py-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                  <FiCheck className="text-green-500" size={18} />
+                  <span className="text-green-400 font-bold text-lg">{formData.username}.danz.eth</span>
+                  <span className="ml-auto text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full flex items-center gap-1">
+                    <FiLock size={10} />
+                    Minted
+                  </span>
+                </div>
+                <p className="text-text-secondary text-xs flex items-center gap-1">
+                  <FiLock size={12} />
+                  Your username is permanently minted on-chain and cannot be changed
+                </p>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowUsernameModal(true)}
-                className="px-4 py-3 bg-neon-purple/10 hover:bg-neon-purple/20 border border-neon-purple/30 rounded-lg text-neon-purple transition-colors flex items-center gap-2"
-                title="Request username change"
-              >
-                <FiEdit3 size={16} />
-                <span className="hidden sm:inline">Request Change</span>
-              </button>
-            </div>
-            <p className="text-text-secondary text-xs mt-1">
-              Username changes require approval after the first change
-            </p>
+            ) : (
+              /* Non-minted Username Display */
+              <>
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">@</div>
+                    <input
+                      id="username"
+                      type="text"
+                      value={formData.username}
+                      disabled
+                      className="w-full pl-8 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text-secondary cursor-not-allowed"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowUsernameModal(true)}
+                    className="px-4 py-3 bg-neon-purple/10 hover:bg-neon-purple/20 border border-neon-purple/30 rounded-lg text-neon-purple transition-colors flex items-center gap-2"
+                    title="Request username change"
+                  >
+                    <FiEdit3 size={16} />
+                    <span className="hidden sm:inline">Change</span>
+                  </button>
+                </div>
+                <div className="flex items-center justify-between mt-2">
+                  <p className="text-text-secondary text-xs">
+                    Username changes require approval after the first change
+                  </p>
+                </div>
+                {/* Mint Username CTA */}
+                <div className="mt-3 p-4 bg-gradient-to-r from-neon-purple/10 to-neon-pink/10 border border-neon-purple/30 rounded-xl">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-neon-purple/20 rounded-lg">
+                      <FiShield className="text-neon-purple" size={20} />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-text-primary font-semibold text-sm">Mint your username forever</h4>
+                      <p className="text-text-secondary text-xs mt-1">
+                        Secure <span className="text-neon-purple font-medium">{formData.username}.danz.eth</span> as your permanent on-chain identity
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowMintModal(true)}
+                      className="px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-pink hover:opacity-90 rounded-lg text-white text-sm font-medium transition-opacity whitespace-nowrap"
+                    >
+                      Mint Now
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
           <div>
@@ -1194,28 +1283,6 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
         </div>
       </div>
 
-      {/* Submit Buttons */}
-      {errors.submit && (
-        <div className="p-4 bg-red-400/10 border border-red-400/20 rounded-lg">
-          <p className="text-red-400">{errors.submit}</p>
-        </div>
-      )}
-
-      <div className="flex gap-4">
-        {onCancel && (
-          <button type="button" onClick={onCancel} className="btn btn-outline" disabled={saving}>
-            Cancel
-          </button>
-        )}
-        <button type="submit" className="btn btn-primary" disabled={saving || !hasChanges}>
-          {saving ? 'Saving...' : 'Save Changes'}
-        </button>
-        {!hasChanges && (
-          <span className="flex items-center text-text-secondary text-sm">
-            <FiCheck className="mr-2" /> All changes saved
-          </span>
-        )}
-      </div>
       </form>
 
       {/* Username Change Modal */}
@@ -1223,8 +1290,21 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
         isOpen={showUsernameModal}
         onClose={() => setShowUsernameModal(false)}
         currentUsername={formData.username}
+        isMinted={user?.username_minted}
         onSuccess={() => {
           toast.success('Username changed successfully!')
+          // Refetch user data
+          window.location.reload()
+        }}
+      />
+
+      {/* Username Mint Modal */}
+      <UsernameMintModal
+        isOpen={showMintModal}
+        onClose={() => setShowMintModal(false)}
+        username={formData.username}
+        onSuccess={() => {
+          toast.success('Username minted successfully!')
           // Refetch user data
           window.location.reload()
         }}

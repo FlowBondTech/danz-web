@@ -8,6 +8,16 @@ export const metadata: Metadata = {
   description:
     'The app that rewards you for dancing, hosting events, and finding your vibe. Transform your passion for movement into meaningful connections and real rewards.',
   keywords: 'dance, rewards, move to earn, dance app, social dance, dance community',
+  manifest: '/manifest.json',
+  themeColor: '#a855f7',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'DANZ',
+  },
+  formatDetection: {
+    telephone: false,
+  },
   openGraph: {
     title: 'DANZ NOW - Move. Connect. Earn.',
     description: 'The movement tech platform for dancers worldwide',
@@ -19,6 +29,15 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'DANZ NOW - Move. Connect. Earn.',
     description: 'The movement tech platform for dancers worldwide',
+  },
+  icons: {
+    icon: [
+      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
   },
 }
 
