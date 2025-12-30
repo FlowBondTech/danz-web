@@ -31,7 +31,6 @@ import {
 import { useToast } from '@/src/hooks/useToast'
 import { ToastContainer } from '@/src/components/ui/Toast'
 import UsernameChangeModal from './UsernameChangeModal'
-import UsernameMintModal from './UsernameMintModal'
 
 export interface ProfileEditFormRef {
   triggerAvatarUpload: () => void
@@ -187,7 +186,6 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
   const [newMusicTag, setNewMusicTag] = useState('')
   const [showPreview, setShowPreview] = useState(false)
   const [showUsernameModal, setShowUsernameModal] = useState(false)
-  const [showMintModal, setShowMintModal] = useState(false)
   const [showMusicSuggestions, setShowMusicSuggestions] = useState(false)
   const musicInputRef = useRef<HTMLInputElement>(null)
   const musicDropdownRef = useRef<HTMLDivElement>(null)
@@ -768,8 +766,8 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
                     Username changes require approval after the first change
                   </p>
                 </div>
-                {/* Mint Username CTA */}
-                <div className="mt-3 p-4 bg-gradient-to-r from-neon-purple/10 to-neon-pink/10 border border-neon-purple/30 rounded-xl">
+                {/* Mint Username CTA - Coming Soon */}
+                <div className="mt-3 p-4 bg-gradient-to-r from-neon-purple/10 to-neon-pink/10 border border-neon-purple/30 rounded-xl opacity-75">
                   <div className="flex items-start gap-3">
                     <div className="p-2 bg-neon-purple/20 rounded-lg">
                       <FiShield className="text-neon-purple" size={20} />
@@ -780,13 +778,9 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
                         Secure <span className="text-neon-purple font-medium">{formData.username}.danz.eth</span> as your permanent on-chain identity
                       </p>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setShowMintModal(true)}
-                      className="px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-pink hover:opacity-90 rounded-lg text-white text-sm font-medium transition-opacity whitespace-nowrap"
-                    >
-                      Mint Now
-                    </button>
+                    <div className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-text-secondary text-sm font-medium whitespace-nowrap">
+                      Coming Soon
+                    </div>
                   </div>
                 </div>
               </>
@@ -1293,18 +1287,6 @@ const ProfileEditForm = forwardRef<ProfileEditFormRef, ProfileEditFormProps>(({ 
         isMinted={user?.username_minted}
         onSuccess={() => {
           toast.success('Username changed successfully!')
-          // Refetch user data
-          window.location.reload()
-        }}
-      />
-
-      {/* Username Mint Modal */}
-      <UsernameMintModal
-        isOpen={showMintModal}
-        onClose={() => setShowMintModal(false)}
-        username={formData.username}
-        onSuccess={() => {
-          toast.success('Username minted successfully!')
           // Refetch user data
           window.location.reload()
         }}
