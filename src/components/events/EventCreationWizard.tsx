@@ -324,19 +324,19 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
                 </div>
 
                 {/* Step Progress */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between overflow-x-auto pb-2 -mb-2">
                   {STEPS.map((step, index) => (
-                    <div key={step.id} className="flex items-center">
+                    <div key={step.id} className="flex items-center flex-shrink-0">
                       <motion.div
                         className={`flex flex-col items-center ${
                           currentStep >= step.id ? 'opacity-100' : 'opacity-40'
                         }`}
                         animate={{
-                          scale: currentStep === step.id ? 1.1 : 1,
+                          scale: currentStep === step.id ? 1.05 : 1,
                         }}
                       >
                         <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-all ${
+                          className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mb-1 transition-all ${
                             currentStep > step.id
                               ? 'bg-green-500 text-text-primary'
                               : currentStep === step.id
@@ -345,9 +345,9 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
                           }`}
                         >
                           {currentStep > step.id ? (
-                            <FiCheck className="w-5 h-5" />
+                            <FiCheck className="w-4 h-4 sm:w-5 sm:h-5" />
                           ) : (
-                            <step.icon className="w-5 h-5" />
+                            <step.icon className="w-4 h-4 sm:w-5 sm:h-5" />
                           )}
                         </div>
                         <span className="text-xs text-text-secondary hidden sm:block">
@@ -356,7 +356,7 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
                       </motion.div>
                       {index < STEPS.length - 1 && (
                         <div
-                          className={`w-8 sm:w-16 h-0.5 mx-2 transition-colors ${
+                          className={`w-4 sm:w-8 lg:w-16 h-0.5 mx-1 sm:mx-2 transition-colors ${
                             currentStep > step.id ? 'bg-green-500' : 'bg-white/10'
                           }`}
                         />

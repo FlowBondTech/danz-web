@@ -123,3 +123,6 @@ pnpm-lock.yaml
 # Environment files (if you want to commit .env.example, don't use .env*)
 .env
 .env.production
+
+# Local Netlify folder
+.netlify
