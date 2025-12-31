@@ -18,7 +18,7 @@ import {
   FiAward,
   FiStar,
 } from 'react-icons/fi'
-import { useCreateEventMutation, RecurrenceType } from '@/src/generated/graphql'
+import { useCreateEventMutation, RecurrenceType, GetEventsDocument } from '@/src/generated/graphql'
 import confetti from 'canvas-confetti'
 import DateTimePicker from './DateTimePicker'
 import DatePicker from './DatePicker'
@@ -97,6 +97,7 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [earnedXP, setEarnedXP] = useState(0)
+  const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState<EventFormData>({
     title: '',
@@ -121,7 +122,10 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
     recurrence_days: [],
   })
 
-  const [createEvent] = useCreateEventMutation()
+  const [createEvent] = useCreateEventMutation({
+    refetchQueries: [{ query: GetEventsDocument }],
+    awaitRefetchQueries: true,
+  })
 
   const updateFormData = (updates: Partial<EventFormData>) => {
     setFormData(prev => ({ ...prev, ...updates }))
@@ -144,15 +148,16 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
 
   const handleSubmit = async () => {
     setIsSubmitting(true)
+    setError(null)
 
     try {
-      await createEvent({
+      const result = await createEvent({
         variables: {
           input: {
             title: formData.title,
             description: formData.description,
             category: formData.category as any,
-            location_name: formData.location_name,
+            location_name: formData.is_virtual ? (formData.location_name || 'Virtual Event') : formData.location_name,
             location_address: formData.location_address || null,
             location_city: formData.location_city || null,
             start_date_time: new Date(formData.start_date_time).toISOString(),
@@ -175,6 +180,20 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
         },
       })
 
+      // Check if the mutation returned data successfully
+      if (result.errors && result.errors.length > 0) {
+        const message = result.errors[0]?.message || 'Failed to create event'
+        setError(message)
+        return
+      }
+
+      if (!result.data?.createEvent) {
+        setError('Event creation failed - no data returned')
+        return
+      }
+
+      console.log('Event created successfully:', result.data.createEvent)
+
       setShowSuccess(true)
       triggerCelebration()
 
@@ -184,8 +203,10 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
         onClose()
         resetForm()
       }, 3000)
-    } catch (error) {
-      console.error('Failed to create event:', error)
+    } catch (err: any) {
+      console.error('Failed to create event:', err)
+      const message = err?.graphQLErrors?.[0]?.message || err?.message || 'Failed to create event. Please try again.'
+      setError(message)
     } finally {
       setIsSubmitting(false)
     }
@@ -194,6 +215,7 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
   const resetForm = () => {
     setCurrentStep(1)
     setShowSuccess(false)
+    setError(null)
     setEarnedXP(0)
     setFormData({
       title: '',
@@ -224,7 +246,9 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
       case 1:
         return formData.title.trim().length > 0 && formData.category
       case 2:
-        return formData.location_name.trim().length > 0 &&
+        // Virtual events don't require location_name
+        const hasLocation = formData.is_virtual || formData.location_name.trim().length > 0
+        return hasLocation &&
                formData.start_date_time &&
                formData.end_date_time
       case 3:
@@ -356,6 +380,13 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
                   </motion.div>
                 </AnimatePresence>
               </div>
+
+              {/* Error Message */}
+              {error && (
+                <div className="mx-6 mb-0 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
+                  {error}
+                </div>
+              )}
 
               {/* Footer Navigation */}
               <div className="p-6 border-t border-white/10 flex items-center justify-between">
