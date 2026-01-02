@@ -408,3 +408,79 @@ query GetGitHubRateLimit {
     used
   }
 }
+
+# Projects Queries
+query GetProjects($include_archived: Boolean) {
+  projects(include_archived: $include_archived) {
+    id
+    name
+    slug
+    description
+    github_repo
+    github_org
+    default_branch
+    project_type
+    platform
+    tech_stack
+    is_active
+    is_archived
+    color
+    icon
+    display_order
+    feature_count
+    task_count
+    open_task_count
+    created_at
+    updated_at
+  }
+}
+
+query GetProject($id: ID!) {
+  project(id: $id) {
+    id
+    name
+    slug
+    description
+    github_repo
+    github_org
+    default_branch
+    project_type
+    platform
+    tech_stack
+    is_active
+    is_archived
+    color
+    icon
+    display_order
+    feature_count
+    task_count
+    open_task_count
+    created_at
+    updated_at
+  }
+}
+
+query GetProjectBySlug($slug: String!) {
+  projectBySlug(slug: $slug) {
+    id
+    name
+    slug
+    description
+    github_repo
+    github_org
+    default_branch
+    project_type
+    platform
+    tech_stack
+    is_active
+    is_archived
+    color
+    icon
+    display_order
+    feature_count
+    task_count
+    open_task_count
+    created_at
+    updated_at
+  }
+}

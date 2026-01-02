@@ -36,6 +36,91 @@ export type Achievement = {
   xp_reward?: Maybe<Scalars['Int']['output']>
 }
 
+export enum AchievementCategory {
+  Duration = 'DURATION',
+  Milestone = 'MILESTONE',
+  Movement = 'MOVEMENT',
+  Sessions = 'SESSIONS',
+  Social = 'SOCIAL',
+  Special = 'SPECIAL',
+  Streak = 'STREAK',
+}
+
+export type AchievementCheckResult = {
+  __typename?: 'AchievementCheckResult'
+  newly_unlocked: Array<AchievementDetails>
+  total_danz_earned: Scalars['Float']['output']
+  total_xp_earned: Scalars['Int']['output']
+}
+
+export type AchievementDefinition = {
+  __typename?: 'AchievementDefinition'
+  category: AchievementCategory
+  danz_reward: Scalars['Float']['output']
+  description: Scalars['String']['output']
+  hidden: Scalars['Boolean']['output']
+  icon: Scalars['String']['output']
+  rarity: AchievementRarity
+  target: Scalars['Int']['output']
+  title: Scalars['String']['output']
+  type: Scalars['String']['output']
+  xp_reward: Scalars['Int']['output']
+}
+
+export type AchievementDetails = {
+  __typename?: 'AchievementDetails'
+  achievement_type: Scalars['String']['output']
+  category: AchievementCategory
+  danz_reward: Scalars['Float']['output']
+  description?: Maybe<Scalars['String']['output']>
+  icon?: Maybe<Scalars['String']['output']>
+  id: Scalars['ID']['output']
+  is_unlocked: Scalars['Boolean']['output']
+  progress?: Maybe<Scalars['Int']['output']>
+  rarity: AchievementRarity
+  target?: Maybe<Scalars['Int']['output']>
+  title: Scalars['String']['output']
+  unlocked_at?: Maybe<Scalars['DateTime']['output']>
+  user_id: Scalars['String']['output']
+  xp_reward: Scalars['Int']['output']
+}
+
+export type AchievementProgress = {
+  __typename?: 'AchievementProgress'
+  achievement_type: Scalars['String']['output']
+  category: AchievementCategory
+  current_progress: Scalars['Int']['output']
+  danz_reward: Scalars['Float']['output']
+  description: Scalars['String']['output']
+  icon: Scalars['String']['output']
+  is_unlocked: Scalars['Boolean']['output']
+  percentage: Scalars['Float']['output']
+  rarity: AchievementRarity
+  target: Scalars['Int']['output']
+  title: Scalars['String']['output']
+  unlocked_at?: Maybe<Scalars['DateTime']['output']>
+  xp_reward: Scalars['Int']['output']
+}
+
+export enum AchievementRarity {
+  Common = 'COMMON',
+  Epic = 'EPIC',
+  Legendary = 'LEGENDARY',
+  Rare = 'RARE',
+  Uncommon = 'UNCOMMON',
+}
+
+export type AchievementStats = {
+  __typename?: 'AchievementStats'
+  by_category: Array<CategoryCount>
+  by_rarity: Array<RarityCount>
+  recent_unlocks: Array<AchievementDetails>
+  total_available: Scalars['Int']['output']
+  total_danz_earned: Scalars['Float']['output']
+  total_unlocked: Scalars['Int']['output']
+  total_xp_earned: Scalars['Int']['output']
+}
+
 export type AcquisitionChannel = {
   __typename?: 'AcquisitionChannel'
   channel: Scalars['String']['output']
@@ -44,8 +129,11 @@ export type AcquisitionChannel = {
 }
 
 export enum ActionType {
+  Onboarding = 'onboarding',
   OpenAchievement = 'open_achievement',
+  OpenBond = 'open_bond',
   OpenEvent = 'open_event',
+  OpenNotifications = 'open_notifications',
   OpenPost = 'open_post',
   OpenProfile = 'open_profile',
   OpenSettings = 'open_settings',
@@ -159,6 +247,48 @@ export enum ActivityVisibility {
 export type AddParticipantsInput = {
   conversation_id: Scalars['ID']['input']
   user_ids: Array<Scalars['String']['input']>
+}
+
+export type AdminEventConnection = {
+  __typename?: 'AdminEventConnection'
+  cancelledCount: Scalars['Int']['output']
+  events: Array<Event>
+  pastCount: Scalars['Int']['output']
+  totalCount: Scalars['Int']['output']
+  upcomingCount: Scalars['Int']['output']
+}
+
+export type AdminNotification = {
+  __typename?: 'AdminNotification'
+  created_at: Scalars['DateTime']['output']
+  id: Scalars['ID']['output']
+  message?: Maybe<Scalars['String']['output']>
+  read: Scalars['Boolean']['output']
+  recipient?: Maybe<User>
+  recipient_id: Scalars['String']['output']
+  sender?: Maybe<User>
+  sender_id?: Maybe<Scalars['String']['output']>
+  sender_type?: Maybe<Scalars['String']['output']>
+  title: Scalars['String']['output']
+  type: Scalars['String']['output']
+}
+
+export type AdminNotificationConnection = {
+  __typename?: 'AdminNotificationConnection'
+  notifications: Array<AdminNotification>
+  totalCount: Scalars['Int']['output']
+  unreadCount: Scalars['Int']['output']
+}
+
+export type AdminReferralStats = {
+  __typename?: 'AdminReferralStats'
+  completedReferrals: Scalars['Int']['output']
+  conversionRate: Scalars['Float']['output']
+  pendingReferrals: Scalars['Int']['output']
+  referralsThisMonth: Scalars['Int']['output']
+  topReferrers: Array<TopReferrer>
+  totalPointsAwarded: Scalars['Int']['output']
+  totalReferrals: Scalars['Int']['output']
 }
 
 export type AdminStats = {
@@ -309,6 +439,13 @@ export type CanViewResult = {
   reason?: Maybe<Scalars['String']['output']>
 }
 
+export type CategoryCount = {
+  __typename?: 'CategoryCount'
+  category: AchievementCategory
+  total: Scalars['Int']['output']
+  unlocked: Scalars['Int']['output']
+}
+
 export type CategoryMetric = {
   __typename?: 'CategoryMetric'
   category: Scalars['String']['output']
@@ -439,6 +576,8 @@ export type ChangelogEntry = {
   id: Scalars['ID']['output']
   is_highlighted: Scalars['Boolean']['output']
   is_public: Scalars['Boolean']['output']
+  project?: Maybe<Project>
+  project_id?: Maybe<Scalars['ID']['output']>
   title: Scalars['String']['output']
   version: Scalars['String']['output']
 }
@@ -583,6 +722,7 @@ export type CreateChangelogEntryInput = {
   github_pr_url?: InputMaybe<Scalars['String']['input']>
   is_highlighted?: InputMaybe<Scalars['Boolean']['input']>
   is_public?: InputMaybe<Scalars['Boolean']['input']>
+  project_id?: InputMaybe<Scalars['ID']['input']>
   title: Scalars['String']['input']
   version: Scalars['String']['input']
 }
@@ -606,6 +746,7 @@ export type CreateDevAlertInput = {
   message: Scalars['String']['input']
   metadata?: InputMaybe<Scalars['JSON']['input']>
   priority?: InputMaybe<DevAlertPriority>
+  project_id?: InputMaybe<Scalars['ID']['input']>
   source_id?: InputMaybe<Scalars['String']['input']>
   source_type?: InputMaybe<Scalars['String']['input']>
   target_roles?: InputMaybe<Array<Scalars['String']['input']>>
@@ -622,6 +763,7 @@ export type CreateDevTaskInput = {
   github_issue_url?: InputMaybe<Scalars['String']['input']>
   parent_task_id?: InputMaybe<Scalars['String']['input']>
   priority: TaskPriority
+  project_id?: InputMaybe<Scalars['ID']['input']>
   sprint?: InputMaybe<Scalars['String']['input']>
   tags?: InputMaybe<Array<Scalars['String']['input']>>
   task_type: DevTaskType
@@ -673,6 +815,7 @@ export type CreateFeatureInventoryInput = {
   name: Scalars['String']['input']
   notes?: InputMaybe<Scalars['String']['input']>
   priority?: InputMaybe<TaskPriority>
+  project_id?: InputMaybe<Scalars['ID']['input']>
   related_files?: InputMaybe<Array<Scalars['String']['input']>>
   slug: Scalars['String']['input']
   status?: InputMaybe<FeatureImplementationStatus>
@@ -683,6 +826,7 @@ export type CreateFeatureRequestInput = {
   category: FeatureRequestCategory
   description?: InputMaybe<Scalars['String']['input']>
   priority?: InputMaybe<TaskPriority>
+  project_id?: InputMaybe<Scalars['ID']['input']>
   tags?: InputMaybe<Array<Scalars['String']['input']>>
   title: Scalars['String']['input']
 }
@@ -726,6 +870,21 @@ export type CreatePostInput = {
   location?: InputMaybe<Scalars['String']['input']>
   media_type?: InputMaybe<MediaType>
   media_url?: InputMaybe<Scalars['String']['input']>
+}
+
+export type CreateProjectInput = {
+  color?: InputMaybe<Scalars['String']['input']>
+  default_branch?: InputMaybe<Scalars['String']['input']>
+  description?: InputMaybe<Scalars['String']['input']>
+  display_order?: InputMaybe<Scalars['Int']['input']>
+  github_org?: InputMaybe<Scalars['String']['input']>
+  github_repo?: InputMaybe<Scalars['String']['input']>
+  icon?: InputMaybe<Scalars['String']['input']>
+  name: Scalars['String']['input']
+  platform?: InputMaybe<ProjectPlatform>
+  project_type: ProjectType
+  slug: Scalars['String']['input']
+  tech_stack?: InputMaybe<Array<Scalars['String']['input']>>
 }
 
 export type DailyActivity = {
@@ -886,6 +1045,8 @@ export type DevAlert = {
   message: Scalars['String']['output']
   metadata?: Maybe<Scalars['JSON']['output']>
   priority: DevAlertPriority
+  project?: Maybe<Project>
+  project_id?: Maybe<Scalars['ID']['output']>
   source_id?: Maybe<Scalars['String']['output']>
   source_type?: Maybe<Scalars['String']['output']>
   target_roles?: Maybe<Array<Scalars['String']['output']>>
@@ -920,6 +1081,7 @@ export type DevAlertFilter = {
   is_dismissed?: InputMaybe<Scalars['Boolean']['input']>
   is_read?: InputMaybe<Scalars['Boolean']['input']>
   priority?: InputMaybe<Array<DevAlertPriority>>
+  project_id?: InputMaybe<Scalars['ID']['input']>
 }
 
 export enum DevAlertPriority {
@@ -977,6 +1139,8 @@ export type DevTask = {
   id: Scalars['ID']['output']
   parent_task?: Maybe<DevTask>
   priority: TaskPriority
+  project?: Maybe<Project>
+  project_id?: Maybe<Scalars['ID']['output']>
   sprint?: Maybe<Scalars['String']['output']>
   started_at?: Maybe<Scalars['DateTime']['output']>
   status: DevTaskStatus
@@ -997,6 +1161,7 @@ export type DevTaskConnection = {
 export type DevTaskFilter = {
   assigned_to?: InputMaybe<Scalars['String']['input']>
   priority?: InputMaybe<Array<TaskPriority>>
+  project_id?: InputMaybe<Scalars['ID']['input']>
   search?: InputMaybe<Scalars['String']['input']>
   sprint?: InputMaybe<Scalars['String']['input']>
   status?: InputMaybe<Array<DevTaskStatus>>
@@ -1307,6 +1472,8 @@ export type FeatureInventory = {
   name: Scalars['String']['output']
   notes?: Maybe<Scalars['String']['output']>
   priority?: Maybe<TaskPriority>
+  project?: Maybe<Project>
+  project_id?: Maybe<Scalars['ID']['output']>
   related_files?: Maybe<Array<Scalars['String']['output']>>
   slug: Scalars['String']['output']
   status: FeatureImplementationStatus
@@ -1341,6 +1508,7 @@ export type FeatureInventoryFilter = {
   is_miniapp_ready?: InputMaybe<Scalars['Boolean']['input']>
   miniapp_api_available?: InputMaybe<Scalars['Boolean']['input']>
   priority?: InputMaybe<Array<TaskPriority>>
+  project_id?: InputMaybe<Scalars['ID']['input']>
   search?: InputMaybe<Scalars['String']['input']>
   status?: InputMaybe<Array<FeatureImplementationStatus>>
 }
@@ -1369,6 +1537,8 @@ export type FeatureRequest = {
   github_pr_url?: Maybe<Scalars['String']['output']>
   id: Scalars['ID']['output']
   priority?: Maybe<TaskPriority>
+  project?: Maybe<Project>
+  project_id?: Maybe<Scalars['ID']['output']>
   requested_at: Scalars['DateTime']['output']
   requested_by?: Maybe<User>
   status: FeatureRequestStatus
@@ -1409,6 +1579,7 @@ export type FeatureRequestFilter = {
   assigned_to?: InputMaybe<Scalars['String']['input']>
   category?: InputMaybe<Array<FeatureRequestCategory>>
   priority?: InputMaybe<Array<TaskPriority>>
+  project_id?: InputMaybe<Scalars['ID']['input']>
   requested_by?: InputMaybe<Scalars['String']['input']>
   search?: InputMaybe<Scalars['String']['input']>
   status?: InputMaybe<Array<FeatureRequestStatus>>
@@ -1432,6 +1603,41 @@ export type FeedResponse = {
   posts: Array<Post>
 }
 
+export type Feedback = {
+  __typename?: 'Feedback'
+  admin_notes?: Maybe<Scalars['String']['output']>
+  app_version?: Maybe<Scalars['String']['output']>
+  created_at: Scalars['DateTime']['output']
+  device_info?: Maybe<Scalars['String']['output']>
+  id: Scalars['ID']['output']
+  message: Scalars['String']['output']
+  resolved_at?: Maybe<Scalars['DateTime']['output']>
+  resolved_by?: Maybe<Scalars['String']['output']>
+  screenshot_url?: Maybe<Scalars['String']['output']>
+  status: FeedbackStatus
+  updated_at: Scalars['DateTime']['output']
+  user?: Maybe<User>
+  user_id: Scalars['String']['output']
+}
+
+export type FeedbackStats = {
+  __typename?: 'FeedbackStats'
+  dismissed: Scalars['Int']['output']
+  in_progress: Scalars['Int']['output']
+  pending: Scalars['Int']['output']
+  resolved: Scalars['Int']['output']
+  reviewed: Scalars['Int']['output']
+  total: Scalars['Int']['output']
+}
+
+export enum FeedbackStatus {
+  Dismissed = 'dismissed',
+  InProgress = 'in_progress',
+  Pending = 'pending',
+  Resolved = 'resolved',
+  Reviewed = 'reviewed',
+}
+
 export type FileUploadResponse = {
   __typename?: 'FileUploadResponse'
   filename?: Maybe<Scalars['String']['output']>
@@ -1444,6 +1650,7 @@ export type FileUploadResponse = {
 
 export type FreestyleSession = {
   __typename?: 'FreestyleSession'
+  achievements_unlocked?: Maybe<Array<Scalars['String']['output']>>
   completed: Scalars['Boolean']['output']
   created_at: Scalars['DateTime']['output']
   duration_seconds: Scalars['Int']['output']
@@ -1916,6 +2123,7 @@ export type Mutation = {
   addFeatureRequestComment: FeatureRequestComment
   addParticipants: Conversation
   addReaction: Message
+  adminDeleteEvent: MutationResponse
   applyPrivacyPreset: PrivacySettings
   approveOrganizer: User
   awardManualPoints: PointTransaction
@@ -1924,14 +2132,17 @@ export type Mutation = {
   blockUser: UserBlock
   /** Cancel a pending request I sent */
   cancelBondRequest: Scalars['Boolean']['output']
+  cancelEvent: Event
   cancelEventRegistration: MutationResponse
   /** Cancel a pending username change request */
   cancelUsernameChangeRequest: MutationResponse
+  checkAchievements: AchievementCheckResult
   checkInEvent: EventAttendance
   checkInParticipant: EventRegistration
   checkInWithCode: CheckInResponse
   checkOutEvent: EventAttendance
   checkSystemHealth: Array<SystemHealth>
+  claimAchievementReward: AchievementDetails
   claimChallengeReward: UserChallenge
   clearGitHubCache: Scalars['Boolean']['output']
   commentOnActivity: Activity
@@ -1953,6 +2164,7 @@ export type Mutation = {
   createNotification: Notification
   createPointAction: PointAction
   createPost: Post
+  createProject: Project
   createSeason: SeasonalLeaderboard
   deactivateChallenge: Challenge
   declineManagerInvitation: EventManager
@@ -1974,6 +2186,7 @@ export type Mutation = {
   deleteNotification: MutationResponse
   deletePointAction: MutationResponse
   deletePost: MutationResponse
+  deleteProject: Scalars['Boolean']['output']
   dismissAllSuggestions: Scalars['Boolean']['output']
   dismissSuggestion: Scalars['Boolean']['output']
   endSeason: MutationResponse
@@ -2048,6 +2261,8 @@ export type Mutation = {
   startChallenge: UserChallenge
   startConversation: Conversation
   startTask: DevTask
+  /** Submit feedback from user */
+  submitFeedback: Feedback
   submitOrganizerApplication: OrganizerApplication
   syncHealthData: WearableSyncResult
   syncMotionData: WearableSyncResult
@@ -2074,6 +2289,8 @@ export type Mutation = {
   updateEventManager: EventManager
   updateFeatureInventory: FeatureInventory
   updateFeatureRequest: FeatureRequest
+  /** Update feedback status (admin only) */
+  updateFeedbackStatus: Feedback
   updateFreestylePreferences: UserPreferences
   updateMessage: Message
   updateNotificationPreferences: NotificationPreferences
@@ -2081,6 +2298,7 @@ export type Mutation = {
   updatePost: Post
   updatePrivacySettings: PrivacySettings
   updateProfile: User
+  updateProject: Project
   updateRegistrationStatus: EventRegistration
   updateUserRole: User
   updateWearableDevice: WearableDevice
@@ -2116,12 +2334,17 @@ export type MutationAddReactionArgs = {
   message_id: Scalars['ID']['input']
 }
 
+export type MutationAdminDeleteEventArgs = {
+  eventId: Scalars['ID']['input']
+}
+
 export type MutationApplyPrivacyPresetArgs = {
   preset: PrivacyPresetType
 }
 
 export type MutationApproveOrganizerArgs = {
   approved: Scalars['Boolean']['input']
+  rejection_reason?: InputMaybe<Scalars['String']['input']>
   userId: Scalars['String']['input']
 }
 
@@ -2147,6 +2370,10 @@ export type MutationCancelBondRequestArgs = {
   request_id: Scalars['ID']['input']
 }
 
+export type MutationCancelEventArgs = {
+  id: Scalars['ID']['input']
+}
+
 export type MutationCancelEventRegistrationArgs = {
   eventId: Scalars['ID']['input']
 }
@@ -2170,6 +2397,10 @@ export type MutationCheckInWithCodeArgs = {
 
 export type MutationCheckOutEventArgs = {
   input: CheckOutEventInput
+}
+
+export type MutationClaimAchievementRewardArgs = {
+  achievementType: Scalars['String']['input']
 }
 
 export type MutationClaimChallengeRewardArgs = {
@@ -2268,6 +2499,10 @@ export type MutationCreatePostArgs = {
   input: CreatePostInput
 }
 
+export type MutationCreateProjectArgs = {
+  input: CreateProjectInput
+}
+
 export type MutationCreateSeasonArgs = {
   endsAt: Scalars['DateTime']['input']
   name: Scalars['String']['input']
@@ -2353,6 +2588,10 @@ export type MutationDeletePointActionArgs = {
 
 export type MutationDeletePostArgs = {
   postId: Scalars['ID']['input']
+}
+
+export type MutationDeleteProjectArgs = {
+  id: Scalars['ID']['input']
 }
 
 export type MutationDismissSuggestionArgs = {
@@ -2601,6 +2840,10 @@ export type MutationStartTaskArgs = {
   id: Scalars['ID']['input']
 }
 
+export type MutationSubmitFeedbackArgs = {
+  input: SubmitFeedbackInput
+}
+
 export type MutationSubmitOrganizerApplicationArgs = {
   input: SubmitOrganizerApplicationInput
 }
@@ -2716,6 +2959,10 @@ export type MutationUpdateFeatureRequestArgs = {
   input: UpdateFeatureRequestInput
 }
 
+export type MutationUpdateFeedbackStatusArgs = {
+  input: UpdateFeedbackStatusInput
+}
+
 export type MutationUpdateFreestylePreferencesArgs = {
   input: UpdateUserPreferencesInput
 }
@@ -2744,6 +2991,11 @@ export type MutationUpdatePrivacySettingsArgs = {
 
 export type MutationUpdateProfileArgs = {
   input: UpdateProfileInput
+}
+
+export type MutationUpdateProjectArgs = {
+  id: Scalars['ID']['input']
+  input: UpdateProjectInput
 }
 
 export type MutationUpdateRegistrationStatusArgs = {
@@ -3129,9 +3381,50 @@ export enum ProfileVisibility {
   Public = 'public',
 }
 
+export type Project = {
+  __typename?: 'Project'
+  color?: Maybe<Scalars['String']['output']>
+  created_at: Scalars['DateTime']['output']
+  default_branch?: Maybe<Scalars['String']['output']>
+  description?: Maybe<Scalars['String']['output']>
+  display_order?: Maybe<Scalars['Int']['output']>
+  feature_count?: Maybe<Scalars['Int']['output']>
+  github_org?: Maybe<Scalars['String']['output']>
+  github_repo?: Maybe<Scalars['String']['output']>
+  icon?: Maybe<Scalars['String']['output']>
+  id: Scalars['ID']['output']
+  is_active: Scalars['Boolean']['output']
+  is_archived: Scalars['Boolean']['output']
+  name: Scalars['String']['output']
+  open_task_count?: Maybe<Scalars['Int']['output']>
+  platform?: Maybe<ProjectPlatform>
+  project_type: ProjectType
+  slug: Scalars['String']['output']
+  task_count?: Maybe<Scalars['Int']['output']>
+  tech_stack?: Maybe<Array<Scalars['String']['output']>>
+  updated_at: Scalars['DateTime']['output']
+}
+
+export enum ProjectPlatform {
+  Admin = 'admin',
+  Api = 'api',
+  Mobile = 'mobile',
+  Telegram = 'telegram',
+  Web = 'web',
+}
+
+export enum ProjectType {
+  App = 'app',
+  Backend = 'backend',
+  Docs = 'docs',
+  Library = 'library',
+}
+
 export type Query = {
   __typename?: 'Query'
   _empty?: Maybe<Scalars['String']['output']>
+  achievementDefinitions: Array<AchievementDefinition>
+  achievementsByCategory: Array<AchievementProgress>
   activity?: Maybe<Activity>
   activityFeed: ActivityFeed
   activityFeedGrouped: Array<ActivityGroup>
@@ -3139,6 +3432,8 @@ export type Query = {
   adminDashboardAnalytics: Scalars['JSON']['output']
   adminStats: AdminStats
   allChallenges: Array<Challenge>
+  /** Get all feedback (admin only) */
+  allFeedback: Array<Feedback>
   /** Admin: Get all username change requests with optional filters */
   allUsernameChangeRequests: UsernameChangeRequestConnection
   analyticsReport: Scalars['JSON']['output']
@@ -3186,11 +3481,16 @@ export type Query = {
   featureInventoryStats: FeatureInventoryStats
   featureRequest?: Maybe<FeatureRequest>
   featureRequests: FeatureRequestConnection
+  /** Get feedback stats (admin only) */
+  feedbackStats: FeedbackStats
   freestyleSession?: Maybe<FreestyleSession>
   friendsActivityFeed: ActivityFeed
   friendsDanceSessions: Array<DanceSession>
   friendsLeaderboard: Leaderboard
+  getAdminReferralStats: AdminReferralStats
   getAllEventRegistrations: Array<EventRegistration>
+  getAllEvents: AdminEventConnection
+  getAllNotifications: AdminNotificationConnection
   getAllPointActions: Array<PointAction>
   getAllTransactions: TransactionHistory
   getAllUsers: Array<User>
@@ -3226,6 +3526,7 @@ export type Query = {
   githubRepos: Array<GitHubRepo>
   globalActivityFeed: ActivityFeed
   globalLeaderboard: Leaderboard
+  isAchievementUnlocked: Scalars['Boolean']['output']
   isUserBlocked: Scalars['Boolean']['output']
   latestChangelog?: Maybe<ChangelogVersion>
   latestWearableReading?: Maybe<WearableHealthData>
@@ -3253,6 +3554,8 @@ export type Query = {
   miniappUnreadCount: Scalars['Int']['output']
   miniappXP: Scalars['Int']['output']
   monthlyLeaderboard: Leaderboard
+  myAchievementStats: AchievementStats
+  myAchievements: Array<AchievementProgress>
   myActiveChallenges: Array<UserChallenge>
   myActivityFeed: ActivityFeed
   myActivityStats: ActivityStats
@@ -3287,6 +3590,7 @@ export type Query = {
   myReferrals: Array<Referral>
   /** Get bond requests sent by me */
   mySentBondRequests: Array<BondRequest>
+  myUnlockedAchievements: Array<AchievementDetails>
   /** Get the current user's username change eligibility status */
   myUsernameChangeEligibility: UsernameChangeEligibility
   /** Get the current user's username change history */
@@ -3304,6 +3608,9 @@ export type Query = {
   pendingUsernameChangeRequests: UsernameChangeRequestConnection
   platformAnalytics: PlatformAnalytics
   privacyPresets: Array<PrivacyPreset>
+  project?: Maybe<Project>
+  projectBySlug?: Maybe<Project>
+  projects: Array<Project>
   realTimeAnalytics: RealTimeAnalytics
   recentActivities: Array<Activity>
   regionalLeaderboard: RegionalLeaderboard
@@ -3334,6 +3641,10 @@ export type Query = {
   weeklyLeaderboard: Leaderboard
 }
 
+export type QueryAchievementsByCategoryArgs = {
+  category: AchievementCategory
+}
+
 export type QueryActivityArgs = {
   id: Scalars['String']['input']
 }
@@ -3352,6 +3663,12 @@ export type QueryActivityFeedGroupedArgs = {
 export type QueryAllChallengesArgs = {
   isActive?: InputMaybe<Scalars['Boolean']['input']>
   type?: InputMaybe<ChallengeType>
+}
+
+export type QueryAllFeedbackArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  status?: InputMaybe<FeedbackStatus>
 }
 
 export type QueryAllUsernameChangeRequestsArgs = {
@@ -3549,6 +3866,20 @@ export type QueryFriendsLeaderboardArgs = {
   metric: LeaderboardMetric
 }
 
+export type QueryGetAllEventsArgs = {
+  category?: InputMaybe<EventCategory>
+  facilitator_id?: InputMaybe<Scalars['String']['input']>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  status?: InputMaybe<EventStatus>
+}
+
+export type QueryGetAllNotificationsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  type?: InputMaybe<Scalars['String']['input']>
+}
+
 export type QueryGetAllPointActionsArgs = {
   category?: InputMaybe<PointActionCategory>
   is_active?: InputMaybe<Scalars['Boolean']['input']>
@@ -3685,6 +4016,10 @@ export type QueryGlobalActivityFeedArgs = {
 export type QueryGlobalLeaderboardArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   metric: LeaderboardMetric
+}
+
+export type QueryIsAchievementUnlockedArgs = {
+  achievementType: Scalars['String']['input']
 }
 
 export type QueryIsUserBlockedArgs = {
@@ -3868,6 +4203,18 @@ export type QueryPlatformAnalyticsArgs = {
   options?: InputMaybe<AnalyticsOptions>
 }
 
+export type QueryProjectArgs = {
+  id: Scalars['ID']['input']
+}
+
+export type QueryProjectBySlugArgs = {
+  slug: Scalars['String']['input']
+}
+
+export type QueryProjectsArgs = {
+  include_archived?: InputMaybe<Scalars['Boolean']['input']>
+}
+
 export type QueryRecentActivitiesArgs = {
   since: Scalars['DateTime']['input']
   types?: InputMaybe<Array<ActivityType>>
@@ -3965,6 +4312,13 @@ export type QueryWearableStatsArgs = {
 export type QueryWeeklyLeaderboardArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>
   metric: LeaderboardMetric
+}
+
+export type RarityCount = {
+  __typename?: 'RarityCount'
+  rarity: AchievementRarity
+  total: Scalars['Int']['output']
+  unlocked: Scalars['Int']['output']
 }
 
 export type RealTimeAnalytics = {
@@ -4266,6 +4620,13 @@ export type StyleMetric = {
   style: Scalars['String']['output']
 }
 
+export type SubmitFeedbackInput = {
+  app_version?: InputMaybe<Scalars['String']['input']>
+  device_info?: InputMaybe<Scalars['String']['input']>
+  message: Scalars['String']['input']
+  screenshot_url?: InputMaybe<Scalars['String']['input']>
+}
+
 export type SubmitOrganizerApplicationInput = {
   additional_info?: InputMaybe<Scalars['String']['input']>
   dance_styles?: InputMaybe<Array<Scalars['String']['input']>>
@@ -4374,6 +4735,15 @@ export type TopEarner = {
   xp_earned: Scalars['Float']['output']
 }
 
+export type TopReferrer = {
+  __typename?: 'TopReferrer'
+  display_name?: Maybe<Scalars['String']['output']>
+  points_earned: Scalars['Int']['output']
+  referral_count: Scalars['Int']['output']
+  user_id: Scalars['String']['output']
+  username?: Maybe<Scalars['String']['output']>
+}
+
 export type TrackReferralClickInput = {
   device_info?: InputMaybe<Scalars['JSON']['input']>
   ip_address?: InputMaybe<Scalars['String']['input']>
@@ -4428,6 +4798,12 @@ export type TypingIndicator = {
   user: User
 }
 
+export type UnlockedAchievement = {
+  __typename?: 'UnlockedAchievement'
+  achievement: AchievementDetails
+  is_new: Scalars['Boolean']['output']
+}
+
 export type UpdateChangelogEntryInput = {
   category?: InputMaybe<ChangelogCategory>
   description?: InputMaybe<Scalars['String']['input']>
@@ -4436,6 +4812,7 @@ export type UpdateChangelogEntryInput = {
   github_pr_url?: InputMaybe<Scalars['String']['input']>
   is_highlighted?: InputMaybe<Scalars['Boolean']['input']>
   is_public?: InputMaybe<Scalars['Boolean']['input']>
+  project_id?: InputMaybe<Scalars['ID']['input']>
   title?: InputMaybe<Scalars['String']['input']>
   version?: InputMaybe<Scalars['String']['input']>
 }
@@ -4456,6 +4833,7 @@ export type UpdateDevTaskInput = {
   github_issue_url?: InputMaybe<Scalars['String']['input']>
   github_pr_url?: InputMaybe<Scalars['String']['input']>
   priority?: InputMaybe<TaskPriority>
+  project_id?: InputMaybe<Scalars['ID']['input']>
   sprint?: InputMaybe<Scalars['String']['input']>
   status?: InputMaybe<DevTaskStatus>
   tags?: InputMaybe<Array<Scalars['String']['input']>>
@@ -4519,6 +4897,7 @@ export type UpdateFeatureInventoryInput = {
   name?: InputMaybe<Scalars['String']['input']>
   notes?: InputMaybe<Scalars['String']['input']>
   priority?: InputMaybe<TaskPriority>
+  project_id?: InputMaybe<Scalars['ID']['input']>
   related_files?: InputMaybe<Array<Scalars['String']['input']>>
   status?: InputMaybe<FeatureImplementationStatus>
   target_version?: InputMaybe<Scalars['String']['input']>
@@ -4533,10 +4912,17 @@ export type UpdateFeatureRequestInput = {
   github_issue_url?: InputMaybe<Scalars['String']['input']>
   github_pr_url?: InputMaybe<Scalars['String']['input']>
   priority?: InputMaybe<TaskPriority>
+  project_id?: InputMaybe<Scalars['ID']['input']>
   status?: InputMaybe<FeatureRequestStatus>
   tags?: InputMaybe<Array<Scalars['String']['input']>>
   target_version?: InputMaybe<Scalars['String']['input']>
   title?: InputMaybe<Scalars['String']['input']>
+}
+
+export type UpdateFeedbackStatusInput = {
+  admin_notes?: InputMaybe<Scalars['String']['input']>
+  feedback_id: Scalars['ID']['input']
+  status: FeedbackStatus
 }
 
 export type UpdateMessageInput = {
@@ -4635,6 +5021,22 @@ export type UpdateProfileInput = {
   website?: InputMaybe<Scalars['String']['input']>
   website_url?: InputMaybe<Scalars['String']['input']>
   youtube?: InputMaybe<Scalars['String']['input']>
+}
+
+export type UpdateProjectInput = {
+  color?: InputMaybe<Scalars['String']['input']>
+  default_branch?: InputMaybe<Scalars['String']['input']>
+  description?: InputMaybe<Scalars['String']['input']>
+  display_order?: InputMaybe<Scalars['Int']['input']>
+  github_org?: InputMaybe<Scalars['String']['input']>
+  github_repo?: InputMaybe<Scalars['String']['input']>
+  icon?: InputMaybe<Scalars['String']['input']>
+  is_active?: InputMaybe<Scalars['Boolean']['input']>
+  is_archived?: InputMaybe<Scalars['Boolean']['input']>
+  name?: InputMaybe<Scalars['String']['input']>
+  platform?: InputMaybe<ProjectPlatform>
+  project_type?: InputMaybe<ProjectType>
+  tech_stack?: InputMaybe<Array<Scalars['String']['input']>>
 }
 
 export type UpdateUserPreferencesInput = {
@@ -8091,6 +8493,99 @@ export type GetGitHubRateLimitQuery = {
     remaining: number
     reset_at: any
     used: number
+  } | null
+}
+
+export type GetProjectsQueryVariables = Exact<{
+  include_archived?: InputMaybe<Scalars['Boolean']['input']>
+}>
+
+export type GetProjectsQuery = {
+  __typename?: 'Query'
+  projects: Array<{
+    __typename?: 'Project'
+    id: string
+    name: string
+    slug: string
+    description?: string | null
+    github_repo?: string | null
+    github_org?: string | null
+    default_branch?: string | null
+    project_type: ProjectType
+    platform?: ProjectPlatform | null
+    tech_stack?: Array<string> | null
+    is_active: boolean
+    is_archived: boolean
+    color?: string | null
+    icon?: string | null
+    display_order?: number | null
+    feature_count?: number | null
+    task_count?: number | null
+    open_task_count?: number | null
+    created_at: any
+    updated_at: any
+  }>
+}
+
+export type GetProjectQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type GetProjectQuery = {
+  __typename?: 'Query'
+  project?: {
+    __typename?: 'Project'
+    id: string
+    name: string
+    slug: string
+    description?: string | null
+    github_repo?: string | null
+    github_org?: string | null
+    default_branch?: string | null
+    project_type: ProjectType
+    platform?: ProjectPlatform | null
+    tech_stack?: Array<string> | null
+    is_active: boolean
+    is_archived: boolean
+    color?: string | null
+    icon?: string | null
+    display_order?: number | null
+    feature_count?: number | null
+    task_count?: number | null
+    open_task_count?: number | null
+    created_at: any
+    updated_at: any
+  } | null
+}
+
+export type GetProjectBySlugQueryVariables = Exact<{
+  slug: Scalars['String']['input']
+}>
+
+export type GetProjectBySlugQuery = {
+  __typename?: 'Query'
+  projectBySlug?: {
+    __typename?: 'Project'
+    id: string
+    name: string
+    slug: string
+    description?: string | null
+    github_repo?: string | null
+    github_org?: string | null
+    default_branch?: string | null
+    project_type: ProjectType
+    platform?: ProjectPlatform | null
+    tech_stack?: Array<string> | null
+    is_active: boolean
+    is_archived: boolean
+    color?: string | null
+    icon?: string | null
+    display_order?: number | null
+    feature_count?: number | null
+    task_count?: number | null
+    open_task_count?: number | null
+    created_at: any
+    updated_at: any
   } | null
 }
 
@@ -17854,6 +18349,235 @@ export type GetGitHubRateLimitSuspenseQueryHookResult = ReturnType<
 export type GetGitHubRateLimitQueryResult = Apollo.QueryResult<
   GetGitHubRateLimitQuery,
   GetGitHubRateLimitQueryVariables
+>
+export const GetProjectsDocument = gql`
+    query GetProjects($include_archived: Boolean) {
+  projects(include_archived: $include_archived) {
+    id
+    name
+    slug
+    description
+    github_repo
+    github_org
+    default_branch
+    project_type
+    platform
+    tech_stack
+    is_active
+    is_archived
+    color
+    icon
+    display_order
+    feature_count
+    task_count
+    open_task_count
+    created_at
+    updated_at
+  }
+}
+    `
+
+/**
+ * __useGetProjectsQuery__
+ *
+ * To run a query within a React component, call `useGetProjectsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProjectsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProjectsQuery({
+ *   variables: {
+ *      include_archived: // value for 'include_archived'
+ *   },
+ * });
+ */
+export function useGetProjectsQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetProjectsQuery, GetProjectsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetProjectsQuery, GetProjectsQueryVariables>(GetProjectsDocument, options)
+}
+export function useGetProjectsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetProjectsQuery, GetProjectsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetProjectsQuery, GetProjectsQueryVariables>(
+    GetProjectsDocument,
+    options,
+  )
+}
+export function useGetProjectsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetProjectsQuery, GetProjectsQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetProjectsQuery, GetProjectsQueryVariables>(
+    GetProjectsDocument,
+    options,
+  )
+}
+export type GetProjectsQueryHookResult = ReturnType<typeof useGetProjectsQuery>
+export type GetProjectsLazyQueryHookResult = ReturnType<typeof useGetProjectsLazyQuery>
+export type GetProjectsSuspenseQueryHookResult = ReturnType<typeof useGetProjectsSuspenseQuery>
+export type GetProjectsQueryResult = Apollo.QueryResult<GetProjectsQuery, GetProjectsQueryVariables>
+export const GetProjectDocument = gql`
+    query GetProject($id: ID!) {
+  project(id: $id) {
+    id
+    name
+    slug
+    description
+    github_repo
+    github_org
+    default_branch
+    project_type
+    platform
+    tech_stack
+    is_active
+    is_archived
+    color
+    icon
+    display_order
+    feature_count
+    task_count
+    open_task_count
+    created_at
+    updated_at
+  }
+}
+    `
+
+/**
+ * __useGetProjectQuery__
+ *
+ * To run a query within a React component, call `useGetProjectQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProjectQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProjectQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetProjectQuery(
+  baseOptions: Apollo.QueryHookOptions<GetProjectQuery, GetProjectQueryVariables> &
+    ({ variables: GetProjectQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetProjectQuery, GetProjectQueryVariables>(GetProjectDocument, options)
+}
+export function useGetProjectLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetProjectQuery, GetProjectQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetProjectQuery, GetProjectQueryVariables>(GetProjectDocument, options)
+}
+export function useGetProjectSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetProjectQuery, GetProjectQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetProjectQuery, GetProjectQueryVariables>(
+    GetProjectDocument,
+    options,
+  )
+}
+export type GetProjectQueryHookResult = ReturnType<typeof useGetProjectQuery>
+export type GetProjectLazyQueryHookResult = ReturnType<typeof useGetProjectLazyQuery>
+export type GetProjectSuspenseQueryHookResult = ReturnType<typeof useGetProjectSuspenseQuery>
+export type GetProjectQueryResult = Apollo.QueryResult<GetProjectQuery, GetProjectQueryVariables>
+export const GetProjectBySlugDocument = gql`
+    query GetProjectBySlug($slug: String!) {
+  projectBySlug(slug: $slug) {
+    id
+    name
+    slug
+    description
+    github_repo
+    github_org
+    default_branch
+    project_type
+    platform
+    tech_stack
+    is_active
+    is_archived
+    color
+    icon
+    display_order
+    feature_count
+    task_count
+    open_task_count
+    created_at
+    updated_at
+  }
+}
+    `
+
+/**
+ * __useGetProjectBySlugQuery__
+ *
+ * To run a query within a React component, call `useGetProjectBySlugQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProjectBySlugQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProjectBySlugQuery({
+ *   variables: {
+ *      slug: // value for 'slug'
+ *   },
+ * });
+ */
+export function useGetProjectBySlugQuery(
+  baseOptions: Apollo.QueryHookOptions<GetProjectBySlugQuery, GetProjectBySlugQueryVariables> &
+    ({ variables: GetProjectBySlugQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetProjectBySlugQuery, GetProjectBySlugQueryVariables>(
+    GetProjectBySlugDocument,
+    options,
+  )
+}
+export function useGetProjectBySlugLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetProjectBySlugQuery, GetProjectBySlugQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetProjectBySlugQuery, GetProjectBySlugQueryVariables>(
+    GetProjectBySlugDocument,
+    options,
+  )
+}
+export function useGetProjectBySlugSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetProjectBySlugQuery, GetProjectBySlugQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetProjectBySlugQuery, GetProjectBySlugQueryVariables>(
+    GetProjectBySlugDocument,
+    options,
+  )
+}
+export type GetProjectBySlugQueryHookResult = ReturnType<typeof useGetProjectBySlugQuery>
+export type GetProjectBySlugLazyQueryHookResult = ReturnType<typeof useGetProjectBySlugLazyQuery>
+export type GetProjectBySlugSuspenseQueryHookResult = ReturnType<
+  typeof useGetProjectBySlugSuspenseQuery
+>
+export type GetProjectBySlugQueryResult = Apollo.QueryResult<
+  GetProjectBySlugQuery,
+  GetProjectBySlugQueryVariables
 >
 export const GetEventByCheckinCodeDocument = gql`
     query GetEventByCheckinCode($code: String!) {

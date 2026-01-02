@@ -15,6 +15,7 @@ import {
   FiCode,
   FiDatabase,
   FiEdit2,
+  FiFolder,
   FiGitBranch,
   FiGitPullRequest,
   FiList,
@@ -23,6 +24,7 @@ import {
   FiRefreshCw,
   FiServer,
   FiSettings,
+  FiSmartphone,
   FiTag,
   FiTrendingUp,
   FiUser,
@@ -122,6 +124,32 @@ const CREATE_DEV_TASK = gql`
   }
 `
 
+const GET_PROJECTS = gql`
+  query GetProjects($include_archived: Boolean) {
+    projects(include_archived: $include_archived) {
+      id
+      name
+      slug
+      description
+      github_repo
+      github_org
+      project_type
+      platform
+      tech_stack
+      is_active
+      is_archived
+      color
+      icon
+      display_order
+      feature_count
+      task_count
+      open_task_count
+      created_at
+      updated_at
+    }
+  }
+`
+
 interface SystemHealth {
   service: string
   status: string
@@ -180,6 +208,32 @@ interface DevStats {
   } | null
 }
 
+interface Project {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  github_repo: string | null
+  github_org: string | null
+  project_type: string
+  platform: string | null
+  tech_stack: string[] | null
+  is_active: boolean
+  is_archived: boolean
+  color: string | null
+  icon: string | null
+  display_order: number
+  feature_count: number
+  task_count: number
+  open_task_count: number
+  created_at: string
+  updated_at: string
+}
+
+interface ProjectsData {
+  projects: Project[]
+}
+
 // Task status columns for kanban
 const TASK_COLUMNS = [
   { id: 'todo', label: 'To Do', color: 'gray' },
@@ -209,10 +263,11 @@ const TASK_TYPE_ICONS: Record<string, string> = {
 export default function DevPanelPage() {
   const { authenticated, ready } = usePrivy()
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<'overview' | 'features' | 'tasks' | 'github' | 'system'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'projects' | 'features' | 'tasks' | 'github' | 'system'>('overview')
   const [showCreateTask, setShowCreateTask] = useState(false)
   const [selectedTask, setSelectedTask] = useState<DevTask | null>(null)
   const [taskFilter, setTaskFilter] = useState<string>('all')
+  const [showArchivedProjects, setShowArchivedProjects] = useState(false)
 
   const { data: profileData, loading: profileLoading } = useGetMyProfileQuery({
     skip: !authenticated,
@@ -239,6 +294,14 @@ export default function DevPanelPage() {
     GET_DEV_TASKS,
     {
       variables: { limit: 100 },
+      skip: !authenticated || !['dev', 'admin'].includes(userRole),
+    }
+  )
+
+  const { data: projectsData, loading: projectsLoading, refetch: refetchProjects } = useQuery<ProjectsData>(
+    GET_PROJECTS,
+    {
+      variables: { include_archived: showArchivedProjects },
       skip: !authenticated || !['dev', 'admin'].includes(userRole),
     }
   )
@@ -277,6 +340,7 @@ export default function DevPanelPage() {
     refetchStats()
     refetchHealth()
     refetchTasks()
+    refetchProjects()
   }
 
   const handleTaskStatusChange = async (taskId: string, newStatus: string) => {
@@ -379,6 +443,7 @@ export default function DevPanelPage() {
         <div className="flex gap-2 mb-6 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
           {[
             { id: 'overview', label: 'Overview', icon: FiTrendingUp },
+            { id: 'projects', label: 'Projects', icon: FiFolder },
             { id: 'features', label: 'Features', icon: FiMessageSquare },
             { id: 'tasks', label: 'Tasks', icon: FiList },
             { id: 'github', label: 'GitHub', icon: FiGitBranch },
@@ -685,6 +750,139 @@ export default function DevPanelPage() {
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Projects Tab */}
+        {activeTab === 'projects' && (
+          <div className="space-y-6">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-text-primary">DANZ Projects</h2>
+                <p className="text-text-secondary text-sm">Manage all projects across the DANZ ecosystem</p>
+              </div>
+              <label className="flex items-center gap-2 text-sm text-text-secondary cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={showArchivedProjects}
+                  onChange={(e) => setShowArchivedProjects(e.target.checked)}
+                  className="rounded border-white/20 bg-bg-primary text-neon-purple focus:ring-neon-purple"
+                />
+                Show archived
+              </label>
+            </div>
+
+            {/* Projects Grid */}
+            {projectsLoading ? (
+              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 animate-pulse">
+                    <div className="h-6 bg-white/10 rounded w-2/3 mb-4" />
+                    <div className="h-4 bg-white/10 rounded w-full mb-2" />
+                    <div className="h-4 bg-white/10 rounded w-3/4" />
+                  </div>
+                ))}
+              </div>
+            ) : projectsData?.projects && projectsData.projects.length > 0 ? (
+              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {projectsData.projects.map(project => (
+                  <div
+                    key={project.id}
+                    className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 hover:border-neon-purple/40 transition-colors"
+                    style={{ borderLeftColor: project.color || '#8B5CF6', borderLeftWidth: '4px' }}
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+                          style={{ backgroundColor: `${project.color}20` }}
+                        >
+                          {project.icon === 'server' && <FiServer style={{ color: project.color || '#8B5CF6' }} />}
+                          {project.icon === 'smartphone' && <FiSmartphone style={{ color: project.color || '#8B5CF6' }} />}
+                          {project.icon === 'send' && <FiMessageSquare style={{ color: project.color || '#8B5CF6' }} />}
+                          {project.icon === 'globe' && <FiGitBranch style={{ color: project.color || '#8B5CF6' }} />}
+                          {project.icon === 'shield' && <FiSettings style={{ color: project.color || '#8B5CF6' }} />}
+                          {project.icon === 'calendar' && <FiClock style={{ color: project.color || '#8B5CF6' }} />}
+                          {!project.icon && <FiFolder style={{ color: project.color || '#8B5CF6' }} />}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-text-primary">{project.name}</h3>
+                          <p className="text-xs text-text-secondary">{project.slug}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2 py-1 rounded text-xs font-medium ${
+                          project.platform === 'api' ? 'bg-green-500/20 text-green-400' :
+                          project.platform === 'mobile' ? 'bg-purple-500/20 text-purple-400' :
+                          project.platform === 'telegram' ? 'bg-blue-500/20 text-blue-400' :
+                          project.platform === 'web' ? 'bg-cyan-500/20 text-cyan-400' :
+                          project.platform === 'admin' ? 'bg-yellow-500/20 text-yellow-400' :
+                          'bg-gray-500/20 text-gray-400'
+                        }`}>
+                          {project.platform || project.project_type}
+                        </span>
+                      </div>
+                    </div>
+
+                    {project.description && (
+                      <p className="text-text-secondary text-sm mb-4 line-clamp-2">{project.description}</p>
+                    )}
+
+                    {/* Tech Stack */}
+                    {project.tech_stack && project.tech_stack.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-4">
+                        {project.tech_stack.slice(0, 4).map(tech => (
+                          <span key={tech} className="px-2 py-0.5 bg-white/5 text-text-secondary rounded text-xs">
+                            {tech}
+                          </span>
+                        ))}
+                        {project.tech_stack.length > 4 && (
+                          <span className="px-2 py-0.5 bg-white/5 text-text-secondary rounded text-xs">
+                            +{project.tech_stack.length - 4}
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Stats */}
+                    <div className="grid grid-cols-3 gap-2 pt-4 border-t border-white/10">
+                      <div className="text-center">
+                        <p className="text-lg font-bold text-text-primary">{project.feature_count}</p>
+                        <p className="text-xs text-text-secondary">Features</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-lg font-bold text-text-primary">{project.task_count}</p>
+                        <p className="text-xs text-text-secondary">Tasks</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-lg font-bold text-neon-pink">{project.open_task_count}</p>
+                        <p className="text-xs text-text-secondary">Open</p>
+                      </div>
+                    </div>
+
+                    {/* GitHub Link */}
+                    {project.github_repo && (
+                      <a
+                        href={`https://github.com/${project.github_org || 'FlowBondTech'}/${project.github_repo}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-4 flex items-center gap-2 text-sm text-text-secondary hover:text-neon-purple transition-colors"
+                      >
+                        <FiGitBranch size={14} />
+                        {project.github_org || 'FlowBondTech'}/{project.github_repo}
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-8 text-center">
+                <FiFolder className="text-neon-purple mx-auto mb-4" size={48} />
+                <h3 className="text-lg font-semibold text-text-primary mb-2">No Projects Found</h3>
+                <p className="text-text-secondary">Projects will appear here once configured.</p>
+              </div>
+            )}
           </div>
         )}
 
