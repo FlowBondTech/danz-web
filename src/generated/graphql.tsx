@@ -3113,6 +3113,7 @@ export enum NotificationType {
   PostComment = 'post_comment',
   PostLike = 'post_like',
   Referral = 'referral',
+  Social = 'social',
   System = 'system',
 }
 
