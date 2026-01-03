@@ -177,33 +177,39 @@ export default function PublicEventPage() {
       case 'upcoming':
         return 'bg-green-500/20 text-green-400 border-green-500/30'
       case 'ongoing':
-        return 'bg-purple-500/20 text-purple-400 border-purple-500/30'
+        return 'bg-neon-purple/20 text-neon-purple border-neon-purple/30'
       case 'past':
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+        return 'bg-text-muted/20 text-text-muted border-text-muted/30'
       case 'cancelled':
         return 'bg-red-500/20 text-red-400 border-red-500/30'
       default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+        return 'bg-text-muted/20 text-text-muted border-text-muted/30'
     }
   }
 
   if (loading || !ready) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500" />
+      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-neon-purple/20 rounded-full" />
+            <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-neon-purple rounded-full animate-spin" />
+          </div>
+          <p className="text-text-secondary">Loading event...</p>
+        </div>
       </div>
     )
   }
 
   if (error || !event) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-white mb-4">Event Not Found</h1>
-          <p className="text-gray-400 mb-6">This event may be private or no longer available.</p>
+          <h1 className="text-2xl font-bold text-text-primary mb-4">Event Not Found</h1>
+          <p className="text-text-secondary mb-6">This event may be private or no longer available.</p>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg text-white transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-neon-purple to-neon-pink hover:opacity-90 rounded-lg text-white transition-all"
           >
             <FiArrowLeft />
             Go Home
@@ -219,7 +225,7 @@ export default function PublicEventPage() {
   const canJoin = !event.is_registered && !isFull && !isPast && !isCancelled
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900">
+    <div className="min-h-screen bg-bg-primary">
       {/* Toast notification */}
       {showShareToast && (
         <motion.div
@@ -233,15 +239,15 @@ export default function PublicEventPage() {
       )}
 
       {/* Header */}
-      <header className="border-b border-white/10 bg-black/30 backdrop-blur-lg sticky top-0 z-40">
+      <header className="border-b border-neon-purple/10 bg-bg-secondary/80 backdrop-blur-lg sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-white hover:text-purple-400 transition-colors">
+          <Link href="/events" className="flex items-center gap-2 text-text-primary hover:text-neon-purple transition-colors">
             <FiArrowLeft />
-            <span className="font-semibold">DANZ</span>
+            <span className="font-semibold">Back to Events</span>
           </Link>
           <button
             onClick={handleShare}
-            className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-bg-card hover:bg-bg-hover border border-neon-purple/20 rounded-lg text-text-primary transition-colors"
           >
             <FiShare2 />
             Share
@@ -259,7 +265,7 @@ export default function PublicEventPage() {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/50 to-transparent" />
         </div>
       )}
 
@@ -268,28 +274,28 @@ export default function PublicEventPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gray-800/50 backdrop-blur-lg rounded-2xl border border-white/10 overflow-hidden"
+          className="bg-bg-card backdrop-blur-lg rounded-2xl border border-neon-purple/10 overflow-hidden"
         >
           {/* Event Header */}
-          <div className="p-6 sm:p-8 border-b border-white/10">
+          <div className="p-6 sm:p-8 border-b border-neon-purple/10">
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(event.status)}`}>
                 {event.status?.charAt(0).toUpperCase() + event.status?.slice(1)}
               </span>
               {event.category && (
-                <span className="px-3 py-1 rounded-full text-sm font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                <span className="px-3 py-1 rounded-full text-sm font-medium bg-neon-purple/20 text-neon-purple border border-neon-purple/30">
                   {event.category}
                 </span>
               )}
               {event.is_virtual && (
-                <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-500/20 text-blue-400 border border-blue-500/30 flex items-center gap-1">
+                <span className="px-3 py-1 rounded-full text-sm font-medium bg-neon-blue/20 text-neon-blue border border-neon-blue/30 flex items-center gap-1">
                   <FiVideo className="w-3 h-3" />
                   Virtual
                 </span>
               )}
             </div>
 
-            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4">{event.title}</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold text-text-primary mb-4">{event.title}</h1>
 
             {/* Organizer */}
             {event.facilitator && (
@@ -303,13 +309,13 @@ export default function PublicEventPage() {
                     className="rounded-full"
                   />
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-purple-500/30 flex items-center justify-center text-purple-400 font-bold">
+                  <div className="w-10 h-10 rounded-full bg-neon-purple/30 flex items-center justify-center text-neon-purple font-bold">
                     {(event.facilitator.display_name || event.facilitator.username)?.charAt(0).toUpperCase()}
                   </div>
                 )}
                 <div>
-                  <p className="text-sm text-gray-400">Hosted by</p>
-                  <p className="text-white font-medium">
+                  <p className="text-sm text-text-muted">Hosted by</p>
+                  <p className="text-text-primary font-medium">
                     {event.facilitator.display_name || event.facilitator.username}
                   </p>
                 </div>
@@ -318,42 +324,42 @@ export default function PublicEventPage() {
 
             {/* Key Details Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="flex items-start gap-3 text-gray-300">
-                <FiCalendar className="w-5 h-5 text-purple-400 mt-0.5" />
+              <div className="flex items-start gap-3 text-text-secondary">
+                <FiCalendar className="w-5 h-5 text-neon-purple mt-0.5" />
                 <div>
-                  <p className="font-medium">{formatDate(event.start_date_time)}</p>
-                  <p className="text-sm text-gray-400">
+                  <p className="font-medium text-text-primary">{formatDate(event.start_date_time)}</p>
+                  <p className="text-sm text-text-muted">
                     {formatTime(event.start_date_time)} - {formatTime(event.end_date_time)}
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 text-gray-300">
-                <FiMapPin className="w-5 h-5 text-purple-400 mt-0.5" />
+              <div className="flex items-start gap-3 text-text-secondary">
+                <FiMapPin className="w-5 h-5 text-neon-purple mt-0.5" />
                 <div>
-                  <p className="font-medium">{event.location_name}</p>
+                  <p className="font-medium text-text-primary">{event.location_name}</p>
                   {event.location_address && (
-                    <p className="text-sm text-gray-400">{event.location_address}</p>
+                    <p className="text-sm text-text-muted">{event.location_address}</p>
                   )}
                   {event.location_city && (
-                    <p className="text-sm text-gray-400">{event.location_city}</p>
+                    <p className="text-sm text-text-muted">{event.location_city}</p>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 text-gray-300">
-                <FiUsers className="w-5 h-5 text-purple-400" />
+              <div className="flex items-center gap-3 text-text-secondary">
+                <FiUsers className="w-5 h-5 text-neon-purple" />
                 <div>
-                  <p className="font-medium">
+                  <p className="font-medium text-text-primary">
                     {event.registration_count || 0}
                     {event.max_capacity && ` / ${event.max_capacity}`} attending
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 text-gray-300">
-                <FiDollarSign className="w-5 h-5 text-purple-400" />
-                <p className="font-medium">
+              <div className="flex items-center gap-3 text-text-secondary">
+                <FiDollarSign className="w-5 h-5 text-neon-purple" />
+                <p className="font-medium text-text-primary">
                   {event.price_usd ? `$${event.price_usd.toFixed(2)}` : 'Free'}
                 </p>
               </div>
@@ -362,21 +368,21 @@ export default function PublicEventPage() {
 
           {/* Description */}
           {event.description && (
-            <div className="p-6 sm:p-8 border-b border-white/10">
-              <h2 className="text-xl font-semibold text-white mb-4">About this event</h2>
-              <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{event.description}</p>
+            <div className="p-6 sm:p-8 border-b border-neon-purple/10">
+              <h2 className="text-xl font-semibold text-text-primary mb-4">About this event</h2>
+              <p className="text-text-secondary whitespace-pre-wrap leading-relaxed">{event.description}</p>
             </div>
           )}
 
           {/* Dance Styles */}
           {event.dance_styles && event.dance_styles.length > 0 && (
-            <div className="p-6 sm:p-8 border-b border-white/10">
-              <h2 className="text-xl font-semibold text-white mb-4">Dance Styles</h2>
+            <div className="p-6 sm:p-8 border-b border-neon-purple/10">
+              <h2 className="text-xl font-semibold text-text-primary mb-4">Dance Styles</h2>
               <div className="flex flex-wrap gap-2">
                 {event.dance_styles.map((style: string) => (
                   <span
                     key={style}
-                    className="px-3 py-1.5 rounded-full text-sm bg-white/10 text-gray-300 border border-white/10"
+                    className="px-3 py-1.5 rounded-full text-sm bg-bg-hover text-text-secondary border border-neon-purple/10"
                   >
                     {style}
                   </span>
@@ -386,19 +392,19 @@ export default function PublicEventPage() {
           )}
 
           {/* Join Button */}
-          <div className="p-6 sm:p-8 bg-black/20">
+          <div className="p-6 sm:p-8 bg-bg-secondary/50">
             {event.is_registered ? (
               <div className="flex items-center justify-center gap-3 py-4 px-6 bg-green-500/20 rounded-xl border border-green-500/30">
                 <FiCheck className="w-6 h-6 text-green-400" />
                 <span className="text-lg font-semibold text-green-400">You&apos;re registered!</span>
               </div>
             ) : isFull ? (
-              <div className="text-center py-4 px-6 bg-gray-700/50 rounded-xl">
-                <p className="text-gray-400 font-medium">This event is full</p>
+              <div className="text-center py-4 px-6 bg-bg-hover rounded-xl">
+                <p className="text-text-muted font-medium">This event is full</p>
               </div>
             ) : isPast ? (
-              <div className="text-center py-4 px-6 bg-gray-700/50 rounded-xl">
-                <p className="text-gray-400 font-medium">This event has ended</p>
+              <div className="text-center py-4 px-6 bg-bg-hover rounded-xl">
+                <p className="text-text-muted font-medium">This event has ended</p>
               </div>
             ) : isCancelled ? (
               <div className="text-center py-4 px-6 bg-red-500/20 rounded-xl border border-red-500/30">
@@ -408,7 +414,7 @@ export default function PublicEventPage() {
               <button
                 onClick={handleJoinEvent}
                 disabled={registering}
-                className="w-full py-4 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-xl text-white font-semibold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-4 px-6 bg-gradient-to-r from-neon-purple to-neon-pink hover:opacity-90 rounded-xl text-white font-semibold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {registering ? (
                   <>
@@ -425,7 +431,7 @@ export default function PublicEventPage() {
             )}
 
             {!authenticated && canJoin && (
-              <p className="text-center text-sm text-gray-400 mt-3">
+              <p className="text-center text-sm text-text-muted mt-3">
                 You&apos;ll need to sign in to join this event
               </p>
             )}
@@ -434,8 +440,8 @@ export default function PublicEventPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 mt-16 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400 text-sm">
+      <footer className="border-t border-neon-purple/10 mt-16 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-text-muted text-sm">
           <p>Powered by DANZ - Dance to Earn</p>
         </div>
       </footer>
