@@ -17,6 +17,9 @@ import {
   FiZap,
   FiAward,
   FiStar,
+  FiEye,
+  FiLock,
+  FiShare2,
 } from 'react-icons/fi'
 import { useCreateEventMutation, RecurrenceType, GetEventsDocument } from '@/src/generated/graphql'
 import confetti from 'canvas-confetti'
@@ -50,6 +53,7 @@ interface EventFormData {
   recurrence_type: RecurrenceType
   recurrence_end_date: string
   recurrence_days: string[]
+  is_public: boolean
 }
 
 const STEPS = [
@@ -120,6 +124,7 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
     recurrence_type: RecurrenceType.Weekly,
     recurrence_end_date: '',
     recurrence_days: [],
+    is_public: true,
   })
 
   const [createEvent] = useCreateEventMutation({
@@ -176,6 +181,7 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
               ? new Date(formData.recurrence_end_date).toISOString()
               : null,
             recurrence_days: formData.is_recurring ? formData.recurrence_days : null,
+            is_public: formData.is_public,
           },
         },
       })
@@ -238,6 +244,7 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
       recurrence_type: RecurrenceType.Weekly,
       recurrence_end_date: '',
       recurrence_days: [],
+      is_public: true,
     })
   }
 
@@ -813,6 +820,50 @@ function StepExtras({
           className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
           placeholder="What should participants bring or know?"
         />
+      </div>
+
+      {/* Public Event Toggle */}
+      <div className="p-4 bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-xl border border-green-500/30">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={`p-2 rounded-lg ${formData.is_public ? 'bg-green-500/20' : 'bg-gray-500/20'}`}>
+              {formData.is_public ? (
+                <FiEye className="w-5 h-5 text-green-400" />
+              ) : (
+                <FiLock className="w-5 h-5 text-gray-400" />
+              )}
+            </div>
+            <div>
+              <label htmlFor="is_public" className="text-text-primary font-medium cursor-pointer">
+                {formData.is_public ? 'Public Event' : 'Private Event'}
+              </label>
+              <p className="text-sm text-text-secondary">
+                {formData.is_public
+                  ? 'Anyone can discover and join via shareable link'
+                  : 'Only visible to people you invite directly'}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => updateFormData({ is_public: !formData.is_public })}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+              formData.is_public ? 'bg-green-500' : 'bg-gray-600'
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                formData.is_public ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
+        </div>
+        {formData.is_public && (
+          <div className="mt-3 pt-3 border-t border-white/10 flex items-center gap-2 text-sm text-green-400">
+            <FiShare2 className="w-4 h-4" />
+            <span>Your event will have a public page you can share</span>
+          </div>
+        )}
       </div>
     </div>
   )

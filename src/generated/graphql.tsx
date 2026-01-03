@@ -778,6 +778,7 @@ export type CreateEventInput = {
   end_date_time: Scalars['DateTime']['input']
   image_url?: InputMaybe<Scalars['String']['input']>
   is_featured?: InputMaybe<Scalars['Boolean']['input']>
+  is_public?: InputMaybe<Scalars['Boolean']['input']>
   is_recurring?: InputMaybe<Scalars['Boolean']['input']>
   is_virtual?: InputMaybe<Scalars['Boolean']['input']>
   location_address?: InputMaybe<Scalars['String']['input']>
@@ -1221,6 +1222,7 @@ export type Event = {
   id: Scalars['ID']['output']
   image_url?: Maybe<Scalars['String']['output']>
   is_featured?: Maybe<Scalars['Boolean']['output']>
+  is_public?: Maybe<Scalars['Boolean']['output']>
   is_recurring?: Maybe<Scalars['Boolean']['output']>
   is_registered?: Maybe<Scalars['Boolean']['output']>
   is_virtual?: Maybe<Scalars['Boolean']['output']>
@@ -1243,6 +1245,7 @@ export type Event = {
   registration_count?: Maybe<Scalars['Int']['output']>
   requirements?: Maybe<Scalars['String']['output']>
   skill_level?: Maybe<SkillLevel>
+  slug?: Maybe<Scalars['String']['output']>
   start_date_time: Scalars['DateTime']['output']
   status?: Maybe<EventStatus>
   tags?: Maybe<Array<Scalars['String']['output']>>
@@ -3611,6 +3614,7 @@ export type Query = {
   project?: Maybe<Project>
   projectBySlug?: Maybe<Project>
   projects: Array<Project>
+  publicEvent?: Maybe<Event>
   realTimeAnalytics: RealTimeAnalytics
   recentActivities: Array<Activity>
   regionalLeaderboard: RegionalLeaderboard
@@ -4213,6 +4217,10 @@ export type QueryProjectBySlugArgs = {
 
 export type QueryProjectsArgs = {
   include_archived?: InputMaybe<Scalars['Boolean']['input']>
+}
+
+export type QueryPublicEventArgs = {
+  slug: Scalars['String']['input']
 }
 
 export type QueryRecentActivitiesArgs = {
@@ -4849,6 +4857,7 @@ export type UpdateEventInput = {
   end_date_time?: InputMaybe<Scalars['DateTime']['input']>
   image_url?: InputMaybe<Scalars['String']['input']>
   is_featured?: InputMaybe<Scalars['Boolean']['input']>
+  is_public?: InputMaybe<Scalars['Boolean']['input']>
   is_recurring?: InputMaybe<Scalars['Boolean']['input']>
   is_virtual?: InputMaybe<Scalars['Boolean']['input']>
   location_address?: InputMaybe<Scalars['String']['input']>
@@ -9468,6 +9477,53 @@ export type GetOrganizerApplicationsQuery = {
       } | null
     }>
   }
+}
+
+export type GetPublicEventQueryVariables = Exact<{
+  slug: Scalars['String']['input']
+}>
+
+export type GetPublicEventQuery = {
+  __typename?: 'Query'
+  publicEvent?: {
+    __typename?: 'Event'
+    id: string
+    title: string
+    description?: string | null
+    category?: EventCategory | null
+    dance_styles?: Array<string> | null
+    skill_level?: SkillLevel | null
+    location_name: string
+    location_city?: string | null
+    location_address?: string | null
+    location_latitude?: number | null
+    location_longitude?: number | null
+    is_virtual?: boolean | null
+    virtual_link?: string | null
+    start_date_time: any
+    end_date_time: any
+    price_usd?: number | null
+    max_capacity?: number | null
+    registration_count?: number | null
+    status?: EventStatus | null
+    is_featured?: boolean | null
+    is_recurring?: boolean | null
+    image_url?: string | null
+    is_registered?: boolean | null
+    user_registration_status?: RegistrationStatus | null
+    slug?: string | null
+    is_public?: boolean | null
+    created_at: any
+    updated_at: any
+    facilitator?: {
+      __typename?: 'User'
+      privy_id: string
+      username?: string | null
+      display_name?: string | null
+      avatar_url?: string | null
+      bio?: string | null
+    } | null
+  } | null
 }
 
 export type GetReferralByCodeQueryVariables = Exact<{
@@ -20806,6 +20862,104 @@ export type GetOrganizerApplicationsSuspenseQueryHookResult = ReturnType<
 export type GetOrganizerApplicationsQueryResult = Apollo.QueryResult<
   GetOrganizerApplicationsQuery,
   GetOrganizerApplicationsQueryVariables
+>
+export const GetPublicEventDocument = gql`
+    query GetPublicEvent($slug: String!) {
+  publicEvent(slug: $slug) {
+    id
+    title
+    description
+    category
+    dance_styles
+    skill_level
+    location_name
+    location_city
+    location_address
+    location_latitude
+    location_longitude
+    is_virtual
+    virtual_link
+    start_date_time
+    end_date_time
+    price_usd
+    max_capacity
+    registration_count
+    status
+    is_featured
+    is_recurring
+    image_url
+    is_registered
+    user_registration_status
+    slug
+    is_public
+    facilitator {
+      privy_id
+      username
+      display_name
+      avatar_url
+      bio
+    }
+    created_at
+    updated_at
+  }
+}
+    `
+
+/**
+ * __useGetPublicEventQuery__
+ *
+ * To run a query within a React component, call `useGetPublicEventQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPublicEventQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPublicEventQuery({
+ *   variables: {
+ *      slug: // value for 'slug'
+ *   },
+ * });
+ */
+export function useGetPublicEventQuery(
+  baseOptions: Apollo.QueryHookOptions<GetPublicEventQuery, GetPublicEventQueryVariables> &
+    ({ variables: GetPublicEventQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetPublicEventQuery, GetPublicEventQueryVariables>(
+    GetPublicEventDocument,
+    options,
+  )
+}
+export function useGetPublicEventLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetPublicEventQuery, GetPublicEventQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetPublicEventQuery, GetPublicEventQueryVariables>(
+    GetPublicEventDocument,
+    options,
+  )
+}
+export function useGetPublicEventSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetPublicEventQuery, GetPublicEventQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetPublicEventQuery, GetPublicEventQueryVariables>(
+    GetPublicEventDocument,
+    options,
+  )
+}
+export type GetPublicEventQueryHookResult = ReturnType<typeof useGetPublicEventQuery>
+export type GetPublicEventLazyQueryHookResult = ReturnType<typeof useGetPublicEventLazyQuery>
+export type GetPublicEventSuspenseQueryHookResult = ReturnType<
+  typeof useGetPublicEventSuspenseQuery
+>
+export type GetPublicEventQueryResult = Apollo.QueryResult<
+  GetPublicEventQuery,
+  GetPublicEventQueryVariables
 >
 export const GetReferralByCodeDocument = gql`
     query GetReferralByCode($code: String!) {
