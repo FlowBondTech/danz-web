@@ -8,13 +8,6 @@
 [build.environment]
   NODE_VERSION = "22"
 
-# Redirect all requests to Next.js for SSR
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/___netlify-handler"
-  status = 200
-  force = false
-
 # ═══════════════════════════════════════════════════════════════
 # MINIAPP HEADERS - Allow Farcaster/Warpcast iframe embedding
 # ═══════════════════════════════════════════════════════════════
