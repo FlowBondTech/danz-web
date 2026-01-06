@@ -1,13 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useQuery } from '@apollo/client'
-import { gql } from '@apollo/client'
 import { usePrivy } from '@privy-io/react-auth'
 import { motion } from 'motion/react'
 import Link from 'next/link'
 import Image from 'next/image'
 import Navbar from '@/src/components/Navbar'
+import { useGetEventsQuery, EventCategory } from '@/src/generated/graphql'
 import {
   FiMapPin,
   FiCalendar,
@@ -18,42 +17,6 @@ import {
   FiVideo,
   FiArrowRight,
 } from 'react-icons/fi'
-
-const GET_PUBLIC_EVENTS = gql`
-  query GetPublicEvents($filter: EventFilterInput, $pagination: PaginationInput) {
-    events(filter: $filter, pagination: $pagination) {
-      events {
-        id
-        title
-        description
-        category
-        dance_styles
-        skill_level
-        location_name
-        location_city
-        is_virtual
-        start_date_time
-        end_date_time
-        price_usd
-        max_capacity
-        registration_count
-        status
-        image_url
-        slug
-        is_public
-        facilitator {
-          display_name
-          username
-          avatar_url
-        }
-      }
-      totalCount
-      pageInfo {
-        hasNextPage
-      }
-    }
-  }
-`
 
 const CATEGORIES = [
   { value: '', label: 'All Categories' },
@@ -71,10 +34,10 @@ export default function PublicEventsPage() {
   const [showFilters, setShowFilters] = useState(false)
   const { authenticated, ready, login } = usePrivy()
 
-  const { data, loading, error } = useQuery(GET_PUBLIC_EVENTS, {
+  const { data, loading, error } = useGetEventsQuery({
     variables: {
       filter: {
-        category: selectedCategory || undefined,
+        category: selectedCategory ? (selectedCategory as EventCategory) : undefined,
       },
       pagination: { limit: 50 },
     },
@@ -266,7 +229,7 @@ export default function PublicEventsPage() {
                   transition={{ delay: index * 0.05 }}
                 >
                   <Link
-                    href={`/events/${event.slug}`}
+                    href={`/events/${event.slug || event.id}`}
                     className="block bg-bg-card backdrop-blur-lg rounded-2xl border border-neon-purple/10 overflow-hidden hover:border-neon-purple/50 transition-all duration-300 group"
                   >
                     {/* Image */}

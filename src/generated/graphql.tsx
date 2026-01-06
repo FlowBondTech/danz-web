@@ -3113,7 +3113,6 @@ export enum NotificationType {
   PostComment = 'post_comment',
   PostLike = 'post_like',
   Referral = 'referral',
-  Social = 'social',
   System = 'system',
 }
 
@@ -9059,6 +9058,7 @@ export type GetEventsQuery = {
     events: Array<{
       __typename?: 'Event'
       id: string
+      slug?: string | null
       title: string
       description?: string | null
       category?: EventCategory | null
@@ -9066,6 +9066,7 @@ export type GetEventsQuery = {
       location_name: string
       location_address?: string | null
       location_city?: string | null
+      is_public?: boolean | null
       facilitator_id?: string | null
       max_capacity?: number | null
       current_capacity?: number | null
@@ -9098,6 +9099,7 @@ export type GetEventsQuery = {
         privy_id: string
         username?: string | null
         display_name?: string | null
+        avatar_url?: string | null
       } | null
     }>
     pageInfo: {
@@ -19609,6 +19611,7 @@ export const GetEventsDocument = gql`
   events(filter: $filter, pagination: $pagination) {
     events {
       id
+      slug
       title
       description
       category
@@ -19616,11 +19619,13 @@ export const GetEventsDocument = gql`
       location_name
       location_address
       location_city
+      is_public
       facilitator_id
       facilitator {
         privy_id
         username
         display_name
+        avatar_url
       }
       max_capacity
       current_capacity

@@ -2,6 +2,7 @@ query GetEvents($filter: EventFilterInput, $pagination: PaginationInput) {
   events(filter: $filter, pagination: $pagination) {
     events {
       id
+      slug
       title
       description
       category
@@ -9,11 +10,13 @@ query GetEvents($filter: EventFilterInput, $pagination: PaginationInput) {
       location_name
       location_address
       location_city
+      is_public
       facilitator_id
       facilitator {
         privy_id
         username
         display_name
+        avatar_url
       }
       max_capacity
       current_capacity
