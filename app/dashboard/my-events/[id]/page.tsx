@@ -258,7 +258,7 @@ export default function EventDetailPage() {
           {/* Edit Button for Organizers */}
           {canManageEvent && (
             <button
-              onClick={() => router.push(`/dashboard/events/create?edit=${event.id}`)}
+              onClick={() => router.push(`/dashboard/my-events/create?edit=${event.id}`)}
               className="absolute top-4 right-4 p-2 bg-black/60 backdrop-blur-sm rounded-full text-white hover:bg-black/80 transition-colors"
             >
               <FiEdit2 size={18} />

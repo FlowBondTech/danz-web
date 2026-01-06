@@ -137,7 +137,7 @@ export default function RecentActivityFeed() {
               onClick={() => {
                 // Navigate based on activity type
                 if (activity.type === 'event') {
-                  router.push('/dashboard/events')
+                  router.push('/dashboard/my-events')
                 } else if (activity.type === 'post') {
                   router.push('/dashboard/feed')
                 } else if (activity.type === 'bond') {

@@ -73,9 +73,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       href: '/dashboard/profile',
     },
     {
-      name: 'Events',
+      name: 'My Events',
       icon: FiCalendar,
-      href: '/dashboard/events',
+      href: '/dashboard/my-events',
     },
     {
       name: 'Wallet',

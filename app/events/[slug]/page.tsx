@@ -9,7 +9,6 @@ import { motion } from 'motion/react'
 import {
   FiMapPin,
   FiCalendar,
-  FiClock,
   FiUsers,
   FiDollarSign,
   FiVideo,
@@ -20,6 +19,7 @@ import {
 } from 'react-icons/fi'
 import Link from 'next/link'
 import Image from 'next/image'
+import Navbar from '@/src/components/Navbar'
 
 const GET_PUBLIC_EVENT = gql`
   query GetPublicEvent($slug: String!) {
@@ -226,24 +226,27 @@ export default function PublicEventPage() {
 
   return (
     <div className="min-h-screen bg-bg-primary">
+      {/* Shared Navbar */}
+      <Navbar />
+
       {/* Toast notification */}
       {showShareToast && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
-          className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg z-50"
+          className="fixed top-24 right-4 bg-green-500 text-white px-4 py-2 rounded-lg z-50"
         >
           Link copied to clipboard!
         </motion.div>
       )}
 
-      {/* Header */}
-      <header className="border-b border-neon-purple/10 bg-bg-secondary/80 backdrop-blur-lg sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <Link href="/events" className="flex items-center gap-2 text-text-primary hover:text-neon-purple transition-colors">
-            <FiArrowLeft />
-            <span className="font-semibold">Back to Events</span>
+      {/* Breadcrumb and Share */}
+      <div className="pt-24 pb-4 border-b border-neon-purple/10 bg-bg-secondary/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+          <Link href="/events" className="flex items-center gap-2 text-text-secondary hover:text-neon-purple transition-colors">
+            <FiArrowLeft className="w-4 h-4" />
+            <span>Back to Events</span>
           </Link>
           <button
             onClick={handleShare}
@@ -253,7 +256,7 @@ export default function PublicEventPage() {
             Share
           </button>
         </div>
-      </header>
+      </div>
 
       {/* Hero Image */}
       {event.image_url && (

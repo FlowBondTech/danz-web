@@ -44,7 +44,7 @@ export default function NotificationItem({ notification, onClose }: Notification
     switch (notification.type) {
       case NotificationType.EventReminder:
       case NotificationType.EventUpdate:
-        return notification.event_id ? `/dashboard/events/${notification.event_id}` : '/dashboard/events'
+        return notification.event_id ? `/dashboard/my-events/${notification.event_id}` : '/dashboard/my-events'
       case NotificationType.PostLike:
       case NotificationType.PostComment:
         return notification.post_id ? `/dashboard/feed?post=${notification.post_id}` : '/dashboard/feed'

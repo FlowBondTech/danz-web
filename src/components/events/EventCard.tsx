@@ -81,7 +81,7 @@ export default function EventCard({ event, onRegister, onCancel, onUpdateStatus,
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't navigate if clicking on action buttons
     if ((e.target as HTMLElement).closest('button')) return
-    router.push(`/dashboard/events/${event.id}`)
+    router.push(`/dashboard/my-events/${event.id}`)
   }
 
   // Determine actual registration status
@@ -124,7 +124,7 @@ export default function EventCard({ event, onRegister, onCancel, onUpdateStatus,
       <motion.div
         whileHover={{ scale: 1.02 }}
         className="flex items-center gap-4 p-4 bg-bg-secondary rounded-xl border border-white/10 hover:border-neon-purple/30 transition-colors cursor-pointer"
-        onClick={() => router.push(`/dashboard/events/${event.id}`)}
+        onClick={() => router.push(`/dashboard/my-events/${event.id}`)}
       >
         <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 flex items-center justify-center text-2xl">
           {categoryEmoji}

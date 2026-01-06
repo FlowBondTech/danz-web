@@ -316,7 +316,7 @@ function DashboardContent() {
         ═══════════════════════════════════════════════════════════════════ */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
           <button
-            onClick={() => router.push('/dashboard/events')}
+            onClick={() => router.push('/dashboard/my-events')}
             className="group bg-gradient-to-br from-neon-purple/20 to-neon-purple/5 hover:from-neon-purple/30 hover:to-neon-purple/10 rounded-2xl border border-neon-purple/30 hover:border-neon-purple/50 p-4 sm:p-5 transition-all duration-300 hover:shadow-lg hover:shadow-neon-purple/20 text-left flex flex-col"
           >
             <div className="w-10 h-10 rounded-xl bg-neon-purple/20 flex items-center justify-center group-hover:scale-110 transition-transform mb-3">
@@ -333,7 +333,7 @@ function DashboardContent() {
           </button>
 
           <button
-            onClick={() => router.push('/dashboard/events/create')}
+            onClick={() => router.push('/dashboard/my-events/create')}
             className="group bg-gradient-to-br from-neon-pink/20 to-neon-pink/5 hover:from-neon-pink/30 hover:to-neon-pink/10 rounded-2xl border border-neon-pink/30 hover:border-neon-pink/50 p-4 sm:p-5 transition-all duration-300 hover:shadow-lg hover:shadow-neon-pink/20 text-left flex flex-col"
           >
             <div className="w-10 h-10 rounded-xl bg-neon-pink/20 flex items-center justify-center group-hover:scale-110 transition-transform mb-3">

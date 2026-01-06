@@ -132,7 +132,7 @@ export default function NotificationsCenterWidget() {
               onClick={() => {
                 // Navigate based on notification type
                 if (notification.type === 'event') {
-                  router.push('/dashboard/events')
+                  router.push('/dashboard/my-events')
                 } else if (notification.type === 'comment' || notification.type === 'like') {
                   router.push('/dashboard/feed')
                 }

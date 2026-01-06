@@ -8,7 +8,7 @@ export default function CreateEventRedirect() {
 
   useEffect(() => {
     // Redirect to events page where the create form is
-    router.replace('/dashboard/events')
+    router.replace('/dashboard/my-events')
   }, [router])
 
   return (

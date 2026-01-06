@@ -3,9 +3,11 @@
 import { useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { gql } from '@apollo/client'
+import { usePrivy } from '@privy-io/react-auth'
 import { motion } from 'motion/react'
 import Link from 'next/link'
 import Image from 'next/image'
+import Navbar from '@/src/components/Navbar'
 import {
   FiMapPin,
   FiCalendar,
@@ -15,12 +17,11 @@ import {
   FiFilter,
   FiVideo,
   FiArrowRight,
-  FiArrowLeft,
 } from 'react-icons/fi'
 
 const GET_PUBLIC_EVENTS = gql`
-  query GetPublicEvents($filter: EventFilterInput, $pagination: PaginationInput, $sortBy: EventSortBy) {
-    events(filter: $filter, pagination: $pagination, sortBy: $sortBy) {
+  query GetPublicEvents($filter: EventFilterInput, $pagination: PaginationInput) {
+    events(filter: $filter, pagination: $pagination) {
       events {
         id
         title
@@ -68,33 +69,32 @@ export default function PublicEventsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [showFilters, setShowFilters] = useState(false)
+  const { authenticated, ready, login } = usePrivy()
 
   const { data, loading, error } = useQuery(GET_PUBLIC_EVENTS, {
     variables: {
       filter: {
         category: selectedCategory || undefined,
-        status: 'upcoming',
       },
       pagination: { limit: 50 },
-      sortBy: 'date_asc',
     },
+    errorPolicy: 'all',
+    skip: !ready, // Wait for Privy to be ready
   })
 
-  const events = data?.events?.events?.filter((event: any) => {
-    // Only show public events
-    if (!event.is_public) return false
-    // Filter by search query
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase()
-      return (
-        event.title?.toLowerCase().includes(query) ||
-        event.description?.toLowerCase().includes(query) ||
-        event.location_city?.toLowerCase().includes(query) ||
-        event.dance_styles?.some((style: string) => style.toLowerCase().includes(query))
-      )
-    }
-    return true
-  }) || []
+  // Filter for public events and apply search filter
+  const allEvents = (data?.events?.events || []).filter((event: any) => event.is_public !== false)
+  const events = searchQuery
+    ? allEvents.filter((event: any) => {
+        const query = searchQuery.toLowerCase()
+        return (
+          event.title?.toLowerCase().includes(query) ||
+          event.description?.toLowerCase().includes(query) ||
+          event.location_city?.toLowerCase().includes(query) ||
+          event.dance_styles?.some((style: string) => style.toLowerCase().includes(query))
+        )
+      })
+    : allEvents
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -127,26 +127,11 @@ export default function PublicEventsPage() {
 
   return (
     <div className="min-h-screen bg-bg-primary">
-      {/* Header */}
-      <header className="border-b border-neon-purple/10 bg-bg-secondary/80 backdrop-blur-lg sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-text-primary hover:text-neon-purple transition-colors">
-            <FiArrowLeft className="w-5 h-5" />
-            <span className="text-2xl font-bold bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent">
-              DANZ
-            </span>
-          </Link>
-          <Link
-            href="/login"
-            className="px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-pink hover:opacity-90 rounded-lg text-white font-medium transition-all"
-          >
-            Sign In
-          </Link>
-        </div>
-      </header>
+      {/* Shared Navbar */}
+      <Navbar />
 
-      {/* Hero */}
-      <div className="relative py-12 sm:py-16 overflow-hidden">
+      {/* Hero - with top padding for fixed navbar */}
+      <div className="relative pt-28 sm:pt-32 pb-12 sm:pb-16 overflow-hidden">
         {/* Background Glow */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -left-40 w-96 h-96 bg-neon-purple/20 rounded-full blur-3xl" />
@@ -209,7 +194,7 @@ export default function PublicEventsPage() {
 
       {/* Events Grid */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        {loading ? (
+        {(loading || !ready) ? (
           <div className="flex items-center justify-center py-20">
             <div className="flex flex-col items-center gap-4">
               <div className="relative">
@@ -219,18 +204,55 @@ export default function PublicEventsPage() {
               <p className="text-text-secondary">Loading events...</p>
             </div>
           </div>
+        ) : (error || !data?.events) && !authenticated ? (
+          <div className="text-center py-20">
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-neon-purple/10 flex items-center justify-center">
+              <span className="text-4xl">💃</span>
+            </div>
+            <h2 className="text-2xl font-bold text-text-primary mb-4">Discover Dance Events</h2>
+            <p className="text-text-secondary mb-8 max-w-md mx-auto">
+              Sign in to browse and join dance events near you. From salsa socials to hip-hop workshops, find your rhythm!
+            </p>
+            <button
+              onClick={() => login()}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-neon-purple to-neon-pink hover:opacity-90 rounded-xl text-white font-medium transition-all"
+            >
+              Sign In to Explore Events
+            </button>
+          </div>
         ) : error ? (
           <div className="text-center py-20">
-            <p className="text-red-400">Failed to load events. Please try again.</p>
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-red-500/10 flex items-center justify-center">
+              <span className="text-4xl">⚠️</span>
+            </div>
+            <h2 className="text-2xl font-bold text-text-primary mb-4">Unable to Load Events</h2>
+            <p className="text-text-secondary mb-8 max-w-md mx-auto">
+              We're having trouble loading events right now. Please try again later.
+            </p>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-bg-card border border-neon-purple/20 hover:border-neon-purple/50 rounded-xl text-text-primary font-medium transition-all"
+            >
+              Go Home
+            </Link>
           </div>
         ) : events.length === 0 ? (
           <div className="text-center py-20">
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-neon-purple/10 flex items-center justify-center">
+              <FiCalendar className="w-10 h-10 text-neon-purple" />
+            </div>
             <h2 className="text-2xl font-bold text-text-primary mb-4">No events found</h2>
             <p className="text-text-secondary mb-8">
               {searchQuery || selectedCategory
                 ? 'Try adjusting your filters'
                 : 'Check back soon for upcoming dance events!'}
             </p>
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-neon-purple to-neon-pink hover:opacity-90 rounded-xl text-white font-medium transition-all"
+            >
+              Sign In to Create Events
+            </Link>
           </div>
         ) : (
           <>

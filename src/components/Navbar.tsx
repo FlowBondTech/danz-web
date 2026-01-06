@@ -65,6 +65,14 @@ export default function Navbar() {
         {/* Desktop Navigation */}
         <ul className="hidden lg:flex items-center gap-8">
           <li>
+            <Link
+              href="/events"
+              className="text-text-secondary hover:text-neon-purple transition-colors font-medium"
+            >
+              Discover
+            </Link>
+          </li>
+          <li>
             <a
               href={isHomePage ? '#dancers' : '/#dancers'}
               onClick={e => handleNavClick(e, '#dancers')}
@@ -245,6 +253,15 @@ export default function Navbar() {
 
           <div className="p-8 pt-24">
             <ul className="flex flex-col gap-6">
+              <li>
+                <Link
+                  href="/events"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-lg text-neon-purple hover:text-neon-pink transition-colors font-medium"
+                >
+                  Discover Events
+                </Link>
+              </li>
               <li>
                 <a
                   href={isHomePage ? '#dancers' : '/#dancers'}

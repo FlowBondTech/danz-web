@@ -77,7 +77,7 @@ export default function LeaderboardPage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         {/* Back Navigation */}
         <Link
-          href="/dashboard/events"
+          href="/dashboard"
           className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors mb-6"
         >
           <FiArrowLeft size={20} />

@@ -124,7 +124,7 @@ export default function UpcomingEventsWidget() {
           </div>
         </div>
         <button
-          onClick={() => router.push('/dashboard/events')}
+          onClick={() => router.push('/dashboard/my-events')}
           className="flex items-center gap-2 px-4 py-2 bg-neon-purple/10 hover:bg-neon-purple/20 border border-neon-purple/30 rounded-lg text-neon-purple text-sm font-medium transition-colors"
         >
           <span>View All</span>
@@ -139,7 +139,7 @@ export default function UpcomingEventsWidget() {
             return (
               <div
                 key={event.id}
-                onClick={() => router.push(`/dashboard/events/${event.id}`)}
+                onClick={() => router.push(`/dashboard/my-events/${event.id}`)}
                 className={`relative overflow-hidden bg-gradient-to-br ${getEventTypeColor(
                   event.type
                 )} border rounded-xl p-4 hover:shadow-lg transition-all duration-300 cursor-pointer group`}
@@ -209,7 +209,7 @@ export default function UpcomingEventsWidget() {
           </div>
           <p className="text-text-secondary mb-4">No upcoming events</p>
           <button
-            onClick={() => router.push('/dashboard/events')}
+            onClick={() => router.push('/events')}
             className="px-6 py-2.5 bg-gradient-to-r from-neon-purple to-neon-pink text-white rounded-xl font-medium hover:shadow-lg hover:shadow-neon-purple/30 transition-all"
           >
             Discover Events
