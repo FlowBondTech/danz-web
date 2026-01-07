@@ -121,15 +121,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           // Get current path
           const currentPath = window.location.pathname
           const isDashboardPath = currentPath.startsWith('/dashboard')
+          // Public paths that authenticated users can stay on without redirect
+          const isPublicPath = currentPath === '/' ||
+                               currentPath.startsWith('/events') ||
+                               currentPath === '/danz' ||
+                               currentPath.startsWith('/i/')
 
           // If no profile or no username, redirect to register (unless already there)
           if ((!data?.me || !data.me.username) && currentPath !== '/register') {
             console.log('User needs onboarding, redirecting to /register')
             router.push('/register')
           }
-          // If has username and not already on dashboard, redirect to dashboard
-          else if (data?.me?.username && !isDashboardPath) {
-            console.log('User logged in, redirecting to dashboard')
+          // If has username and on login page, redirect to dashboard
+          // Don't redirect if on public paths or already on dashboard
+          else if (data?.me?.username && !isDashboardPath && !isPublicPath && currentPath === '/login') {
+            console.log('User logged in from login page, redirecting to dashboard')
             router.push('/dashboard')
           }
         } catch (error) {

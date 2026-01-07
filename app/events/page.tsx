@@ -324,7 +324,7 @@ export default function PublicEventsPage() {
       {/* Footer */}
       <footer className="border-t border-neon-purple/10 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-text-muted text-sm">
-          <p>Powered by DANZ - Dance to Earn</p>
+          <p>Powered by <a href="https://flowbond.tech" target="_blank" rel="noopener noreferrer" className="text-neon-purple hover:text-neon-pink transition-colors">FlowBond.Tech</a></p>
         </div>
       </footer>
     </div>
