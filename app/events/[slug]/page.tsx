@@ -21,6 +21,7 @@ import {
 import Link from 'next/link'
 import Image from 'next/image'
 import Navbar from '@/src/components/Navbar'
+import { QRCodeSVG } from 'qrcode.react'
 
 const GET_PUBLIC_EVENT = gql`
   query GetPublicEvent($slug: String!) {
@@ -82,6 +83,14 @@ export default function PublicEventPage() {
   const [showShareToast, setShowShareToast] = useState(false)
   const [pendingJoin, setPendingJoin] = useState(false)
   const [registrationError, setRegistrationError] = useState<string | null>(null)
+  const [pageUrl, setPageUrl] = useState('')
+
+  // Get page URL for QR code
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setPageUrl(window.location.href)
+    }
+  }, [slug])
 
   const { data, loading, error, refetch } = useQuery(GET_PUBLIC_EVENT, {
     variables: { slug },
@@ -269,13 +278,26 @@ export default function PublicEventPage() {
             <FiArrowLeft className="w-4 h-4" />
             <span>Back to Events</span>
           </Link>
-          <button
-            onClick={handleShare}
-            className="flex items-center gap-2 px-4 py-2 bg-bg-card hover:bg-bg-hover border border-neon-purple/20 rounded-lg text-text-primary transition-colors"
-          >
-            <FiShare2 />
-            Share
-          </button>
+          <div className="flex items-center gap-3">
+            {/* QR Code - hidden on mobile */}
+            {pageUrl && (
+              <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-white rounded-lg" title="Scan to open on your phone">
+                <QRCodeSVG
+                  value={pageUrl}
+                  size={40}
+                  level="M"
+                  includeMargin={false}
+                />
+              </div>
+            )}
+            <button
+              onClick={handleShare}
+              className="flex items-center gap-2 px-4 py-2 bg-bg-card hover:bg-bg-hover border border-neon-purple/20 rounded-lg text-text-primary transition-colors"
+            >
+              <FiShare2 />
+              Share
+            </button>
+          </div>
         </div>
       </div>
 
