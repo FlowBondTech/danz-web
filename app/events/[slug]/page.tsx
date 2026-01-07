@@ -15,7 +15,8 @@ import {
   FiArrowLeft,
   FiShare2,
   FiCheck,
-  FiLoader
+  FiLoader,
+  FiAlertCircle
 } from 'react-icons/fi'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -80,6 +81,7 @@ export default function PublicEventPage() {
   const { authenticated, login, ready } = usePrivy()
   const [showShareToast, setShowShareToast] = useState(false)
   const [pendingJoin, setPendingJoin] = useState(false)
+  const [registrationError, setRegistrationError] = useState<string | null>(null)
 
   const { data, loading, error, refetch } = useQuery(GET_PUBLIC_EVENT, {
     variables: { slug },
@@ -88,7 +90,23 @@ export default function PublicEventPage() {
 
   const [registerForEvent, { loading: registering }] = useMutation(REGISTER_FOR_EVENT, {
     onCompleted: () => {
+      setRegistrationError(null)
       refetch()
+    },
+    onError: (error) => {
+      console.error('Registration error:', error)
+      const errorCode = error.graphQLErrors?.[0]?.extensions?.code
+      if (errorCode === 'PROFILE_REQUIRED') {
+        setRegistrationError('Please complete your profile before registering for events.')
+        // Redirect to dashboard after a short delay
+        setTimeout(() => {
+          router.push('/dashboard?setup=true')
+        }, 2000)
+      } else if (errorCode === 'CONFLICT') {
+        setRegistrationError(error.message)
+      } else {
+        setRegistrationError('Failed to register. Please try again.')
+      }
     },
   })
 
@@ -115,6 +133,8 @@ export default function PublicEventPage() {
   }, [])
 
   const handleJoinEvent = async () => {
+    setRegistrationError(null) // Clear any previous errors
+
     if (!authenticated) {
       // Store intent to join, then trigger login
       setPendingJoin(true)
@@ -129,6 +149,7 @@ export default function PublicEventPage() {
         variables: { eventId: event.id },
       })
     } catch (err) {
+      // Error is handled in onError callback
       console.error('Failed to register:', err)
     }
   }
@@ -396,6 +417,23 @@ export default function PublicEventPage() {
 
           {/* Join Button */}
           <div className="p-6 sm:p-8 bg-bg-secondary/50">
+            {/* Error Message */}
+            {registrationError && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-4 p-4 bg-red-500/20 border border-red-500/30 rounded-xl flex items-start gap-3"
+              >
+                <FiAlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-red-400 font-medium">{registrationError}</p>
+                  {registrationError.includes('complete your profile') && (
+                    <p className="text-red-400/80 text-sm mt-1">Redirecting to your dashboard...</p>
+                  )}
+                </div>
+              </motion.div>
+            )}
+
             {event.is_registered ? (
               <div className="flex items-center justify-center gap-3 py-4 px-6 bg-green-500/20 rounded-xl border border-green-500/30">
                 <FiCheck className="w-6 h-6 text-green-400" />
