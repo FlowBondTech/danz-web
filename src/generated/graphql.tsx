@@ -3615,6 +3615,7 @@ export type Query = {
   projectBySlug?: Maybe<Project>
   projects: Array<Project>
   publicEvent?: Maybe<Event>
+  publicEvents: EventConnection
   realTimeAnalytics: RealTimeAnalytics
   recentActivities: Array<Activity>
   regionalLeaderboard: RegionalLeaderboard
@@ -4221,6 +4222,12 @@ export type QueryProjectsArgs = {
 
 export type QueryPublicEventArgs = {
   slug: Scalars['String']['input']
+}
+
+export type QueryPublicEventsArgs = {
+  filter?: InputMaybe<EventFilterInput>
+  pagination?: InputMaybe<PaginationInput>
+  sortBy?: InputMaybe<EventSortBy>
 }
 
 export type QueryRecentActivitiesArgs = {
@@ -9053,6 +9060,74 @@ export type GetEventsQueryVariables = Exact<{
 export type GetEventsQuery = {
   __typename?: 'Query'
   events: {
+    __typename?: 'EventConnection'
+    totalCount: number
+    events: Array<{
+      __typename?: 'Event'
+      id: string
+      slug?: string | null
+      title: string
+      description?: string | null
+      category?: EventCategory | null
+      image_url?: string | null
+      location_name: string
+      location_address?: string | null
+      location_city?: string | null
+      is_public?: boolean | null
+      facilitator_id?: string | null
+      max_capacity?: number | null
+      current_capacity?: number | null
+      price_usd?: number | null
+      price_danz?: number | null
+      is_featured?: boolean | null
+      skill_level?: SkillLevel | null
+      is_virtual?: boolean | null
+      virtual_link?: string | null
+      requirements?: string | null
+      tags?: Array<string> | null
+      dance_styles?: Array<string> | null
+      currency?: string | null
+      start_date_time: any
+      end_date_time: any
+      created_at: any
+      updated_at: any
+      status?: EventStatus | null
+      is_registered?: boolean | null
+      user_registration_status?: RegistrationStatus | null
+      registration_count?: number | null
+      is_recurring?: boolean | null
+      recurrence_type?: RecurrenceType | null
+      recurrence_end_date?: any | null
+      recurrence_days?: Array<string> | null
+      recurrence_count?: number | null
+      parent_event_id?: string | null
+      facilitator?: {
+        __typename?: 'User'
+        privy_id: string
+        username?: string | null
+        display_name?: string | null
+        avatar_url?: string | null
+      } | null
+    }>
+    pageInfo: {
+      __typename?: 'PageInfo'
+      hasNextPage: boolean
+      hasPreviousPage: boolean
+      startCursor?: string | null
+      endCursor?: string | null
+    }
+  }
+}
+
+export type GetPublicEventsQueryVariables = Exact<{
+  filter?: InputMaybe<EventFilterInput>
+  pagination?: InputMaybe<PaginationInput>
+  sortBy?: InputMaybe<EventSortBy>
+}>
+
+export type GetPublicEventsQuery = {
+  __typename?: 'Query'
+  publicEvents: {
     __typename?: 'EventConnection'
     totalCount: number
     events: Array<{
@@ -19710,6 +19785,122 @@ export type GetEventsQueryHookResult = ReturnType<typeof useGetEventsQuery>
 export type GetEventsLazyQueryHookResult = ReturnType<typeof useGetEventsLazyQuery>
 export type GetEventsSuspenseQueryHookResult = ReturnType<typeof useGetEventsSuspenseQuery>
 export type GetEventsQueryResult = Apollo.QueryResult<GetEventsQuery, GetEventsQueryVariables>
+export const GetPublicEventsDocument = gql`
+    query GetPublicEvents($filter: EventFilterInput, $pagination: PaginationInput, $sortBy: EventSortBy) {
+  publicEvents(filter: $filter, pagination: $pagination, sortBy: $sortBy) {
+    events {
+      id
+      slug
+      title
+      description
+      category
+      image_url
+      location_name
+      location_address
+      location_city
+      is_public
+      facilitator_id
+      facilitator {
+        privy_id
+        username
+        display_name
+        avatar_url
+      }
+      max_capacity
+      current_capacity
+      price_usd
+      price_danz
+      is_featured
+      skill_level
+      is_virtual
+      virtual_link
+      requirements
+      tags
+      dance_styles
+      currency
+      start_date_time
+      end_date_time
+      created_at
+      updated_at
+      status
+      is_registered
+      user_registration_status
+      registration_count
+      is_recurring
+      recurrence_type
+      recurrence_end_date
+      recurrence_days
+      recurrence_count
+      parent_event_id
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}
+    `
+
+/**
+ * __useGetPublicEventsQuery__
+ *
+ * To run a query within a React component, call `useGetPublicEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPublicEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPublicEventsQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *      pagination: // value for 'pagination'
+ *      sortBy: // value for 'sortBy'
+ *   },
+ * });
+ */
+export function useGetPublicEventsQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetPublicEventsQuery, GetPublicEventsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetPublicEventsQuery, GetPublicEventsQueryVariables>(
+    GetPublicEventsDocument,
+    options,
+  )
+}
+export function useGetPublicEventsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetPublicEventsQuery, GetPublicEventsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetPublicEventsQuery, GetPublicEventsQueryVariables>(
+    GetPublicEventsDocument,
+    options,
+  )
+}
+export function useGetPublicEventsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetPublicEventsQuery, GetPublicEventsQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetPublicEventsQuery, GetPublicEventsQueryVariables>(
+    GetPublicEventsDocument,
+    options,
+  )
+}
+export type GetPublicEventsQueryHookResult = ReturnType<typeof useGetPublicEventsQuery>
+export type GetPublicEventsLazyQueryHookResult = ReturnType<typeof useGetPublicEventsLazyQuery>
+export type GetPublicEventsSuspenseQueryHookResult = ReturnType<
+  typeof useGetPublicEventsSuspenseQuery
+>
+export type GetPublicEventsQueryResult = Apollo.QueryResult<
+  GetPublicEventsQuery,
+  GetPublicEventsQueryVariables
+>
 export const GetGlobalLeaderboardDocument = gql`
     query GetGlobalLeaderboard($metric: LeaderboardMetric!, $limit: Int) {
   globalLeaderboard(metric: $metric, limit: $limit) {

@@ -6,7 +6,7 @@ import { motion } from 'motion/react'
 import Link from 'next/link'
 import Image from 'next/image'
 import Navbar from '@/src/components/Navbar'
-import { useGetEventsQuery, EventCategory } from '@/src/generated/graphql'
+import { useGetPublicEventsQuery, EventCategory } from '@/src/generated/graphql'
 import {
   FiMapPin,
   FiCalendar,
@@ -34,7 +34,8 @@ export default function PublicEventsPage() {
   const [showFilters, setShowFilters] = useState(false)
   const { authenticated, ready, login } = usePrivy()
 
-  const { data, loading, error } = useGetEventsQuery({
+  // Use publicEvents query - no auth required, only returns public events
+  const { data, loading, error } = useGetPublicEventsQuery({
     variables: {
       filter: {
         category: selectedCategory ? (selectedCategory as EventCategory) : undefined,
@@ -42,11 +43,10 @@ export default function PublicEventsPage() {
       pagination: { limit: 50 },
     },
     errorPolicy: 'all',
-    skip: !ready, // Wait for Privy to be ready
   })
 
-  // Filter for public events and apply search filter
-  const allEvents = (data?.events?.events || []).filter((event: any) => event.is_public !== false)
+  // Apply search filter (server already filtered for is_public)
+  const allEvents = data?.publicEvents?.events || []
   const events = searchQuery
     ? allEvents.filter((event: any) => {
         const query = searchQuery.toLowerCase()
@@ -157,7 +157,7 @@ export default function PublicEventsPage() {
 
       {/* Events Grid */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        {(loading || !ready) ? (
+        {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="flex flex-col items-center gap-4">
               <div className="relative">
@@ -166,22 +166,6 @@ export default function PublicEventsPage() {
               </div>
               <p className="text-text-secondary">Loading events...</p>
             </div>
-          </div>
-        ) : (error || !data?.events) && !authenticated ? (
-          <div className="text-center py-20">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-neon-purple/10 flex items-center justify-center">
-              <span className="text-4xl">💃</span>
-            </div>
-            <h2 className="text-2xl font-bold text-text-primary mb-4">Discover Dance Events</h2>
-            <p className="text-text-secondary mb-8 max-w-md mx-auto">
-              Sign in to browse and join dance events near you. From salsa socials to hip-hop workshops, find your rhythm!
-            </p>
-            <button
-              onClick={() => login()}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-neon-purple to-neon-pink hover:opacity-90 rounded-xl text-white font-medium transition-all"
-            >
-              Sign In to Explore Events
-            </button>
           </div>
         ) : error ? (
           <div className="text-center py-20">
