@@ -104,6 +104,11 @@ export default function InvitePage() {
           )}
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="absolute bottom-0 left-0 right-0 py-6 text-center text-purple-200/60 text-sm">
+        <p>Powered by <a href="https://flowbond.tech" target="_blank" rel="noopener noreferrer" className="text-purple-300 hover:text-pink-300 transition-colors">FlowBond.Tech</a></p>
+      </footer>
     </div>
   )
 }

@@ -66,6 +66,11 @@ export default function LoginPage() {
           </button>
         </p>
       </div>
+
+      {/* Footer */}
+      <footer className="absolute bottom-0 left-0 right-0 py-6 text-center text-text-muted text-sm">
+        <p>Powered by <a href="https://flowbond.tech" target="_blank" rel="noopener noreferrer" className="text-neon-purple hover:text-neon-pink transition-colors">FlowBond.Tech</a></p>
+      </footer>
     </div>
   )
 }
