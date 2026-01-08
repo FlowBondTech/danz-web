@@ -17,6 +17,8 @@ import {
   FiMapPin,
   FiCheck,
   FiChevronRight,
+  FiHeart,
+  FiList,
 } from 'react-icons/fi'
 import Link from 'next/link'
 import { usePrivy } from '@privy-io/react-auth'
@@ -38,6 +40,7 @@ import {
 import { FiHelpCircle } from 'react-icons/fi'
 
 type ViewMode = 'grid' | 'calendar' | 'map'
+type EventTab = 'all' | 'going' | 'maybe' | 'interested'
 
 // Mock leaderboard data (in production, fetch from API)
 const MOCK_LEADERBOARD = [
@@ -53,12 +56,13 @@ const MOCK_LEADERBOARD = [
 export default function EventsPage() {
   const { authenticated } = usePrivy()
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
+  const [activeTab, setActiveTab] = useState<EventTab>('all')
   const [showCreateWizard, setShowCreateWizard] = useState(false)
   const [showApplicationForm, setShowApplicationForm] = useState(false)
   const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState<any>(null)
   const [registrationNotes, setRegistrationNotes] = useState('')
-  const [selectedRsvpStatus, setSelectedRsvpStatus] = useState<'registered' | 'maybe'>('registered')
+  const [selectedRsvpStatus, setSelectedRsvpStatus] = useState<'registered' | 'maybe' | 'interested'>('registered')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
@@ -116,6 +120,16 @@ export default function EventsPage() {
 
   const events = eventsData?.events?.events || []
 
+  // Filter events by tab (registration status)
+  const filterByTab = (event: any) => {
+    if (activeTab === 'all') return true
+    const status = event.user_registration_status
+    if (activeTab === 'going') return status === 'registered' || status === 'attended'
+    if (activeTab === 'maybe') return status === 'maybe'
+    if (activeTab === 'interested') return status === 'interested'
+    return true
+  }
+
   // Filter events
   const filteredEvents = events.filter(event => {
     const matchesSearch =
@@ -124,8 +138,17 @@ export default function EventsPage() {
       event.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       event.location_city?.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesCategory = !selectedCategory || event.category === selectedCategory
-    return matchesSearch && matchesCategory
+    const matchesTab = filterByTab(event)
+    return matchesSearch && matchesCategory && matchesTab
   })
+
+  // Count events per tab
+  const tabCounts = {
+    all: events.length,
+    going: events.filter((e: any) => e.user_registration_status === 'registered' || e.user_registration_status === 'attended').length,
+    maybe: events.filter((e: any) => e.user_registration_status === 'maybe').length,
+    interested: events.filter((e: any) => e.user_registration_status === 'interested').length,
+  }
 
   const handleRegister = async (event: any, status?: 'registered' | 'maybe') => {
     if (status) {
@@ -261,6 +284,57 @@ export default function EventsPage() {
             ) : null}
           </div>
         </div>
+
+        {/* Event Tabs */}
+        {authenticated && (
+          <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+            {[
+              { id: 'all' as EventTab, label: 'All Events', icon: FiList, color: 'neon-purple' },
+              { id: 'going' as EventTab, label: 'Going', icon: FiCheck, color: 'green-500' },
+              { id: 'maybe' as EventTab, label: 'Maybe', icon: FiHelpCircle, color: 'yellow-500' },
+              { id: 'interested' as EventTab, label: 'Interested', icon: FiHeart, color: 'pink-500' },
+            ].map(tab => {
+              const Icon = tab.icon
+              const count = tabCounts[tab.id]
+              const isActive = activeTab === tab.id
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all whitespace-nowrap ${
+                    isActive
+                      ? `bg-${tab.color}/20 text-${tab.color === 'neon-purple' ? 'neon-purple' : tab.color.replace('-500', '-400')} border border-${tab.color}/30`
+                      : 'bg-bg-secondary text-text-secondary hover:bg-white/10 border border-white/10'
+                  }`}
+                  style={isActive ? {
+                    backgroundColor: tab.color === 'neon-purple' ? 'rgba(168, 85, 247, 0.2)' :
+                                    tab.color === 'green-500' ? 'rgba(34, 197, 94, 0.2)' :
+                                    tab.color === 'yellow-500' ? 'rgba(234, 179, 8, 0.2)' :
+                                    'rgba(236, 72, 153, 0.2)',
+                    color: tab.color === 'neon-purple' ? '#a855f7' :
+                           tab.color === 'green-500' ? '#4ade80' :
+                           tab.color === 'yellow-500' ? '#facc15' :
+                           '#f472b6',
+                    borderColor: tab.color === 'neon-purple' ? 'rgba(168, 85, 247, 0.3)' :
+                                 tab.color === 'green-500' ? 'rgba(34, 197, 94, 0.3)' :
+                                 tab.color === 'yellow-500' ? 'rgba(234, 179, 8, 0.3)' :
+                                 'rgba(236, 72, 153, 0.3)',
+                  } : {}}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{tab.label}</span>
+                  {count > 0 && (
+                    <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                      isActive ? 'bg-white/20' : 'bg-white/10'
+                    }`}>
+                      {count}
+                    </span>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        )}
 
         {/* Filters and View Modes */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
@@ -484,37 +558,50 @@ export default function EventsPage() {
                   <label className="block text-sm font-medium text-text-secondary mb-3">
                     Your Response
                   </label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-3 gap-2">
                     <button
                       onClick={() => setSelectedRsvpStatus('registered')}
-                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${
+                      className={`flex flex-col items-center justify-center gap-1 p-3 rounded-xl border-2 transition-all ${
                         selectedRsvpStatus === 'registered'
                           ? 'border-green-500 bg-green-500/10 text-green-400'
                           : 'border-white/10 bg-bg-primary text-text-secondary hover:border-white/20'
                       }`}
                     >
                       <FiCheck className="w-5 h-5" />
-                      <span className="font-medium">Going</span>
+                      <span className="text-sm font-medium">Going</span>
                     </button>
                     <button
                       onClick={() => setSelectedRsvpStatus('maybe')}
-                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${
+                      className={`flex flex-col items-center justify-center gap-1 p-3 rounded-xl border-2 transition-all ${
                         selectedRsvpStatus === 'maybe'
                           ? 'border-yellow-500 bg-yellow-500/10 text-yellow-400'
                           : 'border-white/10 bg-bg-primary text-text-secondary hover:border-white/20'
                       }`}
                     >
                       <FiHelpCircle className="w-5 h-5" />
-                      <span className="font-medium">Maybe</span>
+                      <span className="text-sm font-medium">Maybe</span>
+                    </button>
+                    <button
+                      onClick={() => setSelectedRsvpStatus('interested')}
+                      className={`flex flex-col items-center justify-center gap-1 p-3 rounded-xl border-2 transition-all ${
+                        selectedRsvpStatus === 'interested'
+                          ? 'border-pink-500 bg-pink-500/10 text-pink-400'
+                          : 'border-white/10 bg-bg-primary text-text-secondary hover:border-white/20'
+                      }`}
+                    >
+                      <FiHeart className="w-5 h-5" />
+                      <span className="text-sm font-medium">Interested</span>
                     </button>
                   </div>
                 </div>
 
                 {/* XP Reward Preview */}
                 <div className="flex items-center justify-center gap-2 p-3 bg-neon-purple/10 border border-neon-purple/20 rounded-xl mb-4">
-                  <span className="text-yellow-500">{selectedRsvpStatus === 'registered' ? '+25 XP' : '+10 XP'}</span>
+                  <span className="text-yellow-500">
+                    {selectedRsvpStatus === 'registered' ? '+25 XP' : selectedRsvpStatus === 'maybe' ? '+10 XP' : '+5 XP'}
+                  </span>
                   <span className="text-text-secondary">
-                    for {selectedRsvpStatus === 'registered' ? 'joining' : 'showing interest in'} this event!
+                    for {selectedRsvpStatus === 'registered' ? 'joining' : selectedRsvpStatus === 'maybe' ? 'considering' : 'showing interest in'} this event!
                   </span>
                 </div>
 
