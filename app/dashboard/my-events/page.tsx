@@ -40,7 +40,7 @@ import {
 import { FiHelpCircle } from 'react-icons/fi'
 
 type ViewMode = 'grid' | 'calendar' | 'map'
-type EventTab = 'all' | 'going' | 'maybe' | 'interested'
+type EventTab = 'all' | 'mine' | 'going' | 'maybe' | 'interested'
 
 // Mock leaderboard data (in production, fetch from API)
 const MOCK_LEADERBOARD = [
@@ -124,6 +124,7 @@ export default function EventsPage() {
   const filterByTab = (event: any) => {
     if (activeTab === 'all') return true
     const status = event.user_registration_status
+    if (activeTab === 'mine') return status === 'registered' || status === 'attended' || status === 'maybe' || status === 'interested'
     if (activeTab === 'going') return status === 'registered' || status === 'attended'
     if (activeTab === 'maybe') return status === 'maybe'
     if (activeTab === 'interested') return status === 'interested'
@@ -145,6 +146,7 @@ export default function EventsPage() {
   // Count events per tab
   const tabCounts = {
     all: events.length,
+    mine: events.filter((e: any) => e.user_registration_status === 'registered' || e.user_registration_status === 'attended' || e.user_registration_status === 'maybe' || e.user_registration_status === 'interested').length,
     going: events.filter((e: any) => e.user_registration_status === 'registered' || e.user_registration_status === 'attended').length,
     maybe: events.filter((e: any) => e.user_registration_status === 'maybe').length,
     interested: events.filter((e: any) => e.user_registration_status === 'interested').length,
@@ -257,13 +259,10 @@ export default function EventsPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setShowCreateWizard(true)}
-                className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-neon-purple to-neon-pink text-white rounded-xl font-medium shadow-lg shadow-neon-purple/30 hover:shadow-neon-purple/40 transition-shadow"
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-pink text-white text-sm rounded-lg font-medium hover:opacity-90 transition-opacity"
               >
-                <FiPlus className="w-5 h-5" />
+                <FiPlus className="w-4 h-4" />
                 Create Event
-                <span className="hidden sm:inline text-xs bg-white/20 px-2 py-0.5 rounded-full">
-                  +100 XP
-                </span>
               </motion.button>
             ) : needsApproval ? (
               <button
@@ -289,7 +288,8 @@ export default function EventsPage() {
         {authenticated && (
           <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
             {[
-              { id: 'all' as EventTab, label: 'All Events', icon: FiList, color: 'neon-purple' },
+              { id: 'all' as EventTab, label: 'Discover', icon: FiList, color: 'neon-purple' },
+              { id: 'mine' as EventTab, label: 'My Events', icon: FiCalendar, color: 'neon-blue' },
               { id: 'going' as EventTab, label: 'Going', icon: FiCheck, color: 'green-500' },
               { id: 'maybe' as EventTab, label: 'Maybe', icon: FiHelpCircle, color: 'yellow-500' },
               { id: 'interested' as EventTab, label: 'Interested', icon: FiHeart, color: 'pink-500' },
@@ -308,14 +308,17 @@ export default function EventsPage() {
                   }`}
                   style={isActive ? {
                     backgroundColor: tab.color === 'neon-purple' ? 'rgba(168, 85, 247, 0.2)' :
+                                    tab.color === 'neon-blue' ? 'rgba(59, 130, 246, 0.2)' :
                                     tab.color === 'green-500' ? 'rgba(34, 197, 94, 0.2)' :
                                     tab.color === 'yellow-500' ? 'rgba(234, 179, 8, 0.2)' :
                                     'rgba(236, 72, 153, 0.2)',
                     color: tab.color === 'neon-purple' ? '#a855f7' :
+                           tab.color === 'neon-blue' ? '#3b82f6' :
                            tab.color === 'green-500' ? '#4ade80' :
                            tab.color === 'yellow-500' ? '#facc15' :
                            '#f472b6',
                     borderColor: tab.color === 'neon-purple' ? 'rgba(168, 85, 247, 0.3)' :
+                                 tab.color === 'neon-blue' ? 'rgba(59, 130, 246, 0.3)' :
                                  tab.color === 'green-500' ? 'rgba(34, 197, 94, 0.3)' :
                                  tab.color === 'yellow-500' ? 'rgba(234, 179, 8, 0.3)' :
                                  'rgba(236, 72, 153, 0.3)',
