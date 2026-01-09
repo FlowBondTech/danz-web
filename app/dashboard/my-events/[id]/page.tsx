@@ -157,11 +157,14 @@ export default function EventDetailPage() {
     skip: !eventId,
   })
 
-  const [registerForEvent, { loading: registering }] = useRegisterForEventMutation({
+  const [registerForEvent, { loading: registering, error: registerError }] = useRegisterForEventMutation({
     onCompleted: () => {
       setShowRegistrationModal(false)
       setRegistrationNotes('')
       refetch()
+    },
+    onError: (error) => {
+      console.error('Registration failed:', error.message)
     },
   })
 
@@ -795,6 +798,12 @@ export default function EventDetailPage() {
                   placeholder="Any special requirements..."
                 />
               </div>
+
+              {registerError && (
+                <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
+                  Registration failed: {registerError.message}
+                </div>
+              )}
 
               <div className="flex gap-3">
                 <button
