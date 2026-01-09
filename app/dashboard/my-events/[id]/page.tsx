@@ -714,10 +714,8 @@ export default function EventDetailPage() {
             {/* Check-in Code Card (for organizers) */}
             {canManageEvent && checkinCode && (
               <EventCheckinCode
-                eventId={event.id}
                 checkinCode={checkinCode}
                 eventTitle={event.title}
-                onCodeRegenerated={() => refetch()}
               />
             )}
           </div>

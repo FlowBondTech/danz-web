@@ -1,62 +1,31 @@
 'use client'
 
-import { useMutation } from '@apollo/client'
-import { gql } from 'graphql-tag'
 import { QRCodeSVG } from 'qrcode.react'
 import { useState } from 'react'
 import {
   FiCopy,
   FiCheck,
-  FiRefreshCw,
   FiMaximize2,
   FiX,
   FiDownload,
 } from 'react-icons/fi'
 
-const REGENERATE_CHECKIN_CODE = gql`
-  mutation RegenerateCheckinCode($eventId: ID!) {
-    regenerateCheckinCode(eventId: $eventId) {
-      id
-      checkin_code
-    }
-  }
-`
-
 interface EventCheckinCodeProps {
-  eventId: string
   checkinCode: string
   eventTitle: string
-  onCodeRegenerated?: (newCode: string) => void
 }
 
 export default function EventCheckinCode({
-  eventId,
   checkinCode,
   eventTitle,
-  onCodeRegenerated,
 }: EventCheckinCodeProps) {
   const [copied, setCopied] = useState(false)
   const [showFullscreen, setShowFullscreen] = useState(false)
-  const [currentCode, setCurrentCode] = useState(checkinCode)
-
-  const [regenerateCode, { loading: regenerating }] = useMutation(REGENERATE_CHECKIN_CODE, {
-    onCompleted: (data) => {
-      const newCode = data.regenerateCheckinCode.checkin_code
-      setCurrentCode(newCode)
-      onCodeRegenerated?.(newCode)
-    },
-  })
 
   const copyCode = async () => {
-    await navigator.clipboard.writeText(currentCode)
+    await navigator.clipboard.writeText(checkinCode)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
-  }
-
-  const handleRegenerate = async () => {
-    if (confirm('Are you sure you want to generate a new check-in code? The old code will no longer work.')) {
-      await regenerateCode({ variables: { eventId } })
-    }
   }
 
   const downloadQR = () => {
@@ -82,7 +51,7 @@ export default function EventCheckinCode({
   }
 
   // QR code content - can be scanned to open check-in page
-  const qrContent = `danz://checkin/${currentCode}`
+  const qrContent = `danz://checkin/${checkinCode}`
 
   return (
     <>
@@ -108,7 +77,7 @@ export default function EventCheckinCode({
           {/* Code Display */}
           <div className="flex items-center gap-3">
             <div className="text-3xl font-mono font-bold tracking-wider text-neon-purple">
-              {currentCode}
+              {checkinCode}
             </div>
             <button
               onClick={copyCode}
@@ -143,14 +112,6 @@ export default function EventCheckinCode({
               <FiDownload size={16} />
               Download
             </button>
-            <button
-              onClick={handleRegenerate}
-              disabled={regenerating}
-              className="py-2.5 px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-text-secondary font-medium transition-colors disabled:opacity-50"
-              title="Generate new code"
-            >
-              <FiRefreshCw size={16} className={regenerating ? 'animate-spin' : ''} />
-            </button>
           </div>
         </div>
       </div>
@@ -179,7 +140,7 @@ export default function EventCheckinCode({
           </div>
 
           <div className="mt-8 text-white text-5xl font-mono font-bold tracking-widest">
-            {currentCode}
+            {checkinCode}
           </div>
 
           <p className="mt-4 text-white/60 text-lg">
