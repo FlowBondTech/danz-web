@@ -279,17 +279,6 @@ export default function PublicEventPage() {
             <span>Back to Events</span>
           </Link>
           <div className="flex items-center gap-3">
-            {/* QR Code - hidden on mobile */}
-            {pageUrl && (
-              <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-white rounded-lg" title="Scan to open on your phone">
-                <QRCodeSVG
-                  value={pageUrl}
-                  size={40}
-                  level="M"
-                  includeMargin={false}
-                />
-              </div>
-            )}
             <button
               onClick={handleShare}
               className="flex items-center gap-2 px-4 py-2 bg-bg-card hover:bg-bg-hover border border-neon-purple/20 rounded-lg text-text-primary transition-colors"
@@ -324,24 +313,41 @@ export default function PublicEventPage() {
         >
           {/* Event Header */}
           <div className="p-6 sm:p-8 border-b border-neon-purple/10">
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(event.status)}`}>
-                {event.status?.charAt(0).toUpperCase() + event.status?.slice(1)}
-              </span>
-              {event.category && (
-                <span className="px-3 py-1 rounded-full text-sm font-medium bg-neon-purple/20 text-neon-purple border border-neon-purple/30">
-                  {event.category}
-                </span>
-              )}
-              {event.is_virtual && (
-                <span className="px-3 py-1 rounded-full text-sm font-medium bg-neon-blue/20 text-neon-blue border border-neon-blue/30 flex items-center gap-1">
-                  <FiVideo className="w-3 h-3" />
-                  Virtual
-                </span>
+            <div className="flex justify-between items-start gap-4">
+              <div className="flex-1">
+                <div className="flex flex-wrap items-center gap-3 mb-4">
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(event.status)}`}>
+                    {event.status?.charAt(0).toUpperCase() + event.status?.slice(1)}
+                  </span>
+                  {event.category && (
+                    <span className="px-3 py-1 rounded-full text-sm font-medium bg-neon-purple/20 text-neon-purple border border-neon-purple/30">
+                      {event.category}
+                    </span>
+                  )}
+                  {event.is_virtual && (
+                    <span className="px-3 py-1 rounded-full text-sm font-medium bg-neon-blue/20 text-neon-blue border border-neon-blue/30 flex items-center gap-1">
+                      <FiVideo className="w-3 h-3" />
+                      Virtual
+                    </span>
+                  )}
+                </div>
+
+                <h1 className="text-3xl sm:text-4xl font-bold text-text-primary mb-4">{event.title}</h1>
+              </div>
+
+              {/* QR Code - hidden on mobile */}
+              {pageUrl && (
+                <div className="hidden sm:flex flex-col items-center gap-1 p-3 bg-white rounded-xl shadow-sm" title="Scan to open on your phone">
+                  <QRCodeSVG
+                    value={pageUrl}
+                    size={80}
+                    level="M"
+                    includeMargin={false}
+                  />
+                  <span className="text-xs text-gray-500">Scan me</span>
+                </div>
               )}
             </div>
-
-            <h1 className="text-3xl sm:text-4xl font-bold text-text-primary mb-4">{event.title}</h1>
 
             {/* Organizer */}
             {event.facilitator && (
