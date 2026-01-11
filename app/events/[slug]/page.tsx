@@ -16,7 +16,8 @@ import {
   FiShare2,
   FiCheck,
   FiLoader,
-  FiAlertCircle
+  FiAlertCircle,
+  FiX
 } from 'react-icons/fi'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -81,6 +82,7 @@ export default function PublicEventPage() {
   const slug = params?.slug as string
   const { authenticated, login, ready } = usePrivy()
   const [showShareToast, setShowShareToast] = useState(false)
+  const [showQRModal, setShowQRModal] = useState(false)
   const [pendingJoin, setPendingJoin] = useState(false)
   const [registrationError, setRegistrationError] = useState<string | null>(null)
   const [pageUrl, setPageUrl] = useState('')
@@ -278,15 +280,6 @@ export default function PublicEventPage() {
             <FiArrowLeft className="w-4 h-4" />
             <span>Back to Events</span>
           </Link>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleShare}
-              className="flex items-center gap-2 px-4 py-2 bg-bg-card hover:bg-bg-hover border border-neon-purple/20 rounded-lg text-text-primary transition-colors"
-            >
-              <FiShare2 />
-              Share
-            </button>
-          </div>
         </div>
       </div>
 
@@ -335,16 +328,29 @@ export default function PublicEventPage() {
                 <h1 className="text-3xl sm:text-4xl font-bold text-text-primary mb-4">{event.title}</h1>
               </div>
 
-              {/* QR Code - hidden on mobile */}
+              {/* QR Code & Share - hidden on mobile */}
               {pageUrl && (
-                <div className="hidden sm:flex flex-col items-center gap-1 p-3 bg-white rounded-xl shadow-sm" title="Scan to open on your phone">
-                  <QRCodeSVG
-                    value={pageUrl}
-                    size={80}
-                    level="M"
-                    includeMargin={false}
-                  />
-                  <span className="text-xs text-gray-500">Scan me</span>
+                <div className="hidden sm:flex flex-col items-center gap-2">
+                  <button
+                    onClick={() => setShowQRModal(true)}
+                    className="flex flex-col items-center gap-1 p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                    title="Click to enlarge"
+                  >
+                    <QRCodeSVG
+                      value={pageUrl}
+                      size={80}
+                      level="M"
+                      includeMargin={false}
+                    />
+                    <span className="text-xs text-gray-500">Tap to enlarge</span>
+                  </button>
+                  <button
+                    onClick={handleShare}
+                    className="flex items-center gap-2 px-4 py-2 bg-bg-hover hover:bg-neon-purple/20 border border-neon-purple/20 rounded-lg text-text-secondary hover:text-neon-purple transition-colors text-sm"
+                  >
+                    <FiShare2 className="w-4 h-4" />
+                    Share
+                  </button>
                 </div>
               )}
             </div>
@@ -507,6 +513,53 @@ export default function PublicEventPage() {
           </div>
         </motion.div>
       </main>
+
+      {/* QR Code Modal */}
+      {showQRModal && pageUrl && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowQRModal(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            className="bg-white rounded-2xl p-6 max-w-sm w-full text-center"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-gray-900">Scan to Open</h3>
+              <button
+                onClick={() => setShowQRModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <FiX className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+            <div className="flex justify-center mb-4">
+              <QRCodeSVG
+                value={pageUrl}
+                size={200}
+                level="M"
+                includeMargin={true}
+              />
+            </div>
+            <p className="text-sm text-gray-500 mb-4">
+              Scan this QR code to open this event on your phone
+            </p>
+            <button
+              onClick={handleShare}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-neon-purple to-neon-pink text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
+            >
+              <FiShare2 className="w-5 h-5" />
+              Share Event
+            </button>
+          </motion.div>
+        </motion.div>
+      )}
 
       {/* Footer */}
       <footer className="border-t border-neon-purple/10 mt-16 py-8">
