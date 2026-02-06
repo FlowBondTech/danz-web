@@ -1,0 +1,313 @@
+'use client'
+
+import { usePrivy } from '@privy-io/react-auth'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { useEffect, useState, Suspense } from 'react'
+
+// Supabase config (using service role for verification completion)
+const SUPABASE_URL = 'https://eoajujwpdkfuicnoxetk.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvYWp1andwZGtmdWljbm94ZXRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NDQzMzQsImV4cCI6MjA3MDIyMDMzNH0.NpMiRO22b-y-7zHo-RhA0ZX8tHkSZiTk9jlWcF-UZEg'
+
+interface VerificationResult {
+  success: boolean
+  error?: string
+  username?: string
+  display_name?: string
+  platform?: string
+}
+
+async function completeVerification(code: string, privyId: string): Promise<VerificationResult> {
+  try {
+    // First, find the pending verification
+    const findUrl = `${SUPABASE_URL}/rest/v1/pending_verifications?code=eq.${code}&verified_at=is.null&select=*`
+    const findRes = await fetch(findUrl, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+    })
+
+    if (!findRes.ok) {
+      return { success: false, error: 'Failed to check verification code' }
+    }
+
+    const verifications = await findRes.json()
+    if (!verifications || verifications.length === 0) {
+      return { success: false, error: 'Invalid or expired verification code' }
+    }
+
+    const verification = verifications[0]
+
+    // Check if expired
+    if (new Date(verification.expires_at) < new Date()) {
+      return { success: false, error: 'Verification code has expired. Please request a new one.' }
+    }
+
+    // Get user info
+    const userUrl = `${SUPABASE_URL}/rest/v1/users?privy_id=eq.${privyId}&select=username,display_name`
+    const userRes = await fetch(userUrl, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+    })
+
+    let username = 'Dancer'
+    let displayName = 'Dancer'
+
+    if (userRes.ok) {
+      const users = await userRes.json()
+      if (users && users.length > 0) {
+        username = users[0].username || 'Dancer'
+        displayName = users[0].display_name || username
+      }
+    }
+
+    // Complete the verification
+    const updateUrl = `${SUPABASE_URL}/rest/v1/pending_verifications?id=eq.${verification.id}`
+    const updateRes = await fetch(updateUrl, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        verified_at: new Date().toISOString(),
+        danz_privy_id: privyId,
+      }),
+    })
+
+    if (!updateRes.ok) {
+      return { success: false, error: 'Failed to complete verification' }
+    }
+
+    // Update user's platform ID (telegram_id or farcaster_fid)
+    if (verification.platform === 'telegram') {
+      await fetch(`${SUPABASE_URL}/rest/v1/users?privy_id=eq.${privyId}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          telegram_id: verification.platform_user_id,
+        }),
+      })
+    } else if (verification.platform === 'farcaster') {
+      await fetch(`${SUPABASE_URL}/rest/v1/users?privy_id=eq.${privyId}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          farcaster_fid: verification.platform_user_id,
+        }),
+      })
+    }
+
+    // Award signup points (50 XP)
+    await fetch(`${SUPABASE_URL}/rest/v1/rpc/award_xp`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_privy_id: privyId,
+        amount: 50,
+        reason: 'Chat platform verification bonus',
+      }),
+    }).catch(() => {
+      // Silently fail if RPC doesn't exist - XP will be awarded by the bot
+    })
+
+    return {
+      success: true,
+      username,
+      display_name: displayName,
+      platform: verification.platform,
+    }
+  } catch (error) {
+    console.error('Verification error:', error)
+    return { success: false, error: 'An unexpected error occurred' }
+  }
+}
+
+function LinkPageContent() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const { login, authenticated, ready, user } = usePrivy()
+
+  const [status, setStatus] = useState<'loading' | 'needs_auth' | 'verifying' | 'success' | 'error'>('loading')
+  const [result, setResult] = useState<VerificationResult | null>(null)
+
+  const code = searchParams.get('code')
+
+  useEffect(() => {
+    if (!code) {
+      setStatus('error')
+      setResult({ success: false, error: 'No verification code provided' })
+      return
+    }
+
+    if (!ready) {
+      return // Wait for Privy to initialize
+    }
+
+    if (!authenticated) {
+      setStatus('needs_auth')
+      return
+    }
+
+    // User is authenticated, complete verification
+    const doVerification = async () => {
+      setStatus('verifying')
+      const privyId = user?.id
+      if (!privyId) {
+        setStatus('error')
+        setResult({ success: false, error: 'Could not get user ID' })
+        return
+      }
+
+      const verifyResult = await completeVerification(code, privyId)
+      setResult(verifyResult)
+      setStatus(verifyResult.success ? 'success' : 'error')
+    }
+
+    doVerification()
+  }, [code, ready, authenticated, user])
+
+  const handleLogin = async () => {
+    try {
+      await login()
+    } catch (error) {
+      console.error('Login failed:', error)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-purple-900 flex items-center justify-center p-4">
+      <div className="max-w-md w-full bg-black/50 backdrop-blur-xl rounded-2xl border border-purple-500/20 p-8 text-center">
+        {/* Logo */}
+        <div className="mb-8">
+          <img src="/danz-icon-white.png" alt="DANZ" className="w-16 h-16 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-white">DANZ.Now</h1>
+          <p className="text-purple-300 mt-2">Account Verification</p>
+        </div>
+
+        {/* Loading State */}
+        {status === 'loading' && (
+          <div className="py-8">
+            <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full mx-auto" />
+            <p className="text-gray-400 mt-4">Loading...</p>
+          </div>
+        )}
+
+        {/* Needs Auth State */}
+        {status === 'needs_auth' && (
+          <div className="py-4">
+            <div className="text-6xl mb-6">🔗</div>
+            <h2 className="text-xl font-semibold text-white mb-4">
+              Link Your Account
+            </h2>
+            <p className="text-gray-400 mb-6">
+              Sign in or create a DANZ.Now account to complete the verification.
+            </p>
+            <button
+              onClick={handleLogin}
+              className="w-full py-3 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-xl transition-all transform hover:scale-105"
+            >
+              Sign In / Sign Up
+            </button>
+            <p className="text-gray-500 text-sm mt-4">
+              Verification code: <code className="text-purple-400">{code}</code>
+            </p>
+          </div>
+        )}
+
+        {/* Verifying State */}
+        {status === 'verifying' && (
+          <div className="py-8">
+            <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full mx-auto" />
+            <p className="text-gray-400 mt-4">Linking your accounts...</p>
+          </div>
+        )}
+
+        {/* Success State */}
+        {status === 'success' && result && (
+          <div className="py-4">
+            <div className="text-6xl mb-6">🎉</div>
+            <h2 className="text-xl font-semibold text-white mb-4">
+              You're Verified!
+            </h2>
+            <p className="text-gray-400 mb-2">
+              Welcome, <span className="text-purple-400 font-semibold">@{result.username}</span>!
+            </p>
+            <p className="text-gray-400 mb-6">
+              Your {result.platform} account is now linked to DANZ.Now.
+            </p>
+
+            <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-4 mb-6">
+              <p className="text-purple-300 font-semibold">+50 XP</p>
+              <p className="text-gray-400 text-sm">Verification bonus!</p>
+            </div>
+
+            <p className="text-gray-500 text-sm mb-6">
+              You can close this page and return to your chat.
+              Say <span className="text-purple-400">"status"</span> to confirm!
+            </p>
+
+            <button
+              onClick={() => router.push('/dashboard')}
+              className="w-full py-3 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-xl transition-all"
+            >
+              Go to Dashboard
+            </button>
+          </div>
+        )}
+
+        {/* Error State */}
+        {status === 'error' && result && (
+          <div className="py-4">
+            <div className="text-6xl mb-6">😕</div>
+            <h2 className="text-xl font-semibold text-white mb-4">
+              Verification Failed
+            </h2>
+            <p className="text-red-400 mb-6">
+              {result.error}
+            </p>
+
+            <div className="space-y-3">
+              <button
+                onClick={() => router.push('/')}
+                className="w-full py-3 px-6 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-xl transition-all"
+              >
+                Go to Home
+              </button>
+              <p className="text-gray-500 text-sm">
+                Need a new code? Say <span className="text-purple-400">"signup"</span> in your chat.
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default function LinkPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-purple-900 flex items-center justify-center">
+        <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full" />
+      </div>
+    }>
+      <LinkPageContent />
+    </Suspense>
+  )
+}
