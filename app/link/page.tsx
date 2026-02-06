@@ -343,9 +343,43 @@ function LinkPageContent() {
             <h2 className="text-xl font-semibold text-white mb-3">
               Verification Failed
             </h2>
-            <p className="text-red-400 mb-5">
+            <p className="text-red-400 mb-4">
               {result.error}
             </p>
+
+            {/* Contextual suggestions */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-5 text-left">
+              <p className="text-gray-300 text-sm font-medium mb-2">Try this:</p>
+              <ul className="text-gray-400 text-sm space-y-2">
+                {result.error?.includes('expired') && (
+                  <>
+                    <li className="flex gap-2"><span className="text-purple-400">1.</span> Go back to your chat</li>
+                    <li className="flex gap-2"><span className="text-purple-400">2.</span> Say <span className="text-purple-400 font-medium">"signup"</span> to get a fresh link</li>
+                    <li className="flex gap-2"><span className="text-purple-400">3.</span> Click the new link within 24 hours</li>
+                  </>
+                )}
+                {result.error?.includes('Invalid') && (
+                  <>
+                    <li className="flex gap-2"><span className="text-purple-400">1.</span> Make sure you clicked the latest link from your chat</li>
+                    <li className="flex gap-2"><span className="text-purple-400">2.</span> Each link can only be used once</li>
+                    <li className="flex gap-2"><span className="text-purple-400">3.</span> Say <span className="text-purple-400 font-medium">"signup"</span> in your chat for a new link</li>
+                  </>
+                )}
+                {result.error?.includes('No verification code') && (
+                  <>
+                    <li className="flex gap-2"><span className="text-purple-400">1.</span> This page needs a verification code in the URL</li>
+                    <li className="flex gap-2"><span className="text-purple-400">2.</span> Say <span className="text-purple-400 font-medium">"signup"</span> in your chat to get a proper link</li>
+                  </>
+                )}
+                {!result.error?.includes('expired') && !result.error?.includes('Invalid') && !result.error?.includes('No verification code') && (
+                  <>
+                    <li className="flex gap-2"><span className="text-purple-400">1.</span> Try refreshing this page</li>
+                    <li className="flex gap-2"><span className="text-purple-400">2.</span> If it still fails, say <span className="text-purple-400 font-medium">"signup"</span> in your chat for a new link</li>
+                    <li className="flex gap-2"><span className="text-purple-400">3.</span> Contact support if the issue persists</li>
+                  </>
+                )}
+              </ul>
+            </div>
 
             <div className="space-y-3">
               <button
@@ -360,9 +394,6 @@ function LinkPageContent() {
               >
                 Close this page
               </button>
-              <p className="text-gray-500 text-sm">
-                Need a new code? Say <span className="text-purple-400">"signup"</span> in your chat.
-              </p>
             </div>
           </div>
         )}
