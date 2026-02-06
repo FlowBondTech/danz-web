@@ -192,6 +192,14 @@ function ParticleLogo({ animating }: { animating: boolean }) {
   )
 }
 
+// Platform display names and icons
+const PLATFORM_INFO: Record<string, { name: string; icon: string; chatLabel: string }> = {
+  telegram: { name: 'Telegram', icon: '✈️', chatLabel: 'your Telegram chat' },
+  discord: { name: 'Discord', icon: '💬', chatLabel: 'your Discord server' },
+  farcaster: { name: 'Farcaster', icon: '🟣', chatLabel: 'Farcaster' },
+  openclaw: { name: 'OpenClaw', icon: '🦀', chatLabel: 'your OpenClaw chat' },
+}
+
 function LinkPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -200,8 +208,35 @@ function LinkPageContent() {
   const [status, setStatus] = useState<'loading' | 'needs_auth' | 'verifying' | 'success' | 'error'>('loading')
   const [result, setResult] = useState<VerificationResult | null>(null)
   const [hasStartedVerification, setHasStartedVerification] = useState(false)
+  const [sourceInfo, setSourceInfo] = useState<{ platform: string; username?: string } | null>(null)
 
   const code = searchParams.get('code')
+
+  const platformDisplay = sourceInfo?.platform ? PLATFORM_INFO[sourceInfo.platform] : null
+  const chatLabel = platformDisplay?.chatLabel || 'your chat'
+
+  // Fetch source platform info on load (before auth)
+  useEffect(() => {
+    if (!code) return
+    const fetchSource = async () => {
+      try {
+        const url = `${SUPABASE_URL}/rest/v1/pending_verifications?code=eq.${code}&select=platform,platform_username`
+        const res = await fetch(url, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          },
+        })
+        if (res.ok) {
+          const data = await res.json()
+          if (data?.[0]) {
+            setSourceInfo({ platform: data[0].platform, username: data[0].platform_username })
+          }
+        }
+      } catch {}
+    }
+    fetchSource()
+  }, [code])
 
   const doVerification = useCallback(async () => {
     if (!code || !user?.id) return
@@ -269,11 +304,18 @@ function LinkPageContent() {
         {/* Needs Auth State */}
         {status === 'needs_auth' && (
           <div className="py-4">
+            {platformDisplay && (
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-sm text-gray-300 mb-4">
+                <span>{platformDisplay.icon}</span>
+                <span>from {platformDisplay.name}</span>
+                {sourceInfo?.username && <span className="text-purple-400">@{sourceInfo.username}</span>}
+              </div>
+            )}
             <h2 className="text-xl font-semibold text-white mb-4">
               Link Your Account
             </h2>
             <p className="text-gray-400 mb-6">
-              Sign in or create a DANZ.Now account to complete the verification.
+              Sign in or create a DANZ.Now account to link with {chatLabel}.
             </p>
             <button
               onClick={handleLogin}
@@ -290,7 +332,9 @@ function LinkPageContent() {
         {/* Verifying State */}
         {status === 'verifying' && (
           <div className="py-6">
-            <p className="text-purple-300 font-medium text-lg mb-2">Linking your accounts...</p>
+            <p className="text-purple-300 font-medium text-lg mb-2">
+              {platformDisplay ? `Linking ${platformDisplay.name} to DANZ.Now...` : 'Linking your accounts...'}
+            </p>
             <p className="text-gray-500 text-sm">This will only take a moment</p>
           </div>
         )}
@@ -315,7 +359,7 @@ function LinkPageContent() {
             </div>
 
             <p className="text-gray-500 text-sm mb-5">
-              You can close this page and return to your chat.
+              You can close this page and return to {chatLabel}.
               Say <span className="text-purple-400">"status"</span> to confirm!
             </p>
 
@@ -349,32 +393,39 @@ function LinkPageContent() {
 
             {/* Contextual suggestions */}
             <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-5 text-left">
+              {platformDisplay && (
+                <div className="flex items-center gap-2 mb-3 pb-3 border-b border-white/5">
+                  <span>{platformDisplay.icon}</span>
+                  <span className="text-gray-300 text-sm">You came from <span className="text-white font-medium">{platformDisplay.name}</span></span>
+                  {sourceInfo?.username && <span className="text-purple-400 text-sm">@{sourceInfo.username}</span>}
+                </div>
+              )}
               <p className="text-gray-300 text-sm font-medium mb-2">Try this:</p>
               <ul className="text-gray-400 text-sm space-y-2">
                 {result.error?.includes('expired') && (
                   <>
-                    <li className="flex gap-2"><span className="text-purple-400">1.</span> Go back to your chat</li>
+                    <li className="flex gap-2"><span className="text-purple-400">1.</span> Go back to {chatLabel}</li>
                     <li className="flex gap-2"><span className="text-purple-400">2.</span> Say <span className="text-purple-400 font-medium">"signup"</span> to get a fresh link</li>
                     <li className="flex gap-2"><span className="text-purple-400">3.</span> Click the new link within 24 hours</li>
                   </>
                 )}
                 {result.error?.includes('Invalid') && (
                   <>
-                    <li className="flex gap-2"><span className="text-purple-400">1.</span> Make sure you clicked the latest link from your chat</li>
+                    <li className="flex gap-2"><span className="text-purple-400">1.</span> Make sure you clicked the latest link from {chatLabel}</li>
                     <li className="flex gap-2"><span className="text-purple-400">2.</span> Each link can only be used once</li>
-                    <li className="flex gap-2"><span className="text-purple-400">3.</span> Say <span className="text-purple-400 font-medium">"signup"</span> in your chat for a new link</li>
+                    <li className="flex gap-2"><span className="text-purple-400">3.</span> Say <span className="text-purple-400 font-medium">"signup"</span> in {chatLabel} for a new link</li>
                   </>
                 )}
                 {result.error?.includes('No verification code') && (
                   <>
                     <li className="flex gap-2"><span className="text-purple-400">1.</span> This page needs a verification code in the URL</li>
-                    <li className="flex gap-2"><span className="text-purple-400">2.</span> Say <span className="text-purple-400 font-medium">"signup"</span> in your chat to get a proper link</li>
+                    <li className="flex gap-2"><span className="text-purple-400">2.</span> Say <span className="text-purple-400 font-medium">"signup"</span> in {chatLabel} to get a proper link</li>
                   </>
                 )}
                 {!result.error?.includes('expired') && !result.error?.includes('Invalid') && !result.error?.includes('No verification code') && (
                   <>
                     <li className="flex gap-2"><span className="text-purple-400">1.</span> Try refreshing this page</li>
-                    <li className="flex gap-2"><span className="text-purple-400">2.</span> If it still fails, say <span className="text-purple-400 font-medium">"signup"</span> in your chat for a new link</li>
+                    <li className="flex gap-2"><span className="text-purple-400">2.</span> If it still fails, say <span className="text-purple-400 font-medium">"signup"</span> in {chatLabel} for a new link</li>
                     <li className="flex gap-2"><span className="text-purple-400">3.</span> Contact support if the issue persists</li>
                   </>
                 )}
