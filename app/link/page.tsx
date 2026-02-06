@@ -2,7 +2,7 @@
 
 import { usePrivy } from '@privy-io/react-auth'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, useCallback, Suspense } from 'react'
 
 // Supabase config (using service role for verification completion)
 const SUPABASE_URL = 'https://eoajujwpdkfuicnoxetk.supabase.co'
@@ -138,6 +138,60 @@ async function completeVerification(code: string, privyId: string): Promise<Veri
   }
 }
 
+// Particle animation around the DANZ logo
+function ParticleLogo({ animating }: { animating: boolean }) {
+  return (
+    <div className="relative w-24 h-24 mx-auto mb-4">
+      {/* Particle ring */}
+      {animating && (
+        <>
+          {Array.from({ length: 12 }).map((_, i) => (
+            <span
+              key={i}
+              className="absolute w-1.5 h-1.5 rounded-full"
+              style={{
+                background: `hsl(${270 + i * 15}, 80%, ${60 + (i % 3) * 10}%)`,
+                top: '50%',
+                left: '50%',
+                animation: `particle-orbit ${2 + (i % 3) * 0.5}s linear infinite`,
+                animationDelay: `${i * -0.25}s`,
+                transformOrigin: '0 0',
+                // @ts-ignore
+                '--orbit-radius': `${36 + (i % 3) * 8}px`,
+                '--start-angle': `${i * 30}deg`,
+              } as React.CSSProperties}
+            />
+          ))}
+          {/* Glow pulse */}
+          <div className="absolute inset-0 rounded-full bg-purple-500/20 animate-ping" style={{ animationDuration: '2s' }} />
+          <div className="absolute -inset-2 rounded-full bg-purple-500/10 animate-pulse" />
+        </>
+      )}
+      {/* Logo */}
+      <img
+        src="/danz-icon-white.png"
+        alt="DANZ"
+        className={`w-24 h-24 relative z-10 transition-transform duration-500 ${animating ? 'scale-110' : ''}`}
+      />
+      <style jsx>{`
+        @keyframes particle-orbit {
+          from {
+            transform: rotate(var(--start-angle)) translateX(var(--orbit-radius)) rotate(calc(-1 * var(--start-angle)));
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+          to {
+            transform: rotate(calc(var(--start-angle) + 360deg)) translateX(var(--orbit-radius)) rotate(calc(-1 * (var(--start-angle) + 360deg)));
+            opacity: 1;
+          }
+        }
+      `}</style>
+    </div>
+  )
+}
+
 function LinkPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -145,8 +199,23 @@ function LinkPageContent() {
 
   const [status, setStatus] = useState<'loading' | 'needs_auth' | 'verifying' | 'success' | 'error'>('loading')
   const [result, setResult] = useState<VerificationResult | null>(null)
+  const [hasStartedVerification, setHasStartedVerification] = useState(false)
 
   const code = searchParams.get('code')
+
+  const doVerification = useCallback(async () => {
+    if (!code || !user?.id) return
+    setStatus('verifying')
+    setHasStartedVerification(true)
+
+    // Minimum display time so the animation is visible
+    const minDelay = new Promise(resolve => setTimeout(resolve, 2500))
+    const verifyPromise = completeVerification(code, user.id)
+
+    const [verifyResult] = await Promise.all([verifyPromise, minDelay])
+    setResult(verifyResult)
+    setStatus(verifyResult.success ? 'success' : 'error')
+  }, [code, user?.id])
 
   useEffect(() => {
     if (!code) {
@@ -165,22 +234,10 @@ function LinkPageContent() {
     }
 
     // User is authenticated, complete verification
-    const doVerification = async () => {
-      setStatus('verifying')
-      const privyId = user?.id
-      if (!privyId) {
-        setStatus('error')
-        setResult({ success: false, error: 'Could not get user ID' })
-        return
-      }
-
-      const verifyResult = await completeVerification(code, privyId)
-      setResult(verifyResult)
-      setStatus(verifyResult.success ? 'success' : 'error')
+    if (!hasStartedVerification) {
+      doVerification()
     }
-
-    doVerification()
-  }, [code, ready, authenticated, user])
+  }, [code, ready, authenticated, user, hasStartedVerification, doVerification])
 
   const handleLogin = async () => {
     try {
@@ -192,10 +249,11 @@ function LinkPageContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-purple-900 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-black/50 backdrop-blur-xl rounded-2xl border border-purple-500/20 p-8 text-center">
-        {/* Logo */}
-        <div className="mb-8">
-          <img src="/danz-icon-white.png" alt="DANZ" className="w-16 h-16 mx-auto mb-4" />
+      <div className="max-w-md w-full bg-black/50 backdrop-blur-xl rounded-2xl border border-purple-500/20 p-8 text-center relative">
+
+        {/* Logo with particles */}
+        <div className="mb-6">
+          <ParticleLogo animating={status === 'verifying'} />
           <h1 className="text-2xl font-bold text-white">DANZ.Now</h1>
           <p className="text-purple-300 mt-2">Account Verification</p>
         </div>
@@ -203,7 +261,7 @@ function LinkPageContent() {
         {/* Loading State */}
         {status === 'loading' && (
           <div className="py-8">
-            <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full mx-auto" />
+            <div className="animate-spin w-10 h-10 border-3 border-purple-500 border-t-transparent rounded-full mx-auto" />
             <p className="text-gray-400 mt-4">Loading...</p>
           </div>
         )}
@@ -211,7 +269,6 @@ function LinkPageContent() {
         {/* Needs Auth State */}
         {status === 'needs_auth' && (
           <div className="py-4">
-            <div className="text-6xl mb-6">🔗</div>
             <h2 className="text-xl font-semibold text-white mb-4">
               Link Your Account
             </h2>
@@ -232,53 +289,61 @@ function LinkPageContent() {
 
         {/* Verifying State */}
         {status === 'verifying' && (
-          <div className="py-8">
-            <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full mx-auto" />
-            <p className="text-gray-400 mt-4">Linking your accounts...</p>
+          <div className="py-6">
+            <p className="text-purple-300 font-medium text-lg mb-2">Linking your accounts...</p>
+            <p className="text-gray-500 text-sm">This will only take a moment</p>
           </div>
         )}
 
         {/* Success State */}
         {status === 'success' && result && (
           <div className="py-4">
-            <div className="text-6xl mb-6">🎉</div>
-            <h2 className="text-xl font-semibold text-white mb-4">
+            <div className="text-5xl mb-4">&#127881;</div>
+            <h2 className="text-xl font-semibold text-white mb-3">
               You're Verified!
             </h2>
-            <p className="text-gray-400 mb-2">
+            <p className="text-gray-400 mb-1">
               Welcome, <span className="text-purple-400 font-semibold">@{result.username}</span>!
             </p>
-            <p className="text-gray-400 mb-6">
+            <p className="text-gray-400 mb-5">
               Your {result.platform} account is now linked to DANZ.Now.
             </p>
 
-            <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-4 mb-6">
-              <p className="text-purple-300 font-semibold">+50 XP</p>
+            <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-4 mb-5">
+              <p className="text-purple-300 font-semibold text-lg">+50 XP</p>
               <p className="text-gray-400 text-sm">Verification bonus!</p>
             </div>
 
-            <p className="text-gray-500 text-sm mb-6">
+            <p className="text-gray-500 text-sm mb-5">
               You can close this page and return to your chat.
               Say <span className="text-purple-400">"status"</span> to confirm!
             </p>
 
-            <button
-              onClick={() => router.push('/dashboard')}
-              className="w-full py-3 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-xl transition-all"
-            >
-              Go to Dashboard
-            </button>
+            <div className="space-y-3">
+              <button
+                onClick={() => router.push('/dashboard')}
+                className="w-full py-3 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-xl transition-all"
+              >
+                Go to Dashboard
+              </button>
+              <button
+                onClick={() => window.close()}
+                className="w-full py-2.5 px-6 text-gray-400 hover:text-white text-sm transition-colors"
+              >
+                Close this page
+              </button>
+            </div>
           </div>
         )}
 
         {/* Error State */}
         {status === 'error' && result && (
           <div className="py-4">
-            <div className="text-6xl mb-6">😕</div>
-            <h2 className="text-xl font-semibold text-white mb-4">
+            <div className="text-5xl mb-4">&#128533;</div>
+            <h2 className="text-xl font-semibold text-white mb-3">
               Verification Failed
             </h2>
-            <p className="text-red-400 mb-6">
+            <p className="text-red-400 mb-5">
               {result.error}
             </p>
 
@@ -288,6 +353,12 @@ function LinkPageContent() {
                 className="w-full py-3 px-6 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-xl transition-all"
               >
                 Go to Home
+              </button>
+              <button
+                onClick={() => window.close()}
+                className="w-full py-2.5 px-6 text-gray-400 hover:text-white text-sm transition-colors"
+              >
+                Close this page
               </button>
               <p className="text-gray-500 text-sm">
                 Need a new code? Say <span className="text-purple-400">"signup"</span> in your chat.
