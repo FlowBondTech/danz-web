@@ -344,23 +344,16 @@ function LinkPageContent() {
           <div className="py-4">
             <div className="text-5xl mb-4">&#127881;</div>
             <h2 className="text-xl font-semibold text-white mb-3">
-              You're Verified!
+              Welcome, <span className="text-purple-400">@{result.username}</span>!
             </h2>
-            <p className="text-gray-400 mb-1">
-              Welcome, <span className="text-purple-400 font-semibold">@{result.username}</span>!
-            </p>
-            <p className="text-gray-400 mb-5">
-              Your {result.platform} account is now linked to DANZ.Now.
-            </p>
 
             <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-4 mb-5">
               <p className="text-purple-300 font-semibold text-lg">+50 XP</p>
-              <p className="text-gray-400 text-sm">Verification bonus!</p>
+              <p className="text-gray-400 text-sm">Verification bonus — you're linked!</p>
             </div>
 
             <p className="text-gray-500 text-sm mb-5">
-              You can close this page and return to {chatLabel}.
-              Say <span className="text-purple-400">"status"</span> to confirm!
+              Head back to {chatLabel} and say <span className="text-purple-400">"status"</span> to confirm.
             </p>
 
             <div className="space-y-3">
@@ -387,50 +380,18 @@ function LinkPageContent() {
             <h2 className="text-xl font-semibold text-white mb-3">
               Verification Failed
             </h2>
-            <p className="text-red-400 mb-4">
+            <p className="text-red-400 mb-5">
               {result.error}
             </p>
 
-            {/* Contextual suggestions */}
-            <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-5 text-left">
-              {platformDisplay && (
-                <div className="flex items-center gap-2 mb-3 pb-3 border-b border-white/5">
-                  <span>{platformDisplay.icon}</span>
-                  <span className="text-gray-300 text-sm">You came from <span className="text-white font-medium">{platformDisplay.name}</span></span>
-                  {sourceInfo?.username && <span className="text-purple-400 text-sm">@{sourceInfo.username}</span>}
-                </div>
-              )}
-              <p className="text-gray-300 text-sm font-medium mb-2">Try this:</p>
-              <ul className="text-gray-400 text-sm space-y-2">
-                {result.error?.includes('expired') && (
-                  <>
-                    <li className="flex gap-2"><span className="text-purple-400">1.</span> Go back to {chatLabel}</li>
-                    <li className="flex gap-2"><span className="text-purple-400">2.</span> Say <span className="text-purple-400 font-medium">"signup"</span> to get a fresh link</li>
-                    <li className="flex gap-2"><span className="text-purple-400">3.</span> Click the new link within 24 hours</li>
-                  </>
-                )}
-                {result.error?.includes('Invalid') && (
-                  <>
-                    <li className="flex gap-2"><span className="text-purple-400">1.</span> Make sure you clicked the latest link from {chatLabel}</li>
-                    <li className="flex gap-2"><span className="text-purple-400">2.</span> Each link can only be used once</li>
-                    <li className="flex gap-2"><span className="text-purple-400">3.</span> Say <span className="text-purple-400 font-medium">"signup"</span> in {chatLabel} for a new link</li>
-                  </>
-                )}
-                {result.error?.includes('No verification code') && (
-                  <>
-                    <li className="flex gap-2"><span className="text-purple-400">1.</span> This page needs a verification code in the URL</li>
-                    <li className="flex gap-2"><span className="text-purple-400">2.</span> Say <span className="text-purple-400 font-medium">"signup"</span> in {chatLabel} to get a proper link</li>
-                  </>
-                )}
-                {!result.error?.includes('expired') && !result.error?.includes('Invalid') && !result.error?.includes('No verification code') && (
-                  <>
-                    <li className="flex gap-2"><span className="text-purple-400">1.</span> Try refreshing this page</li>
-                    <li className="flex gap-2"><span className="text-purple-400">2.</span> If it still fails, say <span className="text-purple-400 font-medium">"signup"</span> in {chatLabel} for a new link</li>
-                    <li className="flex gap-2"><span className="text-purple-400">3.</span> Contact support if the issue persists</li>
-                  </>
-                )}
-              </ul>
-            </div>
+            <p className="text-gray-400 text-sm mb-5">
+              {result.error?.includes('expired') || result.error?.includes('Invalid')
+                ? <>Say <span className="text-purple-400 font-medium">"signup"</span> in {chatLabel} for a fresh link.</>
+                : result.error?.includes('No verification code')
+                ? <>Open the link from {chatLabel} — it includes the code.</>
+                : <>Try refreshing, or say <span className="text-purple-400 font-medium">"signup"</span> in {chatLabel} for a new link.</>
+              }
+            </p>
 
             <div className="space-y-3">
               <button
