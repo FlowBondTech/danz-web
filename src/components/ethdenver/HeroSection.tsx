@@ -1,7 +1,7 @@
 'use client'
 
-import { motion } from 'motion/react'
 import { heroStats } from '@/src/components/ethdenver/data'
+import { motion } from 'motion/react'
 
 export default function HeroSection() {
   return (
@@ -32,8 +32,8 @@ export default function HeroSection() {
             Turn ETHDenver into a dance-to-earn playground.
           </p>
           <p className="text-lg md:text-xl text-text-muted max-w-2xl mx-auto mb-12">
-            Gamified missions for attendees. Measurable engagement for sponsors.
-            Real rewards powered by movement.
+            Gamified missions for attendees. Measurable engagement for sponsors. Real rewards
+            powered by movement.
           </p>
         </motion.div>
 
@@ -44,7 +44,7 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto mb-12"
         >
-          {heroStats.map((stat, i) => (
+          {heroStats.map((stat, _i) => (
             <div
               key={stat.label}
               className="bg-bg-card/30 backdrop-blur-sm border border-white/10 rounded-2xl p-6"

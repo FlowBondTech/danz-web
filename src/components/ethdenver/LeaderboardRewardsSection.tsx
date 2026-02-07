@@ -1,7 +1,7 @@
 'use client'
 
-import { motion } from 'motion/react'
 import { rewardTiers } from '@/src/components/ethdenver/data'
+import { motion } from 'motion/react'
 
 export default function LeaderboardRewardsSection() {
   return (
@@ -66,7 +66,7 @@ export default function LeaderboardRewardsSection() {
                 </div>
 
                 <ul className="space-y-3">
-                  {tier.rewards.map((reward) => (
+                  {tier.rewards.map(reward => (
                     <li key={reward} className="flex items-start gap-3">
                       <div
                         className={`w-1.5 h-1.5 rounded-full bg-gradient-to-br ${tier.gradient} flex-shrink-0 mt-2`}

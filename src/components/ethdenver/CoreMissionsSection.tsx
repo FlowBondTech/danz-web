@@ -1,12 +1,12 @@
 'use client'
 
+import { missionCategories } from '@/src/components/ethdenver/data'
 import { motion } from 'motion/react'
 import { useState } from 'react'
-import { missionCategories } from '@/src/components/ethdenver/data'
 
 export default function CoreMissionsSection() {
   const [activeCategory, setActiveCategory] = useState(missionCategories[0].id)
-  const active = missionCategories.find((c) => c.id === activeCategory) ?? missionCategories[0]
+  const active = missionCategories.find(c => c.id === activeCategory) ?? missionCategories[0]
 
   return (
     <section id="missions" className="section bg-bg-secondary/50 relative overflow-hidden">
@@ -31,7 +31,7 @@ export default function CoreMissionsSection() {
 
         {/* Category Tabs */}
         <div className="flex justify-center gap-3 mb-12">
-          {missionCategories.map((cat) => (
+          {missionCategories.map(cat => (
             <motion.button
               key={cat.id}
               type="button"

@@ -88,12 +88,42 @@ export const missionCategories: MissionCategory[] = [
     subtitle: 'Move to earn $DANZ',
     gradient: 'from-purple-500 to-pink-500',
     missions: [
-      { name: 'First Dance', description: 'Complete your first dance session at ETHDenver', xp: 100, icon: '💃' },
-      { name: 'Night Mover', description: 'Dance at 3 different after-parties', xp: 300, icon: '🌙' },
-      { name: 'Flow State', description: '30-minute unbroken dance session verified by FlowBond', xp: 500, icon: '🌊' },
-      { name: 'Social Spark', description: 'Dance with 5 different partners in one night', xp: 250, icon: '✨' },
-      { name: 'Triple Flow', description: 'Complete 3 dance missions in a single day', xp: 400, icon: '🔥' },
-      { name: 'Pop-Up Starter', description: 'Start a spontaneous dance circle with 5+ people', xp: 600, icon: '🎪' },
+      {
+        name: 'First Dance',
+        description: 'Complete your first dance session at ETHDenver',
+        xp: 100,
+        icon: '💃',
+      },
+      {
+        name: 'Night Mover',
+        description: 'Dance at 3 different after-parties',
+        xp: 300,
+        icon: '🌙',
+      },
+      {
+        name: 'Flow State',
+        description: '30-minute unbroken dance session verified by FlowBond',
+        xp: 500,
+        icon: '🌊',
+      },
+      {
+        name: 'Social Spark',
+        description: 'Dance with 5 different partners in one night',
+        xp: 250,
+        icon: '✨',
+      },
+      {
+        name: 'Triple Flow',
+        description: 'Complete 3 dance missions in a single day',
+        xp: 400,
+        icon: '🔥',
+      },
+      {
+        name: 'Pop-Up Starter',
+        description: 'Start a spontaneous dance circle with 5+ people',
+        xp: 600,
+        icon: '🎪',
+      },
     ],
   },
   {
@@ -102,10 +132,30 @@ export const missionCategories: MissionCategory[] = [
     subtitle: 'Explore & connect',
     gradient: 'from-pink-500 to-red-500',
     missions: [
-      { name: 'Visit the House', description: 'Check in at 3 different hack houses', xp: 200, icon: '🏠' },
-      { name: "Builder's Break", description: 'Join a movement break at a hack house', xp: 150, icon: '🔨' },
-      { name: 'Sunset Flow', description: 'Attend an outdoor movement session', xp: 350, icon: '🌅' },
-      { name: 'Venue Explorer', description: 'Visit 5 different event venues in Denver', xp: 250, icon: '🗺️' },
+      {
+        name: 'Visit the House',
+        description: 'Check in at 3 different hack houses',
+        xp: 200,
+        icon: '🏠',
+      },
+      {
+        name: "Builder's Break",
+        description: 'Join a movement break at a hack house',
+        xp: 150,
+        icon: '🔨',
+      },
+      {
+        name: 'Sunset Flow',
+        description: 'Attend an outdoor movement session',
+        xp: 350,
+        icon: '🌅',
+      },
+      {
+        name: 'Venue Explorer',
+        description: 'Visit 5 different event venues in Denver',
+        xp: 250,
+        icon: '🗺️',
+      },
     ],
   },
   {
@@ -114,10 +164,30 @@ export const missionCategories: MissionCategory[] = [
     subtitle: 'Brand challenges',
     gradient: 'from-blue-500 to-purple-500',
     missions: [
-      { name: 'Visit Booth', description: 'Check in at a sponsor booth and learn about their project', xp: 100, icon: '🎯' },
-      { name: 'Brand Challenge', description: 'Complete a sponsor-specific movement challenge', xp: 300, icon: '🏆' },
-      { name: 'Social Share', description: 'Post about a sponsor with the event hashtag', xp: 150, icon: '📱' },
-      { name: 'QR Scan', description: 'Scan sponsor QR codes at 3 different locations', xp: 200, icon: '📲' },
+      {
+        name: 'Visit Booth',
+        description: 'Check in at a sponsor booth and learn about their project',
+        xp: 100,
+        icon: '🎯',
+      },
+      {
+        name: 'Brand Challenge',
+        description: 'Complete a sponsor-specific movement challenge',
+        xp: 300,
+        icon: '🏆',
+      },
+      {
+        name: 'Social Share',
+        description: 'Post about a sponsor with the event hashtag',
+        xp: 150,
+        icon: '📱',
+      },
+      {
+        name: 'QR Scan',
+        description: 'Scan sponsor QR codes at 3 different locations',
+        xp: 200,
+        icon: '📲',
+      },
     ],
   },
 ]

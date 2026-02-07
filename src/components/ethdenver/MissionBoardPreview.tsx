@@ -1,7 +1,29 @@
 'use client'
 
-import { motion } from 'motion/react'
 import { previewMissions } from '@/src/components/ethdenver/data'
+import { motion } from 'motion/react'
+
+function MissionStatus({ status }: { status: string }) {
+  if (status === 'completed')
+    return (
+      <div className="w-5 h-5 rounded-full bg-neon-purple flex items-center justify-center">
+        <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+    )
+  if (status === 'active') return <span className="text-xs font-medium text-neon-pink">Active</span>
+  return (
+    <svg className="w-4 h-4 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+      />
+    </svg>
+  )
+}
 
 export default function MissionBoardPreview() {
   return (
@@ -92,7 +114,7 @@ export default function MissionBoardPreview() {
 
                   {/* Mission List */}
                   <div className="px-3 pb-6 space-y-2">
-                    {previewMissions.map((mission) => (
+                    {previewMissions.map(mission => (
                       <div
                         key={mission.name}
                         className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
@@ -110,21 +132,7 @@ export default function MissionBoardPreview() {
                           </p>
                           <p className="text-xs text-text-muted">+{mission.xp} XP</p>
                         </div>
-                        {mission.status === 'completed' && (
-                          <div className="w-5 h-5 rounded-full bg-neon-purple flex items-center justify-center">
-                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
-                        )}
-                        {mission.status === 'active' && (
-                          <span className="text-xs font-medium text-neon-pink">Active</span>
-                        )}
-                        {mission.status === 'locked' && (
-                          <svg className="w-4 h-4 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                          </svg>
-                        )}
+                        <MissionStatus status={mission.status} />
                       </div>
                     ))}
                   </div>

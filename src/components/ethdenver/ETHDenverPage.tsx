@@ -1,8 +1,8 @@
 'use client'
 
-import CoreMissionsSection from '@/src/components/ethdenver/CoreMissionsSection'
 import CTASection from '@/src/components/ethdenver/CTASection'
 import CommunityMissionsSection from '@/src/components/ethdenver/CommunityMissionsSection'
+import CoreMissionsSection from '@/src/components/ethdenver/CoreMissionsSection'
 import FlowBondIntegrationSection from '@/src/components/ethdenver/FlowBondIntegrationSection'
 import HeroSection from '@/src/components/ethdenver/HeroSection'
 import LeaderboardRewardsSection from '@/src/components/ethdenver/LeaderboardRewardsSection'

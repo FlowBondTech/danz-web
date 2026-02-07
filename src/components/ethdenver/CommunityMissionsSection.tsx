@@ -1,7 +1,7 @@
 'use client'
 
-import { motion } from 'motion/react'
 import { communityPartners } from '@/src/components/ethdenver/data'
+import { motion } from 'motion/react'
 
 export default function CommunityMissionsSection() {
   return (
@@ -21,7 +21,8 @@ export default function CommunityMissionsSection() {
             Partner <span className="gradient-text">Activations</span>
           </h2>
           <p className="text-xl text-text-secondary max-w-3xl mx-auto">
-            Hack houses, side events, and venues create custom missions to drive foot traffic and engagement.
+            Hack houses, side events, and venues create custom missions to drive foot traffic and
+            engagement.
           </p>
         </motion.div>
 
@@ -40,7 +41,7 @@ export default function CommunityMissionsSection() {
                 <h3 className="text-2xl font-bold mb-4 text-text-primary">{partner.type}</h3>
 
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {partner.examples.map((example) => (
+                  {partner.examples.map(example => (
                     <span
                       key={example}
                       className="text-xs px-3 py-1 bg-white/5 border border-white/10 rounded-full text-text-muted"
@@ -66,7 +67,10 @@ export default function CommunityMissionsSection() {
         >
           <div className="inline-flex items-center gap-3 bg-gradient-to-r from-neon-purple/10 to-neon-pink/10 backdrop-blur-sm border border-white/10 rounded-2xl px-8 py-4">
             <span className="text-text-secondary">Want to create missions for your venue?</span>
-            <a href="#cta" className="text-neon-purple font-semibold hover:text-neon-pink transition-colors">
+            <a
+              href="#cta"
+              className="text-neon-purple font-semibold hover:text-neon-pink transition-colors"
+            >
               Partner with us
             </a>
           </div>

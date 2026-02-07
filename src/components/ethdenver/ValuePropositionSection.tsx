@@ -1,7 +1,7 @@
 'use client'
 
-import { motion } from 'motion/react'
 import { valueCards } from '@/src/components/ethdenver/data'
+import { motion } from 'motion/react'
 
 export default function ValuePropositionSection() {
   return (
@@ -45,16 +45,14 @@ export default function ValuePropositionSection() {
                   <div
                     className={`inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br ${card.gradient} rounded-xl mb-6 shadow-lg`}
                   >
-                    <span className="text-lg font-bold text-white">
-                      {card.audience.charAt(0)}
-                    </span>
+                    <span className="text-lg font-bold text-white">{card.audience.charAt(0)}</span>
                   </div>
 
                   <h3 className="text-xl font-bold mb-2 text-text-primary">{card.audience}</h3>
                   <p className="text-neon-purple text-sm font-medium mb-6">{card.headline}</p>
 
                   <ul className="space-y-3">
-                    {card.points.map((point) => (
+                    {card.points.map(point => (
                       <li key={point} className="flex items-start gap-3">
                         <div className="w-1.5 h-1.5 rounded-full bg-neon-purple flex-shrink-0 mt-2" />
                         <span className="text-sm text-text-secondary">{point}</span>

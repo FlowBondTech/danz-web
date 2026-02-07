@@ -1,8 +1,8 @@
 'use client'
 
+import { sponsorTiers } from '@/src/components/ethdenver/data'
 import { motion } from 'motion/react'
 import { FiCheck } from 'react-icons/fi'
-import { sponsorTiers } from '@/src/components/ethdenver/data'
 
 export default function SponsorPacksSection() {
   return (
@@ -65,7 +65,7 @@ export default function SponsorPacksSection() {
                 <p className="text-sm text-neon-purple font-medium mb-6">{tier.missions}</p>
 
                 <ul className="space-y-3 mb-8 flex-1">
-                  {tier.features.map((feature) => (
+                  {tier.features.map(feature => (
                     <li key={feature} className="flex items-start gap-3">
                       <div className="w-5 h-5 rounded-full bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 flex items-center justify-center flex-shrink-0 mt-0.5">
                         <FiCheck className="w-3 h-3 text-text-primary" />

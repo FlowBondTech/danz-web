@@ -1,8 +1,8 @@
 'use client'
 
+import { flowBondFeatures } from '@/src/components/ethdenver/data'
 import { motion } from 'motion/react'
 import { FiActivity } from 'react-icons/fi'
-import { flowBondFeatures } from '@/src/components/ethdenver/data'
 
 export default function FlowBondIntegrationSection() {
   return (
@@ -31,7 +31,7 @@ export default function FlowBondIntegrationSection() {
               </div>
 
               {/* Animated Rings */}
-              {[1, 2, 3].map((ring) => (
+              {[1, 2, 3].map(ring => (
                 <motion.div
                   key={ring}
                   className="absolute inset-0 border border-neon-purple/20 rounded-full"

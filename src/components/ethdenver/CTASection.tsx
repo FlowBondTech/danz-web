@@ -21,8 +21,9 @@ export default function CTASection() {
           </h2>
 
           <p className="text-xl text-text-secondary mb-12 leading-relaxed">
-            Whether you're a sponsor looking for real engagement, an organizer building unforgettable
-            experiences, or a venue wanting more foot traffic — let's build something together.
+            Whether you're a sponsor looking for real engagement, an organizer building
+            unforgettable experiences, or a venue wanting more foot traffic — let's build something
+            together.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">

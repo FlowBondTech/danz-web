@@ -1,22 +1,23 @@
 'use client'
 
+import { navSections } from '@/src/components/ethdenver/data'
 import { motion } from 'motion/react'
 import { useEffect, useState } from 'react'
-import { navSections } from '@/src/components/ethdenver/data'
 
 export default function SectionNav() {
   const [activeSection, setActiveSection] = useState('hero')
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
             setActiveSection(entry.target.id)
           }
         }
       },
-      { rootMargin: '-40% 0px -40% 0px', threshold: 0 }
+      { rootMargin: '-40% 0px -40% 0px', threshold: 0 },
     )
 
     for (const section of navSections) {
@@ -25,6 +26,12 @@ export default function SectionNav() {
     }
 
     return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 300)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   const scrollTo = (id: string) => {
@@ -36,14 +43,15 @@ export default function SectionNav() {
 
   return (
     <motion.nav
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 1 }}
-      className="fixed top-[72px] left-0 right-0 z-40 bg-bg-primary/80 backdrop-blur-xl border-b border-white/5 hidden lg:block"
+      initial={false}
+      animate={{ opacity: visible ? 1 : 0, y: visible ? 0 : -10 }}
+      transition={{ duration: 0.3 }}
+      className="fixed top-16 left-0 right-0 z-40 bg-bg-primary/80 backdrop-blur-xl border-b border-white/5 hidden lg:block pointer-events-auto"
+      style={{ pointerEvents: visible ? 'auto' : 'none' }}
     >
       <div className="container">
         <div className="flex items-center gap-1 py-2 overflow-x-auto scrollbar-hide">
-          {navSections.map((section) => (
+          {navSections.map(section => (
             <button
               key={section.id}
               type="button"

@@ -125,6 +125,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           const isPublicPath = currentPath === '/' ||
                                currentPath.startsWith('/events') ||
                                currentPath === '/danz' ||
+                               currentPath === '/ethdenver' ||
                                currentPath.startsWith('/i/')
 
           // If no profile or no username, redirect to register (unless already there)
