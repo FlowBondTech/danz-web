@@ -1,17 +1,21 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 interface StripeBuyButtonProps {
   buyButtonId: string
   publishableKey: string
+  children: React.ReactNode
 }
 
-export default function StripeBuyButton({ buyButtonId, publishableKey }: StripeBuyButtonProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
+export default function StripeBuyButton({
+  buyButtonId,
+  publishableKey,
+  children,
+}: StripeBuyButtonProps) {
+  const hiddenRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // Load Stripe Buy Button script if not already loaded
     if (!document.querySelector('script[src="https://js.stripe.com/v3/buy-button.js"]')) {
       const script = document.createElement('script')
       script.src = 'https://js.stripe.com/v3/buy-button.js'
@@ -19,8 +23,7 @@ export default function StripeBuyButton({ buyButtonId, publishableKey }: StripeB
       document.head.appendChild(script)
     }
 
-    // Create the stripe-buy-button element
-    const container = containerRef.current
+    const container = hiddenRef.current
     if (container) {
       container.innerHTML = ''
       const btn = document.createElement('stripe-buy-button')
@@ -30,5 +33,19 @@ export default function StripeBuyButton({ buyButtonId, publishableKey }: StripeB
     }
   }, [buyButtonId, publishableKey])
 
-  return <div ref={containerRef} className="w-full [&>stripe-buy-button]:w-full" />
+  const handleClick = useCallback(() => {
+    const stripeEl = hiddenRef.current?.querySelector('stripe-buy-button')
+    if (!stripeEl?.shadowRoot) return
+    const innerBtn = stripeEl.shadowRoot.querySelector('button')
+    innerBtn?.click()
+  }, [])
+
+  return (
+    <>
+      <div ref={hiddenRef} aria-hidden="true" className="absolute w-0 h-0 overflow-hidden opacity-0 pointer-events-none" />
+      <div onClick={handleClick} className="cursor-pointer">
+        {children}
+      </div>
+    </>
+  )
 }

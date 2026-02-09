@@ -84,7 +84,19 @@ export default function SponsorPacksSection() {
                   <StripeBuyButton
                     buyButtonId={tier.stripeBuyButtonId}
                     publishableKey={STRIPE_PUBLISHABLE_KEY}
-                  />
+                  >
+                    <motion.span
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className={`w-full py-3 px-6 rounded-xl font-medium text-center transition-all block ${
+                        tier.highlighted
+                          ? 'bg-gradient-neon text-white shadow-lg hover:shadow-neon-purple/50'
+                          : 'bg-gradient-to-r from-neon-purple/20 to-neon-pink/20 text-white border border-white/10 hover:border-white/20'
+                      }`}
+                    >
+                      {tier.cta}
+                    </motion.span>
+                  </StripeBuyButton>
                 ) : (
                   <motion.a
                     href={tier.checkoutUrl}
