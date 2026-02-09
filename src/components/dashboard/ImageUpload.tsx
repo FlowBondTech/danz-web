@@ -1,6 +1,6 @@
 'use client'
 
-import { MimeType, UploadType, useGetUploadUrlLazyQuery } from '@/src/generated/graphql'
+import { type MimeType, type UploadType, useGetUploadUrlLazyQuery } from '@/src/generated/graphql'
 import { useState } from 'react'
 import { FiUpload, FiX } from 'react-icons/fi'
 
@@ -142,7 +142,9 @@ export default function ImageUpload({
             <FiUpload className="text-neon-purple mb-2" size={uploadType === 'avatar' ? 32 : 48} />
             <span className="text-sm text-text-secondary mb-1">Click to upload</span>
             <span className="text-xs text-text-muted">
-              {uploadType === 'avatar' ? 'JPG, PNG or WEBP (max 5MB)' : 'JPG, PNG or WEBP (max 10MB)'}
+              {uploadType === 'avatar'
+                ? 'JPG, PNG or WEBP (max 5MB)'
+                : 'JPG, PNG or WEBP (max 10MB)'}
             </span>
             <input
               type="file"

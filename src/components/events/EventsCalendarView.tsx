@@ -1,8 +1,16 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import { FiChevronLeft, FiChevronRight, FiCalendar, FiClock, FiMapPin, FiHelpCircle, FiCheck } from 'react-icons/fi'
+import { AnimatePresence, motion } from 'motion/react'
+import { useMemo, useState } from 'react'
+import {
+  FiCalendar,
+  FiCheck,
+  FiChevronLeft,
+  FiChevronRight,
+  FiClock,
+  FiHelpCircle,
+  FiMapPin,
+} from 'react-icons/fi'
 import type { RegistrationStatusType } from './EventCard'
 
 interface Event {
@@ -42,11 +50,25 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ]
 
-export default function EventsCalendarView({ events, onRegister, onEventClick }: EventsCalendarViewProps) {
+export default function EventsCalendarView({
+  events,
+  onRegister,
+  onEventClick,
+}: EventsCalendarViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
 
@@ -115,9 +137,11 @@ export default function EventsCalendarView({ events, onRegister, onEventClick }:
 
   const isToday = (date: Date) => {
     const today = new Date()
-    return date.getDate() === today.getDate() &&
-           date.getMonth() === today.getMonth() &&
-           date.getFullYear() === today.getFullYear()
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    )
   }
 
   const isCurrentMonth = (date: Date) => {
@@ -126,9 +150,11 @@ export default function EventsCalendarView({ events, onRegister, onEventClick }:
 
   const isSelected = (date: Date) => {
     if (!selectedDate) return false
-    return date.getDate() === selectedDate.getDate() &&
-           date.getMonth() === selectedDate.getMonth() &&
-           date.getFullYear() === selectedDate.getFullYear()
+    return (
+      date.getDate() === selectedDate.getDate() &&
+      date.getMonth() === selectedDate.getMonth() &&
+      date.getFullYear() === selectedDate.getFullYear()
+    )
   }
 
   const selectedDateEvents = selectedDate ? getEventsForDate(selectedDate) : []
@@ -206,7 +232,9 @@ export default function EventsCalendarView({ events, onRegister, onEventClick }:
                       />
                     ))}
                     {dayEvents.length > 3 && (
-                      <span className="text-[8px] text-text-secondary">+{dayEvents.length - 3}</span>
+                      <span className="text-[8px] text-text-secondary">
+                        +{dayEvents.length - 3}
+                      </span>
                     )}
                   </div>
                 )}
@@ -231,9 +259,12 @@ export default function EventsCalendarView({ events, onRegister, onEventClick }:
         <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
           <FiCalendar className="w-5 h-5 text-neon-purple" />
           {selectedDate
-            ? selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
-            : 'Select a date'
-          }
+            ? selectedDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+              })
+            : 'Select a date'}
         </h3>
 
         <AnimatePresence mode="wait">
@@ -254,26 +285,32 @@ export default function EventsCalendarView({ events, onRegister, onEventClick }:
                     className="p-4 bg-bg-primary rounded-xl border border-white/10 hover:border-neon-purple/40 cursor-pointer transition-colors"
                   >
                     <div className="flex items-start gap-3">
-                      <div className={`w-2 h-full min-h-[60px] rounded-full ${
-                        CATEGORY_COLORS[event.category || 'class'] || 'bg-neon-purple'
-                      }`} />
+                      <div
+                        className={`w-2 h-full min-h-[60px] rounded-full ${
+                          CATEGORY_COLORS[event.category || 'class'] || 'bg-neon-purple'
+                        }`}
+                      />
                       <div className="flex-1 min-w-0">
                         <h4 className="font-medium text-text-primary truncate">{event.title}</h4>
                         <div className="flex items-center gap-2 text-sm text-text-secondary mt-1">
                           <FiClock className="w-3 h-3" />
                           {new Date(event.start_date_time).toLocaleTimeString('en-US', {
                             hour: 'numeric',
-                            minute: '2-digit'
+                            minute: '2-digit',
                           })}
                         </div>
                         <div className="flex items-center gap-2 text-sm text-text-secondary mt-1">
                           <FiMapPin className="w-3 h-3" />
                           <span className="truncate">
-                            {event.is_virtual ? 'Virtual' : event.location_name || event.location_city}
+                            {event.is_virtual
+                              ? 'Virtual'
+                              : event.location_name || event.location_city}
                           </span>
                         </div>
                         {(() => {
-                          const status = event.user_registration_status || (event.is_registered ? 'registered' : null)
+                          const status =
+                            event.user_registration_status ||
+                            (event.is_registered ? 'registered' : null)
                           const isGoing = status === 'registered' || status === 'attended'
                           const isMaybe = status === 'maybe'
 
@@ -294,13 +331,16 @@ export default function EventsCalendarView({ events, onRegister, onEventClick }:
                           } else {
                             return (
                               <button
-                                onClick={(e) => {
+                                onClick={e => {
                                   e.stopPropagation()
                                   onRegister(event)
                                 }}
                                 className="mt-2 px-3 py-1 bg-neon-purple/20 text-neon-purple text-xs rounded-full hover:bg-neon-purple/30 transition-colors"
                               >
-                                {event.price_usd && event.price_usd > 0 ? `$${event.price_usd}` : 'Free'} - Join
+                                {event.price_usd && event.price_usd > 0
+                                  ? `$${event.price_usd}`
+                                  : 'Free'}{' '}
+                                - Join
                               </button>
                             )
                           }
@@ -320,9 +360,7 @@ export default function EventsCalendarView({ events, onRegister, onEventClick }:
               >
                 <div className="text-4xl mb-3">📅</div>
                 <p className="text-text-secondary">No events on this day</p>
-                <p className="text-sm text-text-secondary/70 mt-1">
-                  Create one and earn XP!
-                </p>
+                <p className="text-sm text-text-secondary/70 mt-1">Create one and earn XP!</p>
               </motion.div>
             )
           ) : (

@@ -1,42 +1,42 @@
 'use client'
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import {
-  FiGrid,
-  FiCalendar,
-  FiMap,
-  FiPlus,
-  FiFileText,
-  FiClock,
-  FiTrendingUp,
-  FiFilter,
-  FiSearch,
-  FiX,
-  FiDollarSign,
-  FiMapPin,
-  FiCheck,
-  FiChevronRight,
-  FiHeart,
-  FiList,
-} from 'react-icons/fi'
-import Link from 'next/link'
-import { usePrivy } from '@privy-io/react-auth'
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import OrganizerApplicationForm from '@/src/components/dashboard/OrganizerApplicationForm'
-import GamificationBar from '@/src/components/events/GamificationBar'
 import EventCreationWizard from '@/src/components/events/EventCreationWizard'
-import EventsGridView from '@/src/components/events/EventsGridView'
 import EventsCalendarView from '@/src/components/events/EventsCalendarView'
+import EventsGridView from '@/src/components/events/EventsGridView'
 import EventsMapView from '@/src/components/events/EventsMapView'
+import GamificationBar from '@/src/components/events/GamificationBar'
 import Leaderboard from '@/src/components/events/Leaderboard'
 import {
-  useGetEventsQuery,
-  useRegisterForEventMutation,
-  useCancelEventRegistrationMutation,
-  useGetMyProfileQuery,
   EventStatus,
+  useCancelEventRegistrationMutation,
+  useGetEventsQuery,
+  useGetMyProfileQuery,
+  useRegisterForEventMutation,
 } from '@/src/generated/graphql'
+import { usePrivy } from '@privy-io/react-auth'
+import { AnimatePresence, motion } from 'motion/react'
+import Link from 'next/link'
+import { useState } from 'react'
+import {
+  FiCalendar,
+  FiCheck,
+  FiChevronRight,
+  FiClock,
+  FiDollarSign,
+  FiFileText,
+  FiFilter,
+  FiGrid,
+  FiHeart,
+  FiList,
+  FiMap,
+  FiMapPin,
+  FiPlus,
+  FiSearch,
+  FiTrendingUp,
+  FiX,
+} from 'react-icons/fi'
 import { FiHelpCircle } from 'react-icons/fi'
 
 type ViewMode = 'grid' | 'calendar' | 'map'
@@ -44,13 +44,76 @@ type EventTab = 'all' | 'mine' | 'going' | 'maybe' | 'interested'
 
 // Mock leaderboard data (in production, fetch from API)
 const MOCK_LEADERBOARD = [
-  { id: '1', username: 'dancequeen', display_name: 'Sarah M.', xp: 4250, level: 8, events_created: 12, events_attended: 45, streak: 14 },
-  { id: '2', username: 'groovyking', display_name: 'Marcus J.', xp: 3890, level: 7, events_created: 8, events_attended: 52, streak: 21 },
-  { id: '3', username: 'salsafire', display_name: 'Elena R.', xp: 3450, level: 7, events_created: 15, events_attended: 38, streak: 7 },
-  { id: '4', username: 'hiphopdreams', display_name: 'Tyler W.', xp: 2980, level: 6, events_created: 5, events_attended: 42, streak: 0 },
-  { id: '5', username: 'balletrose', display_name: 'Lily C.', xp: 2650, level: 5, events_created: 3, events_attended: 35, streak: 5 },
-  { id: '6', username: 'jazzyhands', display_name: 'Mike D.', xp: 2340, level: 5, events_created: 7, events_attended: 28, streak: 3 },
-  { id: '7', username: 'breakdancer', display_name: 'Carlos G.', xp: 1980, level: 4, events_created: 2, events_attended: 31, streak: 0 },
+  {
+    id: '1',
+    username: 'dancequeen',
+    display_name: 'Sarah M.',
+    xp: 4250,
+    level: 8,
+    events_created: 12,
+    events_attended: 45,
+    streak: 14,
+  },
+  {
+    id: '2',
+    username: 'groovyking',
+    display_name: 'Marcus J.',
+    xp: 3890,
+    level: 7,
+    events_created: 8,
+    events_attended: 52,
+    streak: 21,
+  },
+  {
+    id: '3',
+    username: 'salsafire',
+    display_name: 'Elena R.',
+    xp: 3450,
+    level: 7,
+    events_created: 15,
+    events_attended: 38,
+    streak: 7,
+  },
+  {
+    id: '4',
+    username: 'hiphopdreams',
+    display_name: 'Tyler W.',
+    xp: 2980,
+    level: 6,
+    events_created: 5,
+    events_attended: 42,
+    streak: 0,
+  },
+  {
+    id: '5',
+    username: 'balletrose',
+    display_name: 'Lily C.',
+    xp: 2650,
+    level: 5,
+    events_created: 3,
+    events_attended: 35,
+    streak: 5,
+  },
+  {
+    id: '6',
+    username: 'jazzyhands',
+    display_name: 'Mike D.',
+    xp: 2340,
+    level: 5,
+    events_created: 7,
+    events_attended: 28,
+    streak: 3,
+  },
+  {
+    id: '7',
+    username: 'breakdancer',
+    display_name: 'Carlos G.',
+    xp: 1980,
+    level: 4,
+    events_created: 2,
+    events_attended: 31,
+    streak: 0,
+  },
 ]
 
 export default function EventsPage() {
@@ -62,7 +125,9 @@ export default function EventsPage() {
   const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState<any>(null)
   const [registrationNotes, setRegistrationNotes] = useState('')
-  const [selectedRsvpStatus, setSelectedRsvpStatus] = useState<'registered' | 'maybe' | 'interested'>('registered')
+  const [selectedRsvpStatus, setSelectedRsvpStatus] = useState<
+    'registered' | 'maybe' | 'interested'
+  >('registered')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
@@ -72,7 +137,11 @@ export default function EventsPage() {
     skip: !authenticated,
   })
 
-  const { data: eventsData, loading, refetch } = useGetEventsQuery({
+  const {
+    data: eventsData,
+    loading,
+    refetch,
+  } = useGetEventsQuery({
     variables: {
       filter: {
         status: EventStatus.Upcoming,
@@ -104,7 +173,9 @@ export default function EventsPage() {
   const userRole = profileData?.me?.role
   const isApprovedOrganizer = profileData?.me?.is_organizer_approved
   const canCreateEvents =
-    userRole === 'admin' || userRole === 'manager' || (userRole === 'organizer' && isApprovedOrganizer)
+    userRole === 'admin' ||
+    userRole === 'manager' ||
+    (userRole === 'organizer' && isApprovedOrganizer)
   const needsApproval = userRole === 'organizer' && !isApprovedOrganizer
   const canApplyToOrganize = !canCreateEvents && authenticated
 
@@ -124,7 +195,13 @@ export default function EventsPage() {
   const filterByTab = (event: any) => {
     if (activeTab === 'all') return true
     const status = event.user_registration_status
-    if (activeTab === 'mine') return status === 'registered' || status === 'attended' || status === 'maybe' || status === 'interested'
+    if (activeTab === 'mine')
+      return (
+        status === 'registered' ||
+        status === 'attended' ||
+        status === 'maybe' ||
+        status === 'interested'
+      )
     if (activeTab === 'going') return status === 'registered' || status === 'attended'
     if (activeTab === 'maybe') return status === 'maybe'
     if (activeTab === 'interested') return status === 'interested'
@@ -146,8 +223,17 @@ export default function EventsPage() {
   // Count events per tab
   const tabCounts = {
     all: events.length,
-    mine: events.filter((e: any) => e.user_registration_status === 'registered' || e.user_registration_status === 'attended' || e.user_registration_status === 'maybe' || e.user_registration_status === 'interested').length,
-    going: events.filter((e: any) => e.user_registration_status === 'registered' || e.user_registration_status === 'attended').length,
+    mine: events.filter(
+      (e: any) =>
+        e.user_registration_status === 'registered' ||
+        e.user_registration_status === 'attended' ||
+        e.user_registration_status === 'maybe' ||
+        e.user_registration_status === 'interested',
+    ).length,
+    going: events.filter(
+      (e: any) =>
+        e.user_registration_status === 'registered' || e.user_registration_status === 'attended',
+    ).length,
     maybe: events.filter((e: any) => e.user_registration_status === 'maybe').length,
     interested: events.filter((e: any) => e.user_registration_status === 'interested').length,
   }
@@ -162,9 +248,10 @@ export default function EventsPage() {
   const handleConfirmRegistration = async () => {
     if (selectedEvent) {
       // Note: The 'maybe' status will be stored in notes until backend adds status support
-      const notesWithStatus = selectedRsvpStatus === 'maybe'
-        ? `[RSVP: Maybe] ${registrationNotes || ''}`.trim()
-        : registrationNotes || null
+      const notesWithStatus =
+        selectedRsvpStatus === 'maybe'
+          ? `[RSVP: Maybe] ${registrationNotes || ''}`.trim()
+          : registrationNotes || null
 
       await registerForEvent({
         variables: {
@@ -292,7 +379,12 @@ export default function EventsPage() {
               { id: 'mine' as EventTab, label: 'My Events', icon: FiCalendar, color: 'neon-blue' },
               { id: 'going' as EventTab, label: 'Going', icon: FiCheck, color: 'green-500' },
               { id: 'maybe' as EventTab, label: 'Maybe', icon: FiHelpCircle, color: 'yellow-500' },
-              { id: 'interested' as EventTab, label: 'Interested', icon: FiHeart, color: 'pink-500' },
+              {
+                id: 'interested' as EventTab,
+                label: 'Interested',
+                icon: FiHeart,
+                color: 'pink-500',
+              },
             ].map(tab => {
               const Icon = tab.icon
               const count = tabCounts[tab.id]
@@ -306,30 +398,51 @@ export default function EventsPage() {
                       ? `bg-${tab.color}/20 text-${tab.color === 'neon-purple' ? 'neon-purple' : tab.color.replace('-500', '-400')} border border-${tab.color}/30`
                       : 'bg-bg-secondary text-text-secondary hover:bg-white/10 border border-white/10'
                   }`}
-                  style={isActive ? {
-                    backgroundColor: tab.color === 'neon-purple' ? 'rgba(168, 85, 247, 0.2)' :
-                                    tab.color === 'neon-blue' ? 'rgba(59, 130, 246, 0.2)' :
-                                    tab.color === 'green-500' ? 'rgba(34, 197, 94, 0.2)' :
-                                    tab.color === 'yellow-500' ? 'rgba(234, 179, 8, 0.2)' :
-                                    'rgba(236, 72, 153, 0.2)',
-                    color: tab.color === 'neon-purple' ? '#a855f7' :
-                           tab.color === 'neon-blue' ? '#3b82f6' :
-                           tab.color === 'green-500' ? '#4ade80' :
-                           tab.color === 'yellow-500' ? '#facc15' :
-                           '#f472b6',
-                    borderColor: tab.color === 'neon-purple' ? 'rgba(168, 85, 247, 0.3)' :
-                                 tab.color === 'neon-blue' ? 'rgba(59, 130, 246, 0.3)' :
-                                 tab.color === 'green-500' ? 'rgba(34, 197, 94, 0.3)' :
-                                 tab.color === 'yellow-500' ? 'rgba(234, 179, 8, 0.3)' :
-                                 'rgba(236, 72, 153, 0.3)',
-                  } : {}}
+                  style={
+                    isActive
+                      ? {
+                          backgroundColor:
+                            tab.color === 'neon-purple'
+                              ? 'rgba(168, 85, 247, 0.2)'
+                              : tab.color === 'neon-blue'
+                                ? 'rgba(59, 130, 246, 0.2)'
+                                : tab.color === 'green-500'
+                                  ? 'rgba(34, 197, 94, 0.2)'
+                                  : tab.color === 'yellow-500'
+                                    ? 'rgba(234, 179, 8, 0.2)'
+                                    : 'rgba(236, 72, 153, 0.2)',
+                          color:
+                            tab.color === 'neon-purple'
+                              ? '#a855f7'
+                              : tab.color === 'neon-blue'
+                                ? '#3b82f6'
+                                : tab.color === 'green-500'
+                                  ? '#4ade80'
+                                  : tab.color === 'yellow-500'
+                                    ? '#facc15'
+                                    : '#f472b6',
+                          borderColor:
+                            tab.color === 'neon-purple'
+                              ? 'rgba(168, 85, 247, 0.3)'
+                              : tab.color === 'neon-blue'
+                                ? 'rgba(59, 130, 246, 0.3)'
+                                : tab.color === 'green-500'
+                                  ? 'rgba(34, 197, 94, 0.3)'
+                                  : tab.color === 'yellow-500'
+                                    ? 'rgba(234, 179, 8, 0.3)'
+                                    : 'rgba(236, 72, 153, 0.3)',
+                        }
+                      : {}
+                  }
                 >
                   <Icon className="w-4 h-4" />
                   <span>{tab.label}</span>
                   {count > 0 && (
-                    <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-                      isActive ? 'bg-white/20' : 'bg-white/10'
-                    }`}>
+                    <span
+                      className={`text-xs px-1.5 py-0.5 rounded-full ${
+                        isActive ? 'bg-white/20' : 'bg-white/10'
+                      }`}
+                    >
                       {count}
                     </span>
                   )}
@@ -436,10 +549,10 @@ export default function EventsPage() {
                   opacity: 1,
                   y: 0,
                   transition: {
-                    type: "spring",
+                    type: 'spring',
                     stiffness: 300,
-                    damping: 25
-                  }
+                    damping: 25,
+                  },
                 }}
                 exit={{ scale: 0.9, opacity: 0, y: 20 }}
                 className="bg-bg-secondary rounded-2xl border border-neon-purple/30 max-w-2xl w-full max-h-[85vh] overflow-hidden shadow-2xl shadow-neon-purple/20"
@@ -451,12 +564,12 @@ export default function EventsPage() {
                     <motion.div
                       animate={{
                         rotate: [0, -10, 10, -10, 0],
-                        scale: [1, 1.1, 1]
+                        scale: [1, 1.1, 1],
                       }}
                       transition={{
                         duration: 0.6,
                         delay: 0.2,
-                        ease: "easeInOut"
+                        ease: 'easeInOut',
                       }}
                       className="text-2xl"
                     >
@@ -601,10 +714,20 @@ export default function EventsPage() {
                 {/* XP Reward Preview */}
                 <div className="flex items-center justify-center gap-2 p-3 bg-neon-purple/10 border border-neon-purple/20 rounded-xl mb-4">
                   <span className="text-yellow-500">
-                    {selectedRsvpStatus === 'registered' ? '+25 XP' : selectedRsvpStatus === 'maybe' ? '+10 XP' : '+5 XP'}
+                    {selectedRsvpStatus === 'registered'
+                      ? '+25 XP'
+                      : selectedRsvpStatus === 'maybe'
+                        ? '+10 XP'
+                        : '+5 XP'}
                   </span>
                   <span className="text-text-secondary">
-                    for {selectedRsvpStatus === 'registered' ? 'joining' : selectedRsvpStatus === 'maybe' ? 'considering' : 'showing interest in'} this event!
+                    for{' '}
+                    {selectedRsvpStatus === 'registered'
+                      ? 'joining'
+                      : selectedRsvpStatus === 'maybe'
+                        ? 'considering'
+                        : 'showing interest in'}{' '}
+                    this event!
                   </span>
                 </div>
 
@@ -691,7 +814,8 @@ export default function EventsPage() {
                 </div>
 
                 <p className="text-text-secondary mb-6">
-                  Are you sure you want to cancel your registration for this event? You can always register again if spots are available.
+                  Are you sure you want to cancel your registration for this event? You can always
+                  register again if spots are available.
                 </p>
 
                 <div className="flex gap-3">

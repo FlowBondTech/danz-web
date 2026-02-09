@@ -40,12 +40,7 @@ query GetFeatureRequests(
   $offset: Int
   $sort_by: String
 ) {
-  featureRequests(
-    filter: $filter
-    limit: $limit
-    offset: $offset
-    sort_by: $sort_by
-  ) {
+  featureRequests(filter: $filter, limit: $limit, offset: $offset, sort_by: $sort_by) {
     requests {
       id
       title
@@ -151,18 +146,8 @@ query GetTopVotedFeatures($limit: Int) {
   }
 }
 
-query GetDevTasks(
-  $filter: DevTaskFilter
-  $limit: Int
-  $offset: Int
-  $sort_by: String
-) {
-  devTasks(
-    filter: $filter
-    limit: $limit
-    offset: $offset
-    sort_by: $sort_by
-  ) {
+query GetDevTasks($filter: DevTaskFilter, $limit: Int, $offset: Int, $sort_by: String) {
+  devTasks(filter: $filter, limit: $limit, offset: $offset, sort_by: $sort_by) {
     tasks {
       id
       title

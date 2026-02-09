@@ -1,6 +1,6 @@
 'use client'
 
-import { DanzParty, PARTY_TIER_CONFIG } from '@/src/types/party'
+import { type DanzParty, PARTY_TIER_CONFIG } from '@/src/types/party'
 
 interface PartyCardProps {
   party: DanzParty
@@ -16,9 +16,10 @@ export function PartyCard({ party, onClick, isUserParty }: PartyCardProps) {
       onClick={onClick}
       className={`
         w-full p-4 rounded-2xl border transition-all duration-300
-        ${isUserParty
-          ? 'border-neon-pink/50 bg-gradient-to-br from-neon-pink/10 to-neon-purple/10'
-          : 'border-white/10 bg-card hover:border-white/20'
+        ${
+          isUserParty
+            ? 'border-neon-pink/50 bg-gradient-to-br from-neon-pink/10 to-neon-purple/10'
+            : 'border-white/10 bg-card hover:border-white/20'
         }
         hover:scale-[1.02] active:scale-[0.98]
       `}
@@ -27,26 +28,24 @@ export function PartyCard({ party, onClick, isUserParty }: PartyCardProps) {
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
           {/* Party Avatar */}
-          <div className={`
+          <div
+            className={`
             w-12 h-12 rounded-xl flex items-center justify-center text-2xl
             bg-gradient-to-br ${tierConfig.bgGradient}
-          `}>
+          `}
+          >
             {tierConfig.emoji}
           </div>
 
           <div className="text-left">
             <h3 className="font-bold text-white">{party.name}</h3>
-            <p className={`text-sm ${tierConfig.color}`}>
-              {tierConfig.name} Party
-            </p>
+            <p className={`text-sm ${tierConfig.color}`}>{tierConfig.name} Party</p>
           </div>
         </div>
 
         {/* Multiplier Badge */}
         <div className="px-2 py-1 rounded-lg bg-neon-blue/20 border border-neon-blue/30">
-          <span className="text-neon-blue font-bold text-sm">
-            {party.multiplier}x
-          </span>
+          <span className="text-neon-blue font-bold text-sm">{party.multiplier}x</span>
         </div>
       </div>
 
@@ -64,9 +63,7 @@ export function PartyCard({ party, onClick, isUserParty }: PartyCardProps) {
           {/* Weekly XP */}
           <div className="flex items-center gap-1.5">
             <span className="text-white/50">Weekly</span>
-            <span className="text-neon-pink font-medium">
-              {party.weeklyXp.toLocaleString()} XP
-            </span>
+            <span className="text-neon-pink font-medium">{party.weeklyXp.toLocaleString()} XP</span>
           </div>
         </div>
 
@@ -93,9 +90,7 @@ export function PartyCard({ party, onClick, isUserParty }: PartyCardProps) {
           ))}
           {party.members.length > 4 && (
             <div className="w-6 h-6 rounded-full bg-white/10 border-2 border-bg-primary flex items-center justify-center">
-              <span className="text-[10px] text-white/70">
-                +{party.members.length - 4}
-              </span>
+              <span className="text-[10px] text-white/70">+{party.members.length - 4}</span>
             </div>
           )}
         </div>

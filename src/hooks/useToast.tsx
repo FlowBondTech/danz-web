@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useCallback } from 'react'
-import type { ToastType, ToastProps } from '@/src/components/ui/Toast'
+import type { ToastProps, ToastType } from '@/src/components/ui/Toast'
+import { useCallback, useState } from 'react'
 
 export function useToast() {
   const [toasts, setToasts] = useState<ToastProps[]>([])
@@ -25,10 +25,22 @@ export function useToast() {
     setToasts(prev => prev.filter(t => t.id !== id))
   }, [])
 
-  const success = useCallback((message: string, duration?: number) => addToast('success', message, duration), [addToast])
-  const error = useCallback((message: string, duration?: number) => addToast('error', message, duration), [addToast])
-  const warning = useCallback((message: string, duration?: number) => addToast('warning', message, duration), [addToast])
-  const info = useCallback((message: string, duration?: number) => addToast('info', message, duration), [addToast])
+  const success = useCallback(
+    (message: string, duration?: number) => addToast('success', message, duration),
+    [addToast],
+  )
+  const error = useCallback(
+    (message: string, duration?: number) => addToast('error', message, duration),
+    [addToast],
+  )
+  const warning = useCallback(
+    (message: string, duration?: number) => addToast('warning', message, duration),
+    [addToast],
+  )
+  const info = useCallback(
+    (message: string, duration?: number) => addToast('info', message, duration),
+    [addToast],
+  )
 
   return {
     toasts,

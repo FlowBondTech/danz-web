@@ -1,12 +1,28 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '@/src/contexts/AuthContext'
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
-import { useGetMyProfileQuery, useGetAllUsersQuery, useUpdateUserRoleMutation, useApproveOrganizerMutation, UserRole } from '@/src/generated/graphql'
-import { FiUsers, FiShield, FiCalendar, FiCheck, FiX, FiSearch, FiChevronDown, FiUserCheck, FiEdit2, FiArrowLeft } from 'react-icons/fi'
+import { useAuth } from '@/src/contexts/AuthContext'
+import {
+  type UserRole,
+  useApproveOrganizerMutation,
+  useGetAllUsersQuery,
+  useGetMyProfileQuery,
+  useUpdateUserRoleMutation,
+} from '@/src/generated/graphql'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import {
+  FiArrowLeft,
+  FiCalendar,
+  FiCheck,
+  FiChevronDown,
+  FiSearch,
+  FiShield,
+  FiUserCheck,
+  FiUsers,
+  FiX,
+} from 'react-icons/fi'
 
 export default function AdminUsersPage() {
   const router = useRouter()
@@ -21,7 +37,11 @@ export default function AdminUsersPage() {
   })
 
   // Get all users
-  const { data: usersData, loading: usersLoading, refetch } = useGetAllUsersQuery({
+  const {
+    data: usersData,
+    loading: usersLoading,
+    refetch,
+  } = useGetAllUsersQuery({
     skip: !isAuthenticated || profileData?.me?.role !== 'admin',
   })
 
@@ -62,24 +82,26 @@ export default function AdminUsersPage() {
   }
 
   // Filter users based on search and role
-  const filteredUsers = usersData?.getAllUsers?.filter((user) => {
-    const matchesSearch = searchTerm === '' ||
-      user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.display_name?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers =
+    usersData?.getAllUsers?.filter(user => {
+      const matchesSearch =
+        searchTerm === '' ||
+        user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.display_name?.toLowerCase().includes(searchTerm.toLowerCase())
 
-    let matchesRole = false
-    if (roleFilter === 'all') {
-      matchesRole = true
-    } else if (roleFilter === 'pending') {
-      matchesRole = user.role === 'organizer' && !user.is_organizer_approved
-    } else if (roleFilter === 'dev') {
-      matchesRole = user.role === 'dev' || user.role === 'admin'
-    } else {
-      matchesRole = user.role === roleFilter
-    }
+      let matchesRole = false
+      if (roleFilter === 'all') {
+        matchesRole = true
+      } else if (roleFilter === 'pending') {
+        matchesRole = user.role === 'organizer' && !user.is_organizer_approved
+      } else if (roleFilter === 'dev') {
+        matchesRole = user.role === 'dev' || user.role === 'admin'
+      } else {
+        matchesRole = user.role === roleFilter
+      }
 
-    return matchesSearch && matchesRole
-  }) || []
+      return matchesSearch && matchesRole
+    }) || []
 
   // Count stats
   const stats = {
@@ -87,16 +109,21 @@ export default function AdminUsersPage() {
     admins: usersData?.getAllUsers?.filter(u => u.role === 'admin').length || 0,
     devs: usersData?.getAllUsers?.filter(u => u.role === 'dev' || u.role === 'admin').length || 0,
     organizers: usersData?.getAllUsers?.filter(u => u.role === 'organizer').length || 0,
-    pendingOrganizers: usersData?.getAllUsers?.filter(u =>
-      u.role === 'organizer' && !u.is_organizer_approved
-    ).length || 0,
+    pendingOrganizers:
+      usersData?.getAllUsers?.filter(u => u.role === 'organizer' && !u.is_organizer_approved)
+        .length || 0,
     users: usersData?.getAllUsers?.filter(u => u.role === 'user').length || 0,
   }
 
   // Filter options with counts
   const filterOptions = [
     { value: 'all', label: 'All', count: stats.totalUsers },
-    { value: 'pending', label: 'Pending', count: stats.pendingOrganizers, highlight: stats.pendingOrganizers > 0 },
+    {
+      value: 'pending',
+      label: 'Pending',
+      count: stats.pendingOrganizers,
+      highlight: stats.pendingOrganizers > 0,
+    },
     { value: 'organizer', label: 'Organizers', count: stats.organizers },
     { value: 'dev', label: 'Dev/Admin', count: stats.devs },
     { value: 'user', label: 'Users', count: stats.users },
@@ -137,7 +164,9 @@ export default function AdminUsersPage() {
         {/* Header */}
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">User Management</h1>
-          <p className="text-gray-400 mt-1 sm:mt-2 text-sm sm:text-base">Manage user roles and permissions</p>
+          <p className="text-gray-400 mt-1 sm:mt-2 text-sm sm:text-base">
+            Manage user roles and permissions
+          </p>
         </div>
 
         {/* Stats */}
@@ -146,7 +175,9 @@ export default function AdminUsersPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Total Users</p>
-                <p className="text-xl sm:text-3xl font-bold text-text-primary mt-1">{stats.totalUsers}</p>
+                <p className="text-xl sm:text-3xl font-bold text-text-primary mt-1">
+                  {stats.totalUsers}
+                </p>
               </div>
               <FiUsers className="text-purple-400 text-xl sm:text-3xl" />
             </div>
@@ -166,7 +197,9 @@ export default function AdminUsersPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Organizers</p>
-                <p className="text-xl sm:text-3xl font-bold text-text-primary mt-1">{stats.organizers}</p>
+                <p className="text-xl sm:text-3xl font-bold text-text-primary mt-1">
+                  {stats.organizers}
+                </p>
               </div>
               <FiCalendar className="text-purple-400 text-xl sm:text-3xl" />
             </div>
@@ -176,7 +209,9 @@ export default function AdminUsersPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Pending</p>
-                <p className="text-xl sm:text-3xl font-bold text-text-primary mt-1">{stats.pendingOrganizers}</p>
+                <p className="text-xl sm:text-3xl font-bold text-text-primary mt-1">
+                  {stats.pendingOrganizers}
+                </p>
               </div>
               <FiUserCheck className="text-yellow-400 text-xl sm:text-3xl" />
             </div>
@@ -192,14 +227,14 @@ export default function AdminUsersPage() {
               type="text"
               placeholder="Search by username or display name..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-black/30 border border-purple-500/30 rounded-xl text-text-primary placeholder-gray-500 focus:border-purple-500 focus:outline-none"
             />
           </div>
 
           {/* Role Filter Pills */}
           <div className="flex flex-wrap gap-2">
-            {filterOptions.map((option) => (
+            {filterOptions.map(option => (
               <button
                 key={option.value}
                 onClick={() => setRoleFilter(option.value)}
@@ -207,18 +242,20 @@ export default function AdminUsersPage() {
                   roleFilter === option.value
                     ? 'bg-purple-600 text-text-primary border border-purple-500'
                     : option.highlight
-                    ? 'bg-yellow-600/20 text-yellow-300 border border-yellow-500/50 hover:bg-yellow-600/30'
-                    : 'bg-white/5 text-gray-300 border border-purple-500/20 hover:bg-white/10 hover:border-purple-500/40'
+                      ? 'bg-yellow-600/20 text-yellow-300 border border-yellow-500/50 hover:bg-yellow-600/30'
+                      : 'bg-white/5 text-gray-300 border border-purple-500/20 hover:bg-white/10 hover:border-purple-500/40'
                 }`}
               >
                 {option.label}
-                <span className={`px-1.5 py-0.5 rounded-full text-xs ${
-                  roleFilter === option.value
-                    ? 'bg-white/20'
-                    : option.highlight
-                    ? 'bg-yellow-500/30'
-                    : 'bg-white/10'
-                }`}>
+                <span
+                  className={`px-1.5 py-0.5 rounded-full text-xs ${
+                    roleFilter === option.value
+                      ? 'bg-white/20'
+                      : option.highlight
+                        ? 'bg-yellow-500/30'
+                        : 'bg-white/10'
+                  }`}
+                >
                   {option.count}
                 </span>
               </button>
@@ -251,7 +288,7 @@ export default function AdminUsersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-purple-500/10">
-                {filteredUsers.map((user) => (
+                {filteredUsers.map(user => (
                   <tr key={user.privy_id} className="hover:bg-white/5 transition-colors">
                     <td className="px-6 py-4">
                       <div>
@@ -271,15 +308,17 @@ export default function AdminUsersPage() {
                     <td className="px-6 py-4">
                       <div className="relative inline-block">
                         <button
-                          onClick={() => setShowRoleMenu(showRoleMenu === user.privy_id ? null : user.privy_id)}
+                          onClick={() =>
+                            setShowRoleMenu(showRoleMenu === user.privy_id ? null : user.privy_id)
+                          }
                           className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                             user.role === 'admin'
                               ? 'bg-purple-600/30 text-purple-300 border border-purple-500/50 hover:bg-purple-600/40'
                               : user.role === 'dev'
-                              ? 'bg-cyan-600/30 text-cyan-300 border border-cyan-500/50 hover:bg-cyan-600/40'
-                              : user.role === 'organizer'
-                              ? 'bg-blue-600/30 text-blue-300 border border-blue-500/50 hover:bg-blue-600/40'
-                              : 'bg-gray-600/30 text-gray-300 border border-gray-500/50 hover:bg-gray-600/40'
+                                ? 'bg-cyan-600/30 text-cyan-300 border border-cyan-500/50 hover:bg-cyan-600/40'
+                                : user.role === 'organizer'
+                                  ? 'bg-blue-600/30 text-blue-300 border border-blue-500/50 hover:bg-blue-600/40'
+                                  : 'bg-gray-600/30 text-gray-300 border border-gray-500/50 hover:bg-gray-600/40'
                           }`}
                         >
                           {user.role}
@@ -328,11 +367,17 @@ export default function AdminUsersPage() {
                           XP: <span className="text-text-primary font-medium">{user.xp || 0}</span>
                         </div>
                         <div className="text-gray-400">
-                          Referrals: <span className="text-text-primary font-medium">{user.referral_count || 0}</span>
+                          Referrals:{' '}
+                          <span className="text-text-primary font-medium">
+                            {user.referral_count || 0}
+                          </span>
                         </div>
                         {user.total_sessions && user.total_sessions > 0 && (
                           <div className="text-gray-400">
-                            Sessions: <span className="text-text-primary font-medium">{user.total_sessions}</span>
+                            Sessions:{' '}
+                            <span className="text-text-primary font-medium">
+                              {user.total_sessions}
+                            </span>
                           </div>
                         )}
                       </div>
@@ -370,7 +415,7 @@ export default function AdminUsersPage() {
 
           {/* Mobile Card Layout */}
           <div className="md:hidden divide-y divide-purple-500/10">
-            {filteredUsers.map((user) => (
+            {filteredUsers.map(user => (
               <div key={user.privy_id} className="p-4 space-y-3">
                 {/* User Info Row */}
                 <div className="flex items-start justify-between">
@@ -378,9 +423,7 @@ export default function AdminUsersPage() {
                     <div className="text-text-primary font-medium">
                       {user.display_name || user.username || 'No name'}
                     </div>
-                    <div className="text-gray-400 text-sm">
-                      @{user.username || 'no-username'}
-                    </div>
+                    <div className="text-gray-400 text-sm">@{user.username || 'no-username'}</div>
                     {user.invited_by && (
                       <div className="text-purple-400 text-xs mt-1">
                         Invited by: {user.invited_by}
@@ -412,15 +455,17 @@ export default function AdminUsersPage() {
                   <div className="flex items-center gap-2">
                     <div className="relative">
                       <button
-                        onClick={() => setShowRoleMenu(showRoleMenu === user.privy_id ? null : user.privy_id)}
+                        onClick={() =>
+                          setShowRoleMenu(showRoleMenu === user.privy_id ? null : user.privy_id)
+                        }
                         className={`inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                           user.role === 'admin'
                             ? 'bg-purple-600/30 text-purple-300 border border-purple-500/50'
                             : user.role === 'dev'
-                            ? 'bg-cyan-600/30 text-cyan-300 border border-cyan-500/50'
-                            : user.role === 'organizer'
-                            ? 'bg-blue-600/30 text-blue-300 border border-blue-500/50'
-                            : 'bg-gray-600/30 text-gray-300 border border-gray-500/50'
+                              ? 'bg-cyan-600/30 text-cyan-300 border border-cyan-500/50'
+                              : user.role === 'organizer'
+                                ? 'bg-blue-600/30 text-blue-300 border border-blue-500/50'
+                                : 'bg-gray-600/30 text-gray-300 border border-gray-500/50'
                         }`}
                       >
                         {user.role}

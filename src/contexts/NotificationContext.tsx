@@ -1,23 +1,16 @@
 'use client'
 
 import {
-  type ReactNode,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
-import {
   type Notification,
   NotificationType,
+  useDeleteNotificationMutation,
   useGetMyNotificationsQuery,
   useGetUnreadNotificationCountQuery,
   useMarkAllNotificationsReadMutation,
   useMarkNotificationReadMutation,
-  useDeleteNotificationMutation,
 } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
+import { type ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react'
 
 interface Toast {
   id: string
@@ -75,10 +68,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   })
 
   // Fetch unread count with faster polling
-  const {
-    data: unreadData,
-    refetch: refetchUnread,
-  } = useGetUnreadNotificationCountQuery({
+  const { data: unreadData, refetch: refetchUnread } = useGetUnreadNotificationCountQuery({
     skip: !authenticated || !ready,
     pollInterval: POLL_INTERVAL / 2, // Poll unread count more frequently
     fetchPolicy: 'cache-and-network',
@@ -116,25 +106,28 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const togglePanel = useCallback(() => setIsPanelOpen(prev => !prev), [])
 
   // Mark single notification as read
-  const markAsRead = useCallback(async (id: string) => {
-    try {
-      await markReadMutation({
-        variables: { id },
-        optimisticResponse: {
-          __typename: 'Mutation',
-          markNotificationRead: {
-            __typename: 'Notification',
-            id,
-            read: true,
-            read_at: new Date().toISOString(),
+  const markAsRead = useCallback(
+    async (id: string) => {
+      try {
+        await markReadMutation({
+          variables: { id },
+          optimisticResponse: {
+            __typename: 'Mutation',
+            markNotificationRead: {
+              __typename: 'Notification',
+              id,
+              read: true,
+              read_at: new Date().toISOString(),
+            },
           },
-        },
-      })
-      await refetchUnread()
-    } catch (err) {
-      console.error('Failed to mark notification as read:', err)
-    }
-  }, [markReadMutation, refetchUnread])
+        })
+        await refetchUnread()
+      } catch (err) {
+        console.error('Failed to mark notification as read:', err)
+      }
+    },
+    [markReadMutation, refetchUnread],
+  )
 
   // Mark all as read
   const markAllAsRead = useCallback(async () => {
@@ -148,20 +141,23 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   }, [markAllReadMutation, refetchNotifications, refetchUnread])
 
   // Delete notification
-  const deleteNotification = useCallback(async (id: string) => {
-    try {
-      await deleteMutation({
-        variables: { id },
-        update: (cache) => {
-          cache.evict({ id: `Notification:${id}` })
-          cache.gc()
-        },
-      })
-      await refetchUnread()
-    } catch (err) {
-      console.error('Failed to delete notification:', err)
-    }
-  }, [deleteMutation, refetchUnread])
+  const deleteNotification = useCallback(
+    async (id: string) => {
+      try {
+        await deleteMutation({
+          variables: { id },
+          update: cache => {
+            cache.evict({ id: `Notification:${id}` })
+            cache.gc()
+          },
+        })
+        await refetchUnread()
+      } catch (err) {
+        console.error('Failed to delete notification:', err)
+      }
+    },
+    [deleteMutation, refetchUnread],
+  )
 
   // Refetch all notification data
   const refetch = useCallback(async () => {

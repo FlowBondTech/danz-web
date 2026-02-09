@@ -1,8 +1,8 @@
 'use client'
 
-import { motion, AnimatePresence } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useEffect } from 'react'
-import { FiCheckCircle, FiXCircle, FiAlertCircle, FiInfo, FiX } from 'react-icons/fi'
+import { FiAlertCircle, FiCheckCircle, FiInfo, FiX, FiXCircle } from 'react-icons/fi'
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info'
 
@@ -60,7 +60,10 @@ export function Toast({ id, type, message, duration = 5000, onClose }: ToastProp
   )
 }
 
-export function ToastContainer({ toasts, onClose }: { toasts: ToastProps[]; onClose: (id: string) => void }) {
+export function ToastContainer({
+  toasts,
+  onClose,
+}: { toasts: ToastProps[]; onClose: (id: string) => void }) {
   return (
     <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-md w-full pointer-events-none">
       <AnimatePresence>

@@ -50,15 +50,18 @@ export interface PartyInvite {
 }
 
 // Party tier configuration
-export const PARTY_TIER_CONFIG: Record<PartyTier, {
-  name: string
-  emoji: string
-  minMembers: number
-  maxMembers: number
-  baseMultiplier: number
-  color: string
-  bgGradient: string
-}> = {
+export const PARTY_TIER_CONFIG: Record<
+  PartyTier,
+  {
+    name: string
+    emoji: string
+    minMembers: number
+    maxMembers: number
+    baseMultiplier: number
+    color: string
+    bgGradient: string
+  }
+> = {
   starter: {
     name: 'Starter',
     emoji: '🌱',
@@ -66,7 +69,7 @@ export const PARTY_TIER_CONFIG: Record<PartyTier, {
     maxMembers: 5,
     baseMultiplier: 1.1,
     color: 'text-green-400',
-    bgGradient: 'from-green-500/20 to-green-600/10'
+    bgGradient: 'from-green-500/20 to-green-600/10',
   },
   rising: {
     name: 'Rising',
@@ -75,7 +78,7 @@ export const PARTY_TIER_CONFIG: Record<PartyTier, {
     maxMembers: 10,
     baseMultiplier: 1.25,
     color: 'text-yellow-400',
-    bgGradient: 'from-yellow-500/20 to-yellow-600/10'
+    bgGradient: 'from-yellow-500/20 to-yellow-600/10',
   },
   hot: {
     name: 'Hot',
@@ -84,7 +87,7 @@ export const PARTY_TIER_CONFIG: Record<PartyTier, {
     maxMembers: 25,
     baseMultiplier: 1.5,
     color: 'text-orange-400',
-    bgGradient: 'from-orange-500/20 to-orange-600/10'
+    bgGradient: 'from-orange-500/20 to-orange-600/10',
   },
   fire: {
     name: 'Fire',
@@ -93,7 +96,7 @@ export const PARTY_TIER_CONFIG: Record<PartyTier, {
     maxMembers: 50,
     baseMultiplier: 1.75,
     color: 'text-red-400',
-    bgGradient: 'from-red-500/20 to-red-600/10'
+    bgGradient: 'from-red-500/20 to-red-600/10',
   },
   legendary: {
     name: 'Legendary',
@@ -102,46 +105,49 @@ export const PARTY_TIER_CONFIG: Record<PartyTier, {
     maxMembers: 100,
     baseMultiplier: 2.0,
     color: 'text-purple-400',
-    bgGradient: 'from-purple-500/20 to-pink-500/10'
-  }
+    bgGradient: 'from-purple-500/20 to-pink-500/10',
+  },
 }
 
 // Pool type configuration
-export const POOL_TYPE_CONFIG: Record<PoolType, {
-  name: string
-  description: string
-  minMembers: number
-  maxMembers: number
-  creationCostUsdc: number
-}> = {
+export const POOL_TYPE_CONFIG: Record<
+  PoolType,
+  {
+    name: string
+    description: string
+    minMembers: number
+    maxMembers: number
+    creationCostUsdc: number
+  }
+> = {
   intimate: {
     name: 'Intimate',
     description: 'Small, close-knit group',
     minMembers: 2,
     maxMembers: 10,
-    creationCostUsdc: 5
+    creationCostUsdc: 5,
   },
   large: {
     name: 'Large',
     description: 'Community dance crew',
     minMembers: 10,
     maxMembers: 50,
-    creationCostUsdc: 15
+    creationCostUsdc: 15,
   },
   creator: {
     name: 'Creator',
     description: 'For dance influencers',
     minMembers: 25,
     maxMembers: 100,
-    creationCostUsdc: 50
-  }
+    creationCostUsdc: 50,
+  },
 }
 
 // Calculate party multiplier based on tier and activity
 export function calculatePartyMultiplier(
   tier: PartyTier,
   activeMembers: number,
-  totalMembers: number
+  totalMembers: number,
 ): number {
   const tierConfig = PARTY_TIER_CONFIG[tier]
   const baseMultiplier = tierConfig.baseMultiplier

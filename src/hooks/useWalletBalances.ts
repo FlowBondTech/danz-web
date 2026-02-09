@@ -26,7 +26,9 @@ const SOL_RPC = 'https://api.mainnet-beta.solana.com'
 const LAMPORTS_PER_SOL = 1_000_000_000
 const WEI_PER_ETH = BigInt('1000000000000000000')
 
-export function useWalletBalances(addresses: { address: string; chainType: 'ethereum' | 'solana' }[]): UseWalletBalancesResult {
+export function useWalletBalances(
+  addresses: { address: string; chainType: 'ethereum' | 'solana' }[],
+): UseWalletBalancesResult {
   const [balances, setBalances] = useState<Record<string, WalletBalance>>({})
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -115,14 +117,13 @@ export function useWalletBalances(addresses: { address: string; chainType: 'ethe
 
       await Promise.all(
         addresses.map(async ({ address, chainType }) => {
-          const balance = chainType === 'solana'
-            ? await fetchSolBalance(address)
-            : await fetchEthBalance(address)
+          const balance =
+            chainType === 'solana' ? await fetchSolBalance(address) : await fetchEthBalance(address)
 
           if (balance) {
             newBalances[address] = balance
           }
-        })
+        }),
       )
 
       setBalances(newBalances)
@@ -141,9 +142,12 @@ export function useWalletBalances(addresses: { address: string; chainType: 'ethe
     }
   }, [addresses.length])
 
-  const getBalance = useCallback((address: string) => {
-    return balances[address]
-  }, [balances])
+  const getBalance = useCallback(
+    (address: string) => {
+      return balances[address]
+    },
+    [balances],
+  )
 
   return {
     balances,

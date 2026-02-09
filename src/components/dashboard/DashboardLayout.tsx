@@ -1,24 +1,30 @@
 'use client'
 
+import {
+  NotificationBell,
+  NotificationBellCompact,
+  NotificationPanel,
+} from '@/src/components/notifications'
+import InstallBanner from '@/src/components/ui/InstallBanner'
+import { useExperimental } from '@/src/contexts/ExperimentalContext'
+import { useInstallPrompt } from '@/src/hooks/useInstallPrompt'
 import { usePrivy } from '@privy-io/react-auth'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import {
-  FiBell,
+  FiAward,
   FiCalendar,
   FiChevronLeft,
   FiChevronRight,
   FiCode,
   FiCreditCard,
-  FiDownload,
   FiGrid,
   FiHeart,
   FiLogOut,
   FiMenu,
   FiSettings,
-  FiShare,
   FiShield,
   FiSmartphone,
   FiUser,
@@ -26,10 +32,6 @@ import {
   FiX,
   FiZap,
 } from 'react-icons/fi'
-import { NotificationBell, NotificationBellCompact, NotificationPanel } from '@/src/components/notifications'
-import InstallBanner from '@/src/components/ui/InstallBanner'
-import { useExperimental } from '@/src/contexts/ExperimentalContext'
-import { useInstallPrompt } from '@/src/hooks/useInstallPrompt'
 import { useGetMyProfileQuery } from '../../generated/graphql'
 
 interface DashboardLayoutProps {
@@ -76,6 +78,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       name: 'Events',
       icon: FiCalendar,
       href: '/dashboard/my-events',
+    },
+    {
+      name: 'Sponsor',
+      icon: FiAward,
+      href: '/dashboard/sponsor',
     },
     {
       name: 'Wallet',
@@ -260,7 +267,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </Link>
           <div className="flex items-center gap-2">
             <NotificationBellCompact />
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-text-primary p-2">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="text-text-primary p-2"
+            >
               {mobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
           </div>
@@ -379,7 +389,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        <main className="flex-1 px-4 pb-4 sm:px-6 sm:pb-6 lg:px-8 lg:pb-8 pt-20 lg:pt-8 overflow-auto">{children}</main>
+        <main className="flex-1 px-4 pb-4 sm:px-6 sm:pb-6 lg:px-8 lg:pb-8 pt-20 lg:pt-8 overflow-auto">
+          {children}
+        </main>
       </div>
 
       {/* Install Banner for Mobile */}

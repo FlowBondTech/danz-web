@@ -1,12 +1,13 @@
 'use client'
 
 import { usePrivy } from '@privy-io/react-auth'
-import { useSearchParams, useRouter } from 'next/navigation'
-import { useEffect, useState, useCallback, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense, useCallback, useEffect, useState } from 'react'
 
 // Supabase config (using service role for verification completion)
 const SUPABASE_URL = 'https://eoajujwpdkfuicnoxetk.supabase.co'
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvYWp1andwZGtmdWljbm94ZXRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NDQzMzQsImV4cCI6MjA3MDIyMDMzNH0.NpMiRO22b-y-7zHo-RhA0ZX8tHkSZiTk9jlWcF-UZEg'
+const SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvYWp1andwZGtmdWljbm94ZXRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NDQzMzQsImV4cCI6MjA3MDIyMDMzNH0.NpMiRO22b-y-7zHo-RhA0ZX8tHkSZiTk9jlWcF-UZEg'
 
 interface VerificationResult {
   success: boolean
@@ -22,8 +23,8 @@ async function completeVerification(code: string, privyId: string): Promise<Veri
     const findUrl = `${SUPABASE_URL}/rest/v1/pending_verifications?code=eq.${code}&verified_at=is.null&select=*`
     const findRes = await fetch(findUrl, {
       headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
       },
     })
 
@@ -47,8 +48,8 @@ async function completeVerification(code: string, privyId: string): Promise<Veri
     const userUrl = `${SUPABASE_URL}/rest/v1/users?privy_id=eq.${privyId}&select=username,display_name`
     const userRes = await fetch(userUrl, {
       headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
       },
     })
 
@@ -68,8 +69,8 @@ async function completeVerification(code: string, privyId: string): Promise<Veri
     const updateRes = await fetch(updateUrl, {
       method: 'PATCH',
       headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -87,8 +88,8 @@ async function completeVerification(code: string, privyId: string): Promise<Veri
       await fetch(`${SUPABASE_URL}/rest/v1/users?privy_id=eq.${privyId}`, {
         method: 'PATCH',
         headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -99,8 +100,8 @@ async function completeVerification(code: string, privyId: string): Promise<Veri
       await fetch(`${SUPABASE_URL}/rest/v1/users?privy_id=eq.${privyId}`, {
         method: 'PATCH',
         headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -113,8 +114,8 @@ async function completeVerification(code: string, privyId: string): Promise<Veri
     await fetch(`${SUPABASE_URL}/rest/v1/rpc/award_xp`, {
       method: 'POST',
       headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -149,21 +150,26 @@ function ParticleLogo({ animating }: { animating: boolean }) {
             <span
               key={i}
               className="absolute w-1.5 h-1.5 rounded-full"
-              style={{
-                background: `hsl(${270 + i * 15}, 80%, ${60 + (i % 3) * 10}%)`,
-                top: '50%',
-                left: '50%',
-                animation: `particle-orbit ${2 + (i % 3) * 0.5}s linear infinite`,
-                animationDelay: `${i * -0.25}s`,
-                transformOrigin: '0 0',
-                // @ts-ignore
-                '--orbit-radius': `${36 + (i % 3) * 8}px`,
-                '--start-angle': `${i * 30}deg`,
-              } as React.CSSProperties}
+              style={
+                {
+                  background: `hsl(${270 + i * 15}, 80%, ${60 + (i % 3) * 10}%)`,
+                  top: '50%',
+                  left: '50%',
+                  animation: `particle-orbit ${2 + (i % 3) * 0.5}s linear infinite`,
+                  animationDelay: `${i * -0.25}s`,
+                  transformOrigin: '0 0',
+                  // @ts-ignore
+                  '--orbit-radius': `${36 + (i % 3) * 8}px`,
+                  '--start-angle': `${i * 30}deg`,
+                } as React.CSSProperties
+              }
             />
           ))}
           {/* Glow pulse */}
-          <div className="absolute inset-0 rounded-full bg-purple-500/20 animate-ping" style={{ animationDuration: '2s' }} />
+          <div
+            className="absolute inset-0 rounded-full bg-purple-500/20 animate-ping"
+            style={{ animationDuration: '2s' }}
+          />
           <div className="absolute -inset-2 rounded-full bg-purple-500/10 animate-pulse" />
         </>
       )}
@@ -205,7 +211,9 @@ function LinkPageContent() {
   const router = useRouter()
   const { login, authenticated, ready, user } = usePrivy()
 
-  const [status, setStatus] = useState<'loading' | 'needs_auth' | 'verifying' | 'success' | 'error'>('loading')
+  const [status, setStatus] = useState<
+    'loading' | 'needs_auth' | 'verifying' | 'success' | 'error'
+  >('loading')
   const [result, setResult] = useState<VerificationResult | null>(null)
   const [hasStartedVerification, setHasStartedVerification] = useState(false)
   const [sourceInfo, setSourceInfo] = useState<{ platform: string; username?: string } | null>(null)
@@ -223,8 +231,8 @@ function LinkPageContent() {
         const url = `${SUPABASE_URL}/rest/v1/pending_verifications?code=eq.${code}&select=platform,platform_username`
         const res = await fetch(url, {
           headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
           },
         })
         if (res.ok) {
@@ -285,7 +293,6 @@ function LinkPageContent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-purple-900 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-black/50 backdrop-blur-xl rounded-2xl border border-purple-500/20 p-8 text-center relative">
-
         {/* Logo with particles */}
         <div className="mb-6">
           <ParticleLogo animating={status === 'verifying'} />
@@ -308,12 +315,12 @@ function LinkPageContent() {
               <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-sm text-gray-300 mb-4">
                 <span>{platformDisplay.icon}</span>
                 <span>from {platformDisplay.name}</span>
-                {sourceInfo?.username && <span className="text-purple-400">@{sourceInfo.username}</span>}
+                {sourceInfo?.username && (
+                  <span className="text-purple-400">@{sourceInfo.username}</span>
+                )}
               </div>
             )}
-            <h2 className="text-xl font-semibold text-white mb-4">
-              Link Your Account
-            </h2>
+            <h2 className="text-xl font-semibold text-white mb-4">Link Your Account</h2>
             <p className="text-gray-400 mb-6">
               Sign in or create a DANZ.Now account to link with {chatLabel}.
             </p>
@@ -333,7 +340,9 @@ function LinkPageContent() {
         {status === 'verifying' && (
           <div className="py-6">
             <p className="text-purple-300 font-medium text-lg mb-2">
-              {platformDisplay ? `Linking ${platformDisplay.name} to DANZ.Now...` : 'Linking your accounts...'}
+              {platformDisplay
+                ? `Linking ${platformDisplay.name} to DANZ.Now...`
+                : 'Linking your accounts...'}
             </p>
             <p className="text-gray-500 text-sm">This will only take a moment</p>
           </div>
@@ -353,7 +362,8 @@ function LinkPageContent() {
             </div>
 
             <p className="text-gray-500 text-sm mb-5">
-              Head back to {chatLabel} and say <span className="text-purple-400">"status"</span> to confirm.
+              Head back to {chatLabel} and say <span className="text-purple-400">"status"</span> to
+              confirm.
             </p>
 
             <div className="space-y-3">
@@ -377,20 +387,24 @@ function LinkPageContent() {
         {status === 'error' && result && (
           <div className="py-4">
             <div className="text-5xl mb-4">&#128533;</div>
-            <h2 className="text-xl font-semibold text-white mb-3">
-              Verification Failed
-            </h2>
-            <p className="text-red-400 mb-5">
-              {result.error}
-            </p>
+            <h2 className="text-xl font-semibold text-white mb-3">Verification Failed</h2>
+            <p className="text-red-400 mb-5">{result.error}</p>
 
             <p className="text-gray-400 text-sm mb-5">
-              {result.error?.includes('expired') || result.error?.includes('Invalid')
-                ? <>Say <span className="text-purple-400 font-medium">"signup"</span> in {chatLabel} for a fresh link.</>
-                : result.error?.includes('No verification code')
-                ? <>Open the link from {chatLabel} — it includes the code.</>
-                : <>Try refreshing, or say <span className="text-purple-400 font-medium">"signup"</span> in {chatLabel} for a new link.</>
-              }
+              {result.error?.includes('expired') || result.error?.includes('Invalid') ? (
+                <>
+                  Say <span className="text-purple-400 font-medium">"signup"</span> in {chatLabel}{' '}
+                  for a fresh link.
+                </>
+              ) : result.error?.includes('No verification code') ? (
+                <>Open the link from {chatLabel} — it includes the code.</>
+              ) : (
+                <>
+                  Try refreshing, or say{' '}
+                  <span className="text-purple-400 font-medium">"signup"</span> in {chatLabel} for a
+                  new link.
+                </>
+              )}
             </p>
 
             <div className="space-y-3">
@@ -416,11 +430,13 @@ function LinkPageContent() {
 
 export default function LinkPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-purple-900 flex items-center justify-center">
-        <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full" />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-purple-900 flex items-center justify-center">
+          <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full" />
+        </div>
+      }
+    >
       <LinkPageContent />
     </Suspense>
   )

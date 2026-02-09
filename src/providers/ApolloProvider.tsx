@@ -141,7 +141,9 @@ export const ApolloProvider: React.FC<ApolloProviderProps> = ({ children }) => {
             } else {
               // User is authenticated in Privy but token wasn't attached yet
               // This is a timing issue, don't redirect - let the query retry
-              console.warn('UNAUTHENTICATED error but user is authenticated in Privy - possible token timing issue')
+              console.warn(
+                'UNAUTHENTICATED error but user is authenticated in Privy - possible token timing issue',
+              )
             }
           } else if (extensions?.code === 'FORBIDDEN') {
             console.error('Access denied')

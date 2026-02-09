@@ -1,7 +1,16 @@
 'use client'
 
 import { gql, useQuery } from '@apollo/client'
-import { FiActivity, FiAward, FiCalendar, FiHeart, FiMessageCircle, FiTrendingUp, FiUsers, FiZap } from 'react-icons/fi'
+import {
+  FiActivity,
+  FiAward,
+  FiCalendar,
+  FiHeart,
+  FiMessageCircle,
+  FiTrendingUp,
+  FiUsers,
+  FiZap,
+} from 'react-icons/fi'
 
 const GET_USER_STATS = gql`
   query GetUserStats($userId: String) {
@@ -163,7 +172,9 @@ export default function UserStatsCard() {
             key={index}
             className="p-4 rounded-xl bg-bg-primary/30 border border-white/5 hover:border-white/10 transition-all"
           >
-            <div className={`w-10 h-10 rounded-lg ${stat.bgColor} flex items-center justify-center mb-3`}>
+            <div
+              className={`w-10 h-10 rounded-lg ${stat.bgColor} flex items-center justify-center mb-3`}
+            >
               <stat.icon className={`w-5 h-5 ${stat.color}`} />
             </div>
             <div className="text-2xl font-bold text-text-primary mb-1">{stat.value}</div>

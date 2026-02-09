@@ -544,8 +544,9 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
             }
           } catch (referralError: any) {
             // Check if it's a duplicate referral error (already completed)
-            const isDuplicate = referralError?.message?.includes('already completed') ||
-                               referralError?.graphQLErrors?.[0]?.extensions?.code === 'DUPLICATE_REFERRAL'
+            const isDuplicate =
+              referralError?.message?.includes('already completed') ||
+              referralError?.graphQLErrors?.[0]?.extensions?.code === 'DUPLICATE_REFERRAL'
 
             if (isDuplicate) {
               console.log('Referral was already completed previously')
@@ -648,7 +649,6 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                 </div>
               </div>
             )}
-
           </motion.div>
         )
 
@@ -665,9 +665,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
               <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
                 Join DANZ
               </h2>
-              <p className="text-sm sm:text-base text-gray-400 mt-2">
-                Select all that apply
-              </p>
+              <p className="text-sm sm:text-base text-gray-400 mt-2">Select all that apply</p>
             </div>
 
             <div className="space-y-4">
@@ -681,9 +679,11 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                 }`}
               >
                 <div className="flex items-start gap-3 sm:gap-4">
-                  <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
-                    isDancer ? 'bg-purple-500 border-purple-500' : 'border-purple-500/50'
-                  }`}>
+                  <div
+                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
+                      isDancer ? 'bg-purple-500 border-purple-500' : 'border-purple-500/50'
+                    }`}
+                  >
                     {isDancer && <FiCheck className="text-text-primary text-sm" />}
                   </div>
                   <div className="flex-1 text-left">
@@ -708,9 +708,11 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                 }`}
               >
                 <div className="flex items-start gap-3 sm:gap-4">
-                  <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
-                    isOrganizer ? 'bg-purple-500 border-purple-500' : 'border-purple-500/50'
-                  }`}>
+                  <div
+                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
+                      isOrganizer ? 'bg-purple-500 border-purple-500' : 'border-purple-500/50'
+                    }`}
+                  >
                     {isOrganizer && <FiCheck className="text-text-primary text-sm" />}
                   </div>
                   <div className="flex-1 text-left">
@@ -755,7 +757,9 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
                     <FiBell className="text-purple-400 text-sm" />
-                    <span className="text-text-primary text-sm">Email me about new features and events</span>
+                    <span className="text-text-primary text-sm">
+                      Email me about new features and events
+                    </span>
                   </div>
                 </div>
               </label>
@@ -1029,7 +1033,9 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                     }}
                     className="text-xs sm:text-sm text-purple-400 hover:text-purple-300 transition-colors font-medium"
                   >
-                    {formData.danceStyles.length === DANCE_STYLES.length ? 'Deselect All' : 'Select All'}
+                    {formData.danceStyles.length === DANCE_STYLES.length
+                      ? 'Deselect All'
+                      : 'Select All'}
                   </button>
                 </div>
                 <div className="grid grid-cols-2 gap-2 max-h-48 sm:max-h-64 overflow-y-auto">
@@ -1239,7 +1245,9 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
               </div>
 
               <div>
-                <label className="block text-text-primary mb-2 text-sm">Who invited you? (optional)</label>
+                <label className="block text-text-primary mb-2 text-sm">
+                  Who invited you? (optional)
+                </label>
                 <input
                   type="text"
                   value={formData.invitedBy}
@@ -1392,7 +1400,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                   isLoading ||
                   uploadingAvatar ||
                   isCheckingUsername ||
-                  (currentStep === 'role' && (!isDancer && !isOrganizer || !agreedToTerms)) ||
+                  (currentStep === 'role' && ((!isDancer && !isOrganizer) || !agreedToTerms)) ||
                   !validateCurrentStep()
                 }
                 className={`${

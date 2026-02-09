@@ -122,7 +122,9 @@ export default function DanceBondsWidget() {
                   </h3>
                   {/* Bond Strength Indicator */}
                   <div className="flex items-center gap-1">
-                    <div className={`w-1.5 h-1.5 rounded-full ${getBondColor(bond.bondStrength)}`} />
+                    <div
+                      className={`w-1.5 h-1.5 rounded-full ${getBondColor(bond.bondStrength)}`}
+                    />
                     <span className={`text-xs font-medium ${getBondColor(bond.bondStrength)}`}>
                       {bond.bondStrength}%
                     </span>

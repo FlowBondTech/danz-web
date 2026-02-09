@@ -1,93 +1,75 @@
 'use client'
 
+import { ActivityType, useGetActivityFeedQuery } from '@/src/generated/graphql'
 import { useRouter } from 'next/navigation'
+import type { IconType } from 'react-icons'
 import {
   FiActivity,
   FiAward,
   FiCalendar,
+  FiGift,
   FiHeart,
   FiMessageCircle,
   FiMusic,
+  FiStar,
+  FiTrendingUp,
+  FiUserPlus,
   FiUsers,
+  FiZap,
 } from 'react-icons/fi'
 
-interface Activity {
-  id: string
-  type: 'post' | 'event' | 'achievement' | 'bond' | 'comment' | 'like'
-  title: string
-  description: string
-  timestamp: string
-  icon: any
-  color: string
-  bgColor: string
+const getActivityConfig = (
+  type: ActivityType,
+): { icon: IconType; color: string; bgColor: string } => {
+  switch (type) {
+    case ActivityType.UserAchievement:
+    case ActivityType.DanceMilestone:
+    case ActivityType.HighScoreAchieved:
+      return { icon: FiAward, color: 'text-yellow-400', bgColor: 'bg-yellow-400/10' }
+    case ActivityType.EventCheckin:
+    case ActivityType.EventCompleted:
+    case ActivityType.EventJoined:
+    case ActivityType.EventCreated:
+      return { icon: FiCalendar, color: 'text-neon-purple', bgColor: 'bg-neon-purple/10' }
+    case ActivityType.NewDanceBond:
+    case ActivityType.DanceBondStrengthened:
+      return { icon: FiUsers, color: 'text-pink-400', bgColor: 'bg-pink-400/10' }
+    case ActivityType.PostCreated:
+    case ActivityType.DanceSessionShared:
+    case ActivityType.DanceSessionCompleted:
+      return { icon: FiMusic, color: 'text-blue-400', bgColor: 'bg-blue-400/10' }
+    case ActivityType.PostLiked:
+      return { icon: FiHeart, color: 'text-red-400', bgColor: 'bg-red-400/10' }
+    case ActivityType.PostCommented:
+      return { icon: FiMessageCircle, color: 'text-green-400', bgColor: 'bg-green-400/10' }
+    case ActivityType.UserLevelUp:
+    case ActivityType.LeaderboardRankUp:
+      return { icon: FiTrendingUp, color: 'text-orange-400', bgColor: 'bg-orange-400/10' }
+    case ActivityType.UserStreak:
+    case ActivityType.ChallengeStreak:
+      return { icon: FiZap, color: 'text-amber-400', bgColor: 'bg-amber-400/10' }
+    case ActivityType.ChallengeCompleted:
+    case ActivityType.ChallengeStarted:
+      return { icon: FiStar, color: 'text-cyan-400', bgColor: 'bg-cyan-400/10' }
+    case ActivityType.SeasonReward:
+    case ActivityType.ReferralBonus:
+      return { icon: FiGift, color: 'text-purple-400', bgColor: 'bg-purple-400/10' }
+    case ActivityType.ReferralInvited:
+    case ActivityType.ReferralJoined:
+    case ActivityType.UserJoined:
+      return { icon: FiUserPlus, color: 'text-teal-400', bgColor: 'bg-teal-400/10' }
+    default:
+      return { icon: FiActivity, color: 'text-neon-purple', bgColor: 'bg-neon-purple/10' }
+  }
 }
-
-// Mock data - will be replaced with real GraphQL data
-const mockActivities: Activity[] = [
-  {
-    id: '1',
-    type: 'achievement',
-    title: 'New Achievement Unlocked!',
-    description: 'Earned "Week Warrior" badge for maintaining a 7-day streak',
-    timestamp: '2025-01-17T10:30:00',
-    icon: FiAward,
-    color: 'text-yellow-400',
-    bgColor: 'bg-yellow-400/10',
-  },
-  {
-    id: '2',
-    type: 'event',
-    title: 'Attended Hip Hop Session',
-    description: 'Completed freestyle workshop at Downtown Studio',
-    timestamp: '2025-01-16T18:00:00',
-    icon: FiCalendar,
-    color: 'text-neon-purple',
-    bgColor: 'bg-neon-purple/10',
-  },
-  {
-    id: '3',
-    type: 'bond',
-    title: 'New Dance Bond',
-    description: 'Connected with @alex_moves - Contemporary specialist',
-    timestamp: '2025-01-16T14:22:00',
-    icon: FiUsers,
-    color: 'text-pink-400',
-    bgColor: 'bg-pink-400/10',
-  },
-  {
-    id: '4',
-    type: 'post',
-    title: 'Posted New Dance Video',
-    description: 'Shared "Breaking Basics Tutorial" with the community',
-    timestamp: '2025-01-15T20:15:00',
-    icon: FiMusic,
-    color: 'text-blue-400',
-    bgColor: 'bg-blue-400/10',
-  },
-  {
-    id: '5',
-    type: 'like',
-    title: 'Your Post Got Popular',
-    description: '15 dancers liked your recent performance video',
-    timestamp: '2025-01-15T16:40:00',
-    icon: FiHeart,
-    color: 'text-red-400',
-    bgColor: 'bg-red-400/10',
-  },
-  {
-    id: '6',
-    type: 'comment',
-    title: 'New Comments',
-    description: '3 new comments on your choreography breakdown',
-    timestamp: '2025-01-14T12:10:00',
-    icon: FiMessageCircle,
-    color: 'text-green-400',
-    bgColor: 'bg-green-400/10',
-  },
-]
 
 export default function RecentActivityFeed() {
   const router = useRouter()
+  const { data, loading } = useGetActivityFeedQuery({
+    variables: {
+      limit: 6,
+    },
+  })
 
   const getTimeAgo = (timestamp: string) => {
     const now = new Date()
@@ -107,6 +89,36 @@ export default function RecentActivityFeed() {
       return past.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     }
   }
+
+  const getActivityNavigation = (type: ActivityType) => {
+    if (
+      [
+        ActivityType.EventCheckin,
+        ActivityType.EventCompleted,
+        ActivityType.EventJoined,
+        ActivityType.EventCreated,
+      ].includes(type)
+    ) {
+      return '/dashboard/my-events'
+    } else if ([ActivityType.PostCreated, ActivityType.DanceSessionShared].includes(type)) {
+      return '/dashboard/feed'
+    } else if ([ActivityType.NewDanceBond, ActivityType.DanceBondStrengthened].includes(type)) {
+      return '/dashboard/connections'
+    }
+    return null
+  }
+
+  if (loading) {
+    return (
+      <div className="bg-bg-secondary border border-neon-purple/20 rounded-2xl p-6">
+        <div className="flex items-center justify-center py-8">
+          <div className="w-8 h-8 border-4 border-neon-purple/30 border-t-neon-purple rounded-full animate-spin" />
+        </div>
+      </div>
+    )
+  }
+
+  const activities = data?.activityFeed?.activities || []
 
   return (
     <div className="bg-bg-secondary border border-neon-purple/20 rounded-2xl p-6">
@@ -128,51 +140,66 @@ export default function RecentActivityFeed() {
         </button>
       </div>
 
-      {mockActivities.length > 0 ? (
+      {activities.length > 0 ? (
         <div className="space-y-3">
-          {mockActivities.slice(0, 6).map((activity, index) => (
-            <div
-              key={activity.id}
-              className="group relative flex items-start gap-4 p-4 bg-bg-primary/30 hover:bg-bg-primary/50 border border-white/5 hover:border-neon-purple/30 rounded-xl transition-all cursor-pointer"
-              onClick={() => {
-                // Navigate based on activity type
-                if (activity.type === 'event') {
-                  router.push('/dashboard/my-events')
-                } else if (activity.type === 'post') {
-                  router.push('/dashboard/feed')
-                } else if (activity.type === 'bond') {
-                  router.push('/dashboard/connections')
-                }
-              }}
-            >
-              {/* Timeline Line */}
-              {index !== mockActivities.slice(0, 6).length - 1 && (
-                <div className="absolute left-9 top-16 bottom-0 w-px bg-white/5" />
-              )}
+          {activities.map((activity, index) => {
+            const config = getActivityConfig(activity.activity_type)
+            const Icon = config.icon
+            const navPath = getActivityNavigation(activity.activity_type)
 
-              {/* Icon */}
+            return (
               <div
-                className={`relative flex-shrink-0 w-10 h-10 rounded-lg ${activity.bgColor} flex items-center justify-center z-10`}
+                key={activity.id}
+                className="group relative flex items-start gap-4 p-4 bg-bg-primary/30 hover:bg-bg-primary/50 border border-white/5 hover:border-neon-purple/30 rounded-xl transition-all cursor-pointer"
+                onClick={() => {
+                  if (navPath) {
+                    router.push(navPath)
+                  }
+                }}
               >
-                <activity.icon className={`w-5 h-5 ${activity.color}`} />
-              </div>
+                {/* Timeline Line */}
+                {index !== activities.length - 1 && (
+                  <div className="absolute left-9 top-16 bottom-0 w-px bg-white/5" />
+                )}
 
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-2 mb-1">
-                  <h3 className="text-sm font-semibold text-text-primary group-hover:text-neon-purple transition-colors">
-                    {activity.title}
-                  </h3>
-                  <span className="text-xs text-text-muted flex-shrink-0">
-                    {getTimeAgo(activity.timestamp)}
-                  </span>
+                {/* Icon */}
+                <div
+                  className={`relative flex-shrink-0 w-10 h-10 rounded-lg ${config.bgColor} flex items-center justify-center z-10`}
+                >
+                  <Icon className={`w-5 h-5 ${config.color}`} />
                 </div>
-                <p className="text-sm text-text-secondary leading-relaxed">
-                  {activity.description}
-                </p>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <h3 className="text-sm font-semibold text-text-primary group-hover:text-neon-purple transition-colors">
+                      {activity.title}
+                    </h3>
+                    <span className="text-xs text-text-muted flex-shrink-0">
+                      {getTimeAgo(activity.created_at)}
+                    </span>
+                  </div>
+                  <p className="text-sm text-text-secondary leading-relaxed">
+                    {activity.description}
+                  </p>
+                  {(activity.xp_earned || activity.points_earned) && (
+                    <div className="flex items-center gap-2 mt-2">
+                      {activity.xp_earned && activity.xp_earned > 0 && (
+                        <span className="text-xs px-2 py-0.5 bg-neon-purple/20 text-neon-purple rounded-full">
+                          +{activity.xp_earned} XP
+                        </span>
+                      )}
+                      {activity.points_earned && activity.points_earned > 0 && (
+                        <span className="text-xs px-2 py-0.5 bg-yellow-400/20 text-yellow-400 rounded-full">
+                          +{activity.points_earned} pts
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       ) : (
         <div className="text-center py-12">
@@ -187,7 +214,7 @@ export default function RecentActivityFeed() {
       )}
 
       {/* Load More */}
-      {mockActivities.length > 6 && (
+      {data?.activityFeed?.has_more && (
         <button
           onClick={() => router.push('/dashboard/activity')}
           className="w-full mt-4 py-3 bg-bg-primary/50 hover:bg-bg-primary border border-white/10 hover:border-neon-purple/30 rounded-xl text-text-secondary hover:text-neon-purple text-sm font-medium transition-all"

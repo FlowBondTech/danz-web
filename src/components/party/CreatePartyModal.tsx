@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { POOL_TYPE_CONFIG, type PoolType } from '@/src/types/party'
 import { X } from 'lucide-react'
-import { PoolType, POOL_TYPE_CONFIG, PARTY_TIER_CONFIG } from '@/src/types/party'
+import { useState } from 'react'
 
 interface CreatePartyModalProps {
   isOpen: boolean
@@ -22,7 +22,7 @@ export function CreatePartyModal({
   isOpen,
   onClose,
   onCreateParty,
-  userBalance = 0
+  userBalance = 0,
 }: CreatePartyModalProps) {
   const [step, setStep] = useState<'type' | 'details' | 'payment'>('type')
   const [selectedPoolType, setSelectedPoolType] = useState<PoolType | null>(null)
@@ -65,7 +65,7 @@ export function CreatePartyModal({
         name: name.trim(),
         description: description.trim(),
         poolType: selectedPoolType,
-        isPublic
+        isPublic,
       })
       onClose()
     } catch (err) {
@@ -83,10 +83,7 @@ export function CreatePartyModal({
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
       <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-bg-primary border border-white/10 rounded-t-3xl sm:rounded-3xl">
@@ -98,8 +95,18 @@ export function CreatePartyModal({
                 onClick={handleBack}
                 className="p-1 rounded-lg hover:bg-white/10 transition-colors"
               >
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                <svg
+                  className="w-5 h-5 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
                 </svg>
               </button>
             )}
@@ -124,7 +131,12 @@ export function CreatePartyModal({
               <p className="text-white/60 text-sm mb-4">
                 Select the size and type of party you want to create.
               </p>
-              {(Object.entries(POOL_TYPE_CONFIG) as [PoolType, typeof POOL_TYPE_CONFIG[PoolType]][]).map(([type, config]) => (
+              {(
+                Object.entries(POOL_TYPE_CONFIG) as [
+                  PoolType,
+                  (typeof POOL_TYPE_CONFIG)[PoolType],
+                ][]
+              ).map(([type, config]) => (
                 <button
                   key={type}
                   onClick={() => handleSelectPoolType(type)}
@@ -153,7 +165,7 @@ export function CreatePartyModal({
                 <input
                   type="text"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={e => setName(e.target.value)}
                   placeholder="Enter party name"
                   maxLength={32}
                   className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:border-neon-purple/50 focus:outline-none transition-colors"
@@ -165,7 +177,7 @@ export function CreatePartyModal({
                 <label className="block text-sm text-white/70 mb-2">Description (optional)</label>
                 <textarea
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={e => setDescription(e.target.value)}
                   placeholder="Tell others about your party"
                   maxLength={160}
                   rows={3}
@@ -193,9 +205,7 @@ export function CreatePartyModal({
                 </button>
               </div>
 
-              {error && (
-                <p className="text-red-400 text-sm">{error}</p>
-              )}
+              {error && <p className="text-red-400 text-sm">{error}</p>}
 
               <button
                 onClick={handleContinueToPayment}
@@ -222,7 +232,9 @@ export function CreatePartyModal({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-white/60">Max Members</span>
-                    <span className="text-white">{POOL_TYPE_CONFIG[selectedPoolType].maxMembers}</span>
+                    <span className="text-white">
+                      {POOL_TYPE_CONFIG[selectedPoolType].maxMembers}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-white/60">Visibility</span>
@@ -238,29 +250,29 @@ export function CreatePartyModal({
                     ${POOL_TYPE_CONFIG[selectedPoolType].creationCostUsdc} USDC
                   </span>
                 </div>
-                <p className="text-xs text-white/50 mt-2">
-                  This goes to the party prize pool
-                </p>
+                <p className="text-xs text-white/50 mt-2">This goes to the party prize pool</p>
               </div>
 
               <div className="flex justify-between items-center p-3 rounded-xl bg-white/5">
                 <span className="text-white/60 text-sm">Your Balance</span>
-                <span className={`font-bold ${
-                  userBalance >= POOL_TYPE_CONFIG[selectedPoolType].creationCostUsdc
-                    ? 'text-green-400'
-                    : 'text-red-400'
-                }`}>
+                <span
+                  className={`font-bold ${
+                    userBalance >= POOL_TYPE_CONFIG[selectedPoolType].creationCostUsdc
+                      ? 'text-green-400'
+                      : 'text-red-400'
+                  }`}
+                >
                   ${userBalance.toFixed(2)} USDC
                 </span>
               </div>
 
-              {error && (
-                <p className="text-red-400 text-sm">{error}</p>
-              )}
+              {error && <p className="text-red-400 text-sm">{error}</p>}
 
               <button
                 onClick={handleCreateParty}
-                disabled={isLoading || userBalance < POOL_TYPE_CONFIG[selectedPoolType].creationCostUsdc}
+                disabled={
+                  isLoading || userBalance < POOL_TYPE_CONFIG[selectedPoolType].creationCostUsdc
+                }
                 className="w-full py-3 rounded-xl bg-gradient-to-r from-neon-pink to-neon-purple text-white font-bold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (

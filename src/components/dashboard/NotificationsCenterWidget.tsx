@@ -1,82 +1,61 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import {
+  NotificationType,
+  useGetMyNotificationsQuery,
+  useMarkAllNotificationsReadMutation,
+} from '@/src/generated/graphql'
+import { useRouter } from 'next/navigation'
+import type { IconType } from 'react-icons'
+import {
+  FiAlertCircle,
   FiAward,
   FiBell,
   FiCalendar,
   FiHeart,
   FiMessageCircle,
+  FiUserPlus,
   FiUsers,
+  FiVolume2,
 } from 'react-icons/fi'
 
-interface Notification {
-  id: string
-  type: 'like' | 'comment' | 'event' | 'bond' | 'achievement' | 'system'
-  title: string
-  message: string
-  timestamp: string
-  read: boolean
-  icon: any
-  color: string
+const getNotificationConfig = (type: NotificationType): { icon: IconType; color: string } => {
+  switch (type) {
+    case NotificationType.Achievement:
+      return { icon: FiAward, color: 'text-yellow-400' }
+    case NotificationType.PostLike:
+      return { icon: FiHeart, color: 'text-pink-400' }
+    case NotificationType.PostComment:
+      return { icon: FiMessageCircle, color: 'text-blue-400' }
+    case NotificationType.EventReminder:
+    case NotificationType.EventUpdate:
+      return { icon: FiCalendar, color: 'text-neon-purple' }
+    case NotificationType.DanceBond:
+      return { icon: FiUsers, color: 'text-green-400' }
+    case NotificationType.Referral:
+      return { icon: FiUserPlus, color: 'text-teal-400' }
+    case NotificationType.AdminBroadcast:
+    case NotificationType.EventManagerBroadcast:
+      return { icon: FiVolume2, color: 'text-orange-400' }
+    case NotificationType.System:
+    default:
+      return { icon: FiAlertCircle, color: 'text-gray-400' }
+  }
 }
-
-// Mock data
-const mockNotifications: Notification[] = [
-  {
-    id: '1',
-    type: 'achievement',
-    title: 'New Achievement',
-    message: 'You unlocked "Week Warrior"!',
-    timestamp: '2025-01-17T10:30:00',
-    read: false,
-    icon: FiAward,
-    color: 'text-yellow-400',
-  },
-  {
-    id: '2',
-    type: 'like',
-    title: 'New Likes',
-    message: '5 people liked your video',
-    timestamp: '2025-01-17T09:15:00',
-    read: false,
-    icon: FiHeart,
-    color: 'text-pink-400',
-  },
-  {
-    id: '3',
-    type: 'event',
-    title: 'Event Reminder',
-    message: 'Hip Hop Session starts in 2 hours',
-    timestamp: '2025-01-17T08:00:00',
-    read: true,
-    icon: FiCalendar,
-    color: 'text-neon-purple',
-  },
-  {
-    id: '4',
-    type: 'comment',
-    title: 'New Comment',
-    message: '@alex_moves commented on your post',
-    timestamp: '2025-01-16T20:45:00',
-    read: true,
-    icon: FiMessageCircle,
-    color: 'text-blue-400',
-  },
-  {
-    id: '5',
-    type: 'bond',
-    title: 'New Connection',
-    message: '@rhythm_king wants to connect',
-    timestamp: '2025-01-16T15:30:00',
-    read: true,
-    icon: FiUsers,
-    color: 'text-green-400',
-  },
-]
 
 export default function NotificationsCenterWidget() {
   const router = useRouter()
+  const { data, loading, refetch } = useGetMyNotificationsQuery({
+    variables: {
+      limit: 5,
+    },
+  })
+
+  const [markAllRead, { loading: markingAll }] = useMarkAllNotificationsReadMutation({
+    onCompleted: () => {
+      refetch()
+    },
+  })
 
   const getTimeAgo = (timestamp: string) => {
     const now = new Date()
@@ -95,7 +74,37 @@ export default function NotificationsCenterWidget() {
     }
   }
 
-  const unreadCount = mockNotifications.filter(n => !n.read).length
+  const getNotificationNavigation = (notification: {
+    type: NotificationType
+    event_id?: string | null
+    post_id?: string | null
+  }) => {
+    if (
+      [NotificationType.EventReminder, NotificationType.EventUpdate].includes(notification.type)
+    ) {
+      return '/dashboard/my-events'
+    } else if (
+      [NotificationType.PostComment, NotificationType.PostLike].includes(notification.type)
+    ) {
+      return '/dashboard/feed'
+    } else if (notification.type === NotificationType.DanceBond) {
+      return '/dashboard/connections'
+    }
+    return null
+  }
+
+  if (loading) {
+    return (
+      <div className="bg-bg-secondary border border-neon-purple/20 rounded-2xl p-6">
+        <div className="flex items-center justify-center py-8">
+          <div className="w-8 h-8 border-4 border-neon-purple/30 border-t-neon-purple rounded-full animate-spin" />
+        </div>
+      </div>
+    )
+  }
+
+  const notifications = data?.myNotifications?.notifications || []
+  const unreadCount = data?.myNotifications?.unread_count || 0
 
   return (
     <div className="bg-bg-secondary border border-neon-purple/20 rounded-2xl p-6">
@@ -105,7 +114,9 @@ export default function NotificationsCenterWidget() {
             <FiBell className="w-5 h-5 text-white" />
             {unreadCount > 0 && (
               <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 border-2 border-bg-secondary rounded-full flex items-center justify-center">
-                <span className="text-xs font-bold text-white">{unreadCount}</span>
+                <span className="text-xs font-bold text-white">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
               </div>
             )}
           </div>
@@ -124,47 +135,52 @@ export default function NotificationsCenterWidget() {
         </button>
       </div>
 
-      {mockNotifications.length > 0 ? (
+      {notifications.length > 0 ? (
         <div className="space-y-2">
-          {mockNotifications.slice(0, 5).map(notification => (
-            <div
-              key={notification.id}
-              onClick={() => {
-                // Navigate based on notification type
-                if (notification.type === 'event') {
-                  router.push('/dashboard/my-events')
-                } else if (notification.type === 'comment' || notification.type === 'like') {
-                  router.push('/dashboard/feed')
-                }
-              }}
-              className={`flex items-start gap-3 p-3 rounded-xl transition-all cursor-pointer ${
-                notification.read
-                  ? 'bg-bg-primary/20 border border-white/5 hover:border-white/10'
-                  : 'bg-neon-purple/10 border border-neon-purple/30 hover:border-neon-purple/50'
-              }`}
-            >
-              {/* Icon */}
-              <div className={`flex-shrink-0 w-8 h-8 rounded-lg bg-bg-secondary flex items-center justify-center`}>
-                <notification.icon className={`w-4 h-4 ${notification.color}`} />
-              </div>
+          {notifications.map(notification => {
+            const config = getNotificationConfig(notification.type)
+            const Icon = config.icon
+            const navPath = getNotificationNavigation(notification)
 
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-2 mb-0.5">
-                  <h3 className="text-sm font-semibold text-text-primary">{notification.title}</h3>
-                  <span className="text-xs text-text-muted flex-shrink-0">
-                    {getTimeAgo(notification.timestamp)}
-                  </span>
+            return (
+              <div
+                key={notification.id}
+                onClick={() => {
+                  if (navPath) {
+                    router.push(navPath)
+                  }
+                }}
+                className={`flex items-start gap-3 p-3 rounded-xl transition-all cursor-pointer ${
+                  notification.read
+                    ? 'bg-bg-primary/20 border border-white/5 hover:border-white/10'
+                    : 'bg-neon-purple/10 border border-neon-purple/30 hover:border-neon-purple/50'
+                }`}
+              >
+                {/* Icon */}
+                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-bg-secondary flex items-center justify-center">
+                  <Icon className={`w-4 h-4 ${config.color}`} />
                 </div>
-                <p className="text-sm text-text-secondary">{notification.message}</p>
-              </div>
 
-              {/* Unread Indicator */}
-              {!notification.read && (
-                <div className="flex-shrink-0 w-2 h-2 bg-neon-purple rounded-full mt-2" />
-              )}
-            </div>
-          ))}
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2 mb-0.5">
+                    <h3 className="text-sm font-semibold text-text-primary">
+                      {notification.title}
+                    </h3>
+                    <span className="text-xs text-text-muted flex-shrink-0">
+                      {getTimeAgo(notification.created_at)}
+                    </span>
+                  </div>
+                  <p className="text-sm text-text-secondary">{notification.message}</p>
+                </div>
+
+                {/* Unread Indicator */}
+                {!notification.read && (
+                  <div className="flex-shrink-0 w-2 h-2 bg-neon-purple rounded-full mt-2" />
+                )}
+              </div>
+            )
+          })}
         </div>
       ) : (
         <div className="text-center py-12">
@@ -178,8 +194,12 @@ export default function NotificationsCenterWidget() {
 
       {/* Mark All as Read */}
       {unreadCount > 0 && (
-        <button className="w-full mt-4 py-2.5 bg-bg-primary/50 hover:bg-bg-primary border border-white/10 hover:border-neon-purple/30 rounded-xl text-text-secondary hover:text-neon-purple text-sm font-medium transition-all">
-          Mark All as Read
+        <button
+          onClick={() => markAllRead()}
+          disabled={markingAll}
+          className="w-full mt-4 py-2.5 bg-bg-primary/50 hover:bg-bg-primary border border-white/10 hover:border-neon-purple/30 rounded-xl text-text-secondary hover:text-neon-purple text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {markingAll ? 'Marking...' : 'Mark All as Read'}
         </button>
       )}
     </div>

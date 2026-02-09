@@ -1,12 +1,28 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
-import { useGetPendingOrganizerApplicationsQuery, useGetOrganizerApplicationsQuery, useReviewOrganizerApplicationMutation, ApplicationStatus } from '@/src/generated/graphql'
+import {
+  type ApplicationStatus,
+  useGetOrganizerApplicationsQuery,
+  useGetPendingOrganizerApplicationsQuery,
+  useReviewOrganizerApplicationMutation,
+} from '@/src/generated/graphql'
 import { useGetMyProfileQuery } from '@/src/generated/graphql'
-import { useState } from 'react'
-import { FiCheck, FiX, FiUser, FiMapPin, FiMusic, FiGlobe, FiClock, FiChevronLeft, FiMessageSquare, FiExternalLink } from 'react-icons/fi'
-import { motion, AnimatePresence } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import Link from 'next/link'
+import { useState } from 'react'
+import {
+  FiCheck,
+  FiChevronLeft,
+  FiClock,
+  FiExternalLink,
+  FiGlobe,
+  FiMapPin,
+  FiMessageSquare,
+  FiMusic,
+  FiUser,
+  FiX,
+} from 'react-icons/fi'
 
 export default function OrganizerApplicationsPage() {
   const [selectedApplication, setSelectedApplication] = useState<any>(null)
@@ -16,12 +32,20 @@ export default function OrganizerApplicationsPage() {
 
   const { data: profileData } = useGetMyProfileQuery()
 
-  const { data: pendingData, loading: pendingLoading, refetch: refetchPending } = useGetPendingOrganizerApplicationsQuery({
-    variables: { limit: 50 }
+  const {
+    data: pendingData,
+    loading: pendingLoading,
+    refetch: refetchPending,
+  } = useGetPendingOrganizerApplicationsQuery({
+    variables: { limit: 50 },
   })
 
-  const { data: allData, loading: allLoading, refetch: refetchAll } = useGetOrganizerApplicationsQuery({
-    variables: { limit: 50 }
+  const {
+    data: allData,
+    loading: allLoading,
+    refetch: refetchAll,
+  } = useGetOrganizerApplicationsQuery({
+    variables: { limit: 50 },
   })
 
   const [reviewApplication] = useReviewOrganizerApplicationMutation()
@@ -52,9 +76,9 @@ export default function OrganizerApplicationsPage() {
           input: {
             application_id: selectedApplication.id,
             status: status as ApplicationStatus,
-            admin_notes: adminNotes || null
-          }
-        }
+            admin_notes: adminNotes || null,
+          },
+        },
       })
 
       setSelectedApplication(null)
@@ -71,11 +95,12 @@ export default function OrganizerApplicationsPage() {
   const pendingApplications = pendingData?.pendingOrganizerApplications?.applications || []
   const allApplications = allData?.organizerApplications?.applications || []
 
-  const filteredApplications = activeTab === 'pending'
-    ? pendingApplications
-    : activeTab === 'all'
-      ? allApplications
-      : allApplications.filter(app => app.status === activeTab)
+  const filteredApplications =
+    activeTab === 'pending'
+      ? pendingApplications
+      : activeTab === 'all'
+        ? allApplications
+        : allApplications.filter(app => app.status === activeTab)
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -83,7 +108,7 @@ export default function OrganizerApplicationsPage() {
       day: 'numeric',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     })
   }
 
@@ -102,12 +127,8 @@ export default function OrganizerApplicationsPage() {
 
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-text-primary mb-2">
-                Organizer Applications
-              </h1>
-              <p className="text-text-secondary">
-                Review and manage organizer applications
-              </p>
+              <h1 className="text-3xl font-bold text-text-primary mb-2">Organizer Applications</h1>
+              <p className="text-text-secondary">Review and manage organizer applications</p>
             </div>
 
             <div className="flex items-center gap-2 px-4 py-2 bg-yellow-500/20 text-yellow-400 rounded-lg">
@@ -119,7 +140,7 @@ export default function OrganizerApplicationsPage() {
 
         {/* Tabs */}
         <div className="flex gap-2 mb-6">
-          {(['pending', 'approved', 'rejected', 'all'] as const).map((tab) => (
+          {(['pending', 'approved', 'rejected', 'all'] as const).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -135,7 +156,7 @@ export default function OrganizerApplicationsPage() {
         </div>
 
         {/* Applications List */}
-        {(pendingLoading || allLoading) ? (
+        {pendingLoading || allLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-text-secondary">Loading applications...</div>
           </div>
@@ -151,7 +172,7 @@ export default function OrganizerApplicationsPage() {
           </div>
         ) : (
           <div className="grid gap-4">
-            {filteredApplications.map((app) => (
+            {filteredApplications.map(app => (
               <motion.div
                 key={app.id}
                 initial={{ opacity: 0, y: 10 }}
@@ -167,7 +188,11 @@ export default function OrganizerApplicationsPage() {
                     {/* Avatar */}
                     <div className="w-12 h-12 rounded-full bg-neon-purple/20 flex items-center justify-center flex-shrink-0">
                       {app.user?.avatar_url ? (
-                        <img src={app.user.avatar_url} alt="" className="w-12 h-12 rounded-full object-cover" />
+                        <img
+                          src={app.user.avatar_url}
+                          alt=""
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
                       ) : (
                         <FiUser className="w-6 h-6 text-neon-purple" />
                       )}
@@ -178,18 +203,20 @@ export default function OrganizerApplicationsPage() {
                         <h3 className="font-bold text-text-primary">
                           {app.user?.display_name || app.user?.username || 'Unknown User'}
                         </h3>
-                        <span className={`px-2 py-0.5 text-xs rounded-full ${
-                          app.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
-                          app.status === 'approved' ? 'bg-green-500/20 text-green-400' :
-                          'bg-red-500/20 text-red-400'
-                        }`}>
+                        <span
+                          className={`px-2 py-0.5 text-xs rounded-full ${
+                            app.status === 'pending'
+                              ? 'bg-yellow-500/20 text-yellow-400'
+                              : app.status === 'approved'
+                                ? 'bg-green-500/20 text-green-400'
+                                : 'bg-red-500/20 text-red-400'
+                          }`}
+                        >
                           {app.status}
                         </span>
                       </div>
 
-                      <p className="text-sm text-text-secondary mb-2">
-                        @{app.user?.username}
-                      </p>
+                      <p className="text-sm text-text-secondary mb-2">@{app.user?.username}</p>
 
                       <p className="text-text-primary line-clamp-2">{app.reason}</p>
 
@@ -203,8 +230,11 @@ export default function OrganizerApplicationsPage() {
 
                       {app.dance_styles && app.dance_styles.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-2">
-                          {app.dance_styles.slice(0, 4).map((style) => (
-                            <span key={style} className="px-2 py-0.5 bg-neon-purple/20 text-neon-purple text-xs rounded-full">
+                          {app.dance_styles.slice(0, 4).map(style => (
+                            <span
+                              key={style}
+                              className="px-2 py-0.5 bg-neon-purple/20 text-neon-purple text-xs rounded-full"
+                            >
                               {style}
                             </span>
                           ))}
@@ -218,9 +248,7 @@ export default function OrganizerApplicationsPage() {
                     </div>
                   </div>
 
-                  <div className="text-sm text-text-secondary">
-                    {formatDate(app.created_at)}
-                  </div>
+                  <div className="text-sm text-text-secondary">{formatDate(app.created_at)}</div>
                 </div>
               </motion.div>
             ))}
@@ -242,7 +270,7 @@ export default function OrganizerApplicationsPage() {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 max-w-2xl w-full my-8 max-h-[90vh] overflow-y-auto"
-                onClick={(e) => e.stopPropagation()}
+                onClick={e => e.stopPropagation()}
               >
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-text-primary">Review Application</h2>
@@ -258,7 +286,11 @@ export default function OrganizerApplicationsPage() {
                 <div className="flex items-center gap-4 mb-6 p-4 bg-bg-primary rounded-lg">
                   <div className="w-16 h-16 rounded-full bg-neon-purple/20 flex items-center justify-center">
                     {selectedApplication.user?.avatar_url ? (
-                      <img src={selectedApplication.user.avatar_url} alt="" className="w-16 h-16 rounded-full object-cover" />
+                      <img
+                        src={selectedApplication.user.avatar_url}
+                        alt=""
+                        className="w-16 h-16 rounded-full object-cover"
+                      />
                     ) : (
                       <FiUser className="w-8 h-8 text-neon-purple" />
                     )}
@@ -274,14 +306,20 @@ export default function OrganizerApplicationsPage() {
                 {/* Application Details */}
                 <div className="space-y-4 mb-6">
                   <div>
-                    <h4 className="text-sm font-medium text-text-secondary mb-1">Why they want to organize</h4>
-                    <p className="text-text-primary bg-bg-primary rounded-lg p-3">{selectedApplication.reason}</p>
+                    <h4 className="text-sm font-medium text-text-secondary mb-1">
+                      Why they want to organize
+                    </h4>
+                    <p className="text-text-primary bg-bg-primary rounded-lg p-3">
+                      {selectedApplication.reason}
+                    </p>
                   </div>
 
                   {selectedApplication.experience && (
                     <div>
                       <h4 className="text-sm font-medium text-text-secondary mb-1">Experience</h4>
-                      <p className="text-text-primary bg-bg-primary rounded-lg p-3">{selectedApplication.experience}</p>
+                      <p className="text-text-primary bg-bg-primary rounded-lg p-3">
+                        {selectedApplication.experience}
+                      </p>
                     </div>
                   )}
 
@@ -291,32 +329,44 @@ export default function OrganizerApplicationsPage() {
                         <FiMapPin className="w-4 h-4" /> Venue
                       </h4>
                       <div className="bg-bg-primary rounded-lg p-3">
-                        <p className="text-text-primary font-medium">{selectedApplication.venue_name}</p>
+                        <p className="text-text-primary font-medium">
+                          {selectedApplication.venue_name}
+                        </p>
                         {selectedApplication.venue_address && (
-                          <p className="text-text-secondary text-sm">{selectedApplication.venue_address}</p>
+                          <p className="text-text-secondary text-sm">
+                            {selectedApplication.venue_address}
+                          </p>
                         )}
                         <div className="flex gap-4 mt-1 text-sm text-text-secondary">
-                          {selectedApplication.venue_city && <span>{selectedApplication.venue_city}</span>}
-                          {selectedApplication.venue_capacity && <span>Capacity: {selectedApplication.venue_capacity}</span>}
+                          {selectedApplication.venue_city && (
+                            <span>{selectedApplication.venue_city}</span>
+                          )}
+                          {selectedApplication.venue_capacity && (
+                            <span>Capacity: {selectedApplication.venue_capacity}</span>
+                          )}
                         </div>
                       </div>
                     </div>
                   )}
 
-                  {selectedApplication.dance_styles && selectedApplication.dance_styles.length > 0 && (
-                    <div>
-                      <h4 className="text-sm font-medium text-text-secondary mb-1 flex items-center gap-2">
-                        <FiMusic className="w-4 h-4" /> Dance Styles
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedApplication.dance_styles.map((style: string) => (
-                          <span key={style} className="px-3 py-1 bg-neon-purple/20 text-neon-purple rounded-full">
-                            {style}
-                          </span>
-                        ))}
+                  {selectedApplication.dance_styles &&
+                    selectedApplication.dance_styles.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-medium text-text-secondary mb-1 flex items-center gap-2">
+                          <FiMusic className="w-4 h-4" /> Dance Styles
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedApplication.dance_styles.map((style: string) => (
+                            <span
+                              key={style}
+                              className="px-3 py-1 bg-neon-purple/20 text-neon-purple rounded-full"
+                            >
+                              {style}
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   {(selectedApplication.website_url || selectedApplication.social_media) && (
                     <div>
@@ -335,7 +385,9 @@ export default function OrganizerApplicationsPage() {
                           </a>
                         )}
                         {selectedApplication.social_media && (
-                          <span className="text-text-primary">{selectedApplication.social_media}</span>
+                          <span className="text-text-primary">
+                            {selectedApplication.social_media}
+                          </span>
                         )}
                       </div>
                     </div>
@@ -343,8 +395,12 @@ export default function OrganizerApplicationsPage() {
 
                   {selectedApplication.additional_info && (
                     <div>
-                      <h4 className="text-sm font-medium text-text-secondary mb-1">Additional Information</h4>
-                      <p className="text-text-primary bg-bg-primary rounded-lg p-3">{selectedApplication.additional_info}</p>
+                      <h4 className="text-sm font-medium text-text-secondary mb-1">
+                        Additional Information
+                      </h4>
+                      <p className="text-text-primary bg-bg-primary rounded-lg p-3">
+                        {selectedApplication.additional_info}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -357,7 +413,7 @@ export default function OrganizerApplicationsPage() {
                     </label>
                     <textarea
                       value={adminNotes}
-                      onChange={(e) => setAdminNotes(e.target.value)}
+                      onChange={e => setAdminNotes(e.target.value)}
                       rows={2}
                       className="w-full bg-bg-primary text-text-primary rounded-lg px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
                       placeholder="Add feedback for the applicant..."
@@ -372,8 +428,11 @@ export default function OrganizerApplicationsPage() {
                     <p className="text-text-primary">{selectedApplication.admin_notes}</p>
                     {selectedApplication.reviewer && (
                       <p className="text-sm text-text-secondary mt-2">
-                        Reviewed by {selectedApplication.reviewer.display_name || selectedApplication.reviewer.username}
-                        {selectedApplication.reviewed_at && ` on ${formatDate(selectedApplication.reviewed_at)}`}
+                        Reviewed by{' '}
+                        {selectedApplication.reviewer.display_name ||
+                          selectedApplication.reviewer.username}
+                        {selectedApplication.reviewed_at &&
+                          ` on ${formatDate(selectedApplication.reviewed_at)}`}
                       </p>
                     )}
                   </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'motion/react'
-import { FiCalendar, FiMapPin, FiCheck, FiArrowRight } from 'react-icons/fi'
+import { FiArrowRight, FiCalendar, FiCheck, FiMapPin } from 'react-icons/fi'
 
 interface DanzEvent {
   id: string
@@ -19,7 +19,8 @@ const PAST_EVENTS: DanzEvent[] = [
     title: 'DanzConnect at DevConnect',
     date: 'November 21, 2025',
     location: 'Buenos Aires, Argentina',
-    description: 'Our inaugural community event at DevConnect Buenos Aires. Thank you to everyone who joined us for this amazing launch!',
+    description:
+      'Our inaugural community event at DevConnect Buenos Aires. Thank you to everyone who joined us for this amazing launch!',
     status: 'past',
     lumaUrl: 'https://lu.ma/evt-AnQDBwnz36mhqSN',
   },
@@ -42,7 +43,7 @@ interface UpcomingEventsGridProps {
 
 export default function UpcomingEventsGrid({ showTitle = false }: UpcomingEventsGridProps) {
   return (
-    <section aria-labelledby={showTitle ? "events-heading" : undefined}>
+    <section aria-labelledby={showTitle ? 'events-heading' : undefined}>
       {showTitle && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -54,7 +55,10 @@ export default function UpcomingEventsGrid({ showTitle = false }: UpcomingEvents
           <span className="text-neon-purple text-sm font-medium uppercase tracking-wider mb-4 block">
             Join Us
           </span>
-          <h2 id="events-heading" className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-4">
+          <h2
+            id="events-heading"
+            className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-4"
+          >
             Community <span className="gradient-text">Events</span>
           </h2>
           <p className="text-xl text-text-secondary max-w-2xl mx-auto">
@@ -73,7 +77,10 @@ export default function UpcomingEventsGrid({ showTitle = false }: UpcomingEvents
             viewport={{ once: true }}
             className="text-2xl font-bold text-text-primary mb-6 flex items-center gap-3"
           >
-            <span className="w-2 h-2 rounded-full bg-neon-purple animate-pulse motion-reduce:animate-none" aria-hidden="true" />
+            <span
+              className="w-2 h-2 rounded-full bg-neon-purple animate-pulse motion-reduce:animate-none"
+              aria-hidden="true"
+            />
             Upcoming Events
           </motion.h3>
 
@@ -88,7 +95,10 @@ export default function UpcomingEventsGrid({ showTitle = false }: UpcomingEvents
               >
                 <article className="group relative bg-gradient-to-br from-neon-purple/10 via-bg-card/80 to-neon-pink/10 backdrop-blur-sm border border-neon-purple/30 rounded-2xl p-6 md:p-8 overflow-hidden hover:border-neon-purple/50 transition-all focus-within:ring-2 focus-within:ring-neon-purple">
                   {/* Animated background glow */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-neon-purple/5 to-neon-pink/5 opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
+                  <div
+                    className="absolute inset-0 bg-gradient-to-r from-neon-purple/5 to-neon-pink/5 opacity-0 group-hover:opacity-100 transition-opacity"
+                    aria-hidden="true"
+                  />
 
                   <div className="relative z-10">
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
@@ -103,23 +113,30 @@ export default function UpcomingEventsGrid({ showTitle = false }: UpcomingEvents
                           {event.title}
                         </h4>
 
-                        <p className="text-text-secondary mb-4">
-                          {event.description}
-                        </p>
+                        <p className="text-text-secondary mb-4">{event.description}</p>
 
                         <div className="flex flex-wrap items-center gap-4 text-sm">
                           <div className="flex items-center gap-2 text-text-secondary">
                             <FiCalendar className="text-neon-purple" aria-hidden="true" />
-                            <span><span className="sr-only">Date: </span>{event.date}</span>
+                            <span>
+                              <span className="sr-only">Date: </span>
+                              {event.date}
+                            </span>
                           </div>
                           <div className="flex items-center gap-2 text-text-secondary">
                             <FiMapPin className="text-neon-pink" aria-hidden="true" />
-                            <span><span className="sr-only">Location: </span>{event.location}</span>
+                            <span>
+                              <span className="sr-only">Location: </span>
+                              {event.location}
+                            </span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 text-neon-purple font-medium group-hover:gap-3 transition-all" aria-hidden="true">
+                      <div
+                        className="flex items-center gap-2 text-neon-purple font-medium group-hover:gap-3 transition-all"
+                        aria-hidden="true"
+                      >
                         <span className="text-sm">Stay Tuned</span>
                         <FiArrowRight className="animate-pulse motion-reduce:animate-none" />
                       </div>
@@ -155,7 +172,10 @@ export default function UpcomingEventsGrid({ showTitle = false }: UpcomingEvents
               >
                 <article className="relative bg-bg-card/50 backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-8 overflow-hidden focus-within:ring-2 focus-within:ring-green-400">
                   {/* Success overlay gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent pointer-events-none" aria-hidden="true" />
+                  <div
+                    className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent pointer-events-none"
+                    aria-hidden="true"
+                  />
 
                   <div className="relative z-10">
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
@@ -171,18 +191,22 @@ export default function UpcomingEventsGrid({ showTitle = false }: UpcomingEvents
                           {event.title}
                         </h4>
 
-                        <p className="text-text-secondary mb-4">
-                          {event.description}
-                        </p>
+                        <p className="text-text-secondary mb-4">{event.description}</p>
 
                         <div className="flex flex-wrap items-center gap-4 text-sm">
                           <div className="flex items-center gap-2 text-text-secondary">
                             <FiCalendar className="text-green-400" aria-hidden="true" />
-                            <span><span className="sr-only">Date: </span>{event.date}</span>
+                            <span>
+                              <span className="sr-only">Date: </span>
+                              {event.date}
+                            </span>
                           </div>
                           <div className="flex items-center gap-2 text-text-secondary">
                             <FiMapPin className="text-green-400" aria-hidden="true" />
-                            <span><span className="sr-only">Location: </span>{event.location}</span>
+                            <span>
+                              <span className="sr-only">Location: </span>
+                              {event.location}
+                            </span>
                           </div>
                         </div>
                       </div>

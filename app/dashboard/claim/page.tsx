@@ -2,25 +2,24 @@
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import { usePrivy, useWallets } from '@privy-io/react-auth'
+import { AnimatePresence, motion } from 'motion/react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
 import {
-  FiGift,
-  FiCheck,
-  FiX,
-  FiClock,
-  FiAward,
-  FiStar,
-  FiZap,
-  FiChevronDown,
-  FiExternalLink,
   FiAlertCircle,
+  FiAward,
   FiCalendar,
+  FiCheck,
+  FiChevronDown,
+  FiClock,
+  FiExternalLink,
+  FiGift,
+  FiStar,
   FiUserPlus,
+  FiZap,
 } from 'react-icons/fi'
 import { SiEthereum, SiSolana } from 'react-icons/si'
-import Link from 'next/link'
 
 // Mock data for claimable rewards - will be replaced with real API data
 const mockClaimableTokens = [
@@ -117,13 +116,14 @@ export default function ClaimPage() {
   }, [ready, authenticated, router])
 
   // Get linked wallets
-  const linkedWallets = user?.linkedAccounts
-    ?.filter((account): account is any => account.type === 'wallet')
-    .map(wallet => ({
-      address: wallet.address,
-      chainType: wallet.chainType || 'ethereum',
-      isEmbedded: wallet.walletClientType === 'privy',
-    })) || []
+  const linkedWallets =
+    user?.linkedAccounts
+      ?.filter((account): account is any => account.type === 'wallet')
+      .map(wallet => ({
+        address: wallet.address,
+        chainType: wallet.chainType || 'ethereum',
+        isEmbedded: wallet.walletClientType === 'privy',
+      })) || []
 
   // Set default wallet
   useEffect(() => {
@@ -146,9 +146,10 @@ export default function ClaimPage() {
     setClaimingId(null)
 
     // Show success modal
-    const item = itemType === 'token'
-      ? mockClaimableTokens.find(t => t.id === itemId)
-      : mockClaimableNFTs.find(n => n.id === itemId)
+    const item =
+      itemType === 'token'
+        ? mockClaimableTokens.find(t => t.id === itemId)
+        : mockClaimableNFTs.find(n => n.id === itemId)
 
     setSuccessDetails({
       ...item,
@@ -264,7 +265,8 @@ export default function ClaimPage() {
               <span className="text-text-secondary text-sm">Total Claimed</span>
             </div>
             <p className="text-3xl font-bold text-text-primary">
-              {mockClaimedHistory.reduce((sum, h) => sum + (h.amount || 0), 0)} <span className="text-text-secondary text-lg">$DANZ</span>
+              {mockClaimedHistory.reduce((sum, h) => sum + (h.amount || 0), 0)}{' '}
+              <span className="text-text-secondary text-lg">$DANZ</span>
             </p>
           </motion.div>
         </div>
@@ -299,7 +301,8 @@ export default function ClaimPage() {
                     onClick={() => setShowWalletDropdown(!showWalletDropdown)}
                     className="flex items-center gap-2 px-4 py-2 bg-bg-primary rounded-lg border border-neon-purple/20 hover:border-neon-purple/40 transition-colors"
                   >
-                    {linkedWallets.find(w => w.address === selectedWallet)?.chainType === 'solana' ? (
+                    {linkedWallets.find(w => w.address === selectedWallet)?.chainType ===
+                    'solana' ? (
                       <SiSolana className="w-4 h-4 text-purple-400" />
                     ) : (
                       <SiEthereum className="w-4 h-4 text-blue-400" />
@@ -307,7 +310,9 @@ export default function ClaimPage() {
                     <code className="text-text-primary text-sm">
                       {selectedWallet.slice(0, 6)}...{selectedWallet.slice(-4)}
                     </code>
-                    <FiChevronDown className={`w-4 h-4 text-text-secondary transition-transform ${showWalletDropdown ? 'rotate-180' : ''}`} />
+                    <FiChevronDown
+                      className={`w-4 h-4 text-text-secondary transition-transform ${showWalletDropdown ? 'rotate-180' : ''}`}
+                    />
                   </button>
 
                   <AnimatePresence>
@@ -318,7 +323,7 @@ export default function ClaimPage() {
                         exit={{ opacity: 0, y: -10 }}
                         className="absolute top-full left-0 mt-2 w-64 bg-bg-secondary border border-neon-purple/20 rounded-xl shadow-xl z-10 overflow-hidden"
                       >
-                        {linkedWallets.map((wallet) => (
+                        {linkedWallets.map(wallet => (
                           <button
                             key={wallet.address}
                             onClick={() => {
@@ -378,7 +383,7 @@ export default function ClaimPage() {
 
         {/* Tabs */}
         <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-          {(['tokens', 'nfts', 'history'] as const).map((tab) => (
+          {(['tokens', 'nfts', 'history'] as const).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -426,14 +431,24 @@ export default function ClaimPage() {
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                       <div className="flex items-center gap-4 min-w-0">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
-                          token.type === 'event_reward' ? 'bg-gradient-to-br from-blue-500 to-purple-500' :
-                          token.type === 'referral_bonus' ? 'bg-gradient-to-br from-green-500 to-teal-500' :
-                          'bg-gradient-to-br from-yellow-500 to-orange-500'
-                        }`}>
-                          {token.type === 'event_reward' && <FiCalendar className="w-5 h-5 text-text-primary" />}
-                          {token.type === 'referral_bonus' && <FiUserPlus className="w-5 h-5 text-text-primary" />}
-                          {token.type === 'achievement' && <FiAward className="w-5 h-5 text-text-primary" />}
+                        <div
+                          className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
+                            token.type === 'event_reward'
+                              ? 'bg-gradient-to-br from-blue-500 to-purple-500'
+                              : token.type === 'referral_bonus'
+                                ? 'bg-gradient-to-br from-green-500 to-teal-500'
+                                : 'bg-gradient-to-br from-yellow-500 to-orange-500'
+                          }`}
+                        >
+                          {token.type === 'event_reward' && (
+                            <FiCalendar className="w-5 h-5 text-text-primary" />
+                          )}
+                          {token.type === 'referral_bonus' && (
+                            <FiUserPlus className="w-5 h-5 text-text-primary" />
+                          )}
+                          {token.type === 'achievement' && (
+                            <FiAward className="w-5 h-5 text-text-primary" />
+                          )}
                         </div>
                         <div className="min-w-0">
                           <h3 className="text-text-primary font-medium truncate">{token.title}</h3>
@@ -508,10 +523,14 @@ export default function ClaimPage() {
                     className="bg-bg-secondary rounded-xl border border-neon-purple/20 overflow-hidden hover:border-neon-purple/40 transition-all"
                   >
                     {/* NFT Image Placeholder */}
-                    <div className={`h-48 bg-gradient-to-br ${getRarityColor(nft.rarity).split(' ').slice(0, 2).join(' ')} flex items-center justify-center relative`}>
+                    <div
+                      className={`h-48 bg-gradient-to-br ${getRarityColor(nft.rarity).split(' ').slice(0, 2).join(' ')} flex items-center justify-center relative`}
+                    >
                       <div className="absolute inset-0 bg-black/30" />
                       <FiAward className="w-16 h-16 text-text-primary/80 relative z-10" />
-                      <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-medium bg-black/50 ${getRarityColor(nft.rarity).split(' ').slice(2).join(' ')}`}>
+                      <div
+                        className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-medium bg-black/50 ${getRarityColor(nft.rarity).split(' ').slice(2).join(' ')}`}
+                      >
                         {nft.rarity.toUpperCase()}
                       </div>
                     </div>
@@ -566,9 +585,7 @@ export default function ClaimPage() {
                     <FiClock className="w-8 h-8 text-gray-500" />
                   </div>
                   <h3 className="text-xl font-bold text-text-primary mb-2">No Claim History</h3>
-                  <p className="text-text-secondary">
-                    Your claimed rewards will appear here.
-                  </p>
+                  <p className="text-text-secondary">Your claimed rewards will appear here.</p>
                 </div>
               ) : (
                 mockClaimedHistory.map((item, index) => (
@@ -629,21 +646,21 @@ export default function ClaimPage() {
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
+                onClick={e => e.stopPropagation()}
                 className="bg-bg-secondary rounded-2xl border border-neon-purple/30 p-8 max-w-md w-full text-center"
               >
                 <div className="w-20 h-20 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mx-auto mb-6">
                   <FiCheck className="w-10 h-10 text-text-primary" />
                 </div>
 
-                <h2 className="text-2xl font-bold text-text-primary mb-2">
-                  Successfully Claimed!
-                </h2>
+                <h2 className="text-2xl font-bold text-text-primary mb-2">Successfully Claimed!</h2>
 
                 <p className="text-text-secondary mb-6">
                   {successDetails.itemType === 'token' ? (
                     <>
-                      <span className="text-3xl font-bold text-neon-purple">{successDetails.amount}</span>
+                      <span className="text-3xl font-bold text-neon-purple">
+                        {successDetails.amount}
+                      </span>
                       <span className="text-text-primary ml-2">{successDetails.tokenSymbol}</span>
                     </>
                   ) : (
@@ -655,7 +672,8 @@ export default function ClaimPage() {
                   <div className="flex justify-between text-sm mb-2">
                     <span className="text-text-secondary">Sent to</span>
                     <code className="text-text-primary">
-                      {successDetails.walletAddress?.slice(0, 8)}...{successDetails.walletAddress?.slice(-6)}
+                      {successDetails.walletAddress?.slice(0, 8)}...
+                      {successDetails.walletAddress?.slice(-6)}
                     </code>
                   </div>
                   <div className="flex justify-between text-sm">

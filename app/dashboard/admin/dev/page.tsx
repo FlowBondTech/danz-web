@@ -10,11 +10,9 @@ import {
   FiActivity,
   FiAlertTriangle,
   FiCheckCircle,
-  FiChevronRight,
   FiClock,
   FiCode,
   FiDatabase,
-  FiEdit2,
   FiFolder,
   FiGitBranch,
   FiGitPullRequest,
@@ -263,7 +261,9 @@ const TASK_TYPE_ICONS: Record<string, string> = {
 export default function DevPanelPage() {
   const { authenticated, ready } = usePrivy()
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<'overview' | 'projects' | 'features' | 'tasks' | 'github' | 'system'>('overview')
+  const [activeTab, setActiveTab] = useState<
+    'overview' | 'projects' | 'features' | 'tasks' | 'github' | 'system'
+  >('overview')
   const [showCreateTask, setShowCreateTask] = useState(false)
   const [selectedTask, setSelectedTask] = useState<DevTask | null>(null)
   const [taskFilter, setTaskFilter] = useState<string>('all')
@@ -276,35 +276,39 @@ export default function DevPanelPage() {
   // Cast role to string since 'dev' may not be in generated types yet
   const userRole = (profileData?.me?.role as string) || ''
 
-  const { data: statsData, loading: statsLoading, refetch: refetchStats } = useQuery<{ devDashboardStats: DevStats }>(
-    GET_DEV_DASHBOARD_STATS,
-    {
-      skip: !authenticated || !['dev', 'admin'].includes(userRole),
-    }
-  )
+  const {
+    data: statsData,
+    loading: statsLoading,
+    refetch: refetchStats,
+  } = useQuery<{ devDashboardStats: DevStats }>(GET_DEV_DASHBOARD_STATS, {
+    skip: !authenticated || !['dev', 'admin'].includes(userRole),
+  })
 
-  const { data: healthData, loading: healthLoading, refetch: refetchHealth } = useQuery<{ systemHealth: SystemHealth[] }>(
-    GET_SYSTEM_HEALTH,
-    {
-      skip: !authenticated || !['dev', 'admin'].includes(userRole),
-    }
-  )
+  const {
+    data: healthData,
+    loading: healthLoading,
+    refetch: refetchHealth,
+  } = useQuery<{ systemHealth: SystemHealth[] }>(GET_SYSTEM_HEALTH, {
+    skip: !authenticated || !['dev', 'admin'].includes(userRole),
+  })
 
-  const { data: tasksData, loading: tasksLoading, refetch: refetchTasks } = useQuery<DevTasksData>(
-    GET_DEV_TASKS,
-    {
-      variables: { limit: 100 },
-      skip: !authenticated || !['dev', 'admin'].includes(userRole),
-    }
-  )
+  const {
+    data: tasksData,
+    loading: tasksLoading,
+    refetch: refetchTasks,
+  } = useQuery<DevTasksData>(GET_DEV_TASKS, {
+    variables: { limit: 100 },
+    skip: !authenticated || !['dev', 'admin'].includes(userRole),
+  })
 
-  const { data: projectsData, loading: projectsLoading, refetch: refetchProjects } = useQuery<ProjectsData>(
-    GET_PROJECTS,
-    {
-      variables: { include_archived: showArchivedProjects },
-      skip: !authenticated || !['dev', 'admin'].includes(userRole),
-    }
-  )
+  const {
+    data: projectsData,
+    loading: projectsLoading,
+    refetch: refetchProjects,
+  } = useQuery<ProjectsData>(GET_PROJECTS, {
+    variables: { include_archived: showArchivedProjects },
+    skip: !authenticated || !['dev', 'admin'].includes(userRole),
+  })
 
   const [updateTask] = useMutation(UPDATE_DEV_TASK, {
     onCompleted: () => refetchTasks(),
@@ -326,12 +330,7 @@ export default function DevPanelPage() {
 
   useEffect(() => {
     // Redirect non-dev/admin users
-    if (
-      ready &&
-      authenticated &&
-      !profileLoading &&
-      !['dev', 'admin'].includes(userRole)
-    ) {
+    if (ready && authenticated && !profileLoading && !['dev', 'admin'].includes(userRole)) {
       router.push('/dashboard')
     }
   }, [ready, authenticated, userRole, profileLoading, router])
@@ -357,12 +356,17 @@ export default function DevPanelPage() {
   }
 
   // Group tasks by status for kanban
-  const tasksByStatus = TASK_COLUMNS.reduce((acc, column) => {
-    acc[column.id] = tasksData?.devTasks?.tasks?.filter(
-      task => task.status === column.id && (taskFilter === 'all' || task.priority === taskFilter)
-    ) || []
-    return acc
-  }, {} as Record<string, DevTask[]>)
+  const tasksByStatus = TASK_COLUMNS.reduce(
+    (acc, column) => {
+      acc[column.id] =
+        tasksData?.devTasks?.tasks?.filter(
+          task =>
+            task.status === column.id && (taskFilter === 'all' || task.priority === taskFilter),
+        ) || []
+      return acc
+    },
+    {} as Record<string, DevTask[]>,
+  )
 
   if (!ready || profileLoading) {
     return (
@@ -419,8 +423,12 @@ export default function DevPanelPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6 sm:mb-8 gap-4">
           <div className="min-w-0 flex-1">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-text-primary">Dev Panel</h1>
-            <p className="text-text-secondary mt-1 text-sm sm:text-base truncate">Development tools & features</p>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-text-primary">
+              Dev Panel
+            </h1>
+            <p className="text-text-secondary mt-1 text-sm sm:text-base truncate">
+              Development tools & features
+            </p>
           </div>
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             <button
@@ -460,7 +468,9 @@ export default function DevPanelPage() {
             >
               <tab.icon size={16} />
               <span className="hidden sm:inline">{tab.label}</span>
-              <span className="sm:hidden">{tab.id === 'overview' ? 'Home' : tab.id === 'features' ? 'Feats' : tab.label}</span>
+              <span className="sm:hidden">
+                {tab.id === 'overview' ? 'Home' : tab.id === 'features' ? 'Feats' : tab.label}
+              </span>
             </button>
           ))}
         </div>
@@ -472,7 +482,10 @@ export default function DevPanelPage() {
             {statsLoading ? (
               <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
                 {[...Array(8)].map((_, i) => (
-                  <div key={i} className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 animate-pulse">
+                  <div
+                    key={i}
+                    className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 animate-pulse"
+                  >
                     <div className="h-4 bg-white/10 rounded w-1/2 mb-4" />
                     <div className="h-8 bg-white/10 rounded w-3/4" />
                   </div>
@@ -490,36 +503,52 @@ export default function DevPanelPage() {
                     <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
                       <div className="flex items-center justify-between mb-3 sm:mb-4">
                         <FiMessageSquare className="text-neon-purple" size={20} />
-                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">Total</span>
+                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">
+                          Total
+                        </span>
                       </div>
-                      <p className="text-xl sm:text-2xl font-bold text-text-primary">{stats.total_feature_requests}</p>
+                      <p className="text-xl sm:text-2xl font-bold text-text-primary">
+                        {stats.total_feature_requests}
+                      </p>
                       <p className="text-xs sm:text-sm text-text-secondary mt-1">Requests</p>
                     </div>
 
                     <div className="bg-bg-secondary rounded-xl border border-yellow-400/20 p-4 sm:p-6">
                       <div className="flex items-center justify-between mb-3 sm:mb-4">
                         <FiClock className="text-yellow-400" size={20} />
-                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">Pending</span>
+                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">
+                          Pending
+                        </span>
                       </div>
-                      <p className="text-xl sm:text-2xl font-bold text-text-primary">{stats.pending_requests}</p>
+                      <p className="text-xl sm:text-2xl font-bold text-text-primary">
+                        {stats.pending_requests}
+                      </p>
                       <p className="text-xs sm:text-sm text-text-secondary mt-1">Awaiting</p>
                     </div>
 
                     <div className="bg-bg-secondary rounded-xl border border-blue-400/20 p-4 sm:p-6">
                       <div className="flex items-center justify-between mb-3 sm:mb-4">
                         <FiActivity className="text-blue-400" size={20} />
-                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">Active</span>
+                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">
+                          Active
+                        </span>
                       </div>
-                      <p className="text-xl sm:text-2xl font-bold text-text-primary">{stats.in_progress_requests}</p>
+                      <p className="text-xl sm:text-2xl font-bold text-text-primary">
+                        {stats.in_progress_requests}
+                      </p>
                       <p className="text-xs sm:text-sm text-text-secondary mt-1">In Progress</p>
                     </div>
 
                     <div className="bg-bg-secondary rounded-xl border border-green-400/20 p-4 sm:p-6">
                       <div className="flex items-center justify-between mb-3 sm:mb-4">
                         <FiCheckCircle className="text-green-400" size={20} />
-                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">Done</span>
+                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">
+                          Done
+                        </span>
                       </div>
-                      <p className="text-xl sm:text-2xl font-bold text-text-primary">{stats.completed_requests}</p>
+                      <p className="text-xl sm:text-2xl font-bold text-text-primary">
+                        {stats.completed_requests}
+                      </p>
                       <p className="text-xs sm:text-sm text-text-secondary mt-1">Shipped</p>
                     </div>
                   </div>
@@ -535,36 +564,52 @@ export default function DevPanelPage() {
                     <div className="bg-bg-secondary rounded-xl border border-neon-pink/20 p-4 sm:p-6">
                       <div className="flex items-center justify-between mb-3 sm:mb-4">
                         <FiList className="text-neon-pink" size={20} />
-                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">Total</span>
+                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">
+                          Total
+                        </span>
                       </div>
-                      <p className="text-xl sm:text-2xl font-bold text-text-primary">{stats.total_tasks}</p>
+                      <p className="text-xl sm:text-2xl font-bold text-text-primary">
+                        {stats.total_tasks}
+                      </p>
                       <p className="text-xs sm:text-sm text-text-secondary mt-1">Tasks</p>
                     </div>
 
                     <div className="bg-bg-secondary rounded-xl border border-gray-400/20 p-4 sm:p-6">
                       <div className="flex items-center justify-between mb-3 sm:mb-4">
                         <FiClock className="text-gray-400" size={20} />
-                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">To Do</span>
+                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">
+                          To Do
+                        </span>
                       </div>
-                      <p className="text-xl sm:text-2xl font-bold text-text-primary">{stats.todo_tasks}</p>
+                      <p className="text-xl sm:text-2xl font-bold text-text-primary">
+                        {stats.todo_tasks}
+                      </p>
                       <p className="text-xs sm:text-sm text-text-secondary mt-1">Not Started</p>
                     </div>
 
                     <div className="bg-bg-secondary rounded-xl border border-blue-400/20 p-4 sm:p-6">
                       <div className="flex items-center justify-between mb-3 sm:mb-4">
                         <FiZap className="text-blue-400" size={20} />
-                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">Active</span>
+                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">
+                          Active
+                        </span>
                       </div>
-                      <p className="text-xl sm:text-2xl font-bold text-text-primary">{stats.in_progress_tasks}</p>
+                      <p className="text-xl sm:text-2xl font-bold text-text-primary">
+                        {stats.in_progress_tasks}
+                      </p>
                       <p className="text-xs sm:text-sm text-text-secondary mt-1">In Progress</p>
                     </div>
 
                     <div className="bg-bg-secondary rounded-xl border border-red-400/20 p-4 sm:p-6">
                       <div className="flex items-center justify-between mb-3 sm:mb-4">
                         <FiAlertTriangle className="text-red-400" size={20} />
-                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">Blocked</span>
+                        <span className="text-[10px] sm:text-xs text-text-secondary uppercase tracking-wider">
+                          Blocked
+                        </span>
                       </div>
-                      <p className="text-xl sm:text-2xl font-bold text-text-primary">{stats.blocked_tasks}</p>
+                      <p className="text-xl sm:text-2xl font-bold text-text-primary">
+                        {stats.blocked_tasks}
+                      </p>
                       <p className="text-xs sm:text-sm text-text-secondary mt-1">Attention</p>
                     </div>
                   </div>
@@ -579,14 +624,20 @@ export default function DevPanelPage() {
                         <FiTag className="text-neon-purple" size={20} />
                       </div>
                       <div>
-                        <h3 className="text-base sm:text-lg font-semibold text-text-primary">Changelog</h3>
-                        <p className="text-text-secondary text-xs sm:text-sm">{stats.total_changelog_entries} entries</p>
+                        <h3 className="text-base sm:text-lg font-semibold text-text-primary">
+                          Changelog
+                        </h3>
+                        <p className="text-text-secondary text-xs sm:text-sm">
+                          {stats.total_changelog_entries} entries
+                        </p>
                       </div>
                     </div>
                     {stats.latest_version && (
                       <div className="bg-bg-primary rounded-lg p-3">
                         <p className="text-xs text-text-secondary">Latest Version</p>
-                        <p className="text-lg sm:text-xl font-bold text-neon-purple">{stats.latest_version}</p>
+                        <p className="text-lg sm:text-xl font-bold text-neon-purple">
+                          {stats.latest_version}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -598,18 +649,24 @@ export default function DevPanelPage() {
                         <FiGitBranch className="text-neon-pink" size={20} />
                       </div>
                       <div>
-                        <h3 className="text-base sm:text-lg font-semibold text-text-primary">GitHub</h3>
+                        <h3 className="text-base sm:text-lg font-semibold text-text-primary">
+                          GitHub
+                        </h3>
                         <p className="text-text-secondary text-xs sm:text-sm">Repository Status</p>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-2 sm:gap-3">
                       <div className="bg-bg-primary rounded-lg p-2.5 sm:p-3">
                         <p className="text-[10px] sm:text-xs text-text-secondary">Open PRs</p>
-                        <p className="text-lg sm:text-xl font-bold text-green-400">{stats.github_open_prs ?? '-'}</p>
+                        <p className="text-lg sm:text-xl font-bold text-green-400">
+                          {stats.github_open_prs ?? '-'}
+                        </p>
                       </div>
                       <div className="bg-bg-primary rounded-lg p-2.5 sm:p-3">
                         <p className="text-[10px] sm:text-xs text-text-secondary">Open Issues</p>
-                        <p className="text-lg sm:text-xl font-bold text-yellow-400">{stats.github_open_issues ?? '-'}</p>
+                        <p className="text-lg sm:text-xl font-bold text-yellow-400">
+                          {stats.github_open_issues ?? '-'}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -622,7 +679,9 @@ export default function DevPanelPage() {
                           <FiDatabase className="text-blue-400" size={20} />
                         </div>
                         <div>
-                          <h3 className="text-base sm:text-lg font-semibold text-text-primary">API Rate</h3>
+                          <h3 className="text-base sm:text-lg font-semibold text-text-primary">
+                            API Rate
+                          </h3>
                           <p className="text-text-secondary text-xs sm:text-sm">GitHub API</p>
                         </div>
                       </div>
@@ -649,7 +708,9 @@ export default function DevPanelPage() {
             ) : (
               <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-8 text-center">
                 <FiAlertTriangle className="text-yellow-400 mx-auto mb-4" size={48} />
-                <h3 className="text-lg font-semibold text-text-primary mb-2">Unable to Load Stats</h3>
+                <h3 className="text-lg font-semibold text-text-primary mb-2">
+                  Unable to Load Stats
+                </h3>
                 <p className="text-text-secondary">The dev panel API may not be deployed yet.</p>
               </div>
             )}
@@ -663,7 +724,10 @@ export default function DevPanelPage() {
               {healthLoading ? (
                 <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
                   {[...Array(4)].map((_, i) => (
-                    <div key={i} className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4 animate-pulse">
+                    <div
+                      key={i}
+                      className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4 animate-pulse"
+                    >
                       <div className="h-4 bg-white/10 rounded w-3/4 mb-2" />
                       <div className="h-6 bg-white/10 rounded w-1/2" />
                     </div>
@@ -677,19 +741,28 @@ export default function DevPanelPage() {
                       className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-4"
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-text-primary font-medium capitalize text-sm sm:text-base truncate">{service.service}</span>
+                        <span className="text-text-primary font-medium capitalize text-sm sm:text-base truncate">
+                          {service.service}
+                        </span>
                         {getHealthIcon(service.status)}
                       </div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className={`px-2 py-1 rounded text-[10px] sm:text-xs font-medium ${getHealthStatusColor(service.status)}`}>
+                        <span
+                          className={`px-2 py-1 rounded text-[10px] sm:text-xs font-medium ${getHealthStatusColor(service.status)}`}
+                        >
                           {service.status}
                         </span>
                         {service.response_time_ms !== null && (
-                          <span className="text-text-secondary text-[10px] sm:text-xs">{service.response_time_ms}ms</span>
+                          <span className="text-text-secondary text-[10px] sm:text-xs">
+                            {service.response_time_ms}ms
+                          </span>
                         )}
                       </div>
                       {service.error_message && (
-                        <p className="text-red-400 text-[10px] sm:text-xs mt-2 truncate" title={service.error_message}>
+                        <p
+                          className="text-red-400 text-[10px] sm:text-xs mt-2 truncate"
+                          title={service.error_message}
+                        >
                           {service.error_message}
                         </p>
                       )}
@@ -718,9 +791,13 @@ export default function DevPanelPage() {
                     <div className="p-2.5 sm:p-3 bg-neon-purple/20 rounded-lg group-hover:bg-neon-purple/30 transition-colors">
                       <FiMessageSquare className="text-neon-purple" size={20} />
                     </div>
-                    <h3 className="text-base sm:text-lg font-semibold text-text-primary">Feature Requests</h3>
+                    <h3 className="text-base sm:text-lg font-semibold text-text-primary">
+                      Feature Requests
+                    </h3>
                   </div>
-                  <p className="text-text-secondary text-xs sm:text-sm">View and manage feature requests from users</p>
+                  <p className="text-text-secondary text-xs sm:text-sm">
+                    View and manage feature requests from users
+                  </p>
                 </button>
 
                 <button
@@ -731,9 +808,13 @@ export default function DevPanelPage() {
                     <div className="p-2.5 sm:p-3 bg-neon-pink/20 rounded-lg group-hover:bg-neon-pink/30 transition-colors">
                       <FiList className="text-neon-pink" size={20} />
                     </div>
-                    <h3 className="text-base sm:text-lg font-semibold text-text-primary">Dev Tasks</h3>
+                    <h3 className="text-base sm:text-lg font-semibold text-text-primary">
+                      Dev Tasks
+                    </h3>
                   </div>
-                  <p className="text-text-secondary text-xs sm:text-sm">Track development tasks and sprints</p>
+                  <p className="text-text-secondary text-xs sm:text-sm">
+                    Track development tasks and sprints
+                  </p>
                 </button>
 
                 <button
@@ -744,9 +825,13 @@ export default function DevPanelPage() {
                     <div className="p-2.5 sm:p-3 bg-blue-400/20 rounded-lg group-hover:bg-blue-400/30 transition-colors">
                       <FiGitPullRequest className="text-blue-400" size={20} />
                     </div>
-                    <h3 className="text-base sm:text-lg font-semibold text-text-primary">GitHub Activity</h3>
+                    <h3 className="text-base sm:text-lg font-semibold text-text-primary">
+                      GitHub Activity
+                    </h3>
                   </div>
-                  <p className="text-text-secondary text-xs sm:text-sm">View commits, PRs, and CI/CD status</p>
+                  <p className="text-text-secondary text-xs sm:text-sm">
+                    View commits, PRs, and CI/CD status
+                  </p>
                 </button>
               </div>
             </div>
@@ -760,13 +845,15 @@ export default function DevPanelPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-text-primary">DANZ Projects</h2>
-                <p className="text-text-secondary text-sm">Manage all projects across the DANZ ecosystem</p>
+                <p className="text-text-secondary text-sm">
+                  Manage all projects across the DANZ ecosystem
+                </p>
               </div>
               <label className="flex items-center gap-2 text-sm text-text-secondary cursor-pointer">
                 <input
                   type="checkbox"
                   checked={showArchivedProjects}
-                  onChange={(e) => setShowArchivedProjects(e.target.checked)}
+                  onChange={e => setShowArchivedProjects(e.target.checked)}
                   className="rounded border-white/20 bg-bg-primary text-neon-purple focus:ring-neon-purple"
                 />
                 Show archived
@@ -777,7 +864,10 @@ export default function DevPanelPage() {
             {projectsLoading ? (
               <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 animate-pulse">
+                  <div
+                    key={i}
+                    className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 animate-pulse"
+                  >
                     <div className="h-6 bg-white/10 rounded w-2/3 mb-4" />
                     <div className="h-4 bg-white/10 rounded w-full mb-2" />
                     <div className="h-4 bg-white/10 rounded w-3/4" />
@@ -798,13 +888,27 @@ export default function DevPanelPage() {
                           className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
                           style={{ backgroundColor: `${project.color}20` }}
                         >
-                          {project.icon === 'server' && <FiServer style={{ color: project.color || '#8B5CF6' }} />}
-                          {project.icon === 'smartphone' && <FiSmartphone style={{ color: project.color || '#8B5CF6' }} />}
-                          {project.icon === 'send' && <FiMessageSquare style={{ color: project.color || '#8B5CF6' }} />}
-                          {project.icon === 'globe' && <FiGitBranch style={{ color: project.color || '#8B5CF6' }} />}
-                          {project.icon === 'shield' && <FiSettings style={{ color: project.color || '#8B5CF6' }} />}
-                          {project.icon === 'calendar' && <FiClock style={{ color: project.color || '#8B5CF6' }} />}
-                          {!project.icon && <FiFolder style={{ color: project.color || '#8B5CF6' }} />}
+                          {project.icon === 'server' && (
+                            <FiServer style={{ color: project.color || '#8B5CF6' }} />
+                          )}
+                          {project.icon === 'smartphone' && (
+                            <FiSmartphone style={{ color: project.color || '#8B5CF6' }} />
+                          )}
+                          {project.icon === 'send' && (
+                            <FiMessageSquare style={{ color: project.color || '#8B5CF6' }} />
+                          )}
+                          {project.icon === 'globe' && (
+                            <FiGitBranch style={{ color: project.color || '#8B5CF6' }} />
+                          )}
+                          {project.icon === 'shield' && (
+                            <FiSettings style={{ color: project.color || '#8B5CF6' }} />
+                          )}
+                          {project.icon === 'calendar' && (
+                            <FiClock style={{ color: project.color || '#8B5CF6' }} />
+                          )}
+                          {!project.icon && (
+                            <FiFolder style={{ color: project.color || '#8B5CF6' }} />
+                          )}
                         </div>
                         <div>
                           <h3 className="font-semibold text-text-primary">{project.name}</h3>
@@ -812,28 +916,40 @@ export default function DevPanelPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${
-                          project.platform === 'api' ? 'bg-green-500/20 text-green-400' :
-                          project.platform === 'mobile' ? 'bg-purple-500/20 text-purple-400' :
-                          project.platform === 'telegram' ? 'bg-blue-500/20 text-blue-400' :
-                          project.platform === 'web' ? 'bg-cyan-500/20 text-cyan-400' :
-                          project.platform === 'admin' ? 'bg-yellow-500/20 text-yellow-400' :
-                          'bg-gray-500/20 text-gray-400'
-                        }`}>
+                        <span
+                          className={`px-2 py-1 rounded text-xs font-medium ${
+                            project.platform === 'api'
+                              ? 'bg-green-500/20 text-green-400'
+                              : project.platform === 'mobile'
+                                ? 'bg-purple-500/20 text-purple-400'
+                                : project.platform === 'telegram'
+                                  ? 'bg-blue-500/20 text-blue-400'
+                                  : project.platform === 'web'
+                                    ? 'bg-cyan-500/20 text-cyan-400'
+                                    : project.platform === 'admin'
+                                      ? 'bg-yellow-500/20 text-yellow-400'
+                                      : 'bg-gray-500/20 text-gray-400'
+                          }`}
+                        >
                           {project.platform || project.project_type}
                         </span>
                       </div>
                     </div>
 
                     {project.description && (
-                      <p className="text-text-secondary text-sm mb-4 line-clamp-2">{project.description}</p>
+                      <p className="text-text-secondary text-sm mb-4 line-clamp-2">
+                        {project.description}
+                      </p>
                     )}
 
                     {/* Tech Stack */}
                     {project.tech_stack && project.tech_stack.length > 0 && (
                       <div className="flex flex-wrap gap-1 mb-4">
                         {project.tech_stack.slice(0, 4).map(tech => (
-                          <span key={tech} className="px-2 py-0.5 bg-white/5 text-text-secondary rounded text-xs">
+                          <span
+                            key={tech}
+                            className="px-2 py-0.5 bg-white/5 text-text-secondary rounded text-xs"
+                          >
                             {tech}
                           </span>
                         ))}
@@ -848,7 +964,9 @@ export default function DevPanelPage() {
                     {/* Stats */}
                     <div className="grid grid-cols-3 gap-2 pt-4 border-t border-white/10">
                       <div className="text-center">
-                        <p className="text-lg font-bold text-text-primary">{project.feature_count}</p>
+                        <p className="text-lg font-bold text-text-primary">
+                          {project.feature_count}
+                        </p>
                         <p className="text-xs text-text-secondary">Features</p>
                       </div>
                       <div className="text-center">
@@ -856,7 +974,9 @@ export default function DevPanelPage() {
                         <p className="text-xs text-text-secondary">Tasks</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-lg font-bold text-neon-pink">{project.open_task_count}</p>
+                        <p className="text-lg font-bold text-neon-pink">
+                          {project.open_task_count}
+                        </p>
                         <p className="text-xs text-text-secondary">Open</p>
                       </div>
                     </div>
@@ -892,11 +1012,10 @@ export default function DevPanelPage() {
             <FiMessageSquare className="text-neon-purple mx-auto mb-4" size={48} />
             <h3 className="text-lg font-semibold text-text-primary mb-2">Feature Requests</h3>
             <p className="text-text-secondary mb-4">
-              This section will display all feature requests with voting, filtering, and management capabilities.
+              This section will display all feature requests with voting, filtering, and management
+              capabilities.
             </p>
-            <p className="text-text-secondary text-sm">
-              Backend deployment required. Coming soon!
-            </p>
+            <p className="text-text-secondary text-sm">Backend deployment required. Coming soon!</p>
           </div>
         )}
 
@@ -934,7 +1053,10 @@ export default function DevPanelPage() {
             {tasksLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {TASK_COLUMNS.map(column => (
-                  <div key={column.id} className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 min-h-[300px]">
+                  <div
+                    key={column.id}
+                    className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 min-h-[300px]"
+                  >
                     <div className="h-6 bg-white/10 rounded w-1/2 mb-4 animate-pulse" />
                     <div className="space-y-3">
                       {[1, 2, 3].map(i => (
@@ -970,14 +1092,18 @@ export default function DevPanelPage() {
                     className={`bg-bg-secondary rounded-xl border border-${column.color}-400/20 p-4 min-h-[400px]`}
                   >
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className={`font-semibold text-${column.color}-400 flex items-center gap-2`}>
+                      <h3
+                        className={`font-semibold text-${column.color}-400 flex items-center gap-2`}
+                      >
                         {column.id === 'todo' && <FiClock size={16} />}
                         {column.id === 'in_progress' && <FiZap size={16} />}
                         {column.id === 'blocked' && <FiAlertTriangle size={16} />}
                         {column.id === 'done' && <FiCheckCircle size={16} />}
                         {column.label}
                       </h3>
-                      <span className={`text-xs px-2 py-1 rounded-full bg-${column.color}-400/20 text-${column.color}-400`}>
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full bg-${column.color}-400/20 text-${column.color}-400`}
+                      >
                         {tasksByStatus[column.id]?.length || 0}
                       </span>
                     </div>
@@ -991,16 +1117,24 @@ export default function DevPanelPage() {
                         >
                           <div className="flex items-start justify-between gap-2 mb-2">
                             <div className="flex items-center gap-2 min-w-0">
-                              <span className="text-base">{TASK_TYPE_ICONS[task.task_type] || TASK_TYPE_ICONS.other}</span>
-                              <h4 className="text-sm font-medium text-text-primary truncate">{task.title}</h4>
+                              <span className="text-base">
+                                {TASK_TYPE_ICONS[task.task_type] || TASK_TYPE_ICONS.other}
+                              </span>
+                              <h4 className="text-sm font-medium text-text-primary truncate">
+                                {task.title}
+                              </h4>
                             </div>
-                            <span className={`text-[10px] px-1.5 py-0.5 rounded border ${PRIORITY_COLORS[task.priority]}`}>
+                            <span
+                              className={`text-[10px] px-1.5 py-0.5 rounded border ${PRIORITY_COLORS[task.priority]}`}
+                            >
                               {task.priority}
                             </span>
                           </div>
 
                           {task.description && (
-                            <p className="text-xs text-text-secondary line-clamp-2 mb-2">{task.description}</p>
+                            <p className="text-xs text-text-secondary line-clamp-2 mb-2">
+                              {task.description}
+                            </p>
                           )}
 
                           <div className="flex items-center justify-between text-[10px] text-text-secondary">
@@ -1008,7 +1142,9 @@ export default function DevPanelPage() {
                               {task.assigned_to && (
                                 <span className="flex items-center gap-1">
                                   <FiUser size={10} />
-                                  {task.assigned_to.username || task.assigned_to.display_name || 'Unassigned'}
+                                  {task.assigned_to.username ||
+                                    task.assigned_to.display_name ||
+                                    'Unassigned'}
                                 </span>
                               )}
                               {task.sprint && (
@@ -1017,9 +1153,7 @@ export default function DevPanelPage() {
                                 </span>
                               )}
                             </div>
-                            {task.estimated_hours && (
-                              <span>{task.estimated_hours}h</span>
-                            )}
+                            {task.estimated_hours && <span>{task.estimated_hours}h</span>}
                           </div>
 
                           {/* Quick status change buttons - visible on hover */}
@@ -1027,7 +1161,7 @@ export default function DevPanelPage() {
                             {TASK_COLUMNS.filter(c => c.id !== task.status).map(col => (
                               <button
                                 key={col.id}
-                                onClick={(e) => {
+                                onClick={e => {
                                   e.stopPropagation()
                                   handleTaskStatusChange(task.id, col.id)
                                 }}
@@ -1041,9 +1175,7 @@ export default function DevPanelPage() {
                       ))}
 
                       {tasksByStatus[column.id]?.length === 0 && (
-                        <div className="text-center py-8 text-text-secondary text-sm">
-                          No tasks
-                        </div>
+                        <div className="text-center py-8 text-text-secondary text-sm">No tasks</div>
                       )}
                     </div>
                   </div>
@@ -1055,7 +1187,7 @@ export default function DevPanelPage() {
             {showCreateTask && (
               <CreateTaskModal
                 onClose={() => setShowCreateTask(false)}
-                onSubmit={async (data) => {
+                onSubmit={async data => {
                   try {
                     await createTask({ variables: { input: data } })
                   } catch (error) {
@@ -1109,16 +1241,25 @@ export default function DevPanelPage() {
               ) : health.length > 0 ? (
                 <div className="space-y-3">
                   {health.map(service => (
-                    <div key={service.service} className="bg-bg-primary rounded-lg p-4 flex items-center justify-between">
+                    <div
+                      key={service.service}
+                      className="bg-bg-primary rounded-lg p-4 flex items-center justify-between"
+                    >
                       <div className="flex items-center gap-3">
                         {getHealthIcon(service.status)}
-                        <span className="text-text-primary font-medium capitalize">{service.service}</span>
+                        <span className="text-text-primary font-medium capitalize">
+                          {service.service}
+                        </span>
                       </div>
                       <div className="flex items-center gap-4">
                         {service.response_time_ms !== null && (
-                          <span className="text-text-secondary text-sm">{service.response_time_ms}ms</span>
+                          <span className="text-text-secondary text-sm">
+                            {service.response_time_ms}ms
+                          </span>
                         )}
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getHealthStatusColor(service.status)}`}>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${getHealthStatusColor(service.status)}`}
+                        >
                           {service.status}
                         </span>
                       </div>
@@ -1190,7 +1331,9 @@ function CreateTaskModal({
         priority: formData.priority,
         status: formData.status,
         sprint: formData.sprint || undefined,
-        estimated_hours: formData.estimated_hours ? parseInt(formData.estimated_hours) : undefined,
+        estimated_hours: formData.estimated_hours
+          ? Number.parseInt(formData.estimated_hours)
+          : undefined,
       })
     } finally {
       setIsSubmitting(false)
@@ -1213,7 +1356,7 @@ function CreateTaskModal({
             <input
               type="text"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={e => setFormData({ ...formData, title: e.target.value })}
               className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
               placeholder="Task title..."
               required
@@ -1224,7 +1367,7 @@ function CreateTaskModal({
             <label className="block text-sm text-text-secondary mb-1">Description</label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={e => setFormData({ ...formData, description: e.target.value })}
               className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none min-h-[100px]"
               placeholder="Task description..."
             />
@@ -1235,7 +1378,7 @@ function CreateTaskModal({
               <label className="block text-sm text-text-secondary mb-1">Type</label>
               <select
                 value={formData.task_type}
-                onChange={(e) => setFormData({ ...formData, task_type: e.target.value })}
+                onChange={e => setFormData({ ...formData, task_type: e.target.value })}
                 className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
               >
                 <option value="feature">✨ Feature</option>
@@ -1253,7 +1396,7 @@ function CreateTaskModal({
               <label className="block text-sm text-text-secondary mb-1">Priority</label>
               <select
                 value={formData.priority}
-                onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                onChange={e => setFormData({ ...formData, priority: e.target.value })}
                 className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
               >
                 <option value="low">Low</option>
@@ -1270,7 +1413,7 @@ function CreateTaskModal({
               <input
                 type="text"
                 value={formData.sprint}
-                onChange={(e) => setFormData({ ...formData, sprint: e.target.value })}
+                onChange={e => setFormData({ ...formData, sprint: e.target.value })}
                 className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
                 placeholder="Sprint-1"
               />
@@ -1281,7 +1424,7 @@ function CreateTaskModal({
               <input
                 type="number"
                 value={formData.estimated_hours}
-                onChange={(e) => setFormData({ ...formData, estimated_hours: e.target.value })}
+                onChange={e => setFormData({ ...formData, estimated_hours: e.target.value })}
                 className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
                 placeholder="4"
                 min="0"
@@ -1326,7 +1469,9 @@ function TaskDetailModal({
       <div className="bg-bg-secondary rounded-xl border border-neon-purple/30 w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-4 border-b border-white/10">
           <div className="flex items-center gap-2">
-            <span className="text-xl">{TASK_TYPE_ICONS[task.task_type] || TASK_TYPE_ICONS.other}</span>
+            <span className="text-xl">
+              {TASK_TYPE_ICONS[task.task_type] || TASK_TYPE_ICONS.other}
+            </span>
             <h2 className="text-lg font-semibold text-text-primary">{task.title}</h2>
           </div>
           <button onClick={onClose} className="text-text-secondary hover:text-text-primary">
@@ -1337,15 +1482,22 @@ function TaskDetailModal({
         <div className="p-4 space-y-4">
           {/* Status and Priority */}
           <div className="flex items-center gap-3 flex-wrap">
-            <span className={`px-2 py-1 rounded text-xs font-medium ${PRIORITY_COLORS[task.priority]}`}>
+            <span
+              className={`px-2 py-1 rounded text-xs font-medium ${PRIORITY_COLORS[task.priority]}`}
+            >
               {task.priority.toUpperCase()}
             </span>
-            <span className={`px-2 py-1 rounded text-xs font-medium ${
-              task.status === 'todo' ? 'bg-gray-400/20 text-gray-400' :
-              task.status === 'in_progress' ? 'bg-blue-400/20 text-blue-400' :
-              task.status === 'blocked' ? 'bg-red-400/20 text-red-400' :
-              'bg-green-400/20 text-green-400'
-            }`}>
+            <span
+              className={`px-2 py-1 rounded text-xs font-medium ${
+                task.status === 'todo'
+                  ? 'bg-gray-400/20 text-gray-400'
+                  : task.status === 'in_progress'
+                    ? 'bg-blue-400/20 text-blue-400'
+                    : task.status === 'blocked'
+                      ? 'bg-red-400/20 text-red-400'
+                      : 'bg-green-400/20 text-green-400'
+              }`}
+            >
               {task.status.replace('_', ' ').toUpperCase()}
             </span>
             {task.sprint && (
@@ -1368,7 +1520,9 @@ function TaskDetailModal({
             {task.assigned_to && (
               <div>
                 <span className="text-text-secondary">Assigned to:</span>
-                <p className="text-text-primary">{task.assigned_to.display_name || task.assigned_to.username || 'Unknown'}</p>
+                <p className="text-text-primary">
+                  {task.assigned_to.display_name || task.assigned_to.username || 'Unknown'}
+                </p>
               </div>
             )}
             {task.estimated_hours && (
@@ -1395,7 +1549,10 @@ function TaskDetailModal({
               <h3 className="text-sm font-medium text-text-secondary mb-2">Tags</h3>
               <div className="flex flex-wrap gap-2">
                 {task.tags.map(tag => (
-                  <span key={tag} className="px-2 py-1 bg-white/10 text-text-primary rounded text-xs">
+                  <span
+                    key={tag}
+                    className="px-2 py-1 bg-white/10 text-text-primary rounded text-xs"
+                  >
                     {tag}
                   </span>
                 ))}

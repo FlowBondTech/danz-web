@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { X, Search, UserPlus, Check, Loader2 } from 'lucide-react'
 import type { FarcasterFriend } from '@/src/lib/neynar'
 import type { DanzParty } from '@/src/types/party'
+import { Check, Loader2, Search, UserPlus, X } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
 
 interface InviteFriendsModalProps {
   isOpen: boolean
@@ -18,7 +18,7 @@ export function InviteFriendsModal({
   onClose,
   party,
   currentUserFid,
-  onInviteFriend
+  onInviteFriend,
 }: InviteFriendsModalProps) {
   const [friends, setFriends] = useState<FarcasterFriend[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -101,28 +101,25 @@ export function InviteFriendsModal({
   if (!isOpen || !party) return null
 
   // Filter out users already in the party
-  const partyMemberFids = new Set(party.members.map(m => {
-    // Assuming wallet address could contain FID or we check by other means
-    // For now, we'll use display name matching as a fallback
-    return 0 // This would need proper FID tracking
-  }))
+  const partyMemberFids = new Set(
+    party.members.map(m => {
+      // Assuming wallet address could contain FID or we check by other means
+      // For now, we'll use display name matching as a fallback
+      return 0 // This would need proper FID tracking
+    }),
+  )
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
       <div className="relative w-full max-w-md max-h-[80vh] bg-bg-primary border border-white/10 rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col">
         {/* Header */}
         <div className="sticky top-0 z-10 p-4 border-b border-white/10 bg-bg-primary/95 backdrop-blur">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-bold text-white">
-              Invite Friends to {party.name}
-            </h2>
+            <h2 className="text-lg font-bold text-white">Invite Friends to {party.name}</h2>
             <button
               onClick={onClose}
               className="p-2 rounded-full hover:bg-white/10 transition-colors"
@@ -137,7 +134,7 @@ export function InviteFriendsModal({
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search Farcaster users..."
               className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:border-neon-purple/50 focus:outline-none transition-colors"
             />
@@ -161,9 +158,7 @@ export function InviteFriendsModal({
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <UserPlus className="w-12 h-12 text-white/20 mb-3" />
               <p className="text-white/50 text-sm">
-                {searchQuery
-                  ? 'No users found'
-                  : 'Connect your Farcaster to see friends'}
+                {searchQuery ? 'No users found' : 'Connect your Farcaster to see friends'}
               </p>
             </div>
           ) : (
@@ -171,7 +166,7 @@ export function InviteFriendsModal({
               <p className="text-xs text-white/40 mb-3">
                 {searchQuery ? 'Search results' : 'People you follow'}
               </p>
-              {friends.map((friend) => {
+              {friends.map(friend => {
                 const isInvited = invitedFids.has(friend.fid)
                 const isInviting = invitingFid === friend.fid
 
@@ -198,12 +193,8 @@ export function InviteFriendsModal({
 
                       {/* Info */}
                       <div>
-                        <p className="font-medium text-white">
-                          {friend.displayName}
-                        </p>
-                        <p className="text-sm text-white/50">
-                          @{friend.username}
-                        </p>
+                        <p className="font-medium text-white">{friend.displayName}</p>
+                        <p className="text-sm text-white/50">@{friend.username}</p>
                       </div>
                     </div>
 

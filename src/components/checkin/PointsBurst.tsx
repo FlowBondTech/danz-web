@@ -64,7 +64,12 @@ export function PointsBurst({ points, streakBonus, onComplete }: PointsBurstProp
               top: `${Math.random() * 100}%`,
               width: `${4 + Math.random() * 8}px`,
               height: `${4 + Math.random() * 8}px`,
-              backgroundColor: i % 3 === 0 ? 'rgb(var(--color-neon-pink-rgb))' : i % 3 === 1 ? 'rgb(var(--color-neon-purple-rgb))' : 'rgb(var(--color-neon-blue-rgb))',
+              backgroundColor:
+                i % 3 === 0
+                  ? 'rgb(var(--color-neon-pink-rgb))'
+                  : i % 3 === 1
+                    ? 'rgb(var(--color-neon-purple-rgb))'
+                    : 'rgb(var(--color-neon-blue-rgb))',
               animationDelay: `${Math.random() * 2}s`,
               animationDuration: `${3 + Math.random() * 3}s`,
               opacity: 0.4 + Math.random() * 0.4,
@@ -77,9 +82,18 @@ export function PointsBurst({ points, streakBonus, onComplete }: PointsBurstProp
       {/* Expanding rings */}
       {stage === 'burst' && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="absolute w-32 h-32 rounded-full border-2 border-neon-pink animate-ping" style={{ animationDelay: '0s' }} />
-          <div className="absolute w-32 h-32 rounded-full border-2 border-neon-purple animate-ping" style={{ animationDelay: '0.15s' }} />
-          <div className="absolute w-32 h-32 rounded-full border-2 border-neon-blue animate-ping" style={{ animationDelay: '0.3s' }} />
+          <div
+            className="absolute w-32 h-32 rounded-full border-2 border-neon-pink animate-ping"
+            style={{ animationDelay: '0s' }}
+          />
+          <div
+            className="absolute w-32 h-32 rounded-full border-2 border-neon-purple animate-ping"
+            style={{ animationDelay: '0.15s' }}
+          />
+          <div
+            className="absolute w-32 h-32 rounded-full border-2 border-neon-blue animate-ping"
+            style={{ animationDelay: '0.3s' }}
+          />
         </div>
       )}
 
@@ -87,7 +101,10 @@ export function PointsBurst({ points, streakBonus, onComplete }: PointsBurstProp
         {/* Main celebration circle */}
         <div className="relative">
           {/* Outer spinning ring */}
-          <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-neon-pink via-neon-purple to-neon-blue animate-spin opacity-60" style={{ animationDuration: '3s' }} />
+          <div
+            className="absolute -inset-4 rounded-full bg-gradient-to-r from-neon-pink via-neon-purple to-neon-blue animate-spin opacity-60"
+            style={{ animationDuration: '3s' }}
+          />
 
           {/* Pulsing ring */}
           <div className="absolute -inset-2 rounded-full bg-gradient-to-r from-neon-pink to-neon-purple animate-pulse opacity-40" />

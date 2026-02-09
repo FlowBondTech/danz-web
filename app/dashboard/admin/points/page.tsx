@@ -2,19 +2,35 @@
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import {
-  PointActionCategory,
+  type PointActionCategory,
+  useCreatePointActionMutation,
   useGetAllPointActionsQuery,
   useGetMyProfileQuery,
-  useCreatePointActionMutation,
   useTogglePointActionMutation,
   useUpdatePointActionMutation,
 } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
+import { AnimatePresence, motion } from 'motion/react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { FiCheck, FiX, FiPlus, FiZap, FiAward, FiUsers, FiActivity, FiWatch, FiLink, FiStar, FiTarget, FiTrendingUp, FiDollarSign, FiLock, FiUnlock, FiArrowLeft } from 'react-icons/fi'
-import Link from 'next/link'
-import { motion, AnimatePresence } from 'motion/react'
+import {
+  FiActivity,
+  FiArrowLeft,
+  FiAward,
+  FiCheck,
+  FiDollarSign,
+  FiLink,
+  FiLock,
+  FiPlus,
+  FiStar,
+  FiTarget,
+  FiTrendingUp,
+  FiUsers,
+  FiWatch,
+  FiX,
+  FiZap,
+} from 'react-icons/fi'
 
 // Point System Templates
 const POINT_TEMPLATES = {
@@ -25,11 +41,35 @@ const POINT_TEMPLATES = {
     color: 'text-blue-400',
     bgColor: 'bg-blue-400/10',
     actions: [
-      { action_key: 'daily_check_in', action_name: 'Daily Check-in', points_value: 10, category: 'social' as PointActionCategory, description: 'Login to the app daily' },
-      { action_key: 'share_event', action_name: 'Share Event', points_value: 20, category: 'social' as PointActionCategory, description: 'Share an event on social media' },
-      { action_key: 'comment_on_post', action_name: 'Comment on Post', points_value: 5, category: 'social' as PointActionCategory, description: 'Engage with community posts' },
-      { action_key: 'create_post', action_name: 'Create Post', points_value: 15, category: 'social' as PointActionCategory, description: 'Share content with the community' },
-    ]
+      {
+        action_key: 'daily_check_in',
+        action_name: 'Daily Check-in',
+        points_value: 10,
+        category: 'social' as PointActionCategory,
+        description: 'Login to the app daily',
+      },
+      {
+        action_key: 'share_event',
+        action_name: 'Share Event',
+        points_value: 20,
+        category: 'social' as PointActionCategory,
+        description: 'Share an event on social media',
+      },
+      {
+        action_key: 'comment_on_post',
+        action_name: 'Comment on Post',
+        points_value: 5,
+        category: 'social' as PointActionCategory,
+        description: 'Engage with community posts',
+      },
+      {
+        action_key: 'create_post',
+        action_name: 'Create Post',
+        points_value: 15,
+        category: 'social' as PointActionCategory,
+        description: 'Share content with the community',
+      },
+    ],
   },
   dance_activity: {
     name: 'Dance Activity Rewards',
@@ -38,11 +78,35 @@ const POINT_TEMPLATES = {
     color: 'text-purple-400',
     bgColor: 'bg-purple-400/10',
     actions: [
-      { action_key: 'complete_dance_session', action_name: 'Complete Dance Session', points_value: 50, category: 'activity' as PointActionCategory, description: 'Finish a full dance session' },
-      { action_key: 'attend_event', action_name: 'Attend Event', points_value: 100, category: 'event' as PointActionCategory, description: 'Check in at a dance event' },
-      { action_key: 'host_event', action_name: 'Host Event', points_value: 500, category: 'event' as PointActionCategory, description: 'Organize a dance event' },
-      { action_key: 'learn_new_move', action_name: 'Learn New Move', points_value: 25, category: 'achievement' as PointActionCategory, description: 'Master a new dance move' },
-    ]
+      {
+        action_key: 'complete_dance_session',
+        action_name: 'Complete Dance Session',
+        points_value: 50,
+        category: 'activity' as PointActionCategory,
+        description: 'Finish a full dance session',
+      },
+      {
+        action_key: 'attend_event',
+        action_name: 'Attend Event',
+        points_value: 100,
+        category: 'event' as PointActionCategory,
+        description: 'Check in at a dance event',
+      },
+      {
+        action_key: 'host_event',
+        action_name: 'Host Event',
+        points_value: 500,
+        category: 'event' as PointActionCategory,
+        description: 'Organize a dance event',
+      },
+      {
+        action_key: 'learn_new_move',
+        action_name: 'Learn New Move',
+        points_value: 25,
+        category: 'achievement' as PointActionCategory,
+        description: 'Master a new dance move',
+      },
+    ],
   },
   achievement_based: {
     name: 'Achievement System',
@@ -51,11 +115,35 @@ const POINT_TEMPLATES = {
     color: 'text-yellow-400',
     bgColor: 'bg-yellow-400/10',
     actions: [
-      { action_key: 'first_event', action_name: 'First Event', points_value: 200, category: 'achievement' as PointActionCategory, description: 'Attend your first event' },
-      { action_key: 'streak_7_days', action_name: '7 Day Streak', points_value: 100, category: 'achievement' as PointActionCategory, description: 'Dance 7 days in a row' },
-      { action_key: 'referral_success', action_name: 'Successful Referral', points_value: 150, category: 'referral' as PointActionCategory, description: 'Refer a friend who joins' },
-      { action_key: 'level_up', action_name: 'Level Up', points_value: 300, category: 'achievement' as PointActionCategory, description: 'Advance to the next skill level' },
-    ]
+      {
+        action_key: 'first_event',
+        action_name: 'First Event',
+        points_value: 200,
+        category: 'achievement' as PointActionCategory,
+        description: 'Attend your first event',
+      },
+      {
+        action_key: 'streak_7_days',
+        action_name: '7 Day Streak',
+        points_value: 100,
+        category: 'achievement' as PointActionCategory,
+        description: 'Dance 7 days in a row',
+      },
+      {
+        action_key: 'referral_success',
+        action_name: 'Successful Referral',
+        points_value: 150,
+        category: 'referral' as PointActionCategory,
+        description: 'Refer a friend who joins',
+      },
+      {
+        action_key: 'level_up',
+        action_name: 'Level Up',
+        points_value: 300,
+        category: 'achievement' as PointActionCategory,
+        description: 'Advance to the next skill level',
+      },
+    ],
   },
   wearable_integration: {
     name: 'Wearable & IoT Rewards',
@@ -64,21 +152,80 @@ const POINT_TEMPLATES = {
     color: 'text-green-400',
     bgColor: 'bg-green-400/10',
     actions: [
-      { action_key: 'wearable_steps_10k', action_name: '10K Steps', points_value: 30, category: 'activity' as PointActionCategory, description: 'Walk 10,000 steps (via wearable)' },
-      { action_key: 'wearable_heart_zone', action_name: 'Heart Rate Zone', points_value: 40, category: 'activity' as PointActionCategory, description: 'Maintain target heart rate during dance' },
-      { action_key: 'wearable_calories_500', action_name: 'Burn 500 Calories', points_value: 50, category: 'activity' as PointActionCategory, description: 'Burn 500+ calories in a session' },
-      { action_key: 'wearable_sync', action_name: 'Daily Sync', points_value: 5, category: 'activity' as PointActionCategory, description: 'Sync your wearable device' },
-    ]
-  }
+      {
+        action_key: 'wearable_steps_10k',
+        action_name: '10K Steps',
+        points_value: 30,
+        category: 'activity' as PointActionCategory,
+        description: 'Walk 10,000 steps (via wearable)',
+      },
+      {
+        action_key: 'wearable_heart_zone',
+        action_name: 'Heart Rate Zone',
+        points_value: 40,
+        category: 'activity' as PointActionCategory,
+        description: 'Maintain target heart rate during dance',
+      },
+      {
+        action_key: 'wearable_calories_500',
+        action_name: 'Burn 500 Calories',
+        points_value: 50,
+        category: 'activity' as PointActionCategory,
+        description: 'Burn 500+ calories in a session',
+      },
+      {
+        action_key: 'wearable_sync',
+        action_name: 'Daily Sync',
+        points_value: 5,
+        category: 'activity' as PointActionCategory,
+        description: 'Sync your wearable device',
+      },
+    ],
+  },
 }
 
 // Bonding Tiers
 const BONDING_TIERS = [
-  { level: 1, name: 'Bronze', requiredBond: 100, multiplier: 1.1, color: 'text-orange-600', bgColor: 'bg-orange-600/10' },
-  { level: 2, name: 'Silver', requiredBond: 500, multiplier: 1.25, color: 'text-gray-400', bgColor: 'bg-gray-400/10' },
-  { level: 3, name: 'Gold', requiredBond: 1000, multiplier: 1.5, color: 'text-yellow-400', bgColor: 'bg-yellow-400/10' },
-  { level: 4, name: 'Platinum', requiredBond: 5000, multiplier: 2.0, color: 'text-purple-400', bgColor: 'bg-purple-400/10' },
-  { level: 5, name: 'Diamond', requiredBond: 10000, multiplier: 3.0, color: 'text-blue-400', bgColor: 'bg-blue-400/10' },
+  {
+    level: 1,
+    name: 'Bronze',
+    requiredBond: 100,
+    multiplier: 1.1,
+    color: 'text-orange-600',
+    bgColor: 'bg-orange-600/10',
+  },
+  {
+    level: 2,
+    name: 'Silver',
+    requiredBond: 500,
+    multiplier: 1.25,
+    color: 'text-gray-400',
+    bgColor: 'bg-gray-400/10',
+  },
+  {
+    level: 3,
+    name: 'Gold',
+    requiredBond: 1000,
+    multiplier: 1.5,
+    color: 'text-yellow-400',
+    bgColor: 'bg-yellow-400/10',
+  },
+  {
+    level: 4,
+    name: 'Platinum',
+    requiredBond: 5000,
+    multiplier: 2.0,
+    color: 'text-purple-400',
+    bgColor: 'bg-purple-400/10',
+  },
+  {
+    level: 5,
+    name: 'Diamond',
+    requiredBond: 10000,
+    multiplier: 3.0,
+    color: 'text-blue-400',
+    bgColor: 'bg-blue-400/10',
+  },
 ]
 
 export default function EnhancedPointsPage() {
@@ -86,13 +233,21 @@ export default function EnhancedPointsPage() {
   const router = useRouter()
 
   const [showSetupWizard, setShowSetupWizard] = useState(false)
-  const [selectedTemplate, setSelectedTemplate] = useState<keyof typeof POINT_TEMPLATES | null>(null)
+  const [selectedTemplate, setSelectedTemplate] = useState<keyof typeof POINT_TEMPLATES | null>(
+    null,
+  )
   const [selectedCategory, setSelectedCategory] = useState<PointActionCategory | undefined>()
   const [showBondingSection, setShowBondingSection] = useState(false)
   const [showWearableSection, setShowWearableSection] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [editingPoints, setEditingPoints] = useState<{ [key: string]: number }>({})
-  const [editingLimits, setEditingLimits] = useState<{ [key: string]: { max_per_day: number | null; max_per_week: number | null; max_per_month: number | null } }>({})
+  const [editingLimits, setEditingLimits] = useState<{
+    [key: string]: {
+      max_per_day: number | null
+      max_per_week: number | null
+      max_per_month: number | null
+    }
+  }>({})
 
   const { data: profileData, loading: profileLoading } = useGetMyProfileQuery({
     skip: !authenticated,
@@ -204,8 +359,8 @@ export default function EnhancedPointsPage() {
             max_per_day: customAction.max_per_day,
             max_per_week: customAction.max_per_week,
             max_per_month: customAction.max_per_month,
-          }
-        }
+          },
+        },
       })
 
       setShowCustomForm(false)
@@ -248,7 +403,14 @@ export default function EnhancedPointsPage() {
     }
   }
 
-  const handleLimitsChange = async (action_key: string, limits: { max_per_day: number | null; max_per_week: number | null; max_per_month: number | null }) => {
+  const handleLimitsChange = async (
+    action_key: string,
+    limits: {
+      max_per_day: number | null
+      max_per_week: number | null
+      max_per_month: number | null
+    },
+  ) => {
     try {
       await updatePointAction({
         variables: {
@@ -287,7 +449,9 @@ export default function EnhancedPointsPage() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-text-primary text-2xl" role="status" aria-live="polite">Loading...</div>
+          <div className="text-text-primary text-2xl" role="status" aria-live="polite">
+            Loading...
+          </div>
         </div>
       </DashboardLayout>
     )
@@ -297,7 +461,9 @@ export default function EnhancedPointsPage() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-red-400 text-xl" role="alert">Access Denied - Admin Only</div>
+          <div className="text-red-400 text-xl" role="alert">
+            Access Denied - Admin Only
+          </div>
         </div>
       </DashboardLayout>
     )
@@ -366,7 +532,9 @@ export default function EnhancedPointsPage() {
               <FiStar className="text-yellow-400 flex-shrink-0" size={20} aria-hidden="true" />
               <span className="text-xs text-text-secondary uppercase tracking-wider">Total</span>
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-text-primary break-words">{pointActions.length}</p>
+            <p className="text-xl sm:text-2xl font-bold text-text-primary break-words">
+              {pointActions.length}
+            </p>
             <p className="text-xs sm:text-sm text-text-secondary">Actions</p>
           </div>
 
@@ -419,9 +587,7 @@ export default function EnhancedPointsPage() {
             >
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h2 className="text-xl font-bold text-text-primary">
-                    🎯 Action Templates
-                  </h2>
+                  <h2 className="text-xl font-bold text-text-primary">🎯 Action Templates</h2>
                   <p className="text-text-secondary text-sm mt-1">
                     Click any action to fill the create form with its values
                   </p>
@@ -442,7 +608,11 @@ export default function EnhancedPointsPage() {
                     <div key={key} className="border border-gray-700 rounded-lg overflow-hidden">
                       {/* Template Header - Click to expand/collapse */}
                       <div
-                        onClick={() => setSelectedTemplate(isExpanded ? null : key as keyof typeof POINT_TEMPLATES)}
+                        onClick={() =>
+                          setSelectedTemplate(
+                            isExpanded ? null : (key as keyof typeof POINT_TEMPLATES),
+                          )
+                        }
                         className={`p-4 cursor-pointer transition-all hover:bg-white/5 ${
                           isExpanded ? 'bg-neon-purple/10 border-b border-gray-700' : ''
                         }`}
@@ -463,7 +633,10 @@ export default function EnhancedPointsPage() {
                               animate={{ rotate: isExpanded ? 180 : 0 }}
                               transition={{ duration: 0.2 }}
                             >
-                              <FiActivity className={isExpanded ? 'text-neon-purple' : 'text-gray-400'} size={16} />
+                              <FiActivity
+                                className={isExpanded ? 'text-neon-purple' : 'text-gray-400'}
+                                size={16}
+                              />
                             </motion.div>
                           </div>
                         </div>
@@ -481,7 +654,9 @@ export default function EnhancedPointsPage() {
                             <div className="p-4 grid gap-2">
                               {template.actions.map((action, idx) => {
                                 // Check if action already exists
-                                const exists = pointActions.some(pa => pa.action_key === action.action_key)
+                                const exists = pointActions.some(
+                                  pa => pa.action_key === action.action_key,
+                                )
                                 return (
                                   <div
                                     key={idx}
@@ -507,14 +682,21 @@ export default function EnhancedPointsPage() {
                                         </div>
                                       </div>
                                       <div className="flex items-center gap-2">
-                                        <span className={`text-xs px-2 py-1 rounded ${
-                                          action.category === 'social' ? 'bg-blue-400/20 text-blue-400' :
-                                          action.category === 'activity' ? 'bg-purple-400/20 text-purple-400' :
-                                          action.category === 'event' ? 'bg-green-400/20 text-green-400' :
-                                          action.category === 'achievement' ? 'bg-yellow-400/20 text-yellow-400' :
-                                          action.category === 'referral' ? 'bg-pink-400/20 text-pink-400' :
-                                          'bg-gray-400/20 text-gray-400'
-                                        }`}>
+                                        <span
+                                          className={`text-xs px-2 py-1 rounded ${
+                                            action.category === 'social'
+                                              ? 'bg-blue-400/20 text-blue-400'
+                                              : action.category === 'activity'
+                                                ? 'bg-purple-400/20 text-purple-400'
+                                                : action.category === 'event'
+                                                  ? 'bg-green-400/20 text-green-400'
+                                                  : action.category === 'achievement'
+                                                    ? 'bg-yellow-400/20 text-yellow-400'
+                                                    : action.category === 'referral'
+                                                      ? 'bg-pink-400/20 text-pink-400'
+                                                      : 'bg-gray-400/20 text-gray-400'
+                                          }`}
+                                        >
                                           {action.category}
                                         </span>
                                         {exists ? (
@@ -555,7 +737,8 @@ export default function EnhancedPointsPage() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-xl font-bold text-text-primary">
-                    ✨ {customAction.action_key ? 'Create Point Action' : 'Create Custom Point Action'}
+                    ✨{' '}
+                    {customAction.action_key ? 'Create Point Action' : 'Create Custom Point Action'}
                   </h2>
                   {customAction.action_key && (
                     <p className="text-text-secondary text-sm mt-1">
@@ -587,53 +770,82 @@ export default function EnhancedPointsPage() {
 
               <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-text-secondary mb-1">Action Key (unique ID)</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">
+                    Action Key (unique ID)
+                  </label>
                   <input
                     type="text"
                     value={customAction.action_key}
-                    onChange={(e) => setCustomAction({ ...customAction, action_key: e.target.value.toLowerCase().replace(/\s+/g, '_') })}
+                    onChange={e =>
+                      setCustomAction({
+                        ...customAction,
+                        action_key: e.target.value.toLowerCase().replace(/\s+/g, '_'),
+                      })
+                    }
                     placeholder="e.g., daily_login"
                     className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-text-secondary mb-1">Action Name</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">
+                    Action Name
+                  </label>
                   <input
                     type="text"
                     value={customAction.action_name}
-                    onChange={(e) => setCustomAction({ ...customAction, action_name: e.target.value })}
+                    onChange={e =>
+                      setCustomAction({ ...customAction, action_name: e.target.value })
+                    }
                     placeholder="e.g., Daily Login"
                     className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-text-secondary mb-1">Description</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">
+                    Description
+                  </label>
                   <input
                     type="text"
                     value={customAction.description}
-                    onChange={(e) => setCustomAction({ ...customAction, description: e.target.value })}
+                    onChange={e =>
+                      setCustomAction({ ...customAction, description: e.target.value })
+                    }
                     placeholder="e.g., Reward users for logging in daily"
                     className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-text-secondary mb-1">Points Value</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">
+                    Points Value
+                  </label>
                   <input
                     type="number"
                     value={customAction.points_value}
-                    onChange={(e) => setCustomAction({ ...customAction, points_value: parseInt(e.target.value) || 0 })}
+                    onChange={e =>
+                      setCustomAction({
+                        ...customAction,
+                        points_value: Number.parseInt(e.target.value) || 0,
+                      })
+                    }
                     className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-text-secondary mb-1">Category</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">
+                    Category
+                  </label>
                   <select
                     value={customAction.category}
-                    onChange={(e) => setCustomAction({ ...customAction, category: e.target.value as PointActionCategory })}
+                    onChange={e =>
+                      setCustomAction({
+                        ...customAction,
+                        category: e.target.value as PointActionCategory,
+                      })
+                    }
                     className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
                   >
                     <option value="social">Social</option>
@@ -647,22 +859,36 @@ export default function EnhancedPointsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-text-secondary mb-1">Max Per Day</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">
+                    Max Per Day
+                  </label>
                   <input
                     type="number"
                     value={customAction.max_per_day || ''}
-                    onChange={(e) => setCustomAction({ ...customAction, max_per_day: e.target.value ? parseInt(e.target.value) : null })}
+                    onChange={e =>
+                      setCustomAction({
+                        ...customAction,
+                        max_per_day: e.target.value ? Number.parseInt(e.target.value) : null,
+                      })
+                    }
                     placeholder="No limit"
                     className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-text-secondary mb-1">Max Per Week</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">
+                    Max Per Week
+                  </label>
                   <input
                     type="number"
                     value={customAction.max_per_week || ''}
-                    onChange={(e) => setCustomAction({ ...customAction, max_per_week: e.target.value ? parseInt(e.target.value) : null })}
+                    onChange={e =>
+                      setCustomAction({
+                        ...customAction,
+                        max_per_week: e.target.value ? Number.parseInt(e.target.value) : null,
+                      })
+                    }
                     placeholder="No limit"
                     className="w-full px-3 py-2 bg-bg-primary border border-white/10 rounded-lg text-text-primary focus:border-neon-purple focus:outline-none"
                   />
@@ -673,7 +899,9 @@ export default function EnhancedPointsPage() {
                     <input
                       type="checkbox"
                       checked={customAction.is_active}
-                      onChange={(e) => setCustomAction({ ...customAction, is_active: e.target.checked })}
+                      onChange={e =>
+                        setCustomAction({ ...customAction, is_active: e.target.checked })
+                      }
                       className="rounded border-gray-600"
                     />
                     <span className="text-sm text-text-secondary">Active</span>
@@ -683,7 +911,12 @@ export default function EnhancedPointsPage() {
                     <input
                       type="checkbox"
                       checked={customAction.requires_verification}
-                      onChange={(e) => setCustomAction({ ...customAction, requires_verification: e.target.checked })}
+                      onChange={e =>
+                        setCustomAction({
+                          ...customAction,
+                          requires_verification: e.target.checked,
+                        })
+                      }
                       className="rounded border-gray-600"
                     />
                     <span className="text-sm text-text-secondary">Requires Verification</span>
@@ -754,15 +987,13 @@ export default function EnhancedPointsPage() {
               </p>
 
               <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                {BONDING_TIERS.map((tier) => (
+                {BONDING_TIERS.map(tier => (
                   <div
                     key={tier.level}
                     className={`p-4 rounded-lg border border-gray-700 ${tier.bgColor}`}
                   >
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className={`font-bold text-lg ${tier.color}`}>
-                        {tier.name}
-                      </h3>
+                      <h3 className={`font-bold text-lg ${tier.color}`}>{tier.name}</h3>
                       <span className="text-2xl font-bold text-text-primary">
                         {tier.multiplier}x
                       </span>
@@ -770,11 +1001,15 @@ export default function EnhancedPointsPage() {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-text-secondary">Required Bond:</span>
-                        <span className="text-text-primary">{tier.requiredBond.toLocaleString()} DANZ</span>
+                        <span className="text-text-primary">
+                          {tier.requiredBond.toLocaleString()} DANZ
+                        </span>
                       </div>
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-text-secondary">Point Multiplier:</span>
-                        <span className="text-green-400">+{((tier.multiplier - 1) * 100).toFixed(0)}%</span>
+                        <span className="text-green-400">
+                          +{((tier.multiplier - 1) * 100).toFixed(0)}%
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -822,7 +1057,8 @@ export default function EnhancedPointsPage() {
               </div>
 
               <p className="text-text-secondary mb-6">
-                Connect fitness trackers and smart wearables to earn points for real-world dance activity
+                Connect fitness trackers and smart wearables to earn points for real-world dance
+                activity
               </p>
 
               <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
@@ -891,7 +1127,8 @@ export default function EnhancedPointsPage() {
                   <div>
                     <h4 className="font-medium text-text-primary mb-1">Early Access Program</h4>
                     <p className="text-sm text-text-secondary mb-3">
-                      Join our beta program to be the first to test wearable integration and earn bonus points!
+                      Join our beta program to be the first to test wearable integration and earn
+                      bonus points!
                     </p>
                     <button className="px-4 py-2 bg-gradient-to-r from-neon-purple to-neon-blue text-white text-sm rounded-lg hover:opacity-90 transition-opacity">
                       Join Waitlist
@@ -913,18 +1150,22 @@ export default function EnhancedPointsPage() {
               <button
                 onClick={() => setSelectedCategory(undefined)}
                 className={`px-3 sm:px-4 py-2 rounded-lg transition-colors whitespace-nowrap text-sm min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple ${
-                  !selectedCategory ? 'bg-neon-purple text-text-primary' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  !selectedCategory
+                    ? 'bg-neon-purple text-text-primary'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
                 aria-pressed={!selectedCategory}
               >
                 All
               </button>
-              {['social', 'activity', 'event', 'referral', 'achievement', 'special'].map((cat) => (
+              {['social', 'activity', 'event', 'referral', 'achievement', 'special'].map(cat => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat as PointActionCategory)}
                   className={`px-3 sm:px-4 py-2 rounded-lg transition-colors capitalize whitespace-nowrap text-sm min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple ${
-                    selectedCategory === cat ? 'bg-neon-purple text-text-primary' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    selectedCategory === cat
+                      ? 'bg-neon-purple text-text-primary'
+                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                   }`}
                   aria-pressed={selectedCategory === cat}
                 >
@@ -935,9 +1176,18 @@ export default function EnhancedPointsPage() {
           </nav>
 
           {/* Mobile Card Layout */}
-          <div className="md:hidden divide-y divide-gray-700" role="list" aria-label="Point actions list">
-            {pointActions.map((action) => (
-              <article key={action.id} className="py-4 space-y-3" role="listitem" aria-label={`${action.action_name} - ${action.points_value} points`}>
+          <div
+            className="md:hidden divide-y divide-gray-700"
+            role="list"
+            aria-label="Point actions list"
+          >
+            {pointActions.map(action => (
+              <article
+                key={action.id}
+                className="py-4 space-y-3"
+                role="listitem"
+                aria-label={`${action.action_name} - ${action.points_value} points`}
+              >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-text-primary">
@@ -952,9 +1202,17 @@ export default function EnhancedPointsPage() {
                       <input
                         type="number"
                         value={editingPoints[action.action_key] ?? action.points_value}
-                        onChange={e => setEditingPoints({ ...editingPoints, [action.action_key]: parseInt(e.target.value) || 0 })}
+                        onChange={e =>
+                          setEditingPoints({
+                            ...editingPoints,
+                            [action.action_key]: Number.parseInt(e.target.value) || 0,
+                          })
+                        }
                         onBlur={() => {
-                          if (editingPoints[action.action_key] !== undefined && editingPoints[action.action_key] !== action.points_value) {
+                          if (
+                            editingPoints[action.action_key] !== undefined &&
+                            editingPoints[action.action_key] !== action.points_value
+                          ) {
                             handlePointsChange(action.action_key, editingPoints[action.action_key])
                           }
                         }}
@@ -962,7 +1220,10 @@ export default function EnhancedPointsPage() {
                         aria-label={`Points value for ${action.action_name}`}
                       />
                     ) : (
-                      <span className="text-sm font-bold text-green-400 bg-green-400/10 px-2 py-1 rounded" aria-label={`${action.points_value} points`}>
+                      <span
+                        className="text-sm font-bold text-green-400 bg-green-400/10 px-2 py-1 rounded"
+                        aria-label={`${action.points_value} points`}
+                      >
                         +{action.points_value}
                       </span>
                     )}
@@ -973,10 +1234,19 @@ export default function EnhancedPointsPage() {
                   <span className="px-2 py-1 text-xs rounded-full bg-purple-400/20 text-purple-400">
                     {action.category}
                   </span>
-                  <span className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
-                    action.is_active ? 'bg-green-400/20 text-green-400' : 'bg-gray-400/20 text-gray-400'
-                  }`} aria-label={action.is_active ? 'Status: Active' : 'Status: Inactive'}>
-                    {action.is_active ? <FiCheck size={12} aria-hidden="true" /> : <FiX size={12} aria-hidden="true" />}
+                  <span
+                    className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
+                      action.is_active
+                        ? 'bg-green-400/20 text-green-400'
+                        : 'bg-gray-400/20 text-gray-400'
+                    }`}
+                    aria-label={action.is_active ? 'Status: Active' : 'Status: Inactive'}
+                  >
+                    {action.is_active ? (
+                      <FiCheck size={12} aria-hidden="true" />
+                    ) : (
+                      <FiX size={12} aria-hidden="true" />
+                    )}
                     {action.is_active ? 'Active' : 'Inactive'}
                   </span>
                 </div>
@@ -987,7 +1257,9 @@ export default function EnhancedPointsPage() {
                       <label className="block text-xs text-text-secondary mb-1">Day</label>
                       <input
                         type="number"
-                        value={editingLimits[action.action_key]?.max_per_day ?? action.max_per_day ?? ''}
+                        value={
+                          editingLimits[action.action_key]?.max_per_day ?? action.max_per_day ?? ''
+                        }
                         onChange={e => {
                           const currentLimits = editingLimits[action.action_key] ?? {
                             max_per_day: action.max_per_day,
@@ -998,8 +1270,8 @@ export default function EnhancedPointsPage() {
                             ...editingLimits,
                             [action.action_key]: {
                               ...currentLimits,
-                              max_per_day: e.target.value ? parseInt(e.target.value) : null,
-                            }
+                              max_per_day: e.target.value ? Number.parseInt(e.target.value) : null,
+                            },
                           })
                         }}
                         onBlur={() => {
@@ -1015,7 +1287,11 @@ export default function EnhancedPointsPage() {
                       <label className="block text-xs text-text-secondary mb-1">Week</label>
                       <input
                         type="number"
-                        value={editingLimits[action.action_key]?.max_per_week ?? action.max_per_week ?? ''}
+                        value={
+                          editingLimits[action.action_key]?.max_per_week ??
+                          action.max_per_week ??
+                          ''
+                        }
                         onChange={e => {
                           const currentLimits = editingLimits[action.action_key] ?? {
                             max_per_day: action.max_per_day,
@@ -1026,8 +1302,8 @@ export default function EnhancedPointsPage() {
                             ...editingLimits,
                             [action.action_key]: {
                               ...currentLimits,
-                              max_per_week: e.target.value ? parseInt(e.target.value) : null,
-                            }
+                              max_per_week: e.target.value ? Number.parseInt(e.target.value) : null,
+                            },
                           })
                         }}
                         onBlur={() => {
@@ -1043,7 +1319,11 @@ export default function EnhancedPointsPage() {
                       <label className="block text-xs text-text-secondary mb-1">Month</label>
                       <input
                         type="number"
-                        value={editingLimits[action.action_key]?.max_per_month ?? action.max_per_month ?? ''}
+                        value={
+                          editingLimits[action.action_key]?.max_per_month ??
+                          action.max_per_month ??
+                          ''
+                        }
                         onChange={e => {
                           const currentLimits = editingLimits[action.action_key] ?? {
                             max_per_day: action.max_per_day,
@@ -1054,8 +1334,10 @@ export default function EnhancedPointsPage() {
                             ...editingLimits,
                             [action.action_key]: {
                               ...currentLimits,
-                              max_per_month: e.target.value ? parseInt(e.target.value) : null,
-                            }
+                              max_per_month: e.target.value
+                                ? Number.parseInt(e.target.value)
+                                : null,
+                            },
                           })
                         }}
                         onBlur={() => {
@@ -1120,16 +1402,14 @@ export default function EnhancedPointsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-700">
-                {pointActions.map((action) => (
+                {pointActions.map(action => (
                   <tr key={action.id} className="hover:bg-bg-primary/50 transition-colors">
                     <td className="px-4 py-4 whitespace-nowrap">
                       <div>
                         <div className="text-sm font-medium text-text-primary">
                           {action.action_name}
                         </div>
-                        <div className="text-xs text-text-secondary">
-                          {action.description}
-                        </div>
+                        <div className="text-xs text-text-secondary">{action.description}</div>
                       </div>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
@@ -1142,10 +1422,21 @@ export default function EnhancedPointsPage() {
                         <input
                           type="number"
                           value={editingPoints[action.action_key] ?? action.points_value}
-                          onChange={e => setEditingPoints({ ...editingPoints, [action.action_key]: parseInt(e.target.value) || 0 })}
+                          onChange={e =>
+                            setEditingPoints({
+                              ...editingPoints,
+                              [action.action_key]: Number.parseInt(e.target.value) || 0,
+                            })
+                          }
                           onBlur={() => {
-                            if (editingPoints[action.action_key] !== undefined && editingPoints[action.action_key] !== action.points_value) {
-                              handlePointsChange(action.action_key, editingPoints[action.action_key])
+                            if (
+                              editingPoints[action.action_key] !== undefined &&
+                              editingPoints[action.action_key] !== action.points_value
+                            ) {
+                              handlePointsChange(
+                                action.action_key,
+                                editingPoints[action.action_key],
+                              )
                             }
                           }}
                           className="w-20 px-2 py-1 bg-bg-primary border border-white/10 rounded text-text-primary font-semibold focus:border-neon-purple focus:outline-none"
@@ -1161,7 +1452,11 @@ export default function EnhancedPointsPage() {
                         <td className="px-4 py-4 whitespace-nowrap">
                           <input
                             type="number"
-                            value={editingLimits[action.action_key]?.max_per_day ?? action.max_per_day ?? ''}
+                            value={
+                              editingLimits[action.action_key]?.max_per_day ??
+                              action.max_per_day ??
+                              ''
+                            }
                             onChange={e => {
                               const currentLimits = editingLimits[action.action_key] ?? {
                                 max_per_day: action.max_per_day,
@@ -1172,13 +1467,18 @@ export default function EnhancedPointsPage() {
                                 ...editingLimits,
                                 [action.action_key]: {
                                   ...currentLimits,
-                                  max_per_day: e.target.value ? parseInt(e.target.value) : null,
-                                }
+                                  max_per_day: e.target.value
+                                    ? Number.parseInt(e.target.value)
+                                    : null,
+                                },
                               })
                             }}
                             onBlur={() => {
                               if (editingLimits[action.action_key]) {
-                                handleLimitsChange(action.action_key, editingLimits[action.action_key])
+                                handleLimitsChange(
+                                  action.action_key,
+                                  editingLimits[action.action_key],
+                                )
                               }
                             }}
                             placeholder="∞"
@@ -1188,7 +1488,11 @@ export default function EnhancedPointsPage() {
                         <td className="px-4 py-4 whitespace-nowrap">
                           <input
                             type="number"
-                            value={editingLimits[action.action_key]?.max_per_week ?? action.max_per_week ?? ''}
+                            value={
+                              editingLimits[action.action_key]?.max_per_week ??
+                              action.max_per_week ??
+                              ''
+                            }
                             onChange={e => {
                               const currentLimits = editingLimits[action.action_key] ?? {
                                 max_per_day: action.max_per_day,
@@ -1199,13 +1503,18 @@ export default function EnhancedPointsPage() {
                                 ...editingLimits,
                                 [action.action_key]: {
                                   ...currentLimits,
-                                  max_per_week: e.target.value ? parseInt(e.target.value) : null,
-                                }
+                                  max_per_week: e.target.value
+                                    ? Number.parseInt(e.target.value)
+                                    : null,
+                                },
                               })
                             }}
                             onBlur={() => {
                               if (editingLimits[action.action_key]) {
-                                handleLimitsChange(action.action_key, editingLimits[action.action_key])
+                                handleLimitsChange(
+                                  action.action_key,
+                                  editingLimits[action.action_key],
+                                )
                               }
                             }}
                             placeholder="∞"
@@ -1215,7 +1524,11 @@ export default function EnhancedPointsPage() {
                         <td className="px-4 py-4 whitespace-nowrap">
                           <input
                             type="number"
-                            value={editingLimits[action.action_key]?.max_per_month ?? action.max_per_month ?? ''}
+                            value={
+                              editingLimits[action.action_key]?.max_per_month ??
+                              action.max_per_month ??
+                              ''
+                            }
                             onChange={e => {
                               const currentLimits = editingLimits[action.action_key] ?? {
                                 max_per_day: action.max_per_day,
@@ -1226,13 +1539,18 @@ export default function EnhancedPointsPage() {
                                 ...editingLimits,
                                 [action.action_key]: {
                                   ...currentLimits,
-                                  max_per_month: e.target.value ? parseInt(e.target.value) : null,
-                                }
+                                  max_per_month: e.target.value
+                                    ? Number.parseInt(e.target.value)
+                                    : null,
+                                },
                               })
                             }}
                             onBlur={() => {
                               if (editingLimits[action.action_key]) {
-                                handleLimitsChange(action.action_key, editingLimits[action.action_key])
+                                handleLimitsChange(
+                                  action.action_key,
+                                  editingLimits[action.action_key],
+                                )
                               }
                             }}
                             placeholder="∞"
@@ -1242,9 +1560,11 @@ export default function EnhancedPointsPage() {
                       </>
                     )}
                     <td className="px-4 py-4 whitespace-nowrap">
-                      <span className={`flex items-center gap-1 text-sm ${
-                        action.is_active ? 'text-green-400' : 'text-gray-400'
-                      }`}>
+                      <span
+                        className={`flex items-center gap-1 text-sm ${
+                          action.is_active ? 'text-green-400' : 'text-gray-400'
+                        }`}
+                      >
                         {action.is_active ? (
                           <>
                             <FiCheck size={14} />
@@ -1279,9 +1599,7 @@ export default function EnhancedPointsPage() {
           {pointActions.length === 0 && (
             <div className="text-center py-12">
               <FiAward className="mx-auto text-gray-400 mb-4" size={48} />
-              <p className="text-text-secondary text-lg">
-                No point actions configured yet
-              </p>
+              <p className="text-text-secondary text-lg">No point actions configured yet</p>
               <p className="text-text-secondary text-sm mt-2">
                 Use the Guided Setup above to get started quickly
               </p>

@@ -2,19 +2,17 @@
 
 import { FaTiktok } from 'react-icons/fa'
 import {
+  FiActivity,
   FiAward,
   FiCalendar,
   FiInstagram,
   FiLink,
   FiMapPin,
   FiMusic,
+  FiStar,
   FiTwitter,
-  FiUser,
   FiYoutube,
   FiZap,
-  FiStar,
-  FiUsers,
-  FiActivity,
 } from 'react-icons/fi'
 
 interface ProfileViewCardProps {
@@ -33,11 +31,7 @@ export default function ProfileViewCard({ user, isOwnProfile = true }: ProfileVi
       <div className="relative">
         <div className="h-48 rounded-xl overflow-hidden bg-gradient-to-r from-neon-purple/20 to-neon-pink/20">
           {user.cover_image_url ? (
-            <img
-              src={user.cover_image_url}
-              alt="Cover"
-              className="w-full h-full object-cover"
-            />
+            <img src={user.cover_image_url} alt="Cover" className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-neon-purple/30 via-neon-pink/20 to-neon-purple/30" />
           )}
@@ -79,9 +73,7 @@ export default function ProfileViewCard({ user, isOwnProfile = true }: ProfileVi
               )}
             </h1>
             <p className="text-text-secondary">@{user.username}</p>
-            {user.pronouns && (
-              <p className="text-text-secondary text-sm mt-1">{user.pronouns}</p>
-            )}
+            {user.pronouns && <p className="text-text-secondary text-sm mt-1">{user.pronouns}</p>}
           </div>
 
           {/* Level Badge */}
@@ -92,16 +84,16 @@ export default function ProfileViewCard({ user, isOwnProfile = true }: ProfileVi
         </div>
 
         {/* Bio */}
-        {user.bio && (
-          <p className="text-text-primary mt-4 leading-relaxed">{user.bio}</p>
-        )}
+        {user.bio && <p className="text-text-primary mt-4 leading-relaxed">{user.bio}</p>}
 
         {/* Location & Info Row */}
         <div className="flex flex-wrap items-center gap-4 mt-4 text-sm text-text-secondary">
           {(user.city || user.location) && user.show_location !== false && (
             <span className="flex items-center gap-1.5">
               <FiMapPin size={14} />
-              {user.city}{user.city && user.location && ', '}{user.location}
+              {user.city}
+              {user.city && user.location && ', '}
+              {user.location}
             </span>
           )}
           {user.age && (
@@ -129,7 +121,9 @@ export default function ProfileViewCard({ user, isOwnProfile = true }: ProfileVi
             <div className="text-xs text-text-secondary">Streak</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-bold text-green-400">{user.total_events_attended || 0}</div>
+            <div className="text-xl font-bold text-green-400">
+              {user.total_events_attended || 0}
+            </div>
             <div className="text-xs text-text-secondary">Events</div>
           </div>
           <div className="text-center">
@@ -248,7 +242,11 @@ export default function ProfileViewCard({ user, isOwnProfile = true }: ProfileVi
         {/* Member Since */}
         {user.created_at && (
           <p className="mt-6 text-xs text-text-secondary">
-            Member since {new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+            Member since{' '}
+            {new Date(user.created_at).toLocaleDateString('en-US', {
+              month: 'long',
+              year: 'numeric',
+            })}
           </p>
         )}
       </div>

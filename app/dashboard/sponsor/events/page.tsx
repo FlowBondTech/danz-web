@@ -1,6 +1,12 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
+import { DANCE_STYLES, EVENT_TYPES } from '@/src/constants/eventConstants'
+import {
+  useGetEventsForSponsorshipQuery,
+  useGetMySponsorProfileQuery,
+  useGetSponsorCategoriesQuery,
+} from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -15,16 +21,9 @@ import {
   FiMapPin,
   FiRefreshCw,
   FiSearch,
-  FiStar,
   FiUsers,
   FiX,
 } from 'react-icons/fi'
-import {
-  useGetEventsForSponsorshipQuery,
-  useGetSponsorCategoriesQuery,
-  useGetMySponsorProfileQuery,
-} from '@/src/generated/graphql'
-import { DANCE_STYLES, EVENT_TYPES } from '@/src/constants/eventConstants'
 
 export default function SponsorEventsPage() {
   const { authenticated, ready } = usePrivy()
@@ -46,7 +45,11 @@ export default function SponsorEventsPage() {
 
   const { data: categoriesData } = useGetSponsorCategoriesQuery()
 
-  const { data: eventsData, loading: eventsLoading, refetch } = useGetEventsForSponsorshipQuery({
+  const {
+    data: eventsData,
+    loading: eventsLoading,
+    refetch,
+  } = useGetEventsForSponsorshipQuery({
     skip: !authenticated || !ready,
     variables: {
       input: {
@@ -70,27 +73,28 @@ export default function SponsorEventsPage() {
   const events = eventsData?.eventsForSponsorship || []
 
   // Filter events by search query
-  const filteredEvents = events.filter(event =>
-    !searchQuery ||
-    event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    event.location_name?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredEvents = events.filter(
+    event =>
+      !searchQuery ||
+      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.location_name?.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
   const toggleCategory = (slug: string) => {
     setSelectedCategories(prev =>
-      prev.includes(slug) ? prev.filter(c => c !== slug) : [...prev, slug]
+      prev.includes(slug) ? prev.filter(c => c !== slug) : [...prev, slug],
     )
   }
 
   const toggleEventType = (type: string) => {
     setSelectedEventTypes(prev =>
-      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type],
     )
   }
 
   const toggleDanceStyle = (style: string) => {
     setSelectedDanceStyles(prev =>
-      prev.includes(style) ? prev.filter(s => s !== style) : [...prev, style]
+      prev.includes(style) ? prev.filter(s => s !== style) : [...prev, style],
     )
   }
 
@@ -178,7 +182,7 @@ export default function SponsorEventsPage() {
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search events by name or location..."
                 className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-text-primary placeholder:text-text-muted focus:border-neon-purple/50 focus:outline-none"
               />
@@ -197,10 +201,16 @@ export default function SponsorEventsPage() {
               <span>Filters</span>
               {hasActiveFilters && (
                 <span className="px-1.5 py-0.5 bg-neon-purple text-white text-xs rounded-full">
-                  {selectedCategories.length + selectedEventTypes.length + selectedDanceStyles.length + (verifiedOnly ? 1 : 0) + (regionFilter ? 1 : 0)}
+                  {selectedCategories.length +
+                    selectedEventTypes.length +
+                    selectedDanceStyles.length +
+                    (verifiedOnly ? 1 : 0) +
+                    (regionFilter ? 1 : 0)}
                 </span>
               )}
-              <FiChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+              <FiChevronDown
+                className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`}
+              />
             </button>
           </div>
 
@@ -209,9 +219,11 @@ export default function SponsorEventsPage() {
             <div className="mt-4 pt-4 border-t border-white/10 space-y-4">
               {/* Categories */}
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">Categories</label>
+                <label className="block text-sm font-medium text-text-primary mb-2">
+                  Categories
+                </label>
                 <div className="flex flex-wrap gap-2">
-                  {categories.map((category) => (
+                  {categories.map(category => (
                     <button
                       key={category.slug}
                       onClick={() => toggleCategory(category.slug)}
@@ -229,9 +241,11 @@ export default function SponsorEventsPage() {
 
               {/* Event Types */}
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">Event Types</label>
+                <label className="block text-sm font-medium text-text-primary mb-2">
+                  Event Types
+                </label>
                 <div className="flex flex-wrap gap-2">
-                  {EVENT_TYPES.map((type) => (
+                  {EVENT_TYPES.map(type => (
                     <button
                       key={type.value}
                       onClick={() => toggleEventType(type.value)}
@@ -249,9 +263,11 @@ export default function SponsorEventsPage() {
 
               {/* Dance Styles */}
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">Dance Styles</label>
+                <label className="block text-sm font-medium text-text-primary mb-2">
+                  Dance Styles
+                </label>
                 <div className="flex flex-wrap gap-2">
-                  {DANCE_STYLES.slice(0, 12).map((style) => (
+                  {DANCE_STYLES.slice(0, 12).map(style => (
                     <button
                       key={style.value}
                       onClick={() => toggleDanceStyle(style.value)}
@@ -274,7 +290,7 @@ export default function SponsorEventsPage() {
                   <input
                     type="text"
                     value={regionFilter}
-                    onChange={(e) => setRegionFilter(e.target.value)}
+                    onChange={e => setRegionFilter(e.target.value)}
                     placeholder="e.g., New York, California"
                     className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-text-primary placeholder:text-text-muted focus:border-neon-purple/50 focus:outline-none"
                   />
@@ -323,8 +339,12 @@ export default function SponsorEventsPage() {
             <p className="text-text-secondary">Loading events...</p>
           </div>
         ) : filteredEvents.length > 0 ? (
-          <div className={viewMode === 'grid' ? 'grid sm:grid-cols-2 lg:grid-cols-3 gap-4' : 'space-y-4'}>
-            {filteredEvents.map((event) => (
+          <div
+            className={
+              viewMode === 'grid' ? 'grid sm:grid-cols-2 lg:grid-cols-3 gap-4' : 'space-y-4'
+            }
+          >
+            {filteredEvents.map(event => (
               <EventCard key={event.id} event={event} viewMode={viewMode} />
             ))}
           </div>
@@ -400,7 +420,10 @@ function EventCard({ event, viewMode }: { event: any; viewMode: 'grid' | 'list' 
           {event.dance_styles && event.dance_styles.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {event.dance_styles.slice(0, 3).map((style: string) => (
-                <span key={style} className="px-2 py-0.5 bg-neon-pink/10 text-neon-pink text-xs rounded-full">
+                <span
+                  key={style}
+                  className="px-2 py-0.5 bg-neon-pink/10 text-neon-pink text-xs rounded-full"
+                >
                   {style}
                 </span>
               ))}
@@ -465,12 +488,17 @@ function EventCard({ event, viewMode }: { event: any; viewMode: 'grid' | 'list' 
         {event.dance_styles && event.dance_styles.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-3">
             {event.dance_styles.slice(0, 2).map((style: string) => (
-              <span key={style} className="px-2 py-0.5 bg-neon-pink/10 text-neon-pink text-xs rounded-full">
+              <span
+                key={style}
+                className="px-2 py-0.5 bg-neon-pink/10 text-neon-pink text-xs rounded-full"
+              >
                 {style}
               </span>
             ))}
             {event.dance_styles.length > 2 && (
-              <span className="px-2 py-0.5 text-text-muted text-xs">+{event.dance_styles.length - 2}</span>
+              <span className="px-2 py-0.5 text-text-muted text-xs">
+                +{event.dance_styles.length - 2}
+              </span>
             )}
           </div>
         )}
@@ -483,7 +511,9 @@ function EventCard({ event, viewMode }: { event: any; viewMode: 'grid' | 'list' 
             ) : (
               <div className="w-6 h-6 rounded-full bg-neon-purple/20" />
             )}
-            <span className="text-xs text-text-muted truncate">by {event.facilitator.username || 'Unknown'}</span>
+            <span className="text-xs text-text-muted truncate">
+              by {event.facilitator.username || 'Unknown'}
+            </span>
           </div>
         )}
       </div>

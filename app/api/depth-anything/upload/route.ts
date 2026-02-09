@@ -3,7 +3,8 @@ import { NextResponse } from 'next/server'
 const HF_ORIGIN = 'https://depth-anything-depth-anything-3.hf.space'
 
 export async function POST(req: Request) {
-  let stage: 'parse_form' | 'upload_files' | 'run_handle_uploads' | 'parse_handle_uploads' = 'parse_form'
+  let stage: 'parse_form' | 'upload_files' | 'run_handle_uploads' | 'parse_handle_uploads' =
+    'parse_form'
   try {
     stage = 'parse_form'
     const form = await req.formData()
@@ -48,9 +49,7 @@ export async function POST(req: Request) {
       const attempt2 = attempt1.ok ? attempt1 : await tryUpload('file')
 
       if (!attempt2.ok) {
-        throw new Error(
-          `Upload failed: ${attempt2.status} ${attempt2.text}`,
-        )
+        throw new Error(`Upload failed: ${attempt2.status} ${attempt2.text}`)
       }
 
       const raw = attempt2.json

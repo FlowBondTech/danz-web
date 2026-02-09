@@ -3,10 +3,10 @@
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import { useGetMyProfileQuery } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { FiCalendar, FiUsers, FiCheckCircle, FiArrowLeft } from 'react-icons/fi'
-import Link from 'next/link'
+import { FiArrowLeft, FiCalendar, FiCheckCircle, FiUsers } from 'react-icons/fi'
 
 export default function AdminEventsPage() {
   const { authenticated, ready } = usePrivy()
@@ -62,9 +62,7 @@ export default function AdminEventsPage() {
 
         <div className="flex items-center justify-between mb-6 sm:mb-8">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">
-              Event Attendance
-            </h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">Event Attendance</h1>
             <p className="text-text-secondary mt-1">
               Track event attendance and verify point rewards
             </p>
@@ -76,9 +74,7 @@ export default function AdminEventsPage() {
           <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
             <div className="flex items-center justify-between mb-4">
               <FiCalendar className="text-neon-purple" size={24} />
-              <span className="text-xs text-text-secondary uppercase tracking-wider">
-                Total
-              </span>
+              <span className="text-xs text-text-secondary uppercase tracking-wider">Total</span>
             </div>
             <p className="text-2xl font-bold text-text-primary">0</p>
             <p className="text-sm text-text-secondary mt-1">Events</p>
@@ -98,9 +94,7 @@ export default function AdminEventsPage() {
           <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
             <div className="flex items-center justify-between mb-4">
               <FiCheckCircle className="text-green-400" size={24} />
-              <span className="text-xs text-text-secondary uppercase tracking-wider">
-                Points
-              </span>
+              <span className="text-xs text-text-secondary uppercase tracking-wider">Points</span>
             </div>
             <p className="text-2xl font-bold text-text-primary">0</p>
             <p className="text-sm text-text-secondary mt-1">Awarded</p>
@@ -115,8 +109,8 @@ export default function AdminEventsPage() {
               Event Management Coming Soon
             </h3>
             <p className="text-text-secondary mb-6">
-              Comprehensive event attendance tracking and point verification tools will be
-              available here soon.
+              Comprehensive event attendance tracking and point verification tools will be available
+              here soon.
             </p>
             <div className="flex flex-col gap-2 text-sm text-text-secondary text-left bg-bg-primary rounded-lg p-4">
               <p>• View all upcoming and past events</p>

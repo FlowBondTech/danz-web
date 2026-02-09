@@ -1,26 +1,32 @@
 'use client'
 
 import { motion } from 'motion/react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import {
   FiCalendar,
-  FiMapPin,
-  FiUsers,
-  FiDollarSign,
-  FiClock,
   FiCheck,
-  FiStar,
-  FiRepeat,
-  FiZap,
-  FiHeart,
-  FiShare2,
-  FiHelpCircle,
-  FiX,
   FiChevronDown,
+  FiClock,
+  FiHeart,
+  FiHelpCircle,
+  FiMapPin,
+  FiRepeat,
+  FiShare2,
+  FiStar,
+  FiUsers,
+  FiX,
+  FiZap,
 } from 'react-icons/fi'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 
-export type RegistrationStatusType = 'registered' | 'maybe' | 'waitlisted' | 'cancelled' | 'attended' | 'no-show' | null
+export type RegistrationStatusType =
+  | 'registered'
+  | 'maybe'
+  | 'waitlisted'
+  | 'cancelled'
+  | 'attended'
+  | 'no-show'
+  | null
 
 interface EventCardProps {
   event: {
@@ -72,7 +78,13 @@ const CATEGORY_EMOJIS: Record<string, string> = {
   cultural: '🌍',
 }
 
-export default function EventCard({ event, onRegister, onCancel, onUpdateStatus, variant = 'default' }: EventCardProps) {
+export default function EventCard({
+  event,
+  onRegister,
+  onCancel,
+  onUpdateStatus,
+  variant = 'default',
+}: EventCardProps) {
   const router = useRouter()
   const [isLiked, setIsLiked] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
@@ -85,7 +97,8 @@ export default function EventCard({ event, onRegister, onCancel, onUpdateStatus,
   }
 
   // Determine actual registration status
-  const registrationStatus = event.user_registration_status || (event.is_registered ? 'registered' : null)
+  const registrationStatus =
+    event.user_registration_status || (event.is_registered ? 'registered' : null)
   const isGoing = registrationStatus === 'registered' || registrationStatus === 'attended'
   const isMaybe = registrationStatus === 'maybe'
   const hasRegistration = isGoing || isMaybe
@@ -113,9 +126,7 @@ export default function EventCard({ event, onRegister, onCancel, onUpdateStatus,
   }
 
   const categoryEmoji = CATEGORY_EMOJIS[event.category || 'class'] || '🎵'
-  const spotsLeft = event.max_capacity
-    ? event.max_capacity - (event.registration_count || 0)
-    : null
+  const spotsLeft = event.max_capacity ? event.max_capacity - (event.registration_count || 0) : null
   const isAlmostFull = spotsLeft !== null && spotsLeft <= 5 && spotsLeft > 0
   const isFull = spotsLeft === 0
 
@@ -220,7 +231,9 @@ export default function EventCard({ event, onRegister, onCancel, onUpdateStatus,
               setIsLiked(!isLiked)
             }}
             className={`p-3 rounded-full ${
-              isLiked ? 'bg-red-500 text-text-primary' : 'bg-white/20 text-text-primary hover:bg-white/30'
+              isLiked
+                ? 'bg-red-500 text-text-primary'
+                : 'bg-white/20 text-text-primary hover:bg-white/30'
             }`}
           >
             <FiHeart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
@@ -279,11 +292,7 @@ export default function EventCard({ event, onRegister, onCancel, onUpdateStatus,
           {event.facilitator && (
             <div className="flex items-center gap-2 text-sm text-text-secondary">
               {event.facilitator.avatar_url ? (
-                <img
-                  src={event.facilitator.avatar_url}
-                  alt=""
-                  className="w-4 h-4 rounded-full"
-                />
+                <img src={event.facilitator.avatar_url} alt="" className="w-4 h-4 rounded-full" />
               ) : (
                 <div className="w-4 h-4 rounded-full bg-neon-purple/30" />
               )}
@@ -340,8 +349,8 @@ export default function EventCard({ event, onRegister, onCancel, onUpdateStatus,
                   isFull
                     ? 'bg-red-500'
                     : isAlmostFull
-                    ? 'bg-orange-500'
-                    : 'bg-gradient-to-r from-neon-purple to-neon-pink'
+                      ? 'bg-orange-500'
+                      : 'bg-gradient-to-r from-neon-purple to-neon-pink'
                 }`}
               />
             </div>
@@ -352,7 +361,7 @@ export default function EventCard({ event, onRegister, onCancel, onUpdateStatus,
         {hasRegistration ? (
           <div className="relative">
             <button
-              onClick={(e) => {
+              onClick={e => {
                 e.stopPropagation()
                 setShowStatusMenu(!showStatusMenu)
               }}
@@ -373,7 +382,9 @@ export default function EventCard({ event, onRegister, onCancel, onUpdateStatus,
                   Maybe
                 </>
               )}
-              <FiChevronDown className={`w-4 h-4 ml-1 transition-transform ${showStatusMenu ? 'rotate-180' : ''}`} />
+              <FiChevronDown
+                className={`w-4 h-4 ml-1 transition-transform ${showStatusMenu ? 'rotate-180' : ''}`}
+              />
             </button>
 
             {/* Status Dropdown Menu */}
@@ -386,7 +397,7 @@ export default function EventCard({ event, onRegister, onCancel, onUpdateStatus,
               >
                 {!isGoing && onUpdateStatus && (
                   <button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation()
                       onUpdateStatus(event, 'registered')
                       setShowStatusMenu(false)
@@ -399,7 +410,7 @@ export default function EventCard({ event, onRegister, onCancel, onUpdateStatus,
                 )}
                 {!isMaybe && onUpdateStatus && (
                   <button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation()
                       onUpdateStatus(event, 'maybe')
                       setShowStatusMenu(false)
@@ -412,7 +423,7 @@ export default function EventCard({ event, onRegister, onCancel, onUpdateStatus,
                 )}
                 {onCancel && (
                   <button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation()
                       onCancel(event)
                       setShowStatusMenu(false)

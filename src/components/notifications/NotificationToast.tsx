@@ -1,8 +1,8 @@
 'use client'
 
-import { motion, AnimatePresence } from 'motion/react'
-import { FiX, FiCheck, FiAlertCircle, FiInfo, FiAlertTriangle } from 'react-icons/fi'
 import { useNotifications } from '@/src/contexts/NotificationContext'
+import { AnimatePresence, motion } from 'motion/react'
+import { FiAlertCircle, FiAlertTriangle, FiCheck, FiInfo, FiX } from 'react-icons/fi'
 
 const toastStyles = {
   success: {
@@ -54,7 +54,9 @@ export default function NotificationToast() {
               <div className="p-4">
                 <div className="flex items-start gap-3">
                   {/* Icon */}
-                  <div className={`flex-shrink-0 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center ${style.iconColor}`}>
+                  <div
+                    className={`flex-shrink-0 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center ${style.iconColor}`}
+                  >
                     <Icon size={18} />
                   </div>
 
@@ -124,14 +126,14 @@ export function StandaloneToast({
     >
       <div className="p-4">
         <div className="flex items-start gap-3">
-          <div className={`flex-shrink-0 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center ${style.iconColor}`}>
+          <div
+            className={`flex-shrink-0 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center ${style.iconColor}`}
+          >
             <Icon size={18} />
           </div>
           <div className="flex-1 min-w-0 pt-0.5">
             <h4 className="font-medium text-text-primary text-sm leading-tight">{title}</h4>
-            {message && (
-              <p className="text-text-secondary text-sm mt-1 line-clamp-2">{message}</p>
-            )}
+            {message && <p className="text-text-secondary text-sm mt-1 line-clamp-2">{message}</p>}
           </div>
           {onDismiss && (
             <button

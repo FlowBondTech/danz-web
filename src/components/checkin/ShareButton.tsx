@@ -65,11 +65,7 @@ export function ShareButton({ streak, xpEarned, onShared }: ShareButtonProps) {
                  disabled:opacity-60 disabled:cursor-not-allowed"
     >
       {/* Farcaster icon */}
-      <svg
-        className="w-5 h-5"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-      >
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
         <path d="M18.24 3.75H5.76a2.01 2.01 0 0 0-2.01 2.01v12.48a2.01 2.01 0 0 0 2.01 2.01h12.48a2.01 2.01 0 0 0 2.01-2.01V5.76a2.01 2.01 0 0 0-2.01-2.01Zm-3.66 11.94a.54.54 0 0 1-.54.54h-4.08a.54.54 0 0 1-.54-.54V8.31a.54.54 0 0 1 .54-.54h4.08a.54.54 0 0 1 .54.54v7.38Z" />
       </svg>
 

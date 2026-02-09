@@ -1,30 +1,31 @@
 'use client'
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import {
-  FiX,
-  FiChevronRight,
-  FiChevronLeft,
-  FiCheck,
-  FiMusic,
-  FiMapPin,
-  FiCalendar,
-  FiUsers,
-  FiDollarSign,
-  FiGlobe,
-  FiRepeat,
-  FiZap,
-  FiAward,
-  FiStar,
-  FiEye,
-  FiLock,
-  FiShare2,
-} from 'react-icons/fi'
-import { useCreateEventMutation, RecurrenceType, GetEventsDocument } from '@/src/generated/graphql'
+import { GetEventsDocument, RecurrenceType, useCreateEventMutation } from '@/src/generated/graphql'
 import confetti from 'canvas-confetti'
-import DateTimePicker from './DateTimePicker'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
+import {
+  FiAward,
+  FiCalendar,
+  FiCheck,
+  FiChevronLeft,
+  FiChevronRight,
+  FiDollarSign,
+  FiEye,
+  FiGlobe,
+  FiHeart,
+  FiLock,
+  FiMapPin,
+  FiMusic,
+  FiRepeat,
+  FiShare2,
+  FiStar,
+  FiUsers,
+  FiX,
+  FiZap,
+} from 'react-icons/fi'
 import DatePicker from './DatePicker'
+import DateTimePicker from './DateTimePicker'
 
 interface EventCreationWizardProps {
   isOpen: boolean
@@ -54,6 +55,7 @@ interface EventFormData {
   recurrence_end_date: string
   recurrence_days: string[]
   is_public: boolean
+  allow_sponsors: boolean
 }
 
 const STEPS = [
@@ -96,7 +98,11 @@ const XP_REWARDS = {
   recurringEvent: 50,
 }
 
-export default function EventCreationWizard({ isOpen, onClose, onSuccess }: EventCreationWizardProps) {
+export default function EventCreationWizard({
+  isOpen,
+  onClose,
+  onSuccess,
+}: EventCreationWizardProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
@@ -125,6 +131,7 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
     recurrence_end_date: '',
     recurrence_days: [],
     is_public: true,
+    allow_sponsors: false,
   })
 
   const [createEvent] = useCreateEventMutation({
@@ -162,7 +169,9 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
             title: formData.title,
             description: formData.description,
             category: formData.category as any,
-            location_name: formData.is_virtual ? (formData.location_name || 'Virtual Event') : formData.location_name,
+            location_name: formData.is_virtual
+              ? formData.location_name || 'Virtual Event'
+              : formData.location_name,
             location_address: formData.location_address || null,
             location_city: formData.location_city || null,
             start_date_time: new Date(formData.start_date_time).toISOString(),
@@ -177,11 +186,13 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
             requirements: formData.requirements || null,
             is_recurring: formData.is_recurring,
             recurrence_type: formData.is_recurring ? formData.recurrence_type : RecurrenceType.None,
-            recurrence_end_date: formData.is_recurring && formData.recurrence_end_date
-              ? new Date(formData.recurrence_end_date).toISOString()
-              : null,
+            recurrence_end_date:
+              formData.is_recurring && formData.recurrence_end_date
+                ? new Date(formData.recurrence_end_date).toISOString()
+                : null,
             recurrence_days: formData.is_recurring ? formData.recurrence_days : null,
             is_public: formData.is_public,
+            allow_sponsors: formData.allow_sponsors,
           },
         },
       })
@@ -211,7 +222,10 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
       }, 3000)
     } catch (err: any) {
       console.error('Failed to create event:', err)
-      const message = err?.graphQLErrors?.[0]?.message || err?.message || 'Failed to create event. Please try again.'
+      const message =
+        err?.graphQLErrors?.[0]?.message ||
+        err?.message ||
+        'Failed to create event. Please try again.'
       setError(message)
     } finally {
       setIsSubmitting(false)
@@ -245,6 +259,7 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
       recurrence_end_date: '',
       recurrence_days: [],
       is_public: true,
+      allow_sponsors: false,
     })
   }
 
@@ -255,9 +270,7 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
       case 2:
         // Virtual events don't require location_name
         const hasLocation = formData.is_virtual || formData.location_name.trim().length > 0
-        return hasLocation &&
-               formData.start_date_time &&
-               formData.end_date_time
+        return hasLocation && formData.start_date_time && formData.end_date_time
       case 3:
         return true // All optional
       case 4:
@@ -347,8 +360,8 @@ export default function EventCreationWizard({ isOpen, onClose, onSuccess }: Even
                             currentStep > step.id
                               ? 'bg-green-500 text-text-primary'
                               : currentStep === step.id
-                              ? 'bg-gradient-to-r from-neon-purple to-neon-pink text-white'
-                              : 'bg-white/10 text-text-secondary'
+                                ? 'bg-gradient-to-r from-neon-purple to-neon-pink text-white'
+                                : 'bg-white/10 text-text-secondary'
                           }`}
                         >
                           {currentStep > step.id ? (
@@ -456,9 +469,7 @@ function StepBasics({
   return (
     <div className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-text-secondary mb-2">
-          Event Name *
-        </label>
+        <label className="block text-sm font-medium text-text-secondary mb-2">Event Name *</label>
         <input
           type="text"
           value={formData.title}
@@ -469,9 +480,7 @@ function StepBasics({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-text-secondary mb-3">
-          Category *
-        </label>
+        <label className="block text-sm font-medium text-text-secondary mb-3">Category *</label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {CATEGORIES.map(cat => (
             <button
@@ -491,9 +500,7 @@ function StepBasics({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-text-secondary mb-2">
-          Description
-        </label>
+        <label className="block text-sm font-medium text-text-secondary mb-2">Description</label>
         <textarea
           value={formData.description}
           onChange={e => updateFormData({ description: e.target.value })}
@@ -552,9 +559,7 @@ function StepWhenWhere({
 
       {formData.is_virtual ? (
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">
-            Virtual Link
-          </label>
+          <label className="block text-sm font-medium text-text-secondary mb-2">Virtual Link</label>
           <input
             type="url"
             value={formData.virtual_link}
@@ -579,9 +584,7 @@ function StepWhenWhere({
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-text-secondary mb-2">
-                Address
-              </label>
+              <label className="block text-sm font-medium text-text-secondary mb-2">Address</label>
               <input
                 type="text"
                 value={formData.location_address}
@@ -591,9 +594,7 @@ function StepWhenWhere({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-text-secondary mb-2">
-                City
-              </label>
+              <label className="block text-sm font-medium text-text-secondary mb-2">City</label>
               <input
                 type="text"
                 value={formData.location_city}
@@ -627,7 +628,11 @@ function StepDetails({
           <input
             type="number"
             value={formData.max_capacity || ''}
-            onChange={e => updateFormData({ max_capacity: e.target.value ? parseInt(e.target.value) : null })}
+            onChange={e =>
+              updateFormData({
+                max_capacity: e.target.value ? Number.parseInt(e.target.value) : null,
+              })
+            }
             className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
             placeholder="Leave empty for unlimited"
           />
@@ -640,7 +645,7 @@ function StepDetails({
             type="number"
             step="0.01"
             value={formData.price_usd || ''}
-            onChange={e => updateFormData({ price_usd: parseFloat(e.target.value) || 0 })}
+            onChange={e => updateFormData({ price_usd: Number.parseFloat(e.target.value) || 0 })}
             className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
             placeholder="0 for free"
           />
@@ -648,9 +653,7 @@ function StepDetails({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-text-secondary mb-3">
-          Skill Level
-        </label>
+        <label className="block text-sm font-medium text-text-secondary mb-3">Skill Level</label>
         <div className="grid grid-cols-2 gap-3">
           {SKILL_LEVELS.map(level => (
             <button
@@ -712,7 +715,10 @@ function StepExtras({
             onChange={e => updateFormData({ is_recurring: e.target.checked })}
             className="w-5 h-5 rounded text-neon-purple bg-white/10 border-white/30"
           />
-          <label htmlFor="is_recurring" className="flex items-center gap-2 text-text-primary font-medium">
+          <label
+            htmlFor="is_recurring"
+            className="flex items-center gap-2 text-text-primary font-medium"
+          >
             <FiRepeat className="w-5 h-5 text-neon-purple" />
             Make this a recurring event
             <span className="text-xs px-2 py-0.5 bg-neon-purple/30 rounded-full text-neon-purple">
@@ -729,12 +735,12 @@ function StepExtras({
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-text-secondary mb-2">
-                  Repeat
-                </label>
+                <label className="block text-sm font-medium text-text-secondary mb-2">Repeat</label>
                 <select
                   value={formData.recurrence_type}
-                  onChange={e => updateFormData({ recurrence_type: e.target.value as RecurrenceType })}
+                  onChange={e =>
+                    updateFormData({ recurrence_type: e.target.value as RecurrenceType })
+                  }
                   className="w-full bg-white/5 text-text-primary rounded-xl px-4 py-3 border border-white/10 focus:border-neon-purple/50 focus:outline-none"
                 >
                   <option value={RecurrenceType.Daily}>Daily</option>
@@ -744,9 +750,7 @@ function StepExtras({
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-text-secondary mb-2">
-                  Until
-                </label>
+                <label className="block text-sm font-medium text-text-secondary mb-2">Until</label>
                 <DatePicker
                   value={formData.recurrence_end_date}
                   onChange={value => updateFormData({ recurrence_end_date: value })}
@@ -810,9 +814,7 @@ function StepExtras({
 
       {/* Requirements */}
       <div>
-        <label className="block text-sm font-medium text-text-secondary mb-2">
-          Requirements
-        </label>
+        <label className="block text-sm font-medium text-text-secondary mb-2">Requirements</label>
         <textarea
           value={formData.requirements}
           onChange={e => updateFormData({ requirements: e.target.value })}
@@ -826,7 +828,9 @@ function StepExtras({
       <div className="p-4 bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-xl border border-green-500/30">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg ${formData.is_public ? 'bg-green-500/20' : 'bg-gray-500/20'}`}>
+            <div
+              className={`p-2 rounded-lg ${formData.is_public ? 'bg-green-500/20' : 'bg-gray-500/20'}`}
+            >
               {formData.is_public ? (
                 <FiEye className="w-5 h-5 text-green-400" />
               ) : (
@@ -865,6 +869,58 @@ function StepExtras({
           </div>
         )}
       </div>
+
+      {/* Allow Sponsors Toggle */}
+      <div className="p-4 bg-gradient-to-r from-pink-500/10 to-purple-500/10 rounded-xl border border-pink-500/30">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div
+              className={`p-2 rounded-lg ${formData.allow_sponsors ? 'bg-pink-500/20' : 'bg-gray-500/20'}`}
+            >
+              <FiHeart
+                className={`w-5 h-5 ${formData.allow_sponsors ? 'text-pink-400' : 'text-gray-400'}`}
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="allow_sponsors"
+                className="text-text-primary font-medium cursor-pointer"
+              >
+                {formData.allow_sponsors ? 'Sponsors Welcome' : 'No Sponsors'}
+              </label>
+              <p className="text-sm text-text-secondary">
+                {formData.allow_sponsors
+                  ? 'Accept sponsors to help fund your event'
+                  : 'This event is not accepting sponsors'}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => updateFormData({ allow_sponsors: !formData.allow_sponsors })}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+              formData.allow_sponsors ? 'bg-pink-500' : 'bg-gray-600'
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                formData.allow_sponsors ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
+        </div>
+        {formData.allow_sponsors && (
+          <div className="mt-3 pt-3 border-t border-white/10 space-y-2">
+            <div className="flex items-center gap-2 text-sm text-pink-400">
+              <FiHeart className="w-4 h-4" />
+              <span>Sponsors can apply to support your event</span>
+            </div>
+            <p className="text-xs text-text-muted">
+              You can configure sponsorship tiers and manage applications after the event is created
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
@@ -899,7 +955,9 @@ function StepPreview({ formData }: { formData: EventFormData }) {
               {category?.emoji || '🎉'}
             </div>
             <div className="flex-1">
-              <h4 className="text-xl font-bold text-text-primary">{formData.title || 'Untitled Event'}</h4>
+              <h4 className="text-xl font-bold text-text-primary">
+                {formData.title || 'Untitled Event'}
+              </h4>
               <p className="text-text-secondary">{category?.label || 'Event'}</p>
             </div>
             {formData.price_usd > 0 ? (
@@ -916,9 +974,7 @@ function StepPreview({ formData }: { formData: EventFormData }) {
 
         {/* Preview Details */}
         <div className="p-6 space-y-4">
-          {formData.description && (
-            <p className="text-text-secondary">{formData.description}</p>
-          )}
+          {formData.description && <p className="text-text-secondary">{formData.description}</p>}
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center gap-2 text-text-secondary">
@@ -939,6 +995,12 @@ function StepPreview({ formData }: { formData: EventFormData }) {
               <div className="flex items-center gap-2 text-neon-purple">
                 <FiRepeat className="w-4 h-4" />
                 <span>Recurring Event</span>
+              </div>
+            )}
+            {formData.allow_sponsors && (
+              <div className="flex items-center gap-2 text-pink-400">
+                <FiHeart className="w-4 h-4" />
+                <span>Sponsors Welcome</span>
               </div>
             )}
           </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { getDarkThemes, getLightThemes, type Theme } from '@/src/constants/themes'
+import { type Theme, getDarkThemes, getLightThemes } from '@/src/constants/themes'
 import { useTheme } from '@/src/contexts/ThemeContext'
 import { useState } from 'react'
 import { FiCheck, FiDroplet, FiMonitor, FiMoon, FiSave, FiSun, FiTrash2 } from 'react-icons/fi'
@@ -34,22 +34,10 @@ function ThemeCard({
 
       {/* Color preview */}
       <div className="flex gap-1.5 mb-3">
-        <div
-          className="w-8 h-8 rounded-lg"
-          style={{ backgroundColor: theme.colors.primary }}
-        />
-        <div
-          className="w-8 h-8 rounded-lg"
-          style={{ backgroundColor: theme.colors.neonPink }}
-        />
-        <div
-          className="w-8 h-8 rounded-lg"
-          style={{ backgroundColor: theme.colors.neonPurple }}
-        />
-        <div
-          className="w-8 h-8 rounded-lg"
-          style={{ backgroundColor: theme.colors.bgPrimary }}
-        />
+        <div className="w-8 h-8 rounded-lg" style={{ backgroundColor: theme.colors.primary }} />
+        <div className="w-8 h-8 rounded-lg" style={{ backgroundColor: theme.colors.neonPink }} />
+        <div className="w-8 h-8 rounded-lg" style={{ backgroundColor: theme.colors.neonPurple }} />
+        <div className="w-8 h-8 rounded-lg" style={{ backgroundColor: theme.colors.bgPrimary }} />
       </div>
 
       <div className="flex items-center gap-2 mb-1">

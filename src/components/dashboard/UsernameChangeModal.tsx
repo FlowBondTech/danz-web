@@ -2,17 +2,17 @@
 
 import { useMutation, useQuery } from '@apollo/client'
 import { gql } from 'graphql-tag'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
-  FiX,
-  FiEdit3,
+  FiAlertCircle,
   FiCheck,
   FiClock,
-  FiAlertCircle,
+  FiEdit3,
   FiInfo,
   FiLoader,
   FiLock,
   FiShield,
+  FiX,
 } from 'react-icons/fi'
 
 const GET_USERNAME_ELIGIBILITY = gql`
@@ -91,13 +91,14 @@ export default function UsernameChangeModal({
   const [isCheckingUsername, setIsCheckingUsername] = useState(false)
   const [isUsernameAvailable, setIsUsernameAvailable] = useState<boolean | null>(null)
 
-  const { data: eligibilityData, loading: eligibilityLoading, refetch } = useQuery(
-    GET_USERNAME_ELIGIBILITY,
-    { skip: !isOpen }
-  )
+  const {
+    data: eligibilityData,
+    loading: eligibilityLoading,
+    refetch,
+  } = useQuery(GET_USERNAME_ELIGIBILITY, { skip: !isOpen })
 
   const [requestChange, { loading: requesting }] = useMutation(REQUEST_USERNAME_CHANGE, {
-    onCompleted: (data) => {
+    onCompleted: data => {
       if (data.requestUsernameChange.success) {
         if (data.requestUsernameChange.auto_approved) {
           onSuccess?.()
@@ -164,7 +165,7 @@ export default function UsernameChangeModal({
               query: `query CheckUsername($username: String!) { checkUsername(username: $username) }`,
               variables: { username: newUsername },
             }),
-          }
+          },
         )
         const { data } = await response.json()
         setIsUsernameAvailable(data?.checkUsername ?? false)
@@ -205,10 +206,7 @@ export default function UsernameChangeModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
       <div className="relative bg-bg-secondary border border-neon-purple/30 rounded-2xl w-full max-w-md mx-4 shadow-xl shadow-neon-purple/10">
@@ -218,10 +216,7 @@ export default function UsernameChangeModal({
             <FiEdit3 className="text-neon-purple" />
             Change Username
           </h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-          >
+          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
             <FiX className="text-text-secondary" size={20} />
           </button>
         </div>
@@ -250,7 +245,9 @@ export default function UsernameChangeModal({
                   <FiShield className="text-green-500" size={20} />
                   <div>
                     <p className="text-text-secondary text-sm">Your permanent identity:</p>
-                    <p className="text-green-400 font-bold text-xl mt-1">{currentUsername}.danz.eth</p>
+                    <p className="text-green-400 font-bold text-xl mt-1">
+                      {currentUsername}.danz.eth
+                    </p>
                   </div>
                 </div>
               </div>
@@ -280,9 +277,7 @@ export default function UsernameChangeModal({
                 <div className="flex items-start gap-3">
                   <FiClock className="text-yellow-500 mt-0.5" size={20} />
                   <div>
-                    <h3 className="font-semibold text-yellow-500">
-                      Pending Request
-                    </h3>
+                    <h3 className="font-semibold text-yellow-500">Pending Request</h3>
                     <p className="text-sm text-text-secondary mt-1">
                       You have a pending username change request
                     </p>
@@ -306,9 +301,7 @@ export default function UsernameChangeModal({
                 <div className="flex justify-between">
                   <span className="text-text-secondary">Submitted</span>
                   <span className="text-text-primary text-sm">
-                    {new Date(
-                      eligibility.pending_request.created_at
-                    ).toLocaleDateString()}
+                    {new Date(eligibility.pending_request.created_at).toLocaleDateString()}
                   </span>
                 </div>
                 {eligibility.pending_request.reason && (
@@ -336,12 +329,8 @@ export default function UsernameChangeModal({
                 <div className="flex items-start gap-3">
                   <FiAlertCircle className="text-orange-500 mt-0.5" size={20} />
                   <div>
-                    <h3 className="font-semibold text-orange-500">
-                      Cannot Request Change
-                    </h3>
-                    <p className="text-sm text-text-secondary mt-1">
-                      {eligibility?.message}
-                    </p>
+                    <h3 className="font-semibold text-orange-500">Cannot Request Change</h3>
+                    <p className="text-sm text-text-secondary mt-1">{eligibility?.message}</p>
                   </div>
                 </div>
               </div>
@@ -368,11 +357,7 @@ export default function UsernameChangeModal({
               >
                 <div className="flex items-start gap-3">
                   <FiInfo
-                    className={
-                      eligibility?.will_auto_approve
-                        ? 'text-green-500'
-                        : 'text-blue-500'
-                    }
+                    className={eligibility?.will_auto_approve ? 'text-green-500' : 'text-blue-500'}
                     size={20}
                   />
                   <p className="text-sm text-text-secondary">
@@ -385,9 +370,7 @@ export default function UsernameChangeModal({
 
               {/* Current Username */}
               <div>
-                <label className="block text-text-secondary text-sm mb-2">
-                  Current Username
-                </label>
+                <label className="block text-text-secondary text-sm mb-2">Current Username</label>
                 <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text-secondary">
                   @{currentUsername}
                 </div>
@@ -395,9 +378,7 @@ export default function UsernameChangeModal({
 
               {/* New Username */}
               <div>
-                <label className="block text-text-secondary text-sm mb-2">
-                  New Username
-                </label>
+                <label className="block text-text-secondary text-sm mb-2">New Username</label>
                 <div className="relative">
                   <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">
                     @
@@ -405,15 +386,15 @@ export default function UsernameChangeModal({
                   <input
                     type="text"
                     value={newUsername}
-                    onChange={(e) =>
+                    onChange={e =>
                       setNewUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))
                     }
                     className={`w-full pl-8 pr-10 py-3 bg-white/5 border rounded-lg text-text-primary focus:outline-none transition-colors ${
                       usernameError
                         ? 'border-red-500'
                         : isUsernameAvailable
-                        ? 'border-green-500'
-                        : 'border-white/10 focus:border-neon-purple'
+                          ? 'border-green-500'
+                          : 'border-white/10 focus:border-neon-purple'
                     }`}
                     placeholder="new_username"
                     maxLength={20}
@@ -429,18 +410,12 @@ export default function UsernameChangeModal({
                     ) : null}
                   </div>
                 </div>
-                {usernameError && (
-                  <p className="text-red-500 text-sm mt-1">{usernameError}</p>
-                )}
+                {usernameError && <p className="text-red-500 text-sm mt-1">{usernameError}</p>}
                 {isUsernameAvailable === false && !usernameError && (
-                  <p className="text-red-500 text-sm mt-1">
-                    This username is already taken
-                  </p>
+                  <p className="text-red-500 text-sm mt-1">This username is already taken</p>
                 )}
                 {isUsernameAvailable === true && (
-                  <p className="text-green-500 text-sm mt-1">
-                    Username is available!
-                  </p>
+                  <p className="text-green-500 text-sm mt-1">Username is available!</p>
                 )}
               </div>
 
@@ -448,12 +423,11 @@ export default function UsernameChangeModal({
               {!eligibility?.will_auto_approve && (
                 <div>
                   <label className="block text-text-secondary text-sm mb-2">
-                    Reason for change{' '}
-                    <span className="text-text-secondary/50">(optional)</span>
+                    Reason for change <span className="text-text-secondary/50">(optional)</span>
                   </label>
                   <textarea
                     value={reason}
-                    onChange={(e) => setReason(e.target.value)}
+                    onChange={e => setReason(e.target.value)}
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text-primary focus:outline-none focus:border-neon-purple transition-colors resize-none"
                     rows={3}
                     placeholder="Why would you like to change your username?"
@@ -468,19 +442,14 @@ export default function UsernameChangeModal({
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={
-                  requesting ||
-                  !newUsername ||
-                  !isUsernameAvailable ||
-                  !!usernameError
-                }
+                disabled={requesting || !newUsername || !isUsernameAvailable || !!usernameError}
                 className="w-full py-3 bg-neon-purple hover:bg-neon-purple/80 rounded-xl text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {requesting
                   ? 'Submitting...'
                   : eligibility?.will_auto_approve
-                  ? 'Change Username'
-                  : 'Submit Request'}
+                    ? 'Change Username'
+                    : 'Submit Request'}
               </button>
             </form>
           )}

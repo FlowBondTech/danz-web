@@ -51,8 +51,7 @@ const config: Config = {
           'linear-gradient(135deg, rgb(var(--color-primary-rgb)) 0%, rgb(var(--color-primary-alt-rgb)) 100%)',
         'gradient-neon':
           'linear-gradient(135deg, rgb(var(--color-neon-pink-rgb)) 0%, rgb(var(--color-neon-purple-rgb)) 100%)',
-        'gradient-radial':
-          'radial-gradient(circle at center, var(--tw-gradient-stops))',
+        'gradient-radial': 'radial-gradient(circle at center, var(--tw-gradient-stops))',
       },
       boxShadow: {
         'glow-pink': '0 0 30px rgb(var(--color-neon-pink-rgb) / 0.5)',

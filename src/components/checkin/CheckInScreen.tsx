@@ -27,9 +27,7 @@ export function CheckInScreen({ streak, onCheckIn }: CheckInScreenProps) {
       {/* Streak display */}
       {streak > 0 && (
         <div className="mb-5 px-4 py-2 rounded-full bg-gradient-to-r from-neon-pink/20 to-neon-purple/20 border border-neon-pink/40 animate-float">
-          <span className="text-sm font-medium text-neon-pink">
-            🔥 {streak} day streak
-          </span>
+          <span className="text-sm font-medium text-neon-pink">🔥 {streak} day streak</span>
         </div>
       )}
 
@@ -45,7 +43,10 @@ export function CheckInScreen({ streak, onCheckIn }: CheckInScreenProps) {
       {/* Yes button - with animated ring */}
       <div className="relative">
         {/* Outer spinning ring */}
-        <div className="absolute -inset-2.5 rounded-full bg-gradient-to-r from-neon-pink via-neon-purple to-neon-pink animate-spin-slow opacity-80" style={{ animationDuration: '3s' }} />
+        <div
+          className="absolute -inset-2.5 rounded-full bg-gradient-to-r from-neon-pink via-neon-purple to-neon-pink animate-spin-slow opacity-80"
+          style={{ animationDuration: '3s' }}
+        />
 
         {/* Middle pulsing ring */}
         <div className="absolute -inset-1.5 rounded-full bg-gradient-to-r from-neon-pink to-neon-purple animate-pulse opacity-60" />
@@ -72,9 +73,7 @@ export function CheckInScreen({ streak, onCheckIn }: CheckInScreenProps) {
           {/* Content */}
           <div className="relative flex flex-col items-center justify-center z-10">
             <span className="text-4xl mb-1.5 animate-bounce">💃</span>
-            <span className="text-lg font-bold text-white drop-shadow-lg">
-              Yes I Danz&apos;d!
-            </span>
+            <span className="text-lg font-bold text-white drop-shadow-lg">Yes I Danz&apos;d!</span>
           </div>
 
           {/* Burst animation on click */}
@@ -82,8 +81,14 @@ export function CheckInScreen({ streak, onCheckIn }: CheckInScreenProps) {
             <>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="absolute w-full h-full rounded-full bg-neon-pink animate-ping opacity-40" />
-                <div className="absolute w-[130%] h-[130%] rounded-full bg-neon-purple animate-ping opacity-30" style={{ animationDelay: '0.1s' }} />
-                <div className="absolute w-[160%] h-[160%] rounded-full bg-neon-pink animate-ping opacity-20" style={{ animationDelay: '0.2s' }} />
+                <div
+                  className="absolute w-[130%] h-[130%] rounded-full bg-neon-purple animate-ping opacity-30"
+                  style={{ animationDelay: '0.1s' }}
+                />
+                <div
+                  className="absolute w-[160%] h-[160%] rounded-full bg-neon-pink animate-ping opacity-20"
+                  style={{ animationDelay: '0.2s' }}
+                />
               </div>
             </>
           )}
@@ -94,7 +99,10 @@ export function CheckInScreen({ streak, onCheckIn }: CheckInScreenProps) {
       <div className="mt-6 text-sm text-text-muted animate-fade-in">
         <span className="text-neon-blue font-semibold">+50 XP</span>
         {streak > 0 && (
-          <span className="text-neon-pink font-semibold"> + {Math.min((streak + 1) * 5, 50)} streak bonus</span>
+          <span className="text-neon-pink font-semibold">
+            {' '}
+            + {Math.min((streak + 1) * 5, 50)} streak bonus
+          </span>
         )}
       </div>
 

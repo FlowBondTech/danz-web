@@ -1,14 +1,7 @@
 'use client'
 
-import { type Theme, defaultThemeId, getDarkThemes, getLightThemes, getTheme, themes } from '@/src/constants/themes'
-import {
-  type ReactNode,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import { type Theme, defaultThemeId, getTheme, themes } from '@/src/constants/themes'
+import { type ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react'
 
 interface CustomColors {
   [key: string]: string
@@ -162,7 +155,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   // Apply theme whenever it changes
   useEffect(() => {
     if (mounted) {
-      const theme = getTheme(themeId) || getStoredCustomThemes()[themeId] || getTheme(defaultThemeId)
+      const theme =
+        getTheme(themeId) || getStoredCustomThemes()[themeId] || getTheme(defaultThemeId)
       applyThemeToDOM(theme, customColors)
     }
   }, [themeId, customColors, mounted])
@@ -181,29 +175,35 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  const setMode = useCallback((newMode: ThemeMode) => {
-    setModeState(newMode)
-    localStorage.setItem(MODE_STORAGE_KEY, newMode)
-    // Switch to appropriate theme for mode
-    setThemeId(getThemeForMode(themeId, newMode))
-  }, [themeId])
+  const setMode = useCallback(
+    (newMode: ThemeMode) => {
+      setModeState(newMode)
+      localStorage.setItem(MODE_STORAGE_KEY, newMode)
+      // Switch to appropriate theme for mode
+      setThemeId(getThemeForMode(themeId, newMode))
+    },
+    [themeId],
+  )
 
   const toggleMode = useCallback(() => {
     const newMode = mode === 'dark' ? 'light' : 'dark'
     setMode(newMode)
   }, [mode, setMode])
 
-  const setUseSystemTheme = useCallback((use: boolean) => {
-    setUseSystemThemeState(use)
-    localStorage.setItem(USE_SYSTEM_KEY, use.toString())
-    if (use) {
-      // Apply system preference immediately
-      const systemMode = getSystemThemePreference()
-      setModeState(systemMode)
-      localStorage.setItem(MODE_STORAGE_KEY, systemMode)
-      setThemeId(getThemeForMode(themeId, systemMode))
-    }
-  }, [themeId])
+  const setUseSystemTheme = useCallback(
+    (use: boolean) => {
+      setUseSystemThemeState(use)
+      localStorage.setItem(USE_SYSTEM_KEY, use.toString())
+      if (use) {
+        // Apply system preference immediately
+        const systemMode = getSystemThemePreference()
+        setModeState(systemMode)
+        localStorage.setItem(MODE_STORAGE_KEY, systemMode)
+        setThemeId(getThemeForMode(themeId, systemMode))
+      }
+    },
+    [themeId],
+  )
 
   const setCustomColor = useCallback((key: string, value: string) => {
     setCustomColors(prev => {
@@ -238,7 +238,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       setCustomColors({})
       localStorage.removeItem(CUSTOM_COLORS_KEY)
     },
-    [themeId, customColors]
+    [themeId, customColors],
   )
 
   const deleteCustomTheme = useCallback(
@@ -251,7 +251,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         setTheme(defaultThemeId)
       }
     },
-    [themeId, setTheme]
+    [themeId, setTheme],
   )
 
   const getCustomThemes = useCallback((): Theme[] => {

@@ -1,12 +1,12 @@
 'use client'
 
+import { useGetMyProfileQuery } from '@/src/generated/graphql'
+import { STRIPE_PRICE_IDS, stripeService } from '@/src/services/stripe.service'
 import { usePrivy } from '@privy-io/react-auth'
 import { motion } from 'motion/react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { FiCheck, FiCreditCard } from 'react-icons/fi'
-import { useGetMyProfileQuery } from '@/src/generated/graphql'
-import { STRIPE_PRICE_IDS, stripeService } from '@/src/services/stripe.service'
 
 const plans = [
   {
@@ -58,7 +58,7 @@ export default function SubscriptionSection() {
   const isPremium = user?.is_premium === 'active'
   const currentPlan = user?.subscription_plan
 
-  const handleSelectPlan = async (plan: typeof plans[0]) => {
+  const handleSelectPlan = async (plan: (typeof plans)[0]) => {
     if (!authenticated) {
       login()
       return
@@ -73,7 +73,10 @@ export default function SubscriptionSection() {
     setError(null)
 
     try {
-      const { url } = await stripeService.createCheckoutSession(plan.priceId, plan.id as 'monthly' | 'yearly')
+      const { url } = await stripeService.createCheckoutSession(
+        plan.priceId,
+        plan.id as 'monthly' | 'yearly',
+      )
       if (url) {
         window.location.href = url
       }
@@ -133,76 +136,76 @@ export default function SubscriptionSection() {
           {/* Pricing Cards - Only show if user doesn't have premium */}
           {!isPremium && (
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
-            {plans.map((plan, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className={`relative ${plan.highlighted ? '' : ''}`}
-              >
-                {/* Badge */}
-                {plan.badge && (
-                  <div className="absolute -top-3 right-6 z-10">
-                    <span className="bg-gradient-neon text-white px-4 py-1.5 rounded-full text-sm font-medium">
-                      {plan.badge}
-                    </span>
-                  </div>
-                )}
-
-                <div
-                  className={`bg-bg-card/30 backdrop-blur-sm border rounded-3xl p-8 h-full relative overflow-hidden transition-all duration-300 ${
-                    plan.highlighted
-                      ? 'border-neon-purple/50 shadow-xl shadow-neon-purple/10'
-                      : 'border-white/10 hover:border-white/20'
-                  }`}
+              {plans.map((plan, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  className={`relative ${plan.highlighted ? '' : ''}`}
                 >
-                  {/* Plan Name */}
-                  <h3 className="text-2xl font-bold text-center mb-8">{plan.name}</h3>
-
-                  {/* Features List */}
-                  <ul className="space-y-4 mb-8">
-                    {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start gap-3">
-                        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <FiCheck className="w-3 h-3 text-text-primary" />
-                        </div>
-                        <span className="text-text-primary">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* Price Section */}
-                  <div className="text-center mb-6">
-                    <div className="flex items-baseline justify-center gap-1">
-                      <span className="text-3xl font-bold gradient-text">{plan.price}</span>
-                      <span className="text-text-muted">{plan.period}</span>
+                  {/* Badge */}
+                  {plan.badge && (
+                    <div className="absolute -top-3 right-6 z-10">
+                      <span className="bg-gradient-neon text-white px-4 py-1.5 rounded-full text-sm font-medium">
+                        {plan.badge}
+                      </span>
                     </div>
-                  </div>
+                  )}
 
-                  {/* CTA Button */}
-                  <motion.button
-                    type="button"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleSelectPlan(plan)}
-                    disabled={loading === plan.id}
-                    className={`w-full py-3 px-6 rounded-xl font-medium transition-all ${
+                  <div
+                    className={`bg-bg-card/30 backdrop-blur-sm border rounded-3xl p-8 h-full relative overflow-hidden transition-all duration-300 ${
                       plan.highlighted
-                        ? 'bg-gradient-neon text-white shadow-lg hover:shadow-neon-purple/50'
-                        : 'bg-gradient-to-r from-neon-purple/20 to-neon-pink/20 text-white border border-white/10 hover:border-white/20'
-                    } ${loading === plan.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        ? 'border-neon-purple/50 shadow-xl shadow-neon-purple/10'
+                        : 'border-white/10 hover:border-white/20'
+                    }`}
                   >
-                    {loading === plan.id
-                      ? 'Processing...'
-                      : authenticated
-                        ? 'Select Plan'
-                        : 'Join to Select'}
-                  </motion.button>
-                </div>
-              </motion.div>
-            ))}
+                    {/* Plan Name */}
+                    <h3 className="text-2xl font-bold text-center mb-8">{plan.name}</h3>
+
+                    {/* Features List */}
+                    <ul className="space-y-4 mb-8">
+                      {plan.features.map((feature, featureIndex) => (
+                        <li key={featureIndex} className="flex items-start gap-3">
+                          <div className="w-5 h-5 rounded-full bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <FiCheck className="w-3 h-3 text-text-primary" />
+                          </div>
+                          <span className="text-text-primary">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* Price Section */}
+                    <div className="text-center mb-6">
+                      <div className="flex items-baseline justify-center gap-1">
+                        <span className="text-3xl font-bold gradient-text">{plan.price}</span>
+                        <span className="text-text-muted">{plan.period}</span>
+                      </div>
+                    </div>
+
+                    {/* CTA Button */}
+                    <motion.button
+                      type="button"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => handleSelectPlan(plan)}
+                      disabled={loading === plan.id}
+                      className={`w-full py-3 px-6 rounded-xl font-medium transition-all ${
+                        plan.highlighted
+                          ? 'bg-gradient-neon text-white shadow-lg hover:shadow-neon-purple/50'
+                          : 'bg-gradient-to-r from-neon-purple/20 to-neon-pink/20 text-white border border-white/10 hover:border-white/20'
+                      } ${loading === plan.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {loading === plan.id
+                        ? 'Processing...'
+                        : authenticated
+                          ? 'Select Plan'
+                          : 'Join to Select'}
+                    </motion.button>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           )}
 

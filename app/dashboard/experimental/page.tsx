@@ -6,13 +6,14 @@ import { usePrivy } from '@privy-io/react-auth'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { FiAlertTriangle, FiArrowRight, FiBox, FiLayers, FiZap } from 'react-icons/fi'
+import { FiAlertTriangle, FiArrowRight, FiBox, FiZap } from 'react-icons/fi'
 
 const experimentalFeatures = [
   {
     id: 'depth-anything',
     name: 'Depth Anything',
-    description: 'AI-powered depth map generation from images. Create stunning 3D effects from 2D photos.',
+    description:
+      'AI-powered depth map generation from images. Create stunning 3D effects from 2D photos.',
     icon: '🔮',
     href: '/dashboard/experimental/depth-anything',
     status: 'beta',
@@ -21,7 +22,8 @@ const experimentalFeatures = [
   {
     id: 'miniapps',
     name: 'Mini-Apps Ideas Lab',
-    description: 'Explore concepts for the DANZ mini-apps ecosystem. SDK preview and architecture diagrams.',
+    description:
+      'Explore concepts for the DANZ mini-apps ecosystem. SDK preview and architecture diagrams.',
     icon: '🧩',
     href: '/dashboard/experimental/miniapps',
     status: 'concept',
@@ -39,11 +41,7 @@ function StatusBadge({ status }: { status: string }) {
 
   const { bg, text, label } = config[status] || config.concept
 
-  return (
-    <span className={`px-2 py-1 rounded-full text-xs font-medium ${bg} ${text}`}>
-      {label}
-    </span>
-  )
+  return <span className={`px-2 py-1 rounded-full text-xs font-medium ${bg} ${text}`}>{label}</span>
 }
 
 export default function ExperimentalPage() {
@@ -87,9 +85,7 @@ export default function ExperimentalPage() {
             <FiZap className="text-yellow-500" />
             Experimental Features
           </h1>
-          <p className="text-text-secondary mt-2">
-            Try out features that are still in development
-          </p>
+          <p className="text-text-secondary mt-2">Try out features that are still in development</p>
         </div>
 
         {/* Warning Banner */}
@@ -98,15 +94,15 @@ export default function ExperimentalPage() {
           <div>
             <p className="text-yellow-400 font-medium">Heads up!</p>
             <p className="text-text-muted text-sm mt-1">
-              These features are experimental and may be unstable, incomplete, or change without notice.
-              Use at your own risk and provide feedback to help us improve.
+              These features are experimental and may be unstable, incomplete, or change without
+              notice. Use at your own risk and provide feedback to help us improve.
             </p>
           </div>
         </div>
 
         {/* Features Grid */}
         <div className="grid gap-4">
-          {experimentalFeatures.map((feature) => (
+          {experimentalFeatures.map(feature => (
             <Link
               key={feature.id}
               href={feature.href}
@@ -123,11 +119,9 @@ export default function ExperimentalPage() {
                     </h3>
                     <StatusBadge status={feature.status} />
                   </div>
-                  <p className="text-text-secondary text-sm mb-3">
-                    {feature.description}
-                  </p>
+                  <p className="text-text-secondary text-sm mb-3">{feature.description}</p>
                   <div className="flex flex-wrap gap-2">
-                    {feature.tags.map((tag) => (
+                    {feature.tags.map(tag => (
                       <span
                         key={tag}
                         className="px-2 py-0.5 bg-white/5 rounded text-xs text-text-muted"
@@ -150,7 +144,8 @@ export default function ExperimentalPage() {
             <h3 className="text-lg font-bold text-text-primary">More Coming Soon</h3>
           </div>
           <p className="text-text-muted text-sm">
-            We're always working on new experimental features. Check back regularly or follow our updates to see what's next.
+            We're always working on new experimental features. Check back regularly or follow our
+            updates to see what's next.
           </p>
         </div>
       </div>

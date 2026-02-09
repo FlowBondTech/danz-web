@@ -1,7 +1,7 @@
 'use client'
 
+import { type ReferredUser, getReferredUsers } from '@/src/lib/supabase'
 import { useCallback, useEffect, useState } from 'react'
-import { getReferredUsers, type ReferredUser } from '@/src/lib/supabase'
 
 interface UserPointsData {
   current_points_balance: number
@@ -12,7 +12,8 @@ interface UserPointsData {
 }
 
 const SUPABASE_URL = 'https://eoajujwpdkfuicnoxetk.supabase.co'
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvYWp1andwZGtmdWljbm94ZXRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NDQzMzQsImV4cCI6MjA3MDIyMDMzNH0.NpMiRO22b-y-7zHo-RhA0ZX8tHkSZiTk9jlWcF-UZEg'
+const SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvYWp1andwZGtmdWljbm94ZXRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NDQzMzQsImV4cCI6MjA3MDIyMDMzNH0.NpMiRO22b-y-7zHo-RhA0ZX8tHkSZiTk9jlWcF-UZEg'
 
 /**
  * Fetch user points data from Supabase
@@ -23,10 +24,10 @@ async function fetchUserPoints(username: string): Promise<UserPointsData | null>
       `${SUPABASE_URL}/rest/v1/users?username=eq.${encodeURIComponent(username)}&select=current_points_balance,total_points_earned,total_points_spent,referral_count,referral_points_earned`,
       {
         headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         },
-      }
+      },
     )
 
     if (!response.ok) return null
@@ -105,10 +106,10 @@ export function useReferralData(username: string | null | undefined) {
     totalSignups: referrals.length,
     totalCompleted: completedCount,
     // 20 points per signup + 230 per completion = 250 total per completed
-    totalPointsEarned: pointsData?.referral_points_earned || ((referrals.length * 20) + (completedCount * 230)),
-    conversionRate: referrals.length > 0
-      ? Math.round((completedCount / referrals.length) * 100)
-      : 0,
+    totalPointsEarned:
+      pointsData?.referral_points_earned || referrals.length * 20 + completedCount * 230,
+    conversionRate:
+      referrals.length > 0 ? Math.round((completedCount / referrals.length) * 100) : 0,
     pendingReferrals: pendingCount,
     completedReferrals: completedCount,
   }

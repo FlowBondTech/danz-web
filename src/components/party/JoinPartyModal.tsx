@@ -1,8 +1,8 @@
 'use client'
 
+import { type DanzParty, PARTY_TIER_CONFIG } from '@/src/types/party'
+import { Trophy, Users, X, Zap } from 'lucide-react'
 import { useState } from 'react'
-import { X, Users, Zap, Trophy } from 'lucide-react'
-import { DanzParty, PARTY_TIER_CONFIG } from '@/src/types/party'
 
 interface JoinPartyModalProps {
   isOpen: boolean
@@ -11,12 +11,7 @@ interface JoinPartyModalProps {
   onJoinParty: (partyId: string) => Promise<void>
 }
 
-export function JoinPartyModal({
-  isOpen,
-  onClose,
-  party,
-  onJoinParty
-}: JoinPartyModalProps) {
+export function JoinPartyModal({ isOpen, onClose, party, onJoinParty }: JoinPartyModalProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -44,10 +39,7 @@ export function JoinPartyModal({
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
       <div className="relative w-full max-w-md bg-bg-primary border border-white/10 rounded-t-3xl sm:rounded-3xl overflow-hidden">
@@ -66,18 +58,14 @@ export function JoinPartyModal({
             </div>
             <div>
               <h2 className="text-xl font-bold text-white">{party.name}</h2>
-              <p className={`text-sm ${tierConfig.color}`}>
-                {tierConfig.name} Party
-              </p>
+              <p className={`text-sm ${tierConfig.color}`}>{tierConfig.name} Party</p>
             </div>
           </div>
         </div>
 
         <div className="p-4 space-y-4">
           {/* Description */}
-          {party.description && (
-            <p className="text-white/70 text-sm">{party.description}</p>
-          )}
+          {party.description && <p className="text-white/70 text-sm">{party.description}</p>}
 
           {/* Stats Grid */}
           <div className="grid grid-cols-3 gap-3">
@@ -91,17 +79,13 @@ export function JoinPartyModal({
 
             <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
               <Zap className="w-5 h-5 text-neon-pink mx-auto mb-1" />
-              <p className="text-lg font-bold text-white">
-                {party.multiplier}x
-              </p>
+              <p className="text-lg font-bold text-white">{party.multiplier}x</p>
               <p className="text-xs text-white/50">Multiplier</p>
             </div>
 
             <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
               <Trophy className="w-5 h-5 text-yellow-400 mx-auto mb-1" />
-              <p className="text-lg font-bold text-white">
-                {party.weeklyXp.toLocaleString()}
-              </p>
+              <p className="text-lg font-bold text-white">{party.weeklyXp.toLocaleString()}</p>
               <p className="text-xs text-white/50">Weekly XP</p>
             </div>
           </div>
@@ -122,7 +106,7 @@ export function JoinPartyModal({
           <div>
             <p className="text-sm text-white/50 mb-2">Members</p>
             <div className="flex flex-wrap gap-2">
-              {party.members.slice(0, 8).map((member) => (
+              {party.members.slice(0, 8).map(member => (
                 <div
                   key={member.id}
                   className="flex items-center gap-2 px-2 py-1 rounded-lg bg-white/5"
@@ -141,9 +125,7 @@ export function JoinPartyModal({
                     )}
                   </div>
                   <span className="text-sm text-white/70">{member.displayName}</span>
-                  {member.role === 'leader' && (
-                    <span className="text-xs">👑</span>
-                  )}
+                  {member.role === 'leader' && <span className="text-xs">👑</span>}
                 </div>
               ))}
               {party.members.length > 8 && (
@@ -173,9 +155,7 @@ export function JoinPartyModal({
             </ul>
           </div>
 
-          {error && (
-            <p className="text-red-400 text-sm text-center">{error}</p>
-          )}
+          {error && <p className="text-red-400 text-sm text-center">{error}</p>}
 
           {/* Join Button */}
           <button

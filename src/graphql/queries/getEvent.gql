@@ -33,5 +33,12 @@ query GetEvent($id: ID!) {
     }
     created_at
     updated_at
+    is_public
+    slug
+    allow_sponsors
+    sponsor_benefits
+    sponsor_contact_email
+    sponsor_tier_config
+    sponsor_count
   }
 }

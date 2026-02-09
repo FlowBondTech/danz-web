@@ -1,15 +1,8 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import {
-  FiCalendar,
-  FiClock,
-  FiChevronLeft,
-  FiChevronRight,
-  FiX,
-  FiCheck,
-} from 'react-icons/fi'
+import { AnimatePresence, motion } from 'motion/react'
+import { useEffect, useMemo, useState } from 'react'
+import { FiCalendar, FiCheck, FiChevronLeft, FiChevronRight, FiClock, FiX } from 'react-icons/fi'
 
 interface DateTimePickerProps {
   value: string
@@ -21,8 +14,18 @@ interface DateTimePickerProps {
 }
 
 const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ]
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -142,17 +145,17 @@ export default function DateTimePicker({
 
   const isToday = (date: Date) => {
     const today = new Date()
-    return date.getDate() === today.getDate() &&
-           date.getMonth() === today.getMonth() &&
-           date.getFullYear() === today.getFullYear()
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    )
   }
 
   const isSelected = (date: Date) => {
     if (!tempDate) return false
     const [year, month, day] = tempDate.split('-').map(Number)
-    return date.getDate() === day &&
-           date.getMonth() === month - 1 &&
-           date.getFullYear() === year
+    return date.getDate() === day && date.getMonth() === month - 1 && date.getFullYear() === year
   }
 
   const formatDisplayValue = () => {
@@ -190,7 +193,10 @@ export default function DateTimePicker({
         </div>
         <div className="flex-1 min-w-0">
           {label && (
-            <p className="text-xs text-text-secondary mb-0.5">{label}{required && ' *'}</p>
+            <p className="text-xs text-text-secondary mb-0.5">
+              {label}
+              {required && ' *'}
+            </p>
           )}
           <p className={`truncate ${value ? 'text-text-primary' : 'text-text-secondary'}`}>
             {formatDisplayValue() || placeholder}
@@ -242,9 +248,7 @@ export default function DateTimePicker({
                 >
                   <FiCalendar className="w-4 h-4" />
                   Date
-                  {tempDate && (
-                    <span className="w-2 h-2 rounded-full bg-green-500" />
-                  )}
+                  {tempDate && <span className="w-2 h-2 rounded-full bg-green-500" />}
                 </button>
                 <button
                   onClick={() => setActiveTab('time')}
@@ -291,7 +295,10 @@ export default function DateTimePicker({
                       {/* Day Headers */}
                       <div className="grid grid-cols-7 gap-1 mb-2">
                         {DAYS.map(day => (
-                          <div key={day} className="text-center text-xs text-text-secondary py-2 font-medium">
+                          <div
+                            key={day}
+                            className="text-center text-xs text-text-secondary py-2 font-medium"
+                          >
                             {day}
                           </div>
                         ))}
@@ -327,9 +334,10 @@ export default function DateTimePicker({
                       {/* Time Display */}
                       <div className="text-center mb-6">
                         <p className="text-4xl font-bold text-text-primary mb-2">
-                          {String(tempHour === 0 ? 12 : tempHour > 12 ? tempHour - 12 : tempHour).padStart(2, '0')}
-                          :
-                          {String(tempMinute).padStart(2, '0')}
+                          {String(
+                            tempHour === 0 ? 12 : tempHour > 12 ? tempHour - 12 : tempHour,
+                          ).padStart(2, '0')}
+                          :{String(tempMinute).padStart(2, '0')}
                           <span className="text-lg ml-2 text-neon-purple">
                             {tempHour >= 12 ? 'PM' : 'AM'}
                           </span>

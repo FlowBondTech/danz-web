@@ -9,10 +9,10 @@ import {
   useVerifyPointTransactionMutation,
 } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { FiCheck, FiRotateCcw, FiX, FiArrowLeft } from 'react-icons/fi'
-import Link from 'next/link'
+import { FiArrowLeft, FiCheck, FiRotateCcw, FiX } from 'react-icons/fi'
 
 export default function TransactionsPage() {
   const { authenticated, ready } = usePrivy()
@@ -203,7 +203,9 @@ export default function TransactionsPage() {
         <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 mb-6">
           <div className="flex justify-between items-center">
             <span className="text-text-secondary">Total Transactions</span>
-            <span className="text-text-primary font-bold text-lg">{totalCount.toLocaleString()}</span>
+            <span className="text-text-primary font-bold text-lg">
+              {totalCount.toLocaleString()}
+            </span>
           </div>
         </div>
 
@@ -228,12 +230,14 @@ export default function TransactionsPage() {
                     <div className="flex items-center gap-3 mb-2 flex-wrap">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                          tx.status
+                          tx.status,
                         )}`}
                       >
                         {tx.status}
                       </span>
-                      <span className={`font-semibold text-sm ${getTypeColor(tx.transaction_type)}`}>
+                      <span
+                        className={`font-semibold text-sm ${getTypeColor(tx.transaction_type)}`}
+                      >
                         {tx.transaction_type.toUpperCase()}
                       </span>
                       <span className="text-text-primary font-bold text-lg">

@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'motion/react'
-import { FiZap, FiAward, FiTrendingUp, FiStar, FiTarget } from 'react-icons/fi'
+import { FiAward, FiStar, FiTarget, FiTrendingUp, FiZap } from 'react-icons/fi'
 
 interface GamificationBarProps {
   xp: number
@@ -31,10 +31,7 @@ export default function GamificationBar({
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8">
         {/* Level Badge */}
         <div className="flex items-center gap-4">
-          <motion.div
-            whileHover={{ scale: 1.05, rotate: 5 }}
-            className="relative"
-          >
+          <motion.div whileHover={{ scale: 1.05, rotate: 5 }} className="relative">
             <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-neon-purple via-neon-pink to-neon-blue flex items-center justify-center shadow-lg shadow-neon-purple/30">
               <span className="text-2xl font-black text-text-primary">{level}</span>
             </div>

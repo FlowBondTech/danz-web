@@ -6,7 +6,8 @@ const manifest = {
   // Account association - proves domain ownership
   // TODO: Sign this with your Farcaster custody key
   accountAssociation: {
-    header: 'eyJmaWQiOjAsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIn0',
+    header:
+      'eyJmaWQiOjAsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIn0',
     payload: 'eyJkb21haW4iOiJkYW56LmFwcCJ9',
     signature: 'PLACEHOLDER_SIGNATURE_REPLACE_WITH_ACTUAL',
   },
@@ -24,7 +25,8 @@ const manifest = {
 
     // App description (max 170 chars)
     subtitle: 'Move. Connect. Earn.',
-    description: 'The dance-to-earn platform. Track your moves, earn DANZ tokens, discover events, and connect with the global dance community.',
+    description:
+      'The dance-to-earn platform. Track your moves, earn DANZ tokens, discover events, and connect with the global dance community.',
 
     // Hero image for featuring (1200x630px)
     // TODO: Add proper hero image

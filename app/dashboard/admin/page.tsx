@@ -44,7 +44,9 @@ export default function AdminDashboardPage() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-text-primary text-2xl" role="status" aria-live="polite">Loading...</div>
+          <div className="text-text-primary text-2xl" role="status" aria-live="polite">
+            Loading...
+          </div>
         </div>
       </DashboardLayout>
     )
@@ -54,7 +56,9 @@ export default function AdminDashboardPage() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-red-400 text-xl" role="alert">Access Denied - Admin Only</div>
+          <div className="text-red-400 text-xl" role="alert">
+            Access Denied - Admin Only
+          </div>
         </div>
       </DashboardLayout>
     )
@@ -67,10 +71,17 @@ export default function AdminDashboardPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8">
           <div className="min-w-0 flex-1">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-text-primary">Admin Dashboard</h1>
-            <p className="text-text-secondary mt-1 text-sm sm:text-base">Manage points & analytics</p>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-text-primary">
+              Admin Dashboard
+            </h1>
+            <p className="text-text-secondary mt-1 text-sm sm:text-base">
+              Manage points & analytics
+            </p>
           </div>
-          <div className="bg-gradient-neon px-3 sm:px-4 py-1.5 sm:py-2 rounded-full flex-shrink-0" aria-label="Admin role badge">
+          <div
+            className="bg-gradient-neon px-3 sm:px-4 py-1.5 sm:py-2 rounded-full flex-shrink-0"
+            aria-label="Admin role badge"
+          >
             <span className="text-text-primary font-medium text-xs sm:text-sm">⚡ Admin</span>
           </div>
         </div>
@@ -84,10 +95,12 @@ export default function AdminDashboardPage() {
           >
             <div className="bg-bg-secondary rounded-xl border border-neon-purple/30 p-3 sm:p-4 md:p-6 min-h-[100px]">
               <div className="flex items-center justify-between gap-2 mb-2 sm:mb-3">
-                <FiDollarSign className="text-neon-purple flex-shrink-0" size={20} aria-hidden="true" />
-                <span className="text-xs text-text-secondary uppercase tracking-wider">
-                  Issued
-                </span>
+                <FiDollarSign
+                  className="text-neon-purple flex-shrink-0"
+                  size={20}
+                  aria-hidden="true"
+                />
+                <span className="text-xs text-text-secondary uppercase tracking-wider">Issued</span>
               </div>
               <p className="text-lg sm:text-2xl font-bold text-text-primary break-words">
                 {overview.total_points_issued.toLocaleString()}
@@ -98,9 +111,7 @@ export default function AdminDashboardPage() {
             <div className="bg-bg-secondary rounded-xl border border-neon-purple/30 p-3 sm:p-4 md:p-6 min-h-[100px]">
               <div className="flex items-center justify-between gap-2 mb-2 sm:mb-3">
                 <FiUsers className="text-neon-pink flex-shrink-0" size={20} aria-hidden="true" />
-                <span className="text-xs text-text-secondary uppercase tracking-wider">
-                  Users
-                </span>
+                <span className="text-xs text-text-secondary uppercase tracking-wider">Users</span>
               </div>
               <p className="text-lg sm:text-2xl font-bold text-text-primary break-words">
                 {overview.total_active_users.toLocaleString()}
@@ -121,7 +132,11 @@ export default function AdminDashboardPage() {
 
             <div className="bg-bg-secondary rounded-xl border border-neon-purple/30 p-3 sm:p-4 md:p-6 min-h-[100px]">
               <div className="flex items-center justify-between gap-2 mb-2 sm:mb-3">
-                <FiTrendingUp className="text-green-400 flex-shrink-0" size={20} aria-hidden="true" />
+                <FiTrendingUp
+                  className="text-green-400 flex-shrink-0"
+                  size={20}
+                  aria-hidden="true"
+                />
                 <span className="text-xs text-text-secondary uppercase tracking-wider">Today</span>
               </div>
               <p className="text-lg sm:text-2xl font-bold text-text-primary break-words">
@@ -146,9 +161,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <h2 className="text-sm sm:text-lg font-semibold text-text-primary">Points</h2>
               </div>
-              <p className="text-text-secondary text-xs sm:text-sm">
-                Configure values & rewards
-              </p>
+              <p className="text-text-secondary text-xs sm:text-sm">Configure values & rewards</p>
             </button>
 
             <button
@@ -162,9 +175,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <h2 className="text-sm sm:text-lg font-semibold text-text-primary">Analytics</h2>
               </div>
-              <p className="text-text-secondary text-xs sm:text-sm">
-                View user summaries
-              </p>
+              <p className="text-text-secondary text-xs sm:text-sm">View user summaries</p>
             </button>
 
             <button
@@ -178,9 +189,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <h2 className="text-sm sm:text-lg font-semibold text-text-primary">Transactions</h2>
               </div>
-              <p className="text-text-secondary text-xs sm:text-sm">
-                Manage all transactions
-              </p>
+              <p className="text-text-secondary text-xs sm:text-sm">Manage all transactions</p>
             </button>
 
             <button
@@ -194,9 +203,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <h2 className="text-sm sm:text-lg font-semibold text-text-primary">Events</h2>
               </div>
-              <p className="text-text-secondary text-xs sm:text-sm">
-                Track attendance
-              </p>
+              <p className="text-text-secondary text-xs sm:text-sm">Track attendance</p>
             </button>
 
             <button
@@ -210,9 +217,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <h2 className="text-sm sm:text-lg font-semibold text-text-primary">Users</h2>
               </div>
-              <p className="text-text-secondary text-xs sm:text-sm">
-                Manage user points
-              </p>
+              <p className="text-text-secondary text-xs sm:text-sm">Manage user points</p>
             </button>
 
             <button
@@ -226,9 +231,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <h2 className="text-sm sm:text-lg font-semibold text-text-primary">Referrals</h2>
               </div>
-              <p className="text-text-secondary text-xs sm:text-sm">
-                Track performance
-              </p>
+              <p className="text-text-secondary text-xs sm:text-sm">Track performance</p>
             </button>
           </div>
         </nav>
@@ -239,12 +242,18 @@ export default function AdminDashboardPage() {
             className="bg-bg-secondary rounded-xl border border-neon-purple/30 p-4 sm:p-6"
             aria-labelledby="top-action-heading"
           >
-            <h2 id="top-action-heading" className="text-lg sm:text-xl font-bold text-text-primary mb-3 sm:mb-4">
+            <h2
+              id="top-action-heading"
+              className="text-lg sm:text-xl font-bold text-text-primary mb-3 sm:mb-4"
+            >
               Top Earning Action
             </h2>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
               <div className="min-w-0 flex-1">
-                <p className="text-sm sm:text-lg font-semibold text-text-primary" title={overview.top_earning_action.action_name}>
+                <p
+                  className="text-sm sm:text-lg font-semibold text-text-primary"
+                  title={overview.top_earning_action.action_name}
+                >
                   {overview.top_earning_action.action_name}
                 </p>
                 <p className="text-text-secondary text-xs sm:text-sm">
@@ -252,12 +261,16 @@ export default function AdminDashboardPage() {
                 </p>
               </div>
               <div className="flex items-center justify-between sm:justify-end gap-4 sm:text-right bg-white/5 sm:bg-transparent rounded-lg p-3 sm:p-0">
-                <span className="text-text-secondary text-xs sm:text-sm sm:hidden">Total Awarded</span>
+                <span className="text-text-secondary text-xs sm:text-sm sm:hidden">
+                  Total Awarded
+                </span>
                 <div>
                   <p className="text-xl sm:text-2xl font-bold text-neon-purple">
                     {overview.top_earning_action?.total_points_awarded?.toLocaleString() || '0'}
                   </p>
-                  <p className="text-text-secondary text-xs sm:text-sm hidden sm:block">Total Awarded</p>
+                  <p className="text-text-secondary text-xs sm:text-sm hidden sm:block">
+                    Total Awarded
+                  </p>
                 </div>
               </div>
             </div>

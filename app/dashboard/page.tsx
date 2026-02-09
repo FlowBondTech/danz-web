@@ -19,10 +19,8 @@ import { Suspense, useEffect, useState } from 'react'
 import { FaTiktok } from 'react-icons/fa'
 import {
   FiActivity,
-  FiAward,
   FiCalendar,
   FiChevronRight,
-  FiClock,
   FiEdit3,
   FiHeart,
   FiInstagram,
@@ -31,8 +29,6 @@ import {
   FiPlus,
   FiSettings,
   FiStar,
-  FiTarget,
-  FiTrendingUp,
   FiTwitter,
   FiUsers,
   FiX,
@@ -208,7 +204,7 @@ function DashboardContent() {
 
                     {/* Avatar Edit Icon - positioned at bottom left to avoid level badge */}
                     <button
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation()
                         router.push('/dashboard/profile')
                       }}
@@ -510,10 +506,7 @@ function DashboardContent() {
             </div>
 
             {/* Social Links */}
-            {(profile?.instagram ||
-              profile?.twitter ||
-              profile?.tiktok ||
-              profile?.youtube) && (
+            {(profile?.instagram || profile?.twitter || profile?.tiktok || profile?.youtube) && (
               <div className="bg-bg-secondary rounded-2xl border border-neon-purple/10 p-5">
                 <h3 className="text-lg font-semibold text-text-primary mb-4">Social</h3>
                 <div className="flex gap-3">
@@ -560,7 +553,6 @@ function DashboardContent() {
                 </div>
               </div>
             )}
-
           </div>
         </div>
 
@@ -588,10 +580,7 @@ function DashboardContent() {
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
           onClick={() => setShowAvatarModal(false)}
         >
-          <div
-            className="relative"
-            onClick={e => e.stopPropagation()}
-          >
+          <div className="relative" onClick={e => e.stopPropagation()}>
             {/* Large Avatar */}
             <div className="relative w-80 h-80 sm:w-96 sm:h-96">
               {profile?.avatar_url ? (

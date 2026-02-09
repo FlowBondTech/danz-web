@@ -46,7 +46,7 @@ interface NeynarUser {
 }
 
 // Get users the FID is following (friends to invite)
-export async function getFollowing(fid: number, limit: number = 25): Promise<NeynarUser[]> {
+export async function getFollowing(fid: number, limit = 25): Promise<NeynarUser[]> {
   const client = await getNeynarClient()
   const response = await client.fetchUserFollowing({ fid, limit })
   // Neynar SDK v3 returns users directly, not in result.users
@@ -54,14 +54,14 @@ export async function getFollowing(fid: number, limit: number = 25): Promise<Ney
 }
 
 // Get user's followers
-export async function getFollowers(fid: number, limit: number = 25): Promise<NeynarUser[]> {
+export async function getFollowers(fid: number, limit = 25): Promise<NeynarUser[]> {
   const client = await getNeynarClient()
   const response = await client.fetchUserFollowers({ fid, limit })
   return (response.users || []) as unknown as NeynarUser[]
 }
 
 // Search users by query
-export async function searchUsers(query: string, limit: number = 10): Promise<NeynarUser[]> {
+export async function searchUsers(query: string, limit = 10): Promise<NeynarUser[]> {
   const client = await getNeynarClient()
   const response = await client.searchUser({ q: query, limit })
   return (response.result.users || []) as NeynarUser[]

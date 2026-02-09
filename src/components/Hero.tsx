@@ -100,7 +100,15 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="text-lg text-text-secondary/80 mb-12"
         >
-          Powered by <a href="https://flowbond.tech" target="_blank" rel="noopener noreferrer" className="text-neon-purple hover:text-neon-pink transition-colors">FlowBond.Tech</a>
+          Powered by{' '}
+          <a
+            href="https://flowbond.tech"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-neon-purple hover:text-neon-pink transition-colors"
+          >
+            FlowBond.Tech
+          </a>
         </motion.p>
 
         <motion.div

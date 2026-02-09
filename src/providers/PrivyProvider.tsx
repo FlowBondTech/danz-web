@@ -31,9 +31,5 @@ export const PrivyProvider: React.FC<PrivyProviderProps> = ({ children }) => {
     privyConfig.clientId = clientId
   }
 
-  return (
-    <PrivyProviderBase {...privyConfig}>
-      {children}
-    </PrivyProviderBase>
-  )
+  return <PrivyProviderBase {...privyConfig}>{children}</PrivyProviderBase>
 }

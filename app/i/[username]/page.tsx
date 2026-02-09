@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
 import { useTrackReferralClickMutation } from '@/src/generated/graphql'
+import { useParams, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export default function InvitePage() {
   const params = useParams()
@@ -80,11 +80,10 @@ export default function InvitePage() {
                 <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
                   <span className="text-3xl">🎉</span>
                 </div>
-                <h1 className="text-3xl font-bold text-text-primary mb-2">
-                  You're Invited!
-                </h1>
+                <h1 className="text-3xl font-bold text-text-primary mb-2">You're Invited!</h1>
                 <p className="text-purple-200 text-lg">
-                  <span className="font-semibold text-text-primary">{username}</span> has invited you to join DANZ
+                  <span className="font-semibold text-text-primary">{username}</span> has invited
+                  you to join DANZ
                 </p>
               </div>
 
@@ -107,7 +106,17 @@ export default function InvitePage() {
 
       {/* Footer */}
       <footer className="absolute bottom-0 left-0 right-0 py-6 text-center text-purple-200/60 text-sm">
-        <p>Powered by <a href="https://flowbond.tech" target="_blank" rel="noopener noreferrer" className="text-purple-300 hover:text-pink-300 transition-colors">FlowBond.Tech</a></p>
+        <p>
+          Powered by{' '}
+          <a
+            href="https://flowbond.tech"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-purple-300 hover:text-pink-300 transition-colors"
+          >
+            FlowBond.Tech
+          </a>
+        </p>
       </footer>
     </div>
   )

@@ -34,47 +34,132 @@ const miniAppIdeas = [
     category: 'Dance & Movement',
     icon: FiActivity,
     apps: [
-      { name: 'Battle Arena', description: 'Real-time dance battles with live voting', icon: FiZap, status: 'concept' },
-      { name: 'Rhythm Trainer', description: 'AI-powered rhythm analysis and training', icon: FiMusic, status: 'concept' },
-      { name: 'Style Lab', description: 'Learn different dance styles with tutorials', icon: FiVideo, status: 'concept' },
-      { name: 'Freestyle Mode', description: 'Free dance sessions with movement tracking', icon: FiRadio, status: 'partial' },
+      {
+        name: 'Battle Arena',
+        description: 'Real-time dance battles with live voting',
+        icon: FiZap,
+        status: 'concept',
+      },
+      {
+        name: 'Rhythm Trainer',
+        description: 'AI-powered rhythm analysis and training',
+        icon: FiMusic,
+        status: 'concept',
+      },
+      {
+        name: 'Style Lab',
+        description: 'Learn different dance styles with tutorials',
+        icon: FiVideo,
+        status: 'concept',
+      },
+      {
+        name: 'Freestyle Mode',
+        description: 'Free dance sessions with movement tracking',
+        icon: FiRadio,
+        status: 'partial',
+      },
     ],
   },
   {
     category: 'Social & Community',
     icon: FiUsers,
     apps: [
-      { name: 'Crew Finder', description: 'Match with dancers to form crews', icon: FiTarget, status: 'concept' },
-      { name: 'Dance Map', description: 'Discover dancers and events near you', icon: FiMap, status: 'concept' },
-      { name: 'Mentorship Hub', description: 'Connect beginners with experienced dancers', icon: FiHeart, status: 'concept' },
-      { name: 'Vibe Check', description: 'Daily mood check-ins and wellness tracking', icon: FiMessageCircle, status: 'concept' },
+      {
+        name: 'Crew Finder',
+        description: 'Match with dancers to form crews',
+        icon: FiTarget,
+        status: 'concept',
+      },
+      {
+        name: 'Dance Map',
+        description: 'Discover dancers and events near you',
+        icon: FiMap,
+        status: 'concept',
+      },
+      {
+        name: 'Mentorship Hub',
+        description: 'Connect beginners with experienced dancers',
+        icon: FiHeart,
+        status: 'concept',
+      },
+      {
+        name: 'Vibe Check',
+        description: 'Daily mood check-ins and wellness tracking',
+        icon: FiMessageCircle,
+        status: 'concept',
+      },
     ],
   },
   {
     category: 'Events & Competitions',
     icon: FiCalendar,
     apps: [
-      { name: 'Cipher Circle', description: 'Organize spontaneous street ciphers', icon: FiGlobe, status: 'concept' },
-      { name: 'Workshop Wizard', description: 'Host and discover dance workshops', icon: FiAward, status: 'partial' },
-      { name: 'Competition Central', description: 'Full competition management system', icon: FiTrendingUp, status: 'concept' },
-      { name: 'Pop-Up Parties', description: 'Secret location reveals for exclusive events', icon: FiStar, status: 'concept' },
+      {
+        name: 'Cipher Circle',
+        description: 'Organize spontaneous street ciphers',
+        icon: FiGlobe,
+        status: 'concept',
+      },
+      {
+        name: 'Workshop Wizard',
+        description: 'Host and discover dance workshops',
+        icon: FiAward,
+        status: 'partial',
+      },
+      {
+        name: 'Competition Central',
+        description: 'Full competition management system',
+        icon: FiTrendingUp,
+        status: 'concept',
+      },
+      {
+        name: 'Pop-Up Parties',
+        description: 'Secret location reveals for exclusive events',
+        icon: FiStar,
+        status: 'concept',
+      },
     ],
   },
   {
     category: 'Fitness & Health',
     icon: FiHeart,
     apps: [
-      { name: 'Dance Fit', description: 'Track calories and fitness through dance', icon: FiActivity, status: 'partial' },
-      { name: 'Recovery Room', description: 'Stretching routines and recovery tracking', icon: FiShield, status: 'concept' },
-      { name: 'Move Streak', description: 'Daily movement challenges with rewards', icon: FiZap, status: 'partial' },
+      {
+        name: 'Dance Fit',
+        description: 'Track calories and fitness through dance',
+        icon: FiActivity,
+        status: 'partial',
+      },
+      {
+        name: 'Recovery Room',
+        description: 'Stretching routines and recovery tracking',
+        icon: FiShield,
+        status: 'concept',
+      },
+      {
+        name: 'Move Streak',
+        description: 'Daily movement challenges with rewards',
+        icon: FiZap,
+        status: 'partial',
+      },
     ],
   },
   {
     category: 'Creator & Economy',
     icon: FiGift,
     apps: [
-      { name: 'Tip Jar', description: 'Support dancers with tips and subscriptions', icon: FiGift, status: 'concept' },
-      { name: 'Merch Drop', description: 'Create and sell crew merchandise', icon: FiBox, status: 'concept' },
+      {
+        name: 'Tip Jar',
+        description: 'Support dancers with tips and subscriptions',
+        icon: FiGift,
+        status: 'concept',
+      },
+      {
+        name: 'Merch Drop',
+        description: 'Create and sell crew merchandise',
+        icon: FiBox,
+        status: 'concept',
+      },
     ],
   },
 ]
@@ -86,7 +171,9 @@ function StatusBadge({ status }: { status: string }) {
     concept: { bg: 'bg-purple-500/20', text: 'text-purple-400', label: 'Concept' },
   }
   const { bg, text, label } = config[status] || config.concept
-  return <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${bg} ${text}`}>{label}</span>
+  return (
+    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${bg} ${text}`}>{label}</span>
+  )
 }
 
 export default function MiniAppsPage() {
@@ -216,7 +303,8 @@ await danz.points.award({
           <FiCode className="w-12 h-12 text-neon-purple mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-text-primary mb-2">Want to Build a Mini-App?</h2>
           <p className="text-text-secondary mb-6 max-w-lg mx-auto">
-            Our SDK and APIs are being built with developers in mind. Join our community to get early access.
+            Our SDK and APIs are being built with developers in mind. Join our community to get
+            early access.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a

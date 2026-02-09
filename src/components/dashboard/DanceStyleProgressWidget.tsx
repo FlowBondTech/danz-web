@@ -70,7 +70,9 @@ export default function DanceStyleProgressWidget() {
           </div>
           <div>
             <h2 className="text-xl font-bold text-text-primary">Dance Style Progress</h2>
-            <p className="text-sm text-text-secondary">{mockStylesProgress.length} styles tracked</p>
+            <p className="text-sm text-text-secondary">
+              {mockStylesProgress.length} styles tracked
+            </p>
           </div>
         </div>
       </div>
@@ -115,7 +117,7 @@ export default function DanceStyleProgressWidget() {
                     <div className="h-2 bg-bg-secondary rounded-full overflow-hidden">
                       <div
                         className={`h-full bg-gradient-to-r ${getProgressColor(
-                          styleProgress.progress
+                          styleProgress.progress,
                         )} rounded-full transition-all duration-500`}
                         style={{ width: `${styleProgress.progress}%` }}
                       />
@@ -159,7 +161,7 @@ export default function DanceStyleProgressWidget() {
             <div className="text-xl font-bold text-text-primary">
               {Math.round(
                 mockStylesProgress.reduce((sum, s) => sum + s.progress, 0) /
-                  mockStylesProgress.length
+                  mockStylesProgress.length,
               )}
               %
             </div>
@@ -167,9 +169,10 @@ export default function DanceStyleProgressWidget() {
           </div>
           <div className="text-center">
             <div className="text-xl font-bold text-text-primary">
-              +{Math.round(
+              +
+              {Math.round(
                 mockStylesProgress.reduce((sum, s) => sum + s.recentImprovement, 0) /
-                  mockStylesProgress.length
+                  mockStylesProgress.length,
               )}
               %
             </div>

@@ -41,9 +41,7 @@ export default function LoginPage() {
         </div>
 
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-2">
-            Sign in to DANZ
-          </h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-2">Sign in to DANZ</h1>
           <p className="text-text-secondary">
             Connect your wallet or sign in with email to continue
           </p>
@@ -69,7 +67,17 @@ export default function LoginPage() {
 
       {/* Footer */}
       <footer className="absolute bottom-0 left-0 right-0 py-6 text-center text-text-muted text-sm">
-        <p>Powered by <a href="https://flowbond.tech" target="_blank" rel="noopener noreferrer" className="text-neon-purple hover:text-neon-pink transition-colors">FlowBond.Tech</a></p>
+        <p>
+          Powered by{' '}
+          <a
+            href="https://flowbond.tech"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-neon-purple hover:text-neon-pink transition-colors"
+          >
+            FlowBond.Tech
+          </a>
+        </p>
       </footer>
     </div>
   )

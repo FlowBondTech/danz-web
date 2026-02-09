@@ -124,7 +124,9 @@ export default function ActivityStatsWidget() {
             className={`relative overflow-hidden bg-gradient-to-br ${metric.bgColor} border ${metric.borderColor} rounded-xl p-4 group hover:shadow-lg transition-all duration-300`}
           >
             <div className="flex items-start justify-between mb-3">
-              <div className={`w-9 h-9 rounded-lg bg-bg-secondary/50 flex items-center justify-center`}>
+              <div
+                className={`w-9 h-9 rounded-lg bg-bg-secondary/50 flex items-center justify-center`}
+              >
                 <metric.icon className={`w-5 h-5 ${metric.color}`} />
               </div>
               {metric.trend && (
@@ -135,11 +137,7 @@ export default function ActivityStatsWidget() {
                       : 'bg-red-500/20 text-red-400'
                   }`}
                 >
-                  {metric.trend.isPositive ? (
-                    <FiArrowUp size={12} />
-                  ) : (
-                    <FiArrowDown size={12} />
-                  )}
+                  {metric.trend.isPositive ? <FiArrowUp size={12} /> : <FiArrowDown size={12} />}
                   {Math.abs(metric.trend.change)}%
                 </div>
               )}

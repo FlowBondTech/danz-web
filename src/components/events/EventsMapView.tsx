@@ -1,16 +1,8 @@
 'use client'
 
+import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import {
-  FiMapPin,
-  FiNavigation,
-  FiClock,
-  FiUsers,
-  FiX,
-  FiChevronRight,
-  FiGlobe,
-} from 'react-icons/fi'
+import { FiChevronRight, FiGlobe, FiMapPin, FiNavigation, FiX } from 'react-icons/fi'
 import EventCard, { type RegistrationStatusType } from './EventCard'
 
 interface Event {
@@ -58,15 +50,15 @@ const CATEGORY_COLORS: Record<string, string> = {
 // Simulated city locations (in production, use actual geocoding)
 const CITY_LOCATIONS: Record<string, { lat: number; lng: number }> = {
   'Los Angeles': { lat: 34.0522, lng: -118.2437 },
-  'New York': { lat: 40.7128, lng: -74.0060 },
-  'Miami': { lat: 25.7617, lng: -80.1918 },
-  'Chicago': { lat: 41.8781, lng: -87.6298 },
+  'New York': { lat: 40.7128, lng: -74.006 },
+  Miami: { lat: 25.7617, lng: -80.1918 },
+  Chicago: { lat: 41.8781, lng: -87.6298 },
   'San Francisco': { lat: 37.7749, lng: -122.4194 },
-  'Austin': { lat: 30.2672, lng: -97.7431 },
-  'Seattle': { lat: 47.6062, lng: -122.3321 },
-  'Denver': { lat: 39.7392, lng: -104.9903 },
-  'Atlanta': { lat: 33.7490, lng: -84.3880 },
-  'Boston': { lat: 42.3601, lng: -71.0589 },
+  Austin: { lat: 30.2672, lng: -97.7431 },
+  Seattle: { lat: 47.6062, lng: -122.3321 },
+  Denver: { lat: 39.7392, lng: -104.9903 },
+  Atlanta: { lat: 33.749, lng: -84.388 },
+  Boston: { lat: 42.3601, lng: -71.0589 },
 }
 
 export default function EventsMapView({ events, onRegister }: EventsMapViewProps) {
@@ -74,21 +66,26 @@ export default function EventsMapView({ events, onRegister }: EventsMapViewProps
   const [hoveredEvent, setHoveredEvent] = useState<string | null>(null)
 
   // Group events by city
-  const eventsByCity = events.reduce((acc, event) => {
-    const city = event.location_city || 'Virtual'
-    if (!acc[city]) acc[city] = []
-    acc[city].push(event)
-    return acc
-  }, {} as Record<string, Event[]>)
+  const eventsByCity = events.reduce(
+    (acc, event) => {
+      const city = event.location_city || 'Virtual'
+      if (!acc[city]) acc[city] = []
+      acc[city].push(event)
+      return acc
+    },
+    {} as Record<string, Event[]>,
+  )
 
   // Calculate city statistics
-  const cityStats = Object.entries(eventsByCity).map(([city, cityEvents]) => ({
-    city,
-    count: cityEvents.length,
-    events: cityEvents,
-    location: CITY_LOCATIONS[city] || { lat: 0, lng: 0 },
-    hasLocation: !!CITY_LOCATIONS[city],
-  })).sort((a, b) => b.count - a.count)
+  const cityStats = Object.entries(eventsByCity)
+    .map(([city, cityEvents]) => ({
+      city,
+      count: cityEvents.length,
+      events: cityEvents,
+      location: CITY_LOCATIONS[city] || { lat: 0, lng: 0 },
+      hasLocation: !!CITY_LOCATIONS[city],
+    }))
+    .sort((a, b) => b.count - a.count)
 
   const virtualEvents = events.filter(e => e.is_virtual)
   const physicalCities = cityStats.filter(c => c.city !== 'Virtual' && c.hasLocation)
@@ -156,7 +153,7 @@ export default function EventsMapView({ events, onRegister }: EventsMapViewProps
                     }}
                     transition={{
                       duration: 2,
-                      repeat: Infinity,
+                      repeat: Number.POSITIVE_INFINITY,
                       delay: index * 0.3,
                     }}
                     className={`absolute inset-0 rounded-full ${
@@ -201,7 +198,9 @@ export default function EventsMapView({ events, onRegister }: EventsMapViewProps
                   <FiGlobe className="w-5 h-5 text-text-primary" />
                 </div>
                 <div>
-                  <p className="text-text-primary font-medium">{virtualEvents.length} Virtual Events</p>
+                  <p className="text-text-primary font-medium">
+                    {virtualEvents.length} Virtual Events
+                  </p>
                   <p className="text-sm text-text-secondary">Join from anywhere</p>
                 </div>
                 <FiChevronRight className="w-5 h-5 text-text-secondary" />
@@ -214,7 +213,9 @@ export default function EventsMapView({ events, onRegister }: EventsMapViewProps
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
                 <div className="text-6xl mb-4">🗺️</div>
-                <h3 className="text-xl font-bold text-text-primary mb-2">No events on the map yet</h3>
+                <h3 className="text-xl font-bold text-text-primary mb-2">
+                  No events on the map yet
+                </h3>
                 <p className="text-text-secondary">
                   Create an event and put your city on the dance map!
                 </p>
@@ -308,9 +309,7 @@ export default function EventsMapView({ events, onRegister }: EventsMapViewProps
             >
               <div className="text-center">
                 <div className="text-5xl mb-4">📍</div>
-                <h3 className="text-lg font-bold text-text-primary mb-2">
-                  Select a location
-                </h3>
+                <h3 className="text-lg font-bold text-text-primary mb-2">Select a location</h3>
                 <p className="text-sm text-text-secondary">
                   Click on a city marker or use the quick stats to explore events in that area
                 </p>

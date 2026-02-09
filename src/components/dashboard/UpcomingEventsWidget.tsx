@@ -1,67 +1,22 @@
 'use client'
 
-import { gql, useQuery } from '@apollo/client'
+import { EventStatus, useGetEventsQuery } from '@/src/generated/graphql'
 import { useRouter } from 'next/navigation'
-import {
-  FiCalendar,
-  FiClock,
-  FiMapPin,
-  FiUsers,
-  FiChevronRight,
-} from 'react-icons/fi'
-
-const GET_UPCOMING_EVENTS = gql`
-  query GetUpcomingEvents {
-    me {
-      upcoming_events_count
-    }
-  }
-`
-
-interface Event {
-  id: string
-  title: string
-  date: string
-  time: string
-  location: string
-  attendees: number
-  type: string
-}
-
-// Mock data - will be replaced with real GraphQL data
-const mockEvents: Event[] = [
-  {
-    id: '1',
-    title: 'Hip Hop Freestyle Session',
-    date: '2025-01-20',
-    time: '18:00',
-    location: 'Downtown Studio',
-    attendees: 12,
-    type: 'practice',
-  },
-  {
-    id: '2',
-    title: 'Contemporary Workshop',
-    date: '2025-01-22',
-    time: '14:00',
-    location: 'Arts Center',
-    attendees: 8,
-    type: 'workshop',
-  },
-  {
-    id: '3',
-    title: 'Dance Battle Competition',
-    date: '2025-01-25',
-    time: '19:30',
-    location: 'Metro Arena',
-    attendees: 45,
-    type: 'competition',
-  },
-]
+import { FiCalendar, FiChevronRight, FiClock, FiMapPin, FiUsers } from 'react-icons/fi'
 
 export default function UpcomingEventsWidget() {
   const router = useRouter()
-  const { data, loading } = useQuery(GET_UPCOMING_EVENTS)
+  const { data, loading } = useGetEventsQuery({
+    variables: {
+      filter: {
+        registered_by_me: true,
+        status: EventStatus.Upcoming,
+      },
+      pagination: {
+        limit: 5,
+      },
+    },
+  })
 
   if (loading) {
     return (
@@ -73,32 +28,26 @@ export default function UpcomingEventsWidget() {
     )
   }
 
-  const getEventTypeColor = (type: string) => {
-    switch (type) {
+  const events = data?.events?.events || []
+
+  const getEventTypeColor = (category: string | null | undefined) => {
+    switch (category) {
       case 'workshop':
         return 'from-blue-500/20 to-blue-500/5 border-blue-500/30 text-blue-400'
       case 'competition':
         return 'from-red-500/20 to-red-500/5 border-red-500/30 text-red-400'
-      case 'practice':
+      case 'class':
         return 'from-green-500/20 to-green-500/5 border-green-500/30 text-green-400'
+      case 'social':
+        return 'from-pink-500/20 to-pink-500/5 border-pink-500/30 text-pink-400'
       default:
         return 'from-neon-purple/20 to-neon-purple/5 border-neon-purple/30 text-neon-purple'
     }
   }
 
-  const formatDate = (dateString: string) => {
+  const formatTime = (dateString: string) => {
     const date = new Date(dateString)
-    const today = new Date()
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
-
-    if (date.toDateString() === today.toDateString()) {
-      return 'Today'
-    } else if (date.toDateString() === tomorrow.toDateString()) {
-      return 'Tomorrow'
-    } else {
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    }
+    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
   }
 
   const getDaysUntil = (dateString: string) => {
@@ -118,9 +67,7 @@ export default function UpcomingEventsWidget() {
           </div>
           <div>
             <h2 className="text-xl font-bold text-text-primary">Upcoming Events</h2>
-            <p className="text-sm text-text-secondary">
-              {data?.me?.upcoming_events_count || mockEvents.length} events scheduled
-            </p>
+            <p className="text-sm text-text-secondary">{events.length} events scheduled</p>
           </div>
         </div>
         <button
@@ -132,23 +79,27 @@ export default function UpcomingEventsWidget() {
         </button>
       </div>
 
-      {mockEvents.length > 0 ? (
+      {events.length > 0 ? (
         <div className="space-y-3">
-          {mockEvents.slice(0, 3).map((event, index) => {
-            const daysUntil = getDaysUntil(event.date)
+          {events.slice(0, 3).map(event => {
+            const daysUntil = getDaysUntil(event.start_date_time)
             return (
               <div
                 key={event.id}
-                onClick={() => router.push(`/dashboard/my-events/${event.id}`)}
+                onClick={() => router.push(`/events/${event.slug}`)}
                 className={`relative overflow-hidden bg-gradient-to-br ${getEventTypeColor(
-                  event.type
+                  event.category,
                 )} border rounded-xl p-4 hover:shadow-lg transition-all duration-300 cursor-pointer group`}
               >
                 {/* Countdown Badge */}
-                {daysUntil <= 2 && (
+                {daysUntil <= 2 && daysUntil >= 0 && (
                   <div className="absolute top-3 right-3 px-2 py-1 bg-bg-primary/90 backdrop-blur-sm border border-white/20 rounded-lg">
                     <span className="text-xs font-medium text-text-primary">
-                      {daysUntil === 0 ? 'Today!' : daysUntil === 1 ? 'Tomorrow' : `${daysUntil} days`}
+                      {daysUntil === 0
+                        ? 'Today!'
+                        : daysUntil === 1
+                          ? 'Tomorrow'
+                          : `${daysUntil} days`}
                     </span>
                   </div>
                 )}
@@ -157,10 +108,12 @@ export default function UpcomingEventsWidget() {
                   {/* Date Box */}
                   <div className="flex-shrink-0 w-14 text-center">
                     <div className="text-2xl font-bold text-text-primary">
-                      {new Date(event.date).getDate()}
+                      {new Date(event.start_date_time).getDate()}
                     </div>
                     <div className="text-xs text-text-secondary uppercase">
-                      {new Date(event.date).toLocaleDateString('en-US', { month: 'short' })}
+                      {new Date(event.start_date_time).toLocaleDateString('en-US', {
+                        month: 'short',
+                      })}
                     </div>
                   </div>
 
@@ -173,27 +126,31 @@ export default function UpcomingEventsWidget() {
                     <div className="space-y-1.5">
                       <div className="flex items-center gap-2 text-sm text-text-secondary">
                         <FiClock size={14} className="flex-shrink-0" />
-                        <span>{event.time}</span>
+                        <span>{formatTime(event.start_date_time)}</span>
                       </div>
 
                       <div className="flex items-center gap-2 text-sm text-text-secondary">
                         <FiMapPin size={14} className="flex-shrink-0" />
-                        <span className="truncate">{event.location}</span>
+                        <span className="truncate">
+                          {event.location_name || event.location_city || 'Virtual'}
+                        </span>
                       </div>
 
                       <div className="flex items-center gap-2 text-sm text-text-secondary">
                         <FiUsers size={14} className="flex-shrink-0" />
-                        <span>{event.attendees} attending</span>
+                        <span>{event.registration_count || 0} attending</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Type Badge */}
-                  <div className="flex-shrink-0">
-                    <span className="inline-block px-2.5 py-1 bg-bg-primary/50 backdrop-blur-sm border border-white/10 rounded-lg text-xs font-medium text-text-primary capitalize">
-                      {event.type}
-                    </span>
-                  </div>
+                  {event.category && (
+                    <div className="flex-shrink-0">
+                      <span className="inline-block px-2.5 py-1 bg-bg-primary/50 backdrop-blur-sm border border-white/10 rounded-lg text-xs font-medium text-text-primary capitalize">
+                        {event.category}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Hover effect */}
@@ -209,7 +166,7 @@ export default function UpcomingEventsWidget() {
           </div>
           <p className="text-text-secondary mb-4">No upcoming events</p>
           <button
-            onClick={() => router.push('/events')}
+            onClick={() => router.push('/dashboard/my-events')}
             className="px-6 py-2.5 bg-gradient-to-r from-neon-purple to-neon-pink text-white rounded-xl font-medium hover:shadow-lg hover:shadow-neon-purple/30 transition-all"
           >
             Discover Events

@@ -3,35 +3,35 @@
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import { useAuth } from '@/src/contexts/AuthContext'
 import { useUserPoints } from '@/src/hooks/useReferralData'
-import { usePrivy, useWallets, useCreateWallet, useFundWallet } from '@privy-io/react-auth'
+import { useWalletBalances } from '@/src/hooks/useWalletBalances'
+import { useCreateWallet, useFundWallet, usePrivy, useWallets } from '@privy-io/react-auth'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState, useMemo } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { useEffect, useMemo, useState } from 'react'
 import {
-  FiCopy,
-  FiExternalLink,
-  FiLink,
-  FiPlus,
-  FiTrash2,
-  FiCheck,
   FiAlertCircle,
-  FiShield,
-  FiWifi,
-  FiDownload,
-  FiDollarSign,
-  FiKey,
-  FiLock,
-  FiUnlock,
   FiAlertTriangle,
-  FiX,
-  FiRefreshCw,
-  FiStar,
-  FiGift,
-  FiTrendingUp,
   FiAward,
+  FiCheck,
+  FiCopy,
+  FiDollarSign,
+  FiDownload,
+  FiExternalLink,
+  FiGift,
+  FiKey,
+  FiLink,
+  FiLock,
+  FiPlus,
+  FiRefreshCw,
+  FiShield,
+  FiStar,
+  FiTrash2,
+  FiTrendingUp,
+  FiUnlock,
+  FiWifi,
+  FiX,
 } from 'react-icons/fi'
 import { SiEthereum, SiSolana } from 'react-icons/si'
-import { useWalletBalances } from '@/src/hooks/useWalletBalances'
 
 interface WalletInfo {
   address: string
@@ -64,28 +64,32 @@ export default function WalletPage() {
   }, [ready, authenticated, router])
 
   // Get all linked wallets from user object
-  const allLinkedWallets: WalletInfo[] = user?.linkedAccounts
-    ?.filter((account): account is any =>
-      account.type === 'wallet'
-    )
-    .map(wallet => ({
-      address: wallet.address,
-      chainType: wallet.chainType || 'ethereum',
-      walletClient: wallet.walletClientType || 'unknown',
-      isEmbedded: wallet.walletClientType === 'privy',
-      isConnected: connectedWallets.some(cw => cw.address === wallet.address),
-    })) || []
+  const allLinkedWallets: WalletInfo[] =
+    user?.linkedAccounts
+      ?.filter((account): account is any => account.type === 'wallet')
+      .map(wallet => ({
+        address: wallet.address,
+        chainType: wallet.chainType || 'ethereum',
+        walletClient: wallet.walletClientType || 'unknown',
+        isEmbedded: wallet.walletClientType === 'privy',
+        isConnected: connectedWallets.some(cw => cw.address === wallet.address),
+      })) || []
 
   // Separate embedded and external wallets
   const embeddedWallets = allLinkedWallets.filter(w => w.isEmbedded)
   const linkedWallets = allLinkedWallets.filter(w => !w.isEmbedded)
 
   // Fetch balances for all wallets
-  const walletAddresses = useMemo(() =>
-    allLinkedWallets.map(w => ({ address: w.address, chainType: w.chainType })),
-    [allLinkedWallets]
+  const walletAddresses = useMemo(
+    () => allLinkedWallets.map(w => ({ address: w.address, chainType: w.chainType })),
+    [allLinkedWallets],
   )
-  const { balances, isLoading: balancesLoading, refetch: refetchBalances, getBalance } = useWalletBalances(walletAddresses)
+  const {
+    balances,
+    isLoading: balancesLoading,
+    refetch: refetchBalances,
+    getBalance,
+  } = useWalletBalances(walletAddresses)
 
   const copyToClipboard = async (address: string) => {
     await navigator.clipboard.writeText(address)
@@ -95,7 +99,7 @@ export default function WalletPage() {
 
   const handleCreateEmbeddedWallet = async () => {
     if (embeddedWallets.length > 0) {
-      setError("You already have an embedded wallet")
+      setError('You already have an embedded wallet')
       setTimeout(() => setError(null), 3000)
       return
     }
@@ -103,10 +107,10 @@ export default function WalletPage() {
     setIsCreatingWallet(true)
     try {
       await createWallet()
-      setSuccess("Embedded wallet created successfully!")
+      setSuccess('Embedded wallet created successfully!')
       setTimeout(() => setSuccess(null), 3000)
     } catch (err: any) {
-      setError(err.message || "Failed to create wallet")
+      setError(err.message || 'Failed to create wallet')
       setTimeout(() => setError(null), 3000)
     } finally {
       setIsCreatingWallet(false)
@@ -128,14 +132,14 @@ export default function WalletPage() {
       // Note: Privy's exportWallet may only support Ethereum embedded wallets
       // Solana export might require a different approach
       await exportWallet({ address })
-      setSuccess("Check the Privy modal to export your wallet")
+      setSuccess('Check the Privy modal to export your wallet')
       setTimeout(() => setSuccess(null), 3000)
     } catch (err: any) {
       console.error('Export wallet error:', err)
       if (chainType === 'solana') {
-        setError("Solana wallet export may not be supported yet. Contact support for assistance.")
+        setError('Solana wallet export may not be supported yet. Contact support for assistance.')
       } else {
-        setError(err.message || "Failed to export wallet")
+        setError(err.message || 'Failed to export wallet')
       }
       setTimeout(() => setError(null), 5000)
     } finally {
@@ -146,7 +150,9 @@ export default function WalletPage() {
   const handleFundWallet = async (address: string, chainType: string) => {
     // Privy's fiat on-ramp only supports EVM chains, not Solana
     if (chainType === 'solana') {
-      setError("Fiat on-ramp is only available for Ethereum wallets. Use an exchange to fund Solana wallets.")
+      setError(
+        'Fiat on-ramp is only available for Ethereum wallets. Use an exchange to fund Solana wallets.',
+      )
       setTimeout(() => setError(null), 5000)
       return
     }
@@ -162,7 +168,7 @@ export default function WalletPage() {
       }
     } catch (err: any) {
       console.error('Fund wallet error:', err)
-      setError(err.message || "Failed to open funding flow")
+      setError(err.message || 'Failed to open funding flow')
       setTimeout(() => setError(null), 3000)
     }
   }
@@ -170,13 +176,13 @@ export default function WalletPage() {
   const handleUnlinkWallet = async (address: string) => {
     const wallet = allLinkedWallets.find(w => w.address === address)
     if (wallet?.isEmbedded) {
-      setError("Cannot unlink your embedded wallet")
+      setError('Cannot unlink your embedded wallet')
       setTimeout(() => setError(null), 3000)
       return
     }
 
     if (allLinkedWallets.length <= 1) {
-      setError("Cannot unlink your only wallet")
+      setError('Cannot unlink your only wallet')
       setTimeout(() => setError(null), 3000)
       return
     }
@@ -184,10 +190,10 @@ export default function WalletPage() {
     setUnlinkingAddress(address)
     try {
       await unlinkWallet(address)
-      setSuccess("Wallet unlinked successfully")
+      setSuccess('Wallet unlinked successfully')
       setTimeout(() => setSuccess(null), 3000)
     } catch (err: any) {
-      setError(err.message || "Failed to unlink wallet")
+      setError(err.message || 'Failed to unlink wallet')
       setTimeout(() => setError(null), 3000)
     } finally {
       setUnlinkingAddress(null)
@@ -257,16 +263,23 @@ export default function WalletPage() {
                 {/* Points Balance */}
                 <div className="flex items-center gap-3 sm:gap-4">
                   <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-yellow-500/20 shrink-0">
-                    <FiStar className="w-6 h-6 sm:w-8 sm:h-8 text-text-primary" aria-hidden="true" />
+                    <FiStar
+                      className="w-6 h-6 sm:w-8 sm:h-8 text-text-primary"
+                      aria-hidden="true"
+                    />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-text-secondary text-xs sm:text-sm mb-1">DANZ Points Balance</p>
+                    <p className="text-text-secondary text-xs sm:text-sm mb-1">
+                      DANZ Points Balance
+                    </p>
                     {pointsLoading ? (
                       <div className="w-6 h-6 border-2 border-neon-purple border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <p className="text-2xl sm:text-4xl font-bold text-text-primary">
                         {points?.current_points_balance?.toLocaleString() || 0}
-                        <span className="text-sm sm:text-lg text-text-secondary ml-1 sm:ml-2">pts</span>
+                        <span className="text-sm sm:text-lg text-text-secondary ml-1 sm:ml-2">
+                          pts
+                        </span>
                       </p>
                     )}
                   </div>
@@ -276,7 +289,10 @@ export default function WalletPage() {
                 <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-6">
                   <div className="text-center md:text-right">
                     <div className="flex items-center justify-center md:justify-end gap-1 sm:gap-2 mb-1">
-                      <FiTrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-green-400" aria-hidden="true" />
+                      <FiTrendingUp
+                        className="w-3 h-3 sm:w-4 sm:h-4 text-green-400"
+                        aria-hidden="true"
+                      />
                       <span className="text-[10px] sm:text-xs text-text-secondary">Earned</span>
                     </div>
                     <p className="text-sm sm:text-lg font-bold text-green-400">
@@ -285,7 +301,10 @@ export default function WalletPage() {
                   </div>
                   <div className="text-center md:text-right">
                     <div className="flex items-center justify-center md:justify-end gap-1 sm:gap-2 mb-1">
-                      <FiGift className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400" aria-hidden="true" />
+                      <FiGift
+                        className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400"
+                        aria-hidden="true"
+                      />
                       <span className="text-[10px] sm:text-xs text-text-secondary">Referrals</span>
                     </div>
                     <p className="text-sm sm:text-lg font-bold text-purple-400">
@@ -306,7 +325,9 @@ export default function WalletPage() {
 
               {/* Points Info */}
               <div className="mt-6 pt-6 border-t border-white/10">
-                <h3 className="text-sm font-medium text-text-primary mb-3">What are DANZ Points?</h3>
+                <h3 className="text-sm font-medium text-text-primary mb-3">
+                  What are DANZ Points?
+                </h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
                   <div className="flex items-center gap-2 text-text-secondary">
                     <span className="w-2 h-2 rounded-full bg-green-400" aria-hidden="true" />
@@ -326,7 +347,8 @@ export default function WalletPage() {
                   </div>
                 </div>
                 <p className="mt-3 text-xs text-text-secondary">
-                  Points can be redeemed for $DANZ tokens, exclusive NFTs, event discounts, and premium features. Stay tuned!
+                  Points can be redeemed for $DANZ tokens, exclusive NFTs, event discounts, and
+                  premium features. Stay tuned!
                 </p>
               </div>
             </div>
@@ -373,7 +395,7 @@ export default function WalletPage() {
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
+                onClick={e => e.stopPropagation()}
                 className="bg-bg-secondary rounded-2xl border border-red-500/30 p-6 max-w-md w-full shadow-2xl"
               >
                 {/* Header */}
@@ -407,11 +429,13 @@ export default function WalletPage() {
                   <div className="bg-bg-primary rounded-xl p-4">
                     <p className="text-text-secondary text-sm mb-2">Exporting key for:</p>
                     <div className="flex items-center gap-2">
-                      <span className={`inline-flex items-center gap-1.5 px-2 py-1 text-xs rounded-full ${
-                        exportWarningWallet.chainType === 'solana'
-                          ? 'bg-purple-500/20 text-purple-400'
-                          : 'bg-blue-500/20 text-blue-400'
-                      }`}>
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2 py-1 text-xs rounded-full ${
+                          exportWarningWallet.chainType === 'solana'
+                            ? 'bg-purple-500/20 text-purple-400'
+                            : 'bg-blue-500/20 text-blue-400'
+                        }`}
+                      >
                         {exportWarningWallet.chainType === 'solana' ? (
                           <SiSolana className="w-3 h-3" />
                         ) : (
@@ -420,7 +444,8 @@ export default function WalletPage() {
                         {exportWarningWallet.chainType === 'solana' ? 'Solana' : 'Ethereum'}
                       </span>
                       <code className="text-text-primary text-sm font-mono">
-                        {exportWarningWallet.address.slice(0, 8)}...{exportWarningWallet.address.slice(-6)}
+                        {exportWarningWallet.address.slice(0, 8)}...
+                        {exportWarningWallet.address.slice(-6)}
                       </code>
                     </div>
                   </div>
@@ -428,7 +453,8 @@ export default function WalletPage() {
                   {exportWarningWallet.chainType === 'solana' && (
                     <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
                       <p className="text-yellow-400 text-sm">
-                        <strong>Note:</strong> Solana wallet export may have limited support. If export fails, contact support for assistance.
+                        <strong>Note:</strong> Solana wallet export may have limited support. If
+                        export fails, contact support for assistance.
                       </p>
                     </div>
                   )}
@@ -458,7 +484,9 @@ export default function WalletPage() {
         <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-8">
           <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-6">
             <p className="text-text-secondary text-xs sm:text-sm mb-1">Total Wallets</p>
-            <p className="text-xl sm:text-3xl font-bold text-text-primary">{allLinkedWallets.length}</p>
+            <p className="text-xl sm:text-3xl font-bold text-text-primary">
+              {allLinkedWallets.length}
+            </p>
           </div>
           <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-3 sm:p-6">
             <p className="text-text-secondary text-xs sm:text-sm mb-1">Connected</p>
@@ -473,12 +501,12 @@ export default function WalletPage() {
               className="absolute top-2 right-2 sm:top-4 sm:right-4 p-1.5 sm:p-2 hover:bg-white/5 rounded-lg transition-colors disabled:opacity-50"
               title="Refresh balances"
             >
-              <FiRefreshCw className={`w-3 h-3 sm:w-4 sm:h-4 text-text-secondary ${balancesLoading ? 'animate-spin' : ''}`} />
+              <FiRefreshCw
+                className={`w-3 h-3 sm:w-4 sm:h-4 text-text-secondary ${balancesLoading ? 'animate-spin' : ''}`}
+              />
             </button>
             <p className="text-text-secondary text-xs sm:text-sm mb-1">Embedded</p>
-            <p className="text-xl sm:text-3xl font-bold text-neon-pink">
-              {embeddedWallets.length}
-            </p>
+            <p className="text-xl sm:text-3xl font-bold text-neon-pink">{embeddedWallets.length}</p>
           </div>
         </div>
 
@@ -489,7 +517,8 @@ export default function WalletPage() {
             Embedded Wallet
           </h2>
           <p className="text-text-secondary text-sm mb-4">
-            Your secure Privy-managed wallet. Created automatically and secured with your login credentials.
+            Your secure Privy-managed wallet. Created automatically and secured with your login
+            credentials.
           </p>
 
           {embeddedWallets.length === 0 ? (
@@ -499,7 +528,8 @@ export default function WalletPage() {
               </div>
               <h3 className="text-lg font-bold text-text-primary mb-2">No Embedded Wallet Yet</h3>
               <p className="text-text-secondary mb-6 max-w-md mx-auto">
-                Create a secure embedded wallet managed by Privy. This wallet is automatically secured with your login credentials.
+                Create a secure embedded wallet managed by Privy. This wallet is automatically
+                secured with your login credentials.
               </p>
               <button
                 onClick={handleCreateEmbeddedWallet}
@@ -582,11 +612,13 @@ export default function WalletPage() {
 
                         {/* Chain Badge */}
                         <div className="mt-3">
-                          <span className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs rounded-full font-medium ${
-                            wallet.chainType === 'solana'
-                              ? 'bg-purple-500/20 text-purple-400'
-                              : 'bg-blue-500/20 text-blue-400'
-                          }`}>
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs rounded-full font-medium ${
+                              wallet.chainType === 'solana'
+                                ? 'bg-purple-500/20 text-purple-400'
+                                : 'bg-blue-500/20 text-blue-400'
+                            }`}
+                          >
                             {getWalletIcon(wallet.chainType)}
                             <span className="capitalize">{wallet.chainType}</span>
                           </span>
@@ -679,7 +711,8 @@ export default function WalletPage() {
             Linked Wallets
           </h2>
           <p className="text-text-secondary text-sm mb-4">
-            External wallets connected to your account. Use these to receive rewards to your preferred address.
+            External wallets connected to your account. Use these to receive rewards to your
+            preferred address.
           </p>
 
           {linkedWallets.length === 0 ? (
@@ -687,9 +720,12 @@ export default function WalletPage() {
               <div className="w-16 h-16 rounded-full bg-neon-pink/10 flex items-center justify-center mx-auto mb-4">
                 <FiLink className="w-8 h-8 text-neon-pink" />
               </div>
-              <h3 className="text-lg font-bold text-text-primary mb-2">No External Wallets Linked</h3>
+              <h3 className="text-lg font-bold text-text-primary mb-2">
+                No External Wallets Linked
+              </h3>
               <p className="text-text-secondary mb-6 max-w-md mx-auto">
-                Connect your MetaMask, Phantom, or other wallets to receive rewards to your preferred address.
+                Connect your MetaMask, Phantom, or other wallets to receive rewards to your
+                preferred address.
               </p>
               <button
                 onClick={() => linkWallet()}
@@ -712,11 +748,13 @@ export default function WalletPage() {
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                     <div className="flex items-start gap-3 sm:gap-4 min-w-0">
                       {/* Wallet Icon */}
-                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 ${
-                        wallet.chainType === 'solana'
-                          ? 'bg-gradient-to-br from-purple-600 to-green-500'
-                          : 'bg-gradient-to-br from-blue-600 to-purple-600'
-                      }`}>
+                      <div
+                        className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 ${
+                          wallet.chainType === 'solana'
+                            ? 'bg-gradient-to-br from-purple-600 to-green-500'
+                            : 'bg-gradient-to-br from-blue-600 to-purple-600'
+                        }`}
+                      >
                         {getWalletIcon(wallet.chainType)}
                       </div>
 
@@ -763,11 +801,13 @@ export default function WalletPage() {
 
                         {/* Chain Badge */}
                         <div className="mt-2">
-                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full ${
-                            wallet.chainType === 'solana'
-                              ? 'bg-purple-500/20 text-purple-400'
-                              : 'bg-blue-500/20 text-blue-400'
-                          }`}>
+                          <span
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full ${
+                              wallet.chainType === 'solana'
+                                ? 'bg-purple-500/20 text-purple-400'
+                                : 'bg-blue-500/20 text-blue-400'
+                            }`}
+                          >
                             {getWalletIcon(wallet.chainType)}
                             <span className="capitalize">{wallet.chainType}</span>
                           </span>
@@ -797,41 +837,41 @@ export default function WalletPage() {
 
                       {/* Actions */}
                       <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-                      {wallet.chainType === 'solana' ? (
-                        <button
-                          onClick={() => copyToClipboard(wallet.address)}
-                          className="p-2 hover:bg-purple-500/10 text-text-secondary hover:text-purple-400 rounded-lg transition-all"
-                          title="Copy address to receive SOL"
-                        >
-                          {copiedAddress === wallet.address ? (
-                            <FiCheck className="w-5 h-5 text-green-500" />
-                          ) : (
-                            <FiCopy className="w-5 h-5" />
-                          )}
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleFundWallet(wallet.address, wallet.chainType)}
-                          className="p-2 hover:bg-green-500/10 text-text-secondary hover:text-green-500 rounded-lg transition-all"
-                          title="Fund wallet"
-                        >
-                          <FiDollarSign className="w-5 h-5" />
-                        </button>
-                      )}
-                      {allLinkedWallets.length > 1 && (
-                        <button
-                          onClick={() => handleUnlinkWallet(wallet.address)}
-                          disabled={unlinkingAddress === wallet.address}
-                          className="p-2 hover:bg-red-500/10 text-text-secondary hover:text-red-500 rounded-lg transition-all disabled:opacity-50"
-                          title="Unlink wallet"
-                        >
-                          {unlinkingAddress === wallet.address ? (
-                            <div className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
-                          ) : (
-                            <FiTrash2 className="w-5 h-5" />
-                          )}
-                        </button>
-                      )}
+                        {wallet.chainType === 'solana' ? (
+                          <button
+                            onClick={() => copyToClipboard(wallet.address)}
+                            className="p-2 hover:bg-purple-500/10 text-text-secondary hover:text-purple-400 rounded-lg transition-all"
+                            title="Copy address to receive SOL"
+                          >
+                            {copiedAddress === wallet.address ? (
+                              <FiCheck className="w-5 h-5 text-green-500" />
+                            ) : (
+                              <FiCopy className="w-5 h-5" />
+                            )}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleFundWallet(wallet.address, wallet.chainType)}
+                            className="p-2 hover:bg-green-500/10 text-text-secondary hover:text-green-500 rounded-lg transition-all"
+                            title="Fund wallet"
+                          >
+                            <FiDollarSign className="w-5 h-5" />
+                          </button>
+                        )}
+                        {allLinkedWallets.length > 1 && (
+                          <button
+                            onClick={() => handleUnlinkWallet(wallet.address)}
+                            disabled={unlinkingAddress === wallet.address}
+                            className="p-2 hover:bg-red-500/10 text-text-secondary hover:text-red-500 rounded-lg transition-all disabled:opacity-50"
+                            title="Unlink wallet"
+                          >
+                            {unlinkingAddress === wallet.address ? (
+                              <div className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              <FiTrash2 className="w-5 h-5" />
+                            )}
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

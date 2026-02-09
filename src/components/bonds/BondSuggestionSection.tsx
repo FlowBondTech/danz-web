@@ -1,7 +1,7 @@
 'use client'
 
+import type { SuggestedBond } from '@/src/types/bonds'
 import { useState } from 'react'
-import { SuggestedBond } from '@/src/types/bonds'
 import { SuggestedBondCard } from './SuggestedBondCard'
 
 interface BondSuggestionSectionProps {
@@ -69,11 +69,8 @@ export function BondSuggestionSection({
 
       {/* Suggestion cards - horizontal scroll on mobile */}
       <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory -mx-4 px-4 scrollbar-hide">
-        {visibleSuggestions.map((suggestion) => (
-          <div
-            key={suggestion.id}
-            className="flex-shrink-0 w-[300px] snap-center"
-          >
+        {visibleSuggestions.map(suggestion => (
+          <div key={suggestion.id} className="flex-shrink-0 w-[300px] snap-center">
             <SuggestedBondCard
               bond={suggestion}
               onAccept={handleAccept}

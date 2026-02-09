@@ -52,12 +52,7 @@ query GetUserTransactions(
   $offset: Int
   $status: TransactionStatus
 ) {
-  getUserTransactions(
-    user_id: $user_id
-    limit: $limit
-    offset: $offset
-    status: $status
-  ) {
+  getUserTransactions(user_id: $user_id, limit: $limit, offset: $offset, status: $status) {
     transactions {
       id
       user_id
@@ -138,16 +133,8 @@ query GetAllTransactions(
 }
 
 # Daily Activity Queries
-query GetUserDailyActivity(
-  $user_id: String!
-  $start_date: String!
-  $end_date: String!
-) {
-  getUserDailyActivity(
-    user_id: $user_id
-    start_date: $start_date
-    end_date: $end_date
-  ) {
+query GetUserDailyActivity($user_id: String!, $start_date: String!, $end_date: String!) {
+  getUserDailyActivity(user_id: $user_id, start_date: $start_date, end_date: $end_date) {
     id
     user_id
     activity_date
@@ -249,12 +236,7 @@ query GetPointsOverview {
   }
 }
 
-query GetUserPointsSummaries(
-  $limit: Int
-  $offset: Int
-  $sort_by: String
-  $sort_order: String
-) {
+query GetUserPointsSummaries($limit: Int, $offset: Int, $sort_by: String, $sort_order: String) {
   getUserPointsSummaries(
     limit: $limit
     offset: $offset

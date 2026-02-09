@@ -13,7 +13,7 @@ export function SplashScreen({
   title = 'DANZ',
   subtitle = 'Move. Connect. Earn.',
   onComplete,
-  duration = 1500
+  duration = 1500,
 }: SplashScreenProps) {
   const [fadeIn, setFadeIn] = useState(false)
 

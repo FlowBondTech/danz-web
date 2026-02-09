@@ -1,13 +1,17 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
-import { useExperimental } from '@/src/contexts/ExperimentalContext'
 import { getDarkThemes, getLightThemes } from '@/src/constants/themes'
+import { useExperimental } from '@/src/contexts/ExperimentalContext'
 import { useTheme } from '@/src/contexts/ThemeContext'
-import { useGetMyProfileQuery, useGetMyNotificationPreferencesQuery, useUpdateNotificationPreferencesMutation } from '@/src/generated/graphql'
+import {
+  useGetMyNotificationPreferencesQuery,
+  useGetMyProfileQuery,
+  useUpdateNotificationPreferencesMutation,
+} from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import {
   FiBell,
   FiCheck,
@@ -15,12 +19,8 @@ import {
   FiChevronRight,
   FiDroplet,
   FiEdit3,
-  FiExternalLink,
   FiEye,
-  FiEyeOff,
   FiLock,
-  FiMail,
-  FiMapPin,
   FiMonitor,
   FiMoon,
   FiSettings,
@@ -62,12 +62,18 @@ function SettingsSection({
           <span className={`text-${accentColor}`}>{icon}</span>
           <span className="font-semibold text-text-primary">{title}</span>
           {badge && (
-            <span className={`text-xs px-2 py-0.5 rounded-full bg-${accentColor}/20 text-${accentColor}`}>
+            <span
+              className={`text-xs px-2 py-0.5 rounded-full bg-${accentColor}/20 text-${accentColor}`}
+            >
               {badge}
             </span>
           )}
         </div>
-        {isOpen ? <FiChevronDown size={20} className="text-text-secondary" /> : <FiChevronRight size={20} className="text-text-secondary" />}
+        {isOpen ? (
+          <FiChevronDown size={20} className="text-text-secondary" />
+        ) : (
+          <FiChevronRight size={20} className="text-text-secondary" />
+        )}
       </button>
       {isOpen && <div className="px-4 pb-4 border-t border-white/5">{children}</div>}
     </div>
@@ -115,13 +121,16 @@ function ToggleRow({
 export default function SettingsPage() {
   const { authenticated, ready, user, logout } = usePrivy()
   const router = useRouter()
-  const { theme, themeId, mode, useSystemTheme, setTheme, toggleMode, setUseSystemTheme } = useTheme()
+  const { theme, themeId, mode, useSystemTheme, setTheme, toggleMode, setUseSystemTheme } =
+    useTheme()
   const { experimentalEnabled, setExperimentalEnabled } = useExperimental()
   const { data: profileData } = useGetMyProfileQuery({ skip: !authenticated })
   const profile = profileData?.me
 
   // Notification preferences
-  const { data: notifData } = useGetMyNotificationPreferencesQuery({ fetchPolicy: 'cache-and-network' })
+  const { data: notifData } = useGetMyNotificationPreferencesQuery({
+    fetchPolicy: 'cache-and-network',
+  })
   const [updateNotifPrefs] = useUpdateNotificationPreferencesMutation()
   const [notifPrefs, setNotifPrefs] = useState({
     email_notifications: true,
@@ -236,19 +245,30 @@ export default function SettingsPage() {
         {/* Settings Sections */}
         <div className="space-y-4">
           {/* Profile Section */}
-          <SettingsSection id="profile" icon={<FiUser size={20} />} title="Profile" defaultOpen={true}>
+          <SettingsSection
+            id="profile"
+            icon={<FiUser size={20} />}
+            title="Profile"
+            defaultOpen={true}
+          >
             <div className="pt-4 space-y-4">
               {/* Quick Profile Summary */}
               <div className="flex items-center gap-4 p-3 bg-white/5 rounded-lg">
                 {profile?.avatar_url ? (
-                  <img src={profile.avatar_url} alt="" className="w-12 h-12 rounded-full object-cover" />
+                  <img
+                    src={profile.avatar_url}
+                    alt=""
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
                 ) : (
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center text-white font-bold">
                     {profile?.username?.charAt(0).toUpperCase() || 'U'}
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-text-primary truncate">{profile?.display_name || profile?.username}</p>
+                  <p className="font-semibold text-text-primary truncate">
+                    {profile?.display_name || profile?.username}
+                  </p>
                   <p className="text-text-secondary text-sm">@{profile?.username}</p>
                 </div>
                 <button
@@ -281,11 +301,18 @@ export default function SettingsPage() {
           </SettingsSection>
 
           {/* Appearance Section */}
-          <SettingsSection id="appearance" icon={<FiDroplet size={20} />} title="Theme & Appearance" defaultOpen={true}>
+          <SettingsSection
+            id="appearance"
+            icon={<FiDroplet size={20} />}
+            title="Theme & Appearance"
+            defaultOpen={true}
+          >
             <div className="pt-4 space-y-4">
               {/* Mode Toggle */}
               <div>
-                <p className="text-text-secondary text-xs font-medium mb-2 uppercase tracking-wider">Mode</p>
+                <p className="text-text-secondary text-xs font-medium mb-2 uppercase tracking-wider">
+                  Mode
+                </p>
                 <div className="flex gap-2">
                   {[
                     { mode: 'dark' as const, icon: <FiMoon size={16} />, label: 'Dark' },
@@ -303,7 +330,8 @@ export default function SettingsPage() {
                         }
                       }}
                       className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border transition-all text-sm ${
-                        (m.mode === 'system' && useSystemTheme) || (m.mode !== 'system' && !useSystemTheme && mode === m.mode)
+                        (m.mode === 'system' && useSystemTheme) ||
+                        (m.mode !== 'system' && !useSystemTheme && mode === m.mode)
                           ? 'border-neon-purple bg-neon-purple/10 text-neon-purple'
                           : 'border-white/10 text-text-secondary hover:border-white/20'
                       }`}
@@ -317,7 +345,9 @@ export default function SettingsPage() {
 
               {/* Theme Grid - Compact */}
               <div>
-                <p className="text-text-secondary text-xs font-medium mb-2 uppercase tracking-wider">Theme</p>
+                <p className="text-text-secondary text-xs font-medium mb-2 uppercase tracking-wider">
+                  Theme
+                </p>
                 <div className="grid grid-cols-4 gap-2">
                   {presetThemes.map(t => (
                     <button
@@ -331,8 +361,14 @@ export default function SettingsPage() {
                       title={t.name}
                     >
                       <div className="flex gap-1 mb-1.5">
-                        <div className="w-4 h-4 rounded" style={{ backgroundColor: t.colors.neonPurple }} />
-                        <div className="w-4 h-4 rounded" style={{ backgroundColor: t.colors.neonPink }} />
+                        <div
+                          className="w-4 h-4 rounded"
+                          style={{ backgroundColor: t.colors.neonPurple }}
+                        />
+                        <div
+                          className="w-4 h-4 rounded"
+                          style={{ backgroundColor: t.colors.neonPink }}
+                        />
                       </div>
                       <p className="text-[10px] text-text-secondary truncate">{t.name}</p>
                       {themeId === t.id && (
@@ -528,7 +564,9 @@ export default function SettingsPage() {
                   <FiTrash2 size={16} />
                   Delete Account
                 </h3>
-                <p className="text-text-secondary text-xs mt-1">Permanently delete your account and data</p>
+                <p className="text-text-secondary text-xs mt-1">
+                  Permanently delete your account and data
+                </p>
               </div>
               <button className="px-4 py-2 bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 rounded-lg text-red-400 text-sm font-medium transition-colors">
                 Delete

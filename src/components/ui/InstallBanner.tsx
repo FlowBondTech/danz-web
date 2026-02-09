@@ -1,17 +1,11 @@
 'use client'
 
-import { FiX, FiDownload, FiShare, FiPlusSquare } from 'react-icons/fi'
 import { useInstallPrompt } from '@/src/hooks/useInstallPrompt'
+import { FiDownload, FiPlusSquare, FiShare, FiX } from 'react-icons/fi'
 
 export default function InstallBanner() {
-  const {
-    isInstallable,
-    isInstalled,
-    isIOS,
-    promptInstall,
-    dismissBanner,
-    showBanner,
-  } = useInstallPrompt()
+  const { isInstallable, isInstalled, isIOS, promptInstall, dismissBanner, showBanner } =
+    useInstallPrompt()
 
   // Don't show if already installed or banner is hidden
   if (isInstalled || !showBanner || !isInstallable) {
@@ -42,9 +36,7 @@ export default function InstallBanner() {
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-              <h3 className="text-text-primary font-bold text-sm">
-                Add DANZ to Home Screen
-              </h3>
+              <h3 className="text-text-primary font-bold text-sm">Add DANZ to Home Screen</h3>
               {isIOS ? (
                 <p className="text-text-secondary text-xs mt-1">
                   Tap <FiShare className="inline text-neon-purple" size={12} /> then{' '}

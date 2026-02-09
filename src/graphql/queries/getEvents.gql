@@ -44,6 +44,8 @@ query GetEvents($filter: EventFilterInput, $pagination: PaginationInput) {
       recurrence_days
       recurrence_count
       parent_event_id
+      allow_sponsors
+      sponsor_count
     }
     pageInfo {
       hasNextPage

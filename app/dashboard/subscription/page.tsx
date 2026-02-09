@@ -68,13 +68,16 @@ function SubscriptionContent() {
     }
   }, [searchParams, refetch])
 
-  const handleSubscribe = async (plan: typeof plans[0]) => {
+  const handleSubscribe = async (plan: (typeof plans)[0]) => {
     setIsLoading(true)
     setError(null)
 
     try {
       // Only allow new subscriptions - no upgrades
-      const { url } = await stripeService.createCheckoutSession(plan.priceId, plan.id as 'monthly' | 'yearly')
+      const { url } = await stripeService.createCheckoutSession(
+        plan.priceId,
+        plan.id as 'monthly' | 'yearly',
+      )
       if (url) {
         window.location.href = url
       }
@@ -178,54 +181,54 @@ function SubscriptionContent() {
         {!isPremium && (
           <div className="grid md:grid-cols-2 gap-6">
             {plans.map(plan => (
-            <div
-              key={plan.id}
-              className={`relative bg-bg-secondary rounded-xl p-6 border transition-all ${
-                selectedPlan === plan.id
-                  ? 'border-neon-purple/50 shadow-lg shadow-neon-purple/10'
-                  : 'border-white/10 hover:border-white/20'
-              }`}
-            >
-              {plan.badge && (
-                <div className="absolute -top-3 right-6">
-                  <span className="bg-gradient-neon text-white px-3 py-1 rounded-full text-sm font-medium">
-                    {plan.badge}
-                  </span>
-                </div>
-              )}
-
-              <div className="mb-6">
-                <h3 className="text-xl font-bold text-text-primary mb-2">{plan.name}</h3>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-bold gradient-text">{plan.price}</span>
-                  <span className="text-text-muted">{plan.period}</span>
-                </div>
-              </div>
-
-              <ul className="space-y-3 mb-6">
-                {plan.features.map((feature, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <FiCheck className="w-3 h-3 text-text-primary" />
-                    </div>
-                    <span className="text-text-secondary text-sm">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <button
-                onClick={() => handleSubscribe(plan)}
-                disabled={isLoading}
-                className={`w-full py-3 rounded-lg font-medium transition-all ${
+              <div
+                key={plan.id}
+                className={`relative bg-bg-secondary rounded-xl p-6 border transition-all ${
                   selectedPlan === plan.id
-                    ? 'bg-gradient-neon text-white shadow-lg hover:shadow-neon-purple/50'
-                    : 'bg-white/5 text-text-primary border border-white/10 hover:bg-white/10'
-                } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    ? 'border-neon-purple/50 shadow-lg shadow-neon-purple/10'
+                    : 'border-white/10 hover:border-white/20'
+                }`}
               >
-                {isLoading ? 'Processing...' : 'Select Plan'}
-              </button>
-            </div>
-          ))}
+                {plan.badge && (
+                  <div className="absolute -top-3 right-6">
+                    <span className="bg-gradient-neon text-white px-3 py-1 rounded-full text-sm font-medium">
+                      {plan.badge}
+                    </span>
+                  </div>
+                )}
+
+                <div className="mb-6">
+                  <h3 className="text-xl font-bold text-text-primary mb-2">{plan.name}</h3>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-3xl font-bold gradient-text">{plan.price}</span>
+                    <span className="text-text-muted">{plan.period}</span>
+                  </div>
+                </div>
+
+                <ul className="space-y-3 mb-6">
+                  {plan.features.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <div className="w-5 h-5 rounded-full bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <FiCheck className="w-3 h-3 text-text-primary" />
+                      </div>
+                      <span className="text-text-secondary text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <button
+                  onClick={() => handleSubscribe(plan)}
+                  disabled={isLoading}
+                  className={`w-full py-3 rounded-lg font-medium transition-all ${
+                    selectedPlan === plan.id
+                      ? 'bg-gradient-neon text-white shadow-lg hover:shadow-neon-purple/50'
+                      : 'bg-white/5 text-text-primary border border-white/10 hover:bg-white/10'
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  {isLoading ? 'Processing...' : 'Select Plan'}
+                </button>
+              </div>
+            ))}
           </div>
         )}
 

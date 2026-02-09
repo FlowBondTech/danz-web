@@ -1,40 +1,140 @@
 'use client'
 
-import { useState } from 'react'
+import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
+import { useGetMyProfileQuery } from '@/src/generated/graphql'
+import { usePrivy } from '@privy-io/react-auth'
 import { motion } from 'motion/react'
+import Link from 'next/link'
+import { useState } from 'react'
 import {
   FiArrowLeft,
   FiAward,
   FiCalendar,
-  FiUsers,
-  FiTrendingUp,
-  FiZap,
   FiStar,
   FiTarget,
+  FiTrendingUp,
+  FiUsers,
+  FiZap,
 } from 'react-icons/fi'
-import Link from 'next/link'
-import { usePrivy } from '@privy-io/react-auth'
-import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
-import { useGetMyProfileQuery } from '@/src/generated/graphql'
 
 // TODO: Fetch from API
 const MOCK_LEADERBOARD = [
-  { id: '1', username: 'dancequeen', display_name: 'Sarah M.', xp: 4250, level: 8, events_created: 12, events_attended: 45, streak: 14 },
-  { id: '2', username: 'groovyking', display_name: 'Marcus J.', xp: 3890, level: 7, events_created: 8, events_attended: 52, streak: 21 },
-  { id: '3', username: 'salsafire', display_name: 'Elena R.', xp: 3450, level: 7, events_created: 15, events_attended: 38, streak: 7 },
-  { id: '4', username: 'hiphopdreams', display_name: 'Tyler W.', xp: 2980, level: 6, events_created: 5, events_attended: 42, streak: 0 },
-  { id: '5', username: 'balletrose', display_name: 'Lily C.', xp: 2650, level: 5, events_created: 3, events_attended: 35, streak: 5 },
-  { id: '6', username: 'jazzyhands', display_name: 'Mike D.', xp: 2340, level: 5, events_created: 7, events_attended: 28, streak: 3 },
-  { id: '7', username: 'breakdancer', display_name: 'Carlos G.', xp: 1980, level: 4, events_created: 2, events_attended: 31, streak: 0 },
-  { id: '8', username: 'tapmaster', display_name: 'Jessica T.', xp: 1750, level: 4, events_created: 4, events_attended: 25, streak: 2 },
-  { id: '9', username: 'swingking', display_name: 'David S.', xp: 1520, level: 3, events_created: 1, events_attended: 22, streak: 0 },
-  { id: '10', username: 'moonwalker', display_name: 'Chris M.', xp: 1280, level: 3, events_created: 0, events_attended: 18, streak: 1 },
+  {
+    id: '1',
+    username: 'dancequeen',
+    display_name: 'Sarah M.',
+    xp: 4250,
+    level: 8,
+    events_created: 12,
+    events_attended: 45,
+    streak: 14,
+  },
+  {
+    id: '2',
+    username: 'groovyking',
+    display_name: 'Marcus J.',
+    xp: 3890,
+    level: 7,
+    events_created: 8,
+    events_attended: 52,
+    streak: 21,
+  },
+  {
+    id: '3',
+    username: 'salsafire',
+    display_name: 'Elena R.',
+    xp: 3450,
+    level: 7,
+    events_created: 15,
+    events_attended: 38,
+    streak: 7,
+  },
+  {
+    id: '4',
+    username: 'hiphopdreams',
+    display_name: 'Tyler W.',
+    xp: 2980,
+    level: 6,
+    events_created: 5,
+    events_attended: 42,
+    streak: 0,
+  },
+  {
+    id: '5',
+    username: 'balletrose',
+    display_name: 'Lily C.',
+    xp: 2650,
+    level: 5,
+    events_created: 3,
+    events_attended: 35,
+    streak: 5,
+  },
+  {
+    id: '6',
+    username: 'jazzyhands',
+    display_name: 'Mike D.',
+    xp: 2340,
+    level: 5,
+    events_created: 7,
+    events_attended: 28,
+    streak: 3,
+  },
+  {
+    id: '7',
+    username: 'breakdancer',
+    display_name: 'Carlos G.',
+    xp: 1980,
+    level: 4,
+    events_created: 2,
+    events_attended: 31,
+    streak: 0,
+  },
+  {
+    id: '8',
+    username: 'tapmaster',
+    display_name: 'Jessica T.',
+    xp: 1750,
+    level: 4,
+    events_created: 4,
+    events_attended: 25,
+    streak: 2,
+  },
+  {
+    id: '9',
+    username: 'swingking',
+    display_name: 'David S.',
+    xp: 1520,
+    level: 3,
+    events_created: 1,
+    events_attended: 22,
+    streak: 0,
+  },
+  {
+    id: '10',
+    username: 'moonwalker',
+    display_name: 'Chris M.',
+    xp: 1280,
+    level: 3,
+    events_created: 0,
+    events_attended: 18,
+    streak: 1,
+  },
 ]
 
 const RANK_BADGES: Record<number, { emoji: string; color: string; bg: string; glow: string }> = {
-  1: { emoji: '👑', color: 'text-yellow-400', bg: 'bg-yellow-500/20', glow: 'shadow-yellow-500/30' },
+  1: {
+    emoji: '👑',
+    color: 'text-yellow-400',
+    bg: 'bg-yellow-500/20',
+    glow: 'shadow-yellow-500/30',
+  },
   2: { emoji: '🥈', color: 'text-gray-300', bg: 'bg-gray-500/20', glow: 'shadow-gray-500/20' },
-  3: { emoji: '🥉', color: 'text-orange-400', bg: 'bg-orange-500/20', glow: 'shadow-orange-500/20' },
+  3: {
+    emoji: '🥉',
+    color: 'text-orange-400',
+    bg: 'bg-orange-500/20',
+    glow: 'shadow-orange-500/20',
+  },
 }
 
 type TimeFilter = 'weekly' | 'monthly' | 'allTime'
@@ -90,13 +190,13 @@ export default function LeaderboardPage() {
             <motion.div
               animate={{
                 rotate: [0, -10, 10, -10, 0],
-                scale: [1, 1.1, 1]
+                scale: [1, 1.1, 1],
               }}
               transition={{
                 duration: 0.6,
-                repeat: Infinity,
+                repeat: Number.POSITIVE_INFINITY,
                 repeatDelay: 3,
-                ease: "easeInOut"
+                ease: 'easeInOut',
               }}
               className="text-5xl"
             >
@@ -106,9 +206,7 @@ export default function LeaderboardPage() {
               <h1 className="text-3xl md:text-4xl font-display font-bold text-text-primary">
                 Dance Leaderboard
               </h1>
-              <p className="text-text-secondary mt-1">
-                Top dancers in the community
-              </p>
+              <p className="text-text-secondary mt-1">Top dancers in the community</p>
             </div>
           </div>
 
@@ -148,12 +246,14 @@ export default function LeaderboardPage() {
 
           {/* Sort By */}
           <div className="flex items-center gap-1 sm:gap-2 bg-bg-secondary rounded-xl p-1.5 border border-white/10 overflow-x-auto">
-            {([
-              { key: 'xp', icon: FiZap, label: 'XP' },
-              { key: 'events_created', icon: FiCalendar, label: 'Created' },
-              { key: 'events_attended', icon: FiUsers, label: 'Attended' },
-              { key: 'streak', icon: FiTrendingUp, label: 'Streak' },
-            ] as { key: SortBy; icon: typeof FiZap; label: string }[]).map(({ key, icon: Icon, label }) => (
+            {(
+              [
+                { key: 'xp', icon: FiZap, label: 'XP' },
+                { key: 'events_created', icon: FiCalendar, label: 'Created' },
+                { key: 'events_attended', icon: FiUsers, label: 'Attended' },
+                { key: 'streak', icon: FiTrendingUp, label: 'Streak' },
+              ] as { key: SortBy; icon: typeof FiZap; label: string }[]
+            ).map(({ key, icon: Icon, label }) => (
               <button
                 key={key}
                 onClick={() => setSortBy(key)}
@@ -192,7 +292,9 @@ export default function LeaderboardPage() {
                 <p className="font-bold text-text-primary mt-3 truncate max-w-[120px]">
                   {sortedUsers[1].display_name || sortedUsers[1].username}
                 </p>
-                <p className="text-lg text-yellow-400 font-medium">{sortedUsers[1].xp.toLocaleString()} XP</p>
+                <p className="text-lg text-yellow-400 font-medium">
+                  {sortedUsers[1].xp.toLocaleString()} XP
+                </p>
                 <p className="text-sm text-text-secondary">Level {sortedUsers[1].level}</p>
                 <div className="h-24 w-28 bg-gray-500/20 rounded-t-xl mt-4 flex items-center justify-center border-t border-l border-r border-gray-500/30">
                   <span className="text-4xl font-bold text-gray-400">2</span>
@@ -210,14 +312,14 @@ export default function LeaderboardPage() {
                 <div className="relative">
                   <motion.div
                     animate={{ y: [0, -8, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
+                    transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
                     className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 mx-auto mb-3 overflow-hidden border-4 border-yellow-400 shadow-2xl shadow-yellow-500/40 flex items-center justify-center text-white text-3xl font-bold"
                   >
                     {sortedUsers[0].display_name?.[0] || sortedUsers[0].username[0]}
                   </motion.div>
                   <motion.span
                     animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
+                    transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
                     className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-4xl"
                   >
                     👑
@@ -226,7 +328,9 @@ export default function LeaderboardPage() {
                 <p className="font-bold text-text-primary text-lg mt-3 truncate max-w-[140px]">
                   {sortedUsers[0].display_name || sortedUsers[0].username}
                 </p>
-                <p className="text-xl text-yellow-400 font-bold">{sortedUsers[0].xp.toLocaleString()} XP</p>
+                <p className="text-xl text-yellow-400 font-bold">
+                  {sortedUsers[0].xp.toLocaleString()} XP
+                </p>
                 <p className="text-sm text-text-secondary">Level {sortedUsers[0].level}</p>
                 <div className="h-32 w-32 bg-yellow-500/20 rounded-t-xl mt-4 flex items-center justify-center border-t border-l border-r border-yellow-500/30">
                   <span className="text-5xl font-bold text-yellow-400">1</span>
@@ -251,7 +355,9 @@ export default function LeaderboardPage() {
                 <p className="font-bold text-text-primary mt-3 truncate max-w-[120px]">
                   {sortedUsers[2].display_name || sortedUsers[2].username}
                 </p>
-                <p className="text-lg text-yellow-400 font-medium">{sortedUsers[2].xp.toLocaleString()} XP</p>
+                <p className="text-lg text-yellow-400 font-medium">
+                  {sortedUsers[2].xp.toLocaleString()} XP
+                </p>
                 <p className="text-sm text-text-secondary">Level {sortedUsers[2].level}</p>
                 <div className="h-20 w-28 bg-orange-500/20 rounded-t-xl mt-4 flex items-center justify-center border-t border-l border-r border-orange-500/30">
                   <span className="text-4xl font-bold text-orange-400">3</span>
@@ -340,8 +446,18 @@ export default function LeaderboardPage() {
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { icon: FiCalendar, label: 'Create Events', xp: '+100 XP', desc: 'Host dance events' },
-              { icon: FiUsers, label: 'Attend Events', xp: '+25 XP', desc: 'Join community events' },
+              {
+                icon: FiCalendar,
+                label: 'Create Events',
+                xp: '+100 XP',
+                desc: 'Host dance events',
+              },
+              {
+                icon: FiUsers,
+                label: 'Attend Events',
+                xp: '+25 XP',
+                desc: 'Join community events',
+              },
               { icon: FiTrendingUp, label: 'Build Streaks', xp: '+10 XP/day', desc: 'Dance daily' },
               { icon: FiStar, label: 'Level Up', xp: 'Bonus XP', desc: 'Unlock achievements' },
             ].map((item, index) => (

@@ -3,12 +3,12 @@
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import type React from 'react'
-import { type ReactNode, createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react'
+import { type ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react'
 import type { User } from '../generated/graphql'
 import {
   useGetMyProfileQuery,
-  useUpdateProfileMutation,
   useTrackAppOpenMutation,
+  useUpdateProfileMutation,
 } from '../generated/graphql'
 
 // Auth context type
@@ -28,7 +28,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 // Provider Component
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const router = useRouter()
-  const { login: privyLogin, logout: privyLogout, authenticated, ready, getAccessToken } = usePrivy()
+  const {
+    login: privyLogin,
+    logout: privyLogout,
+    authenticated,
+    ready,
+    getAccessToken,
+  } = usePrivy()
 
   const [hasCheckedProfile, setHasCheckedProfile] = useState(false)
   const [tokenReady, setTokenReady] = useState(false)
@@ -122,11 +128,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           const currentPath = window.location.pathname
           const isDashboardPath = currentPath.startsWith('/dashboard')
           // Public paths that authenticated users can stay on without redirect
-          const isPublicPath = currentPath === '/' ||
-                               currentPath.startsWith('/events') ||
-                               currentPath === '/danz' ||
-                               currentPath === '/ethdenver' ||
-                               currentPath.startsWith('/i/')
+          const isPublicPath =
+            currentPath === '/' ||
+            currentPath.startsWith('/events') ||
+            currentPath === '/danz' ||
+            currentPath === '/ethdenver' ||
+            currentPath.startsWith('/i/')
 
           // If no profile or no username, redirect to register (unless already there)
           if ((!data?.me || !data.me.username) && currentPath !== '/register') {
@@ -135,7 +142,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           }
           // If has username and on login page, redirect to dashboard
           // Don't redirect if on public paths or already on dashboard
-          else if (data?.me?.username && !isDashboardPath && !isPublicPath && currentPath === '/login') {
+          else if (
+            data?.me?.username &&
+            !isDashboardPath &&
+            !isPublicPath &&
+            currentPath === '/login'
+          ) {
             console.log('User logged in from login page, redirecting to dashboard')
             router.push('/dashboard')
           }
@@ -148,7 +160,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     checkProfileAndRedirect()
-  }, [authenticated, ready, tokenReady, profileLoading, hasCheckedProfile, refetchProfile, router, trackAppOpen])
+  }, [
+    authenticated,
+    ready,
+    tokenReady,
+    profileLoading,
+    hasCheckedProfile,
+    refetchProfile,
+    router,
+    trackAppOpen,
+  ])
 
   const login = async () => {
     try {

@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
+import { useCallback, useEffect, useState } from 'react'
 
 interface UseAppReadyOptions {
   minSplashDuration?: number
@@ -20,7 +20,7 @@ interface UseAppReadyResult {
  * Ensures splash shows for minimum duration while checking auth state.
  */
 export function useAppReady({
-  minSplashDuration = 1500
+  minSplashDuration = 1500,
 }: UseAppReadyOptions = {}): UseAppReadyResult {
   const { ready, authenticated } = usePrivy()
   const [showSplash, setShowSplash] = useState(true)
@@ -51,6 +51,6 @@ export function useAppReady({
     showSplash,
     isAuthenticated: authenticated,
     isLoading: !ready,
-    hideSplash
+    hideSplash,
   }
 }

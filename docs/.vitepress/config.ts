@@ -10,7 +10,13 @@ export default defineConfig({
     ['meta', { name: 'theme-color', content: '#8B5CF6' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'DANZ Platform Documentation' }],
-    ['meta', { property: 'og:description', content: 'Complete technical documentation for the DANZ dance-to-earn ecosystem' }],
+    [
+      'meta',
+      {
+        property: 'og:description',
+        content: 'Complete technical documentation for the DANZ dance-to-earn ecosystem',
+      },
+    ],
   ],
 
   themeConfig: {
@@ -28,7 +34,7 @@ export default defineConfig({
           { text: 'danz-web', link: '/frontend/danz-web' },
           { text: 'danz-miniapp', link: '/frontend/danz-miniapp' },
           { text: 'Prototypes', link: '/prototypes/overview' },
-        ]
+        ],
       },
       { text: 'Deployment', link: '/deployment/infrastructure' },
     ],
@@ -42,7 +48,7 @@ export default defineConfig({
             { text: 'Getting Started', link: '/guide/getting-started' },
             { text: 'Project Overview', link: '/guide/overview' },
             { text: 'Tech Stack', link: '/guide/tech-stack' },
-          ]
+          ],
         },
         {
           text: 'Development',
@@ -50,26 +56,20 @@ export default defineConfig({
             { text: 'Local Setup', link: '/guide/local-setup' },
             { text: 'Code Conventions', link: '/guide/conventions' },
             { text: 'Workflows', link: '/guide/workflows' },
-          ]
+          ],
         },
         {
           text: 'Core Systems',
-          items: [
-            { text: 'Point System', link: '/guide/point-system' },
-          ]
+          items: [{ text: 'Point System', link: '/guide/point-system' }],
         },
         {
           text: 'Integration Guides',
-          items: [
-            { text: 'Wearable Integration', link: '/guide/wearable-integration' },
-          ]
+          items: [{ text: 'Wearable Integration', link: '/guide/wearable-integration' }],
         },
         {
           text: 'Mobile Development',
-          items: [
-            { text: 'Mobile Onboarding', link: '/guide/mobile-onboarding' },
-          ]
-        }
+          items: [{ text: 'Mobile Onboarding', link: '/guide/mobile-onboarding' }],
+        },
       ],
       '/architecture/': [
         {
@@ -78,8 +78,8 @@ export default defineConfig({
             { text: 'Overview', link: '/architecture/overview' },
             { text: 'Data Flow', link: '/architecture/data-flow' },
             { text: 'Security', link: '/architecture/security' },
-          ]
-        }
+          ],
+        },
       ],
       '/api/': [
         {
@@ -91,7 +91,7 @@ export default defineConfig({
             { text: 'Events', link: '/api/events' },
             { text: 'Achievements', link: '/api/achievements' },
             { text: 'Social', link: '/api/social' },
-          ]
+          ],
         },
         {
           text: 'Cross-Platform APIs',
@@ -102,8 +102,8 @@ export default defineConfig({
             { text: 'Activity Feed', link: '/api/activity-feed' },
             { text: 'Analytics', link: '/api/analytics' },
             { text: 'Telegram Miniapp', link: '/api/miniapp' },
-          ]
-        }
+          ],
+        },
       ],
       '/database/': [
         {
@@ -115,8 +115,8 @@ export default defineConfig({
             { text: 'Social Tables', link: '/database/social' },
             { text: 'Cross-Platform Tables', link: '/database/cross-platform' },
             { text: 'Indexes & Performance', link: '/database/indexes' },
-          ]
-        }
+          ],
+        },
       ],
       '/frontend/': [
         {
@@ -124,15 +124,15 @@ export default defineConfig({
           items: [
             { text: 'danz-web', link: '/frontend/danz-web' },
             { text: 'danz-miniapp', link: '/frontend/danz-miniapp' },
-          ]
+          ],
         },
         {
           text: 'Components',
           items: [
             { text: 'Auth Components', link: '/frontend/components-auth' },
             { text: 'Dashboard', link: '/frontend/components-dashboard' },
-          ]
-        }
+          ],
+        },
       ],
       '/prototypes/': [
         {
@@ -144,8 +144,8 @@ export default defineConfig({
             { text: 'Version 3: Minimalist', link: '/prototypes/version3' },
             { text: 'Version 4: Retro', link: '/prototypes/version4' },
             { text: 'Version 5: Neon', link: '/prototypes/version5' },
-          ]
-        }
+          ],
+        },
       ],
       '/deployment/': [
         {
@@ -154,14 +154,12 @@ export default defineConfig({
             { text: 'Infrastructure', link: '/deployment/infrastructure' },
             { text: 'Environment Variables', link: '/deployment/environment' },
             { text: 'CI/CD', link: '/deployment/cicd' },
-          ]
+          ],
         },
         {
           text: 'Mobile',
-          items: [
-            { text: 'Testing & Deployment', link: '/deployment/mobile-testing-deployment' },
-          ]
-        }
+          items: [{ text: 'Testing & Deployment', link: '/deployment/mobile-testing-deployment' }],
+        },
       ],
     },
 
@@ -174,35 +172,35 @@ export default defineConfig({
       provider: 'local',
       options: {
         detailedView: true,
-      }
+      },
     },
 
     footer: {
       message: 'Built with VitePress',
-      copyright: 'Copyright 2024 DANZ / FlowBond'
+      copyright: 'Copyright 2024 DANZ / FlowBond',
     },
 
     editLink: {
       pattern: 'https://github.com/FlowBondTech/danz-docs/edit/main/:path',
-      text: 'Edit this page on GitHub'
+      text: 'Edit this page on GitHub',
     },
 
     lastUpdated: {
       text: 'Updated at',
       formatOptions: {
         dateStyle: 'full',
-        timeStyle: 'medium'
-      }
+        timeStyle: 'medium',
+      },
     },
 
     outline: {
       level: [2, 3],
-      label: 'On this page'
+      label: 'On this page',
     },
 
     docFooter: {
       prev: 'Previous',
-      next: 'Next'
+      next: 'Next',
     },
 
     darkModeSwitchLabel: 'Theme',
@@ -213,8 +211,8 @@ export default defineConfig({
   markdown: {
     lineNumbers: true,
     image: {
-      lazyLoading: true
-    }
+      lazyLoading: true,
+    },
   },
 
   lastUpdated: true,

@@ -161,7 +161,7 @@ export default function AchievementsWidget() {
               </div>
               <span
                 className={`px-2 py-0.5 ${getRarityBadgeColor(
-                  achievement.rarity
+                  achievement.rarity,
                 )} border rounded-full text-xs font-medium capitalize`}
               >
                 {achievement.rarity}
@@ -179,24 +179,26 @@ export default function AchievementsWidget() {
             <p className="text-xs text-text-secondary mb-3">{achievement.description}</p>
 
             {/* Progress Bar (for locked achievements) */}
-            {!achievement.earned && achievement.progress !== undefined && achievement.maxProgress && (
-              <div className="space-y-1">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-text-muted">Progress</span>
-                  <span className="text-text-secondary font-medium">
-                    {achievement.progress}/{achievement.maxProgress}
-                  </span>
+            {!achievement.earned &&
+              achievement.progress !== undefined &&
+              achievement.maxProgress && (
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-text-muted">Progress</span>
+                    <span className="text-text-secondary font-medium">
+                      {achievement.progress}/{achievement.maxProgress}
+                    </span>
+                  </div>
+                  <div className="h-1.5 bg-bg-primary rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-neon-purple to-neon-pink rounded-full transition-all duration-500"
+                      style={{
+                        width: `${(achievement.progress / achievement.maxProgress) * 100}%`,
+                      }}
+                    />
+                  </div>
                 </div>
-                <div className="h-1.5 bg-bg-primary rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-neon-purple to-neon-pink rounded-full transition-all duration-500"
-                    style={{
-                      width: `${(achievement.progress / achievement.maxProgress) * 100}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            )}
+              )}
 
             {/* Earned Date */}
             {achievement.earned && achievement.earnedDate && (

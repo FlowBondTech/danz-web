@@ -131,18 +131,21 @@ export function useFarcasterFrame(): UseFarcasterFrameReturn {
   }, [isInFrame])
 
   // Open URL in Farcaster browser
-  const openUrl = useCallback(async (url: string) => {
-    if (sdk && isInFrame) {
-      try {
-        await sdk.actions.openUrl(url)
-        return
-      } catch (err) {
-        console.error('[Farcaster SDK] Open URL error:', err)
+  const openUrl = useCallback(
+    async (url: string) => {
+      if (sdk && isInFrame) {
+        try {
+          await sdk.actions.openUrl(url)
+          return
+        } catch (err) {
+          console.error('[Farcaster SDK] Open URL error:', err)
+        }
       }
-    }
-    // Fallback to window.open
-    window.open(url, '_blank')
-  }, [isInFrame])
+      // Fallback to window.open
+      window.open(url, '_blank')
+    },
+    [isInFrame],
+  )
 
   // Close the miniapp
   const close = useCallback(async () => {
@@ -155,22 +158,27 @@ export function useFarcasterFrame(): UseFarcasterFrameReturn {
   }, [])
 
   // Compose a cast
-  const composeCast = useCallback(async (text: string, embeds?: string[]) => {
-    const castUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(text)}${
-      embeds?.length ? `&embeds[]=${embeds.map(e => encodeURIComponent(e)).join('&embeds[]=')}` : ''
-    }`
+  const composeCast = useCallback(
+    async (text: string, embeds?: string[]) => {
+      const castUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(text)}${
+        embeds?.length
+          ? `&embeds[]=${embeds.map(e => encodeURIComponent(e)).join('&embeds[]=')}`
+          : ''
+      }`
 
-    if (sdk && isInFrame) {
-      try {
-        await sdk.actions.openUrl(castUrl)
-        return
-      } catch (err) {
-        console.error('[Farcaster SDK] Compose cast error:', err)
+      if (sdk && isInFrame) {
+        try {
+          await sdk.actions.openUrl(castUrl)
+          return
+        } catch (err) {
+          console.error('[Farcaster SDK] Compose cast error:', err)
+        }
       }
-    }
-    // Fallback
-    window.open(castUrl, '_blank')
-  }, [isInFrame])
+      // Fallback
+      window.open(castUrl, '_blank')
+    },
+    [isInFrame],
+  )
 
   return {
     isLoaded,

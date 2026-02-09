@@ -13,7 +13,8 @@ export default function ExperimentalSettings() {
         Experimental Features
       </h2>
       <p className="text-text-muted text-sm mb-6">
-        Enable access to features that are still in development. These may be unstable or change at any time.
+        Enable access to features that are still in development. These may be unstable or change at
+        any time.
       </p>
 
       {/* Main Toggle */}
@@ -24,9 +25,7 @@ export default function ExperimentalSettings() {
           </div>
           <div>
             <p className="text-text-primary font-medium">Enable Experimental Features</p>
-            <p className="text-text-muted text-sm">
-              Show experimental section in the dashboard
-            </p>
+            <p className="text-text-muted text-sm">Show experimental section in the dashboard</p>
           </div>
         </div>
         <button
@@ -51,7 +50,8 @@ export default function ExperimentalSettings() {
           <div>
             <p className="text-yellow-400 font-medium text-sm">Experimental Mode Active</p>
             <p className="text-text-muted text-sm mt-1">
-              You now have access to experimental features in the sidebar. These features are under active development and may not work as expected.
+              You now have access to experimental features in the sidebar. These features are under
+              active development and may not work as expected.
             </p>
           </div>
         </div>
@@ -67,14 +67,18 @@ export default function ExperimentalSettings() {
                 <span className="text-lg">🔮</span>
                 <span className="text-text-primary text-sm">Depth Anything (AI Depth Maps)</span>
               </div>
-              <span className="text-xs text-yellow-500 bg-yellow-500/10 px-2 py-1 rounded">Active</span>
+              <span className="text-xs text-yellow-500 bg-yellow-500/10 px-2 py-1 rounded">
+                Active
+              </span>
             </div>
             <div className="flex items-center justify-between p-3 bg-bg-card rounded-lg border border-white/5">
               <div className="flex items-center gap-3">
                 <span className="text-lg">🧩</span>
                 <span className="text-text-primary text-sm">Mini-Apps Ideas Lab</span>
               </div>
-              <span className="text-xs text-yellow-500 bg-yellow-500/10 px-2 py-1 rounded">Active</span>
+              <span className="text-xs text-yellow-500 bg-yellow-500/10 px-2 py-1 rounded">
+                Active
+              </span>
             </div>
           </div>
         </div>

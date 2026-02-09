@@ -1,12 +1,26 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
-import { useGetAllEventRegistrationsQuery, useGetMyProfileQuery, RegistrationStatus } from '@/src/generated/graphql'
+import {
+  RegistrationStatus,
+  useGetAllEventRegistrationsQuery,
+  useGetMyProfileQuery,
+} from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { FiCalendar, FiUser, FiDollarSign, FiCheckCircle, FiXCircle, FiClock, FiMapPin, FiMessageSquare, FiArrowLeft } from 'react-icons/fi'
-import Link from 'next/link'
+import {
+  FiArrowLeft,
+  FiCalendar,
+  FiCheckCircle,
+  FiClock,
+  FiDollarSign,
+  FiMapPin,
+  FiMessageSquare,
+  FiUser,
+  FiXCircle,
+} from 'react-icons/fi'
 
 export default function AdminRegistrationsPage() {
   const { authenticated, ready } = usePrivy()
@@ -19,7 +33,11 @@ export default function AdminRegistrationsPage() {
     skip: !authenticated,
   })
 
-  const { data: registrationsData, loading: registrationsLoading, refetch } = useGetAllEventRegistrationsQuery({
+  const {
+    data: registrationsData,
+    loading: registrationsLoading,
+    refetch,
+  } = useGetAllEventRegistrationsQuery({
     skip: !authenticated || profileData?.me?.role !== 'admin',
   })
 
@@ -59,7 +77,8 @@ export default function AdminRegistrationsPage() {
 
   // Filter registrations
   const filteredRegistrations = registrations.filter(reg => {
-    const matchesSearch = !searchTerm ||
+    const matchesSearch =
+      !searchTerm ||
       reg.user?.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       reg.user?.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       reg.event?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -77,26 +96,35 @@ export default function AdminRegistrationsPage() {
       day: 'numeric',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     })
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'confirmed': return 'text-green-400 bg-green-400/10'
-      case 'pending': return 'text-yellow-400 bg-yellow-400/10'
-      case 'cancelled': return 'text-red-400 bg-red-400/10'
-      default: return 'text-gray-400 bg-gray-400/10'
+      case 'confirmed':
+        return 'text-green-400 bg-green-400/10'
+      case 'pending':
+        return 'text-yellow-400 bg-yellow-400/10'
+      case 'cancelled':
+        return 'text-red-400 bg-red-400/10'
+      default:
+        return 'text-gray-400 bg-gray-400/10'
     }
   }
 
   const getPaymentStatusColor = (status: string) => {
     switch (status) {
-      case 'paid': return 'text-green-400'
-      case 'pending': return 'text-yellow-400'
-      case 'failed': return 'text-red-400'
-      case 'refunded': return 'text-purple-400'
-      default: return 'text-gray-400'
+      case 'paid':
+        return 'text-green-400'
+      case 'pending':
+        return 'text-yellow-400'
+      case 'failed':
+        return 'text-red-400'
+      case 'refunded':
+        return 'text-purple-400'
+      default:
+        return 'text-gray-400'
     }
   }
 
@@ -129,12 +157,12 @@ export default function AdminRegistrationsPage() {
             type="text"
             placeholder="Search by user, event, or notes..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={e => setSearchTerm(e.target.value)}
             className="flex-1 bg-bg-secondary text-text-primary rounded-xl px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
           />
           <select
             value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
+            onChange={e => setFilterStatus(e.target.value)}
             className="bg-bg-secondary text-text-primary rounded-xl px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
           >
             <option value="all">All Status</option>
@@ -144,7 +172,7 @@ export default function AdminRegistrationsPage() {
           </select>
           <select
             value={filterPayment}
-            onChange={(e) => setFilterPayment(e.target.value)}
+            onChange={e => setFilterPayment(e.target.value)}
             className="bg-bg-secondary text-text-primary rounded-xl px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
           >
             <option value="all">All Payments</option>
@@ -190,7 +218,11 @@ export default function AdminRegistrationsPage() {
               <FiDollarSign className="text-green-400" size={24} />
             </div>
             <p className="text-2xl font-bold text-text-primary">
-              ${registrations.filter(r => r.payment_status === 'paid').reduce((sum, r) => sum + (r.payment_amount || 0), 0).toFixed(2)}
+              $
+              {registrations
+                .filter(r => r.payment_status === 'paid')
+                .reduce((sum, r) => sum + (r.payment_amount || 0), 0)
+                .toFixed(2)}
             </p>
             <p className="text-sm text-text-secondary">Total Revenue</p>
           </div>
@@ -226,12 +258,14 @@ export default function AdminRegistrationsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-700">
-                {filteredRegistrations.map((registration) => (
+                {filteredRegistrations.map(registration => (
                   <tr key={registration.id} className="hover:bg-bg-primary/50 transition-colors">
                     <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                       <div>
                         <div className="text-sm font-medium text-text-primary">
-                          {registration.user?.display_name || registration.user?.username || 'Unknown'}
+                          {registration.user?.display_name ||
+                            registration.user?.username ||
+                            'Unknown'}
                         </div>
                         <div className="text-xs text-text-secondary">
                           @{registration.user?.username || 'unknown'}
@@ -245,7 +279,8 @@ export default function AdminRegistrationsPage() {
                         </div>
                         <div className="text-xs text-text-secondary flex items-center gap-1">
                           <FiCalendar size={10} />
-                          {registration.event?.start_date_time && formatDate(registration.event.start_date_time)}
+                          {registration.event?.start_date_time &&
+                            formatDate(registration.event.start_date_time)}
                         </div>
                         <div className="text-xs text-text-secondary flex items-center gap-1">
                           <FiMapPin size={10} />
@@ -254,14 +289,23 @@ export default function AdminRegistrationsPage() {
                       </div>
                     </td>
                     <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(registration.status || 'pending')}`}>
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${getStatusColor(registration.status || 'pending')}`}
+                      >
                         {registration.status || 'Pending'}
                       </span>
                     </td>
                     <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-1">
-                        <FiDollarSign className={getPaymentStatusColor(registration.payment_status || 'pending')} size={14} />
-                        <span className={`text-sm ${getPaymentStatusColor(registration.payment_status || 'pending')}`}>
+                        <FiDollarSign
+                          className={getPaymentStatusColor(
+                            registration.payment_status || 'pending',
+                          )}
+                          size={14}
+                        />
+                        <span
+                          className={`text-sm ${getPaymentStatusColor(registration.payment_status || 'pending')}`}
+                        >
                           {registration.payment_status || 'Pending'}
                         </span>
                       </div>
@@ -293,8 +337,14 @@ export default function AdminRegistrationsPage() {
                       {registration.user_notes ? (
                         <div className="max-w-xs">
                           <div className="flex items-start gap-1">
-                            <FiMessageSquare className="text-neon-purple mt-1 flex-shrink-0" size={12} />
-                            <p className="text-sm text-text-primary line-clamp-3" title={registration.user_notes}>
+                            <FiMessageSquare
+                              className="text-neon-purple mt-1 flex-shrink-0"
+                              size={12}
+                            />
+                            <p
+                              className="text-sm text-text-primary line-clamp-3"
+                              title={registration.user_notes}
+                            >
                               {registration.user_notes}
                             </p>
                           </div>
@@ -304,7 +354,9 @@ export default function AdminRegistrationsPage() {
                       )}
                       {registration.admin_notes && (
                         <div className="mt-2 p-2 bg-yellow-400/10 rounded">
-                          <p className="text-xs text-yellow-400">Admin: {registration.admin_notes}</p>
+                          <p className="text-xs text-yellow-400">
+                            Admin: {registration.admin_notes}
+                          </p>
                         </div>
                       )}
                     </td>
@@ -313,8 +365,8 @@ export default function AdminRegistrationsPage() {
                         {registration.registration_date
                           ? formatDate(registration.registration_date)
                           : registration.created_at
-                          ? formatDate(registration.created_at)
-                          : 'Unknown'}
+                            ? formatDate(registration.created_at)
+                            : 'Unknown'}
                       </div>
                     </td>
                   </tr>

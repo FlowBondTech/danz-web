@@ -1,15 +1,12 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
-import {
-  useGetMyProfileQuery,
-  useGetUserPointsSummariesQuery,
-} from '@/src/generated/graphql'
+import { useGetMyProfileQuery, useGetUserPointsSummariesQuery } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { FiAward, FiTrendingUp, FiUser, FiArrowLeft } from 'react-icons/fi'
-import Link from 'next/link'
+import { FiArrowLeft, FiAward, FiTrendingUp, FiUser } from 'react-icons/fi'
 
 export default function AnalyticsPage() {
   const { authenticated, ready } = usePrivy()
@@ -54,7 +51,9 @@ export default function AnalyticsPage() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-text-primary text-2xl" role="status" aria-live="polite">Loading...</div>
+          <div className="text-text-primary text-2xl" role="status" aria-live="polite">
+            Loading...
+          </div>
         </div>
       </DashboardLayout>
     )
@@ -64,7 +63,9 @@ export default function AnalyticsPage() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-red-400 text-xl" role="alert">Access Denied - Admin Only</div>
+          <div className="text-red-400 text-xl" role="alert">
+            Access Denied - Admin Only
+          </div>
         </div>
       </DashboardLayout>
     )
@@ -95,8 +96,12 @@ export default function AnalyticsPage() {
         </Link>
 
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-text-primary">User Analytics</h1>
-          <p className="text-text-secondary mt-1 text-sm sm:text-base">Points summaries and activity</p>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-text-primary">
+            User Analytics
+          </h1>
+          <p className="text-text-secondary mt-1 text-sm sm:text-base">
+            Points summaries and activity
+          </p>
         </div>
 
         {/* Summary Stats - Fluid grid for accessibility */}
@@ -109,11 +114,11 @@ export default function AnalyticsPage() {
             <div className="bg-bg-secondary rounded-xl border border-neon-purple/30 p-3 sm:p-4 md:p-6 min-h-[100px]">
               <div className="flex items-center justify-between gap-2 mb-2 sm:mb-4">
                 <FiUser className="text-neon-purple flex-shrink-0" size={20} aria-hidden="true" />
-                <span className="text-xs text-text-secondary uppercase tracking-wider">
-                  Users
-                </span>
+                <span className="text-xs text-text-secondary uppercase tracking-wider">Users</span>
               </div>
-              <p className="text-xl sm:text-2xl font-bold text-text-primary break-words">{users.length}</p>
+              <p className="text-xl sm:text-2xl font-bold text-text-primary break-words">
+                {users.length}
+              </p>
               <p className="text-xs sm:text-sm text-text-secondary mt-1">With Activity</p>
             </div>
 
@@ -126,7 +131,7 @@ export default function AnalyticsPage() {
               </div>
               <p className="text-xl sm:text-2xl font-bold text-text-primary break-words">
                 {Math.round(
-                  users.reduce((sum, u) => sum + (u.total_points_earned || 0), 0) / users.length
+                  users.reduce((sum, u) => sum + (u.total_points_earned || 0), 0) / users.length,
                 ).toLocaleString()}
               </p>
               <p className="text-xs sm:text-sm text-text-secondary mt-1">Per User</p>
@@ -134,10 +139,12 @@ export default function AnalyticsPage() {
 
             <div className="bg-bg-secondary rounded-xl border border-neon-purple/30 p-3 sm:p-4 md:p-6 min-h-[100px]">
               <div className="flex items-center justify-between gap-2 mb-2 sm:mb-4">
-                <FiTrendingUp className="text-blue-400 flex-shrink-0" size={20} aria-hidden="true" />
-                <span className="text-xs text-text-secondary uppercase tracking-wider">
-                  Active
-                </span>
+                <FiTrendingUp
+                  className="text-blue-400 flex-shrink-0"
+                  size={20}
+                  aria-hidden="true"
+                />
+                <span className="text-xs text-text-secondary uppercase tracking-wider">Active</span>
               </div>
               <p className="text-xl sm:text-2xl font-bold text-text-primary break-words">
                 {users.filter(u => (u.transactions_last_week || 0) > 0).length}
@@ -152,7 +159,9 @@ export default function AnalyticsPage() {
           {/* Mobile Sort Controls */}
           <nav className="md:hidden p-4 border-b border-white/10" aria-label="Sort options">
             <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-              <span className="text-xs text-text-secondary whitespace-nowrap" id="sort-label">Sort:</span>
+              <span className="text-xs text-text-secondary whitespace-nowrap" id="sort-label">
+                Sort:
+              </span>
               <div role="group" aria-labelledby="sort-label" className="flex items-center gap-2">
                 {[
                   { key: 'total_points_earned', label: 'Earned' },
@@ -179,14 +188,31 @@ export default function AnalyticsPage() {
           </nav>
 
           {/* Mobile Card Layout */}
-          <div className="md:hidden divide-y divide-white/10" role="list" aria-label="User analytics list">
+          <div
+            className="md:hidden divide-y divide-white/10"
+            role="list"
+            aria-label="User analytics list"
+          >
             {loading ? (
-              <div className="px-4 py-12 text-center text-text-secondary" role="status" aria-live="polite">Loading users...</div>
+              <div
+                className="px-4 py-12 text-center text-text-secondary"
+                role="status"
+                aria-live="polite"
+              >
+                Loading users...
+              </div>
             ) : users.length === 0 ? (
-              <div className="px-4 py-12 text-center text-text-secondary" role="status">No users found</div>
+              <div className="px-4 py-12 text-center text-text-secondary" role="status">
+                No users found
+              </div>
             ) : (
               users.map(user => (
-                <article key={user.privy_id} className="p-4 space-y-3" role="listitem" aria-label={`User ${user.username || 'Unknown'}`}>
+                <article
+                  key={user.privy_id}
+                  className="p-4 space-y-3"
+                  role="listitem"
+                  aria-label={`User ${user.username || 'Unknown'}`}
+                >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="text-sm font-medium text-text-primary truncate">
@@ -196,7 +222,10 @@ export default function AnalyticsPage() {
                         {user.privy_id.slice(0, 12)}...
                       </div>
                     </div>
-                    <span className="px-2 py-1 bg-neon-purple/20 text-neon-purple rounded-full text-xs font-medium flex-shrink-0" aria-label={`Level ${user.level || 1}`}>
+                    <span
+                      className="px-2 py-1 bg-neon-purple/20 text-neon-purple rounded-full text-xs font-medium flex-shrink-0"
+                      aria-label={`Level ${user.level || 1}`}
+                    >
                       Lv {user.level || 1}
                     </span>
                   </div>
@@ -222,10 +251,15 @@ export default function AnalyticsPage() {
                     </div>
                     <div className="bg-white/5 rounded-lg p-2 min-h-[56px]">
                       <p className="text-xs text-text-secondary">Last 7d</p>
-                      <p className={`text-sm font-semibold break-words ${
-                        (user.points_last_week || 0) > 0 ? 'text-green-400' : 'text-text-secondary'
-                      }`}>
-                        {(user.points_last_week || 0) > 0 ? '+' : ''}{(user.points_last_week || 0).toLocaleString()}
+                      <p
+                        className={`text-sm font-semibold break-words ${
+                          (user.points_last_week || 0) > 0
+                            ? 'text-green-400'
+                            : 'text-text-secondary'
+                        }`}
+                      >
+                        {(user.points_last_week || 0) > 0 ? '+' : ''}
+                        {(user.points_last_week || 0).toLocaleString()}
                       </p>
                     </div>
                   </div>
@@ -344,7 +378,10 @@ export default function AnalyticsPage() {
 
           {/* Pagination */}
           {users.length >= limit && (
-            <nav className="px-4 sm:px-6 py-3 sm:py-4 bg-white/5 border-t border-white/10 flex justify-between items-center gap-2" aria-label="Pagination">
+            <nav
+              className="px-4 sm:px-6 py-3 sm:py-4 bg-white/5 border-t border-white/10 flex justify-between items-center gap-2"
+              aria-label="Pagination"
+            >
               <button
                 onClick={() => setOffset(Math.max(0, offset - limit))}
                 disabled={offset === 0}

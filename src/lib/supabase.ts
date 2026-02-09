@@ -2,7 +2,8 @@
 // Using REST API instead of SDK for minimal bundle size
 
 const SUPABASE_URL = 'https://eoajujwpdkfuicnoxetk.supabase.co'
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvYWp1andwZGtmdWljbm94ZXRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NDQzMzQsImV4cCI6MjA3MDIyMDMzNH0.NpMiRO22b-y-7zHo-RhA0ZX8tHkSZiTk9jlWcF-UZEg'
+const SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvYWp1andwZGtmdWljbm94ZXRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NDQzMzQsImV4cCI6MjA3MDIyMDMzNH0.NpMiRO22b-y-7zHo-RhA0ZX8tHkSZiTk9jlWcF-UZEg'
 
 interface SupabaseQueryOptions {
   select?: string
@@ -11,10 +12,7 @@ interface SupabaseQueryOptions {
   limit?: number
 }
 
-async function supabaseQuery<T>(
-  table: string,
-  options: SupabaseQueryOptions = {}
-): Promise<T[]> {
+async function supabaseQuery<T>(table: string, options: SupabaseQueryOptions = {}): Promise<T[]> {
   const { select = '*', filter = {}, order, limit } = options
 
   let url = `${SUPABASE_URL}/rest/v1/${table}?select=${encodeURIComponent(select)}`
@@ -36,8 +34,8 @@ async function supabaseQuery<T>(
 
   const response = await fetch(url, {
     headers: {
-      'apikey': SUPABASE_ANON_KEY,
-      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
       'Content-Type': 'application/json',
     },
   })
@@ -77,9 +75,10 @@ export interface ReferrerStats {
  */
 export async function getReferredUsers(referrerUsername: string): Promise<ReferredUser[]> {
   return supabaseQuery<ReferredUser>('users', {
-    select: 'privy_id,username,display_name,avatar_url,created_at,xp,level,total_sessions,total_dance_time',
+    select:
+      'privy_id,username,display_name,avatar_url,created_at,xp,level,total_sessions,total_dance_time',
     filter: {
-      'invited_by': `eq.${referrerUsername}`,
+      invited_by: `eq.${referrerUsername}`,
     },
     order: 'created_at.desc',
     limit: 50,
@@ -91,9 +90,10 @@ export async function getReferredUsers(referrerUsername: string): Promise<Referr
  */
 export async function getReferrerStats(username: string): Promise<ReferrerStats | null> {
   const results = await supabaseQuery<ReferrerStats>('users', {
-    select: 'username,display_name,referral_count,referral_points_earned,current_points_balance,total_points_earned',
+    select:
+      'username,display_name,referral_count,referral_points_earned,current_points_balance,total_points_earned',
     filter: {
-      'username': `eq.${username}`,
+      username: `eq.${username}`,
     },
     limit: 1,
   })
@@ -109,17 +109,17 @@ export async function countReferredUsers(referrerUsername: string): Promise<numb
     `${SUPABASE_URL}/rest/v1/users?invited_by=eq.${encodeURIComponent(referrerUsername)}&select=username`,
     {
       headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Prefer': 'count=exact',
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        Prefer: 'count=exact',
       },
-    }
+    },
   )
 
   const count = response.headers.get('content-range')
   if (count) {
     const match = count.match(/\/(\d+)$/)
-    return match ? parseInt(match[1], 10) : 0
+    return match ? Number.parseInt(match[1], 10) : 0
   }
 
   return 0
@@ -128,14 +128,16 @@ export async function countReferredUsers(referrerUsername: string): Promise<numb
 /**
  * Get all users with their referral info (for admin)
  */
-export async function getAllUsersWithReferrals(): Promise<Array<{
-  username: string
-  display_name: string
-  invited_by: string | null
-  referral_count: number
-  referral_points_earned: number
-  created_at: string
-}>> {
+export async function getAllUsersWithReferrals(): Promise<
+  Array<{
+    username: string
+    display_name: string
+    invited_by: string | null
+    referral_count: number
+    referral_points_earned: number
+    created_at: string
+  }>
+> {
   return supabaseQuery('users', {
     select: 'username,display_name,invited_by,referral_count,referral_points_earned,created_at',
     order: 'created_at.desc',
@@ -148,9 +150,10 @@ export async function getAllUsersWithReferrals(): Promise<Array<{
  */
 export async function getTopReferrers(limit = 10): Promise<ReferrerStats[]> {
   return supabaseQuery<ReferrerStats>('users', {
-    select: 'username,display_name,referral_count,referral_points_earned,current_points_balance,total_points_earned',
+    select:
+      'username,display_name,referral_count,referral_points_earned,current_points_balance,total_points_earned',
     filter: {
-      'referral_count': 'gt.0',
+      referral_count: 'gt.0',
     },
     order: 'referral_count.desc',
     limit,

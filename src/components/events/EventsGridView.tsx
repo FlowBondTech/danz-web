@@ -40,7 +40,13 @@ interface EventsGridViewProps {
   isLoading?: boolean
 }
 
-export default function EventsGridView({ events, onRegister, onCancel, onUpdateStatus, isLoading }: EventsGridViewProps) {
+export default function EventsGridView({
+  events,
+  onRegister,
+  onCancel,
+  onUpdateStatus,
+  isLoading,
+}: EventsGridViewProps) {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

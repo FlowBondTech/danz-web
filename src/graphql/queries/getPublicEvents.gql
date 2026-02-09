@@ -1,4 +1,8 @@
-query GetPublicEvents($filter: EventFilterInput, $pagination: PaginationInput, $sortBy: EventSortBy) {
+query GetPublicEvents(
+  $filter: EventFilterInput
+  $pagination: PaginationInput
+  $sortBy: EventSortBy
+) {
   publicEvents(filter: $filter, pagination: $pagination, sortBy: $sortBy) {
     events {
       id

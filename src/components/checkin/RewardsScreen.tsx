@@ -1,9 +1,9 @@
 'use client'
 
-import { type CheckInRewards } from './types'
-import { ShareButton } from './ShareButton'
+import type { SuggestedBond } from '@/src/types/bonds'
 import { BondSuggestionSection } from '../bonds'
-import { SuggestedBond } from '@/src/types/bonds'
+import { ShareButton } from './ShareButton'
+import type { CheckInRewards } from './types'
 
 interface RewardsScreenProps {
   rewards: CheckInRewards
@@ -59,9 +59,7 @@ export function RewardsScreen({
         <h1 className="text-3xl font-bold text-text-primary mb-1">
           {rewards.newStreak} Day Streak!
         </h1>
-        <p className="text-text-muted text-sm">
-          Keep it going!
-        </p>
+        <p className="text-text-muted text-sm">Keep it going!</p>
       </div>
 
       {/* Rewards breakdown */}
@@ -112,34 +110,37 @@ export function RewardsScreen({
               key={entry.rank}
               className={`
                 flex items-center gap-3 p-3 rounded-xl
-                ${entry.rank <= 3
-                  ? 'bg-gradient-to-r from-neon-pink/10 to-neon-purple/10 border border-neon-pink/20'
-                  : 'bg-bg-card/50 border border-white/10'
+                ${
+                  entry.rank <= 3
+                    ? 'bg-gradient-to-r from-neon-pink/10 to-neon-purple/10 border border-neon-pink/20'
+                    : 'bg-bg-card/50 border border-white/10'
                 }
               `}
             >
-              <div className={`
+              <div
+                className={`
                 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
-                ${entry.rank === 1 ? 'bg-yellow-500/20 text-yellow-400' :
-                  entry.rank === 2 ? 'bg-gray-400/20 text-gray-300' :
-                  entry.rank === 3 ? 'bg-orange-500/20 text-orange-400' :
-                  'bg-bg-card text-text-muted'
+                ${
+                  entry.rank === 1
+                    ? 'bg-yellow-500/20 text-yellow-400'
+                    : entry.rank === 2
+                      ? 'bg-gray-400/20 text-gray-300'
+                      : entry.rank === 3
+                        ? 'bg-orange-500/20 text-orange-400'
+                        : 'bg-bg-card text-text-muted'
                 }
-              `}>
+              `}
+              >
                 {entry.rank}
               </div>
               <div className="w-8 h-8 rounded-full bg-bg-card flex items-center justify-center">
                 {entry.avatar}
               </div>
               <div className="flex-1">
-                <div className="text-text-primary text-sm font-medium">
-                  {entry.username}
-                </div>
+                <div className="text-text-primary text-sm font-medium">{entry.username}</div>
               </div>
               <div className="text-right">
-                <div className="text-neon-pink font-mono text-sm">
-                  🔥 {entry.streak}
-                </div>
+                <div className="text-neon-pink font-mono text-sm">🔥 {entry.streak}</div>
               </div>
             </div>
           ))}
@@ -159,10 +160,7 @@ export function RewardsScreen({
 
       {/* Share button */}
       <div className="mt-6">
-        <ShareButton
-          streak={rewards.newStreak}
-          xpEarned={rewards.totalXp}
-        />
+        <ShareButton streak={rewards.newStreak} xpEarned={rewards.totalXp} />
       </div>
 
       {/* FlowBond Tech footer */}

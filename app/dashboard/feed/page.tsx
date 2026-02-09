@@ -73,8 +73,11 @@ function PostComments({ postId }: { postId: string }) {
       {/* Existing Comments */}
       {comments.length > 0 && (
         <div className="space-y-3 mb-4">
-          {comments.map((comment) => (
-            <div key={comment.id} className="flex items-start gap-3 p-3 rounded-xl bg-bg-primary/30">
+          {comments.map(comment => (
+            <div
+              key={comment.id}
+              className="flex items-start gap-3 p-3 rounded-xl bg-bg-primary/30"
+            >
               {comment.user?.avatar_url ? (
                 <img
                   src={comment.user.avatar_url}
@@ -95,7 +98,9 @@ function PostComments({ postId }: { postId: string }) {
                     {formatTimeAgo(new Date(comment.created_at))}
                   </span>
                 </div>
-                <p className="text-text-primary text-sm mt-1 whitespace-pre-wrap">{comment.content}</p>
+                <p className="text-text-primary text-sm mt-1 whitespace-pre-wrap">
+                  {comment.content}
+                </p>
               </div>
             </div>
           ))}
@@ -107,7 +112,7 @@ function PostComments({ postId }: { postId: string }) {
         <div className="flex-1">
           <textarea
             value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
+            onChange={e => setCommentText(e.target.value)}
             placeholder="Write a comment..."
             className="w-full bg-bg-primary border border-white/10 rounded-xl px-4 py-2 text-text-primary placeholder-text-secondary resize-none focus:outline-none focus:border-neon-purple/50 focus:ring-1 focus:ring-neon-purple/20 transition-all text-sm"
             rows={2}
@@ -334,7 +339,7 @@ function FeedContent() {
 
               <textarea
                 value={postContent}
-                onChange={(e) => setPostContent(e.target.value)}
+                onChange={e => setPostContent(e.target.value)}
                 placeholder="Share your dance journey, a win, or just say hi..."
                 className="w-full bg-bg-primary border border-white/10 rounded-xl p-4 text-text-primary placeholder-text-secondary resize-none focus:outline-none focus:border-neon-purple/50 focus:ring-2 focus:ring-neon-purple/20 transition-all"
                 rows={5}
@@ -349,9 +354,7 @@ function FeedContent() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-text-secondary">
-                    {postContent.length}/500
-                  </span>
+                  <span className="text-sm text-text-secondary">{postContent.length}/500</span>
                   <button
                     onClick={handleCreatePost}
                     disabled={creating || !postContent.trim()}
@@ -427,7 +430,9 @@ function FeedContent() {
                 </div>
 
                 {/* Post Content */}
-                <p className="text-text-primary leading-relaxed mb-4 whitespace-pre-wrap">{post.content}</p>
+                <p className="text-text-primary leading-relaxed mb-4 whitespace-pre-wrap">
+                  {post.content}
+                </p>
 
                 {/* Post Media */}
                 {post.media_url && post.media_type === 'image' && (

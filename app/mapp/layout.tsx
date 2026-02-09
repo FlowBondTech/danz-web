@@ -4,7 +4,8 @@ import type { ReactNode } from 'react'
 // Miniapp-specific metadata
 export const metadata: Metadata = {
   title: 'DANZ | Move. Connect. Earn.',
-  description: 'The dance-to-earn platform. Track your moves, earn tokens, and connect with dancers worldwide.',
+  description:
+    'The dance-to-earn platform. Track your moves, earn tokens, and connect with dancers worldwide.',
   openGraph: {
     title: 'DANZ',
     description: 'Move. Connect. Earn.',
@@ -31,9 +32,5 @@ export const viewport: Viewport = {
 }
 
 export default function MappLayout({ children }: { children: ReactNode }) {
-  return (
-    <div className="miniapp-container min-h-screen bg-bg-primary">
-      {children}
-    </div>
-  )
+  return <div className="miniapp-container min-h-screen bg-bg-primary">{children}</div>
 }

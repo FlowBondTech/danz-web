@@ -1,6 +1,9 @@
 'use client'
 
-import { depthAnythingApi, type DepthAnythingReconstructOptions } from '@/src/services/depth-anything/api'
+import {
+  type DepthAnythingReconstructOptions,
+  depthAnythingApi,
+} from '@/src/services/depth-anything/api'
 import { useEffect, useMemo, useState } from 'react'
 import { FiImage, FiTrash2, FiUpload, FiVideo, FiZap } from 'react-icons/fi'
 
@@ -44,8 +47,7 @@ export default function DepthAnythingDashboard() {
       if (value && !targetDir) {
         setTargetDir(value)
       }
-    } catch {
-    }
+    } catch {}
   }, [targetDir])
 
   useEffect(() => {
@@ -61,8 +63,7 @@ export default function DepthAnythingDashboard() {
       }
 
       window.history.replaceState({}, '', url.toString())
-    } catch {
-    }
+    } catch {}
   }, [targetDir])
 
   const imagePreviews = useMemo(() => {
@@ -214,7 +215,8 @@ export default function DepthAnythingDashboard() {
             ).map((s, idx) => {
               const isActive = activeIndex !== -1 && idx === activeIndex
               const isCompleted = activeIndex !== -1 && idx < activeIndex
-              const base = 'px-3 py-2 rounded-lg text-center text-xs font-medium border transition-colors'
+              const base =
+                'px-3 py-2 rounded-lg text-center text-xs font-medium border transition-colors'
               const styles = isActive
                 ? 'bg-neon-purple/15 text-neon-purple border-neon-purple/30'
                 : isCompleted
@@ -309,7 +311,9 @@ export default function DepthAnythingDashboard() {
                     className="w-full px-3 py-2 rounded-lg bg-bg-primary/40 border border-white/10 text-text-primary"
                     disabled={isUploading || isReconstructing}
                   />
-                  <p className="text-xs text-text-muted mt-2">Higher FPS means more frames sampled.</p>
+                  <p className="text-xs text-text-muted mt-2">
+                    Higher FPS means more frames sampled.
+                  </p>
                 </div>
 
                 <div className="flex gap-3">

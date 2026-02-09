@@ -2,23 +2,14 @@
 
 import { QRCodeSVG } from 'qrcode.react'
 import { useState } from 'react'
-import {
-  FiCopy,
-  FiCheck,
-  FiMaximize2,
-  FiX,
-  FiDownload,
-} from 'react-icons/fi'
+import { FiCheck, FiCopy, FiDownload, FiMaximize2, FiX } from 'react-icons/fi'
 
 interface EventCheckinCodeProps {
   checkinCode: string
   eventTitle: string
 }
 
-export default function EventCheckinCode({
-  checkinCode,
-  eventTitle,
-}: EventCheckinCodeProps) {
+export default function EventCheckinCode({ checkinCode, eventTitle }: EventCheckinCodeProps) {
   const [copied, setCopied] = useState(false)
   const [showFullscreen, setShowFullscreen] = useState(false)
 
@@ -56,9 +47,7 @@ export default function EventCheckinCode({
   return (
     <>
       <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-        <h3 className="text-lg font-semibold text-text-primary mb-4">
-          Event Check-in Code
-        </h3>
+        <h3 className="text-lg font-semibold text-text-primary mb-4">Event Check-in Code</h3>
 
         <div className="flex flex-col items-center gap-6">
           {/* QR Code */}
@@ -143,9 +132,7 @@ export default function EventCheckinCode({
             {checkinCode}
           </div>
 
-          <p className="mt-4 text-white/60 text-lg">
-            Scan QR code or enter code to check in
-          </p>
+          <p className="mt-4 text-white/60 text-lg">Scan QR code or enter code to check in</p>
         </div>
       )}
     </>

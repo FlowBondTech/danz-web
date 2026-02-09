@@ -1,8 +1,13 @@
 'use client'
 
+import {
+  type DanzParty,
+  PARTY_TIER_CONFIG,
+  type PartyMember,
+  type PartyRole,
+} from '@/src/types/party'
+import { ArrowLeft, LogOut, Share2, Trophy, Users, Zap } from 'lucide-react'
 import { useState } from 'react'
-import { ArrowLeft, Users, Zap, Trophy, Share2, Settings, LogOut } from 'lucide-react'
-import { DanzParty, PartyMember, PARTY_TIER_CONFIG, PartyRole } from '@/src/types/party'
 
 interface PartyDetailViewProps {
   party: DanzParty
@@ -25,7 +30,7 @@ export function PartyDetailView({
   onLeaveParty,
   onShareParty,
   onKickMember,
-  onPromoteMember
+  onPromoteMember,
 }: PartyDetailViewProps) {
   const [activeTab, setActiveTab] = useState<Tab>('members')
   const [isLeaving, setIsLeaving] = useState(false)
@@ -84,13 +89,9 @@ export function PartyDetailView({
           </div>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-white">{party.name}</h1>
-            <p className={`text-sm ${tierConfig.color}`}>
-              {tierConfig.name} Party
-            </p>
+            <p className={`text-sm ${tierConfig.color}`}>{tierConfig.name} Party</p>
             {party.description && (
-              <p className="text-sm text-white/60 mt-1 line-clamp-2">
-                {party.description}
-              </p>
+              <p className="text-sm text-white/60 mt-1 line-clamp-2">{party.description}</p>
             )}
           </div>
         </div>
@@ -109,17 +110,13 @@ export function PartyDetailView({
 
           <div className="p-3 rounded-xl bg-card border border-white/10 text-center">
             <Zap className="w-5 h-5 text-neon-pink mx-auto mb-1" />
-            <p className="text-lg font-bold text-white">
-              {party.multiplier}x
-            </p>
+            <p className="text-lg font-bold text-white">{party.multiplier}x</p>
             <p className="text-xs text-white/50">Multiplier</p>
           </div>
 
           <div className="p-3 rounded-xl bg-card border border-white/10 text-center">
             <Trophy className="w-5 h-5 text-yellow-400 mx-auto mb-1" />
-            <p className="text-lg font-bold text-white">
-              {party.weeklyXp.toLocaleString()}
-            </p>
+            <p className="text-lg font-bold text-white">{party.weeklyXp.toLocaleString()}</p>
             <p className="text-xs text-white/50">Weekly XP</p>
           </div>
         </div>
@@ -142,19 +139,21 @@ export function PartyDetailView({
       {/* Tabs */}
       <div className="px-4 mt-4">
         <div className="flex gap-2 p-1 bg-white/5 rounded-xl">
-          {(['members', 'leaderboard', ...(canManage ? ['settings' as const] : [])] as Tab[]).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
-                activeTab === tab
-                  ? 'bg-neon-purple text-white'
-                  : 'text-white/50 hover:text-white/70'
-              }`}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </button>
-          ))}
+          {(['members', 'leaderboard', ...(canManage ? ['settings' as const] : [])] as Tab[]).map(
+            tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+                  activeTab === tab
+                    ? 'bg-neon-purple text-white'
+                    : 'text-white/50 hover:text-white/70'
+                }`}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>
+            ),
+          )}
         </div>
       </div>
 
@@ -198,9 +197,7 @@ export function PartyDetailView({
           <div className="space-y-4">
             <div className="p-4 rounded-xl bg-white/5 border border-white/10">
               <h3 className="font-medium text-white mb-3">Party Settings</h3>
-              <p className="text-sm text-white/50">
-                Party management features coming soon...
-              </p>
+              <p className="text-sm text-white/50">Party management features coming soon...</p>
             </div>
 
             {!isLeader && (
@@ -236,7 +233,7 @@ function MemberRow({
   isCurrentUser,
   canManage,
   onKick,
-  onPromote
+  onPromote,
 }: {
   member: PartyMember
   rank: number
@@ -246,11 +243,11 @@ function MemberRow({
   onPromote?: (memberId: string, role: PartyRole) => void
 }) {
   return (
-    <div className={`p-3 rounded-xl border transition-all ${
-      isCurrentUser
-        ? 'bg-neon-purple/10 border-neon-purple/30'
-        : 'bg-white/5 border-white/10'
-    }`}>
+    <div
+      className={`p-3 rounded-xl border transition-all ${
+        isCurrentUser ? 'bg-neon-purple/10 border-neon-purple/30' : 'bg-white/5 border-white/10'
+      }`}
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center">
@@ -269,14 +266,10 @@ function MemberRow({
 
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-medium text-white">
-                {member.displayName}
-              </span>
+              <span className="font-medium text-white">{member.displayName}</span>
               {member.role === 'leader' && <span className="text-xs">👑</span>}
               {member.role === 'co-leader' && <span className="text-xs">⭐</span>}
-              {isCurrentUser && (
-                <span className="text-xs text-neon-purple">(You)</span>
-              )}
+              {isCurrentUser && <span className="text-xs text-neon-purple">(You)</span>}
             </div>
             <div className="flex items-center gap-2 text-sm text-white/50">
               <span>🔥 {member.streakDays}d streak</span>
@@ -303,7 +296,7 @@ function MemberRow({
 function LeaderboardRow({
   member,
   rank,
-  isCurrentUser
+  isCurrentUser,
 }: {
   member: PartyMember
   rank: number
@@ -317,11 +310,11 @@ function LeaderboardRow({
   }
 
   return (
-    <div className={`p-3 rounded-xl border transition-all ${
-      isCurrentUser
-        ? 'bg-neon-purple/10 border-neon-purple/30'
-        : 'bg-white/5 border-white/10'
-    }`}>
+    <div
+      className={`p-3 rounded-xl border transition-all ${
+        isCurrentUser ? 'bg-neon-purple/10 border-neon-purple/30' : 'bg-white/5 border-white/10'
+      }`}
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 flex items-center justify-center text-lg">
@@ -345,17 +338,13 @@ function LeaderboardRow({
           <div>
             <span className="font-medium text-white">
               {member.displayName}
-              {isCurrentUser && (
-                <span className="text-xs text-neon-purple ml-2">(You)</span>
-              )}
+              {isCurrentUser && <span className="text-xs text-neon-purple ml-2">(You)</span>}
             </span>
           </div>
         </div>
 
         <div className="text-right">
-          <p className="font-bold text-neon-pink">
-            {member.weeklyXpContributed.toLocaleString()}
-          </p>
+          <p className="font-bold text-neon-pink">{member.weeklyXpContributed.toLocaleString()}</p>
           <p className="text-xs text-white/50">XP this week</p>
         </div>
       </div>

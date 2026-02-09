@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { FEELING_OPTIONS, BENEFIT_OPTIONS, type DanceReflection } from './types'
+import { BENEFIT_OPTIONS, type DanceReflection, FEELING_OPTIONS } from './types'
 
 interface ReflectionScreenProps {
   onSubmit: (reflection: DanceReflection | null) => void
@@ -14,9 +14,7 @@ export function ReflectionScreen({ onSubmit, onSkip }: ReflectionScreenProps) {
 
   const toggleBenefit = (benefitId: string) => {
     setSelectedBenefits(prev =>
-      prev.includes(benefitId)
-        ? prev.filter(b => b !== benefitId)
-        : [...prev, benefitId]
+      prev.includes(benefitId) ? prev.filter(b => b !== benefitId) : [...prev, benefitId],
     )
   }
 
@@ -38,15 +36,9 @@ export function ReflectionScreen({ onSubmit, onSkip }: ReflectionScreenProps) {
     <div className="flex flex-col min-h-[500px] px-4 py-6">
       {/* Header */}
       <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-text-primary mb-2">
-          How was your dance?
-        </h1>
-        <p className="text-text-secondary text-sm">
-          Share your experience to earn bonus XP
-        </p>
-        <div className="mt-2 text-xs text-neon-blue">
-          +25 XP reflection bonus
-        </div>
+        <h1 className="text-2xl font-bold text-text-primary mb-2">How was your dance?</h1>
+        <p className="text-text-secondary text-sm">Share your experience to earn bonus XP</p>
+        <div className="mt-2 text-xs text-neon-blue">+25 XP reflection bonus</div>
       </div>
 
       {/* Feeling selection */}
@@ -56,15 +48,14 @@ export function ReflectionScreen({ onSubmit, onSkip }: ReflectionScreenProps) {
           {FEELING_OPTIONS.map(option => (
             <button
               key={option.id}
-              onClick={() => setSelectedFeeling(
-                selectedFeeling === option.id ? null : option.id
-              )}
+              onClick={() => setSelectedFeeling(selectedFeeling === option.id ? null : option.id)}
               className={`
                 px-4 py-2 rounded-full text-sm
                 transition-all duration-200
-                ${selectedFeeling === option.id
-                  ? 'bg-gradient-to-r from-neon-pink to-neon-purple text-white shadow-glow-pink'
-                  : 'bg-bg-card text-text-secondary hover:bg-bg-hover border border-white/10'
+                ${
+                  selectedFeeling === option.id
+                    ? 'bg-gradient-to-r from-neon-pink to-neon-purple text-white shadow-glow-pink'
+                    : 'bg-bg-card text-text-secondary hover:bg-bg-hover border border-white/10'
                 }
               `}
             >
@@ -87,9 +78,10 @@ export function ReflectionScreen({ onSubmit, onSkip }: ReflectionScreenProps) {
                 px-3 py-3 rounded-xl text-sm
                 transition-all duration-200
                 flex items-center gap-2
-                ${selectedBenefits.includes(option.id)
-                  ? 'bg-gradient-to-r from-neon-pink/30 to-neon-purple/30 text-white border-2 border-neon-pink'
-                  : 'bg-bg-card text-text-secondary hover:bg-bg-hover border border-white/10'
+                ${
+                  selectedBenefits.includes(option.id)
+                    ? 'bg-gradient-to-r from-neon-pink/30 to-neon-purple/30 text-white border-2 border-neon-pink'
+                    : 'bg-bg-card text-text-secondary hover:bg-bg-hover border border-white/10'
                 }
               `}
             >
@@ -107,9 +99,10 @@ export function ReflectionScreen({ onSubmit, onSkip }: ReflectionScreenProps) {
           className={`
             w-full py-4 rounded-xl font-semibold
             transition-all duration-200
-            ${hasSelection
-              ? 'bg-gradient-to-r from-neon-pink to-neon-purple text-white shadow-glow-pink hover:shadow-glow-purple'
-              : 'bg-bg-card text-text-muted'
+            ${
+              hasSelection
+                ? 'bg-gradient-to-r from-neon-pink to-neon-purple text-white shadow-glow-pink hover:shadow-glow-purple'
+                : 'bg-bg-card text-text-muted'
             }
           `}
         >

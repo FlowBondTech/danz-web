@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import { FiX, FiBell, FiCheck, FiSettings, FiRefreshCw } from 'react-icons/fi'
 import { useNotifications } from '@/src/contexts/NotificationContext'
-import NotificationItem, { NotificationItemSkeleton } from './NotificationItem'
-import Link from 'next/link'
 import { NotificationType } from '@/src/generated/graphql'
+import { AnimatePresence, motion } from 'motion/react'
+import Link from 'next/link'
+import { useEffect, useRef, useState } from 'react'
+import { FiBell, FiCheck, FiRefreshCw, FiSettings, FiX } from 'react-icons/fi'
+import NotificationItem, { NotificationItemSkeleton } from './NotificationItem'
 
 type FilterType = 'all' | 'unread' | NotificationType
 
@@ -20,15 +20,8 @@ const filterOptions: { value: FilterType; label: string }[] = [
 ]
 
 export default function NotificationPanel() {
-  const {
-    notifications,
-    unreadCount,
-    loading,
-    isPanelOpen,
-    closePanel,
-    markAllAsRead,
-    refetch,
-  } = useNotifications()
+  const { notifications, unreadCount, loading, isPanelOpen, closePanel, markAllAsRead, refetch } =
+    useNotifications()
 
   const [filter, setFilter] = useState<FilterType>('all')
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -119,7 +112,11 @@ export default function NotificationPanel() {
                   >
                     <motion.div
                       animate={isRefreshing ? { rotate: 360 } : {}}
-                      transition={{ duration: 1, repeat: isRefreshing ? Infinity : 0, ease: 'linear' }}
+                      transition={{
+                        duration: 1,
+                        repeat: isRefreshing ? Number.POSITIVE_INFINITY : 0,
+                        ease: 'linear',
+                      }}
                     >
                       <FiRefreshCw size={18} />
                     </motion.div>

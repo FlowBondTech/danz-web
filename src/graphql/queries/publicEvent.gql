@@ -35,5 +35,10 @@ query GetPublicEvent($slug: String!) {
     }
     created_at
     updated_at
+    allow_sponsors
+    sponsor_benefits
+    sponsor_contact_email
+    sponsor_tier_config
+    sponsor_count
   }
 }

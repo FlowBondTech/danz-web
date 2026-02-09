@@ -1,17 +1,17 @@
 'use client'
 
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import { gql } from 'graphql-tag'
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
-  FiX,
+  FiAlertCircle,
+  FiCalendar,
+  FiCamera,
   FiCheck,
   FiLoader,
-  FiAlertCircle,
-  FiCamera,
-  FiType,
-  FiCalendar,
   FiMapPin,
+  FiType,
+  FiX,
 } from 'react-icons/fi'
 
 const CHECK_IN_WITH_CODE = gql`
@@ -94,7 +94,7 @@ export default function EventCheckinModal({
   }, [isOpen, initialCode])
 
   const [checkIn, { loading: checkingIn }] = useMutation(CHECK_IN_WITH_CODE, {
-    onCompleted: (data) => {
+    onCompleted: data => {
       setCheckinResult({
         success: data.checkInWithCode.success,
         message: data.checkInWithCode.message,
@@ -104,7 +104,7 @@ export default function EventCheckinModal({
         onCheckinSuccess?.()
       }
     },
-    onError: (error) => {
+    onError: error => {
       setCheckinResult({
         success: false,
         message: error.message || 'Failed to check in. Please try again.',
@@ -127,7 +127,10 @@ export default function EventCheckinModal({
   }
 
   const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6)
+    const value = e.target.value
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '')
+      .slice(0, 6)
     setCode(value)
   }
 
@@ -136,10 +139,7 @@ export default function EventCheckinModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
       <div className="relative bg-bg-secondary border border-neon-purple/30 rounded-2xl w-full max-w-md mx-4 shadow-xl shadow-neon-purple/10">
@@ -149,10 +149,7 @@ export default function EventCheckinModal({
             <FiCheck className="text-neon-purple" />
             Event Check-In
           </h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-          >
+          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
             <FiX className="text-text-secondary" size={20} />
           </button>
         </div>
@@ -166,12 +163,8 @@ export default function EventCheckinModal({
                 <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
                   <FiCheck className="text-green-500" size={32} />
                 </div>
-                <h3 className="text-xl font-bold text-text-primary">
-                  You're Checked In!
-                </h3>
-                <p className="text-text-secondary mt-2">
-                  {checkinResult.message}
-                </p>
+                <h3 className="text-xl font-bold text-text-primary">You're Checked In!</h3>
+                <p className="text-text-secondary mt-2">{checkinResult.message}</p>
               </div>
 
               {checkinResult.event && (

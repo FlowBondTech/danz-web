@@ -1,9 +1,22 @@
 'use client'
 
+import {
+  useGetMyOrganizerApplicationQuery,
+  useSubmitOrganizerApplicationMutation,
+} from '@/src/generated/graphql'
+import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import { FiX, FiSend, FiCheck, FiClock, FiXCircle, FiMapPin, FiMusic, FiGlobe, FiInfo } from 'react-icons/fi'
-import { useSubmitOrganizerApplicationMutation, useGetMyOrganizerApplicationQuery } from '@/src/generated/graphql'
+import {
+  FiCheck,
+  FiClock,
+  FiGlobe,
+  FiInfo,
+  FiMapPin,
+  FiMusic,
+  FiSend,
+  FiX,
+  FiXCircle,
+} from 'react-icons/fi'
 
 interface OrganizerApplicationFormProps {
   isOpen: boolean
@@ -11,15 +24,24 @@ interface OrganizerApplicationFormProps {
   onSuccess?: () => void
 }
 
-export default function OrganizerApplicationForm({ isOpen, onClose, onSuccess }: OrganizerApplicationFormProps) {
+export default function OrganizerApplicationForm({
+  isOpen,
+  onClose,
+  onSuccess,
+}: OrganizerApplicationFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
 
-  const { data: existingApplication, loading: queryLoading, error: queryError, refetch } = useGetMyOrganizerApplicationQuery({
+  const {
+    data: existingApplication,
+    loading: queryLoading,
+    error: queryError,
+    refetch,
+  } = useGetMyOrganizerApplicationQuery({
     fetchPolicy: 'network-only', // Always fetch fresh data when form opens
-    onError: (error) => {
+    onError: error => {
       console.error('[OrganizerApplication] Query error:', error)
-    }
+    },
   })
   const [submitApplication] = useSubmitOrganizerApplicationMutation()
 
@@ -43,17 +65,24 @@ export default function OrganizerApplicationForm({ isOpen, onClose, onSuccess }:
         variables: {
           input: {
             reason: formData.get('reason') as string,
-            experience: formData.get('experience') as string || null,
-            venue_name: formData.get('venue_name') as string || null,
-            venue_address: formData.get('venue_address') as string || null,
-            venue_city: formData.get('venue_city') as string || null,
-            venue_capacity: formData.get('venue_capacity') ? parseInt(formData.get('venue_capacity') as string) : null,
-            dance_styles: danceStylesInput ? danceStylesInput.split(',').map(s => s.trim()).filter(Boolean) : null,
-            website_url: formData.get('website_url') as string || null,
-            social_media: formData.get('social_media') as string || null,
-            additional_info: formData.get('additional_info') as string || null,
-          }
-        }
+            experience: (formData.get('experience') as string) || null,
+            venue_name: (formData.get('venue_name') as string) || null,
+            venue_address: (formData.get('venue_address') as string) || null,
+            venue_city: (formData.get('venue_city') as string) || null,
+            venue_capacity: formData.get('venue_capacity')
+              ? Number.parseInt(formData.get('venue_capacity') as string)
+              : null,
+            dance_styles: danceStylesInput
+              ? danceStylesInput
+                  .split(',')
+                  .map(s => s.trim())
+                  .filter(Boolean)
+              : null,
+            website_url: (formData.get('website_url') as string) || null,
+            social_media: (formData.get('social_media') as string) || null,
+            additional_info: (formData.get('additional_info') as string) || null,
+          },
+        },
       })
 
       refetch()
@@ -124,11 +153,15 @@ export default function OrganizerApplicationForm({ isOpen, onClose, onSuccess }:
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 max-w-2xl w-full my-8 max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-text-primary">
-                {queryLoading ? 'Loading...' : application ? 'Your Organizer Application' : 'Become an Event Organizer'}
+                {queryLoading
+                  ? 'Loading...'
+                  : application
+                    ? 'Your Organizer Application'
+                    : 'Become an Event Organizer'}
               </h2>
               <button
                 onClick={onClose}
@@ -186,8 +219,11 @@ export default function OrganizerApplicationForm({ isOpen, onClose, onSuccess }:
                     <div>
                       <h3 className="text-sm text-text-secondary mb-1">Dance Styles</h3>
                       <div className="flex flex-wrap gap-2">
-                        {application.dance_styles.map((style) => (
-                          <span key={style} className="px-2 py-1 bg-neon-purple/20 text-neon-purple text-sm rounded-full">
+                        {application.dance_styles.map(style => (
+                          <span
+                            key={style}
+                            className="px-2 py-1 bg-neon-purple/20 text-neon-purple text-sm rounded-full"
+                          >
                             {style}
                           </span>
                         ))}

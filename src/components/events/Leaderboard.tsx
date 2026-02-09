@@ -1,16 +1,8 @@
 'use client'
 
+import { motion } from 'motion/react'
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import {
-  FiTrendingUp,
-  FiAward,
-  FiCalendar,
-  FiUsers,
-  FiStar,
-  FiChevronRight,
-  FiZap,
-} from 'react-icons/fi'
+import { FiAward, FiCalendar, FiChevronRight, FiTrendingUp, FiUsers, FiZap } from 'react-icons/fi'
 
 interface LeaderboardUser {
   id: string
@@ -39,11 +31,7 @@ const RANK_BADGES: Record<number, { emoji: string; color: string; bg: string }> 
 type TimeFilter = 'weekly' | 'monthly' | 'allTime'
 type SortBy = 'xp' | 'events_created' | 'events_attended' | 'streak'
 
-export default function Leaderboard({
-  users,
-  currentUserId,
-  variant = 'full'
-}: LeaderboardProps) {
+export default function Leaderboard({ users, currentUserId, variant = 'full' }: LeaderboardProps) {
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('weekly')
   const [sortBy, setSortBy] = useState<SortBy>('xp')
 
@@ -91,7 +79,11 @@ export default function Leaderboard({
               <span className="text-lg">{RANK_BADGES[index + 1]?.emoji}</span>
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center text-sm font-bold">
                 {user.avatar_url ? (
-                  <img src={user.avatar_url} alt="" className="w-full h-full rounded-full object-cover" />
+                  <img
+                    src={user.avatar_url}
+                    alt=""
+                    className="w-full h-full rounded-full object-cover"
+                  />
                 ) : (
                   user.display_name?.[0] || user.username[0]
                 )}
@@ -144,7 +136,9 @@ export default function Leaderboard({
                     : 'bg-white/5 hover:bg-white/10'
                 }`}
               >
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${badge?.bg || 'bg-white/10'}`}>
+                <div
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center ${badge?.bg || 'bg-white/10'}`}
+                >
                   {badge ? (
                     <span className="text-lg">{badge.emoji}</span>
                   ) : (
@@ -172,9 +166,7 @@ export default function Leaderboard({
 
                 <div className="text-right">
                   <p className="font-bold text-yellow-400">{user.xp.toLocaleString()} XP</p>
-                  <p className="text-xs text-text-secondary">
-                    {user.events_attended} events
-                  </p>
+                  <p className="text-xs text-text-secondary">{user.events_attended} events</p>
                 </div>
               </motion.div>
             )
@@ -195,9 +187,7 @@ export default function Leaderboard({
               <FiAward className="w-6 h-6 text-yellow-500" />
               Dance Leaderboard
             </h2>
-            <p className="text-sm text-text-secondary mt-1">
-              Top dancers in the community
-            </p>
+            <p className="text-sm text-text-secondary mt-1">Top dancers in the community</p>
           </div>
 
           {currentUserRank && (
@@ -229,19 +219,25 @@ export default function Leaderboard({
                     : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
-                {filter === 'weekly' ? 'This Week' : filter === 'monthly' ? 'This Month' : 'All Time'}
+                {filter === 'weekly'
+                  ? 'This Week'
+                  : filter === 'monthly'
+                    ? 'This Month'
+                    : 'All Time'}
               </button>
             ))}
           </div>
 
           {/* Sort By */}
           <div className="flex items-center gap-2 bg-bg-primary rounded-lg p-1">
-            {([
-              { key: 'xp', icon: FiZap, label: 'XP' },
-              { key: 'events_created', icon: FiCalendar, label: 'Created' },
-              { key: 'events_attended', icon: FiUsers, label: 'Attended' },
-              { key: 'streak', icon: FiTrendingUp, label: 'Streak' },
-            ] as { key: SortBy; icon: typeof FiZap; label: string }[]).map(({ key, icon: Icon, label }) => (
+            {(
+              [
+                { key: 'xp', icon: FiZap, label: 'XP' },
+                { key: 'events_created', icon: FiCalendar, label: 'Created' },
+                { key: 'events_attended', icon: FiUsers, label: 'Attended' },
+                { key: 'streak', icon: FiTrendingUp, label: 'Streak' },
+              ] as { key: SortBy; icon: typeof FiZap; label: string }[]
+            ).map(({ key, icon: Icon, label }) => (
               <button
                 key={key}
                 onClick={() => setSortBy(key)}
@@ -273,7 +269,11 @@ export default function Leaderboard({
               <div className="relative">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-400 to-gray-600 mx-auto mb-2 overflow-hidden border-2 border-gray-400">
                   {sortedUsers[1].avatar_url ? (
-                    <img src={sortedUsers[1].avatar_url} alt="" className="w-full h-full object-cover" />
+                    <img
+                      src={sortedUsers[1].avatar_url}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-text-primary text-xl font-bold">
                       {sortedUsers[1].display_name?.[0] || sortedUsers[1].username[0]}
@@ -302,11 +302,15 @@ export default function Leaderboard({
               <div className="relative">
                 <motion.div
                   animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
                   className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 mx-auto mb-2 overflow-hidden border-4 border-yellow-400 shadow-lg shadow-yellow-500/30"
                 >
                   {sortedUsers[0].avatar_url ? (
-                    <img src={sortedUsers[0].avatar_url} alt="" className="w-full h-full object-cover" />
+                    <img
+                      src={sortedUsers[0].avatar_url}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-text-primary text-2xl font-bold">
                       {sortedUsers[0].display_name?.[0] || sortedUsers[0].username[0]}
@@ -318,7 +322,9 @@ export default function Leaderboard({
               <p className="font-bold text-text-primary mt-2 truncate max-w-[120px]">
                 {sortedUsers[0].display_name || sortedUsers[0].username}
               </p>
-              <p className="text-sm text-yellow-400 font-medium">{sortedUsers[0].xp.toLocaleString()} XP</p>
+              <p className="text-sm text-yellow-400 font-medium">
+                {sortedUsers[0].xp.toLocaleString()} XP
+              </p>
               <div className="h-28 w-28 bg-yellow-500/30 rounded-t-lg mt-2 flex items-center justify-center">
                 <span className="text-4xl font-bold text-yellow-400">1</span>
               </div>
@@ -336,7 +342,11 @@ export default function Leaderboard({
               <div className="relative">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 mx-auto mb-2 overflow-hidden border-2 border-orange-400">
                   {sortedUsers[2].avatar_url ? (
-                    <img src={sortedUsers[2].avatar_url} alt="" className="w-full h-full object-cover" />
+                    <img
+                      src={sortedUsers[2].avatar_url}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-text-primary text-xl font-bold">
                       {sortedUsers[2].display_name?.[0] || sortedUsers[2].username[0]}

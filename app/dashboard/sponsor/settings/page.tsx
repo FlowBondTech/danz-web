@@ -1,6 +1,12 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
+import { DANCE_STYLES, EVENT_TYPES } from '@/src/constants/eventConstants'
+import {
+  useGetMySponsorProfileQuery,
+  useGetSponsorCategoriesQuery,
+  useUpdateSponsorProfileMutation,
+} from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -13,30 +19,46 @@ import {
   FiMapPin,
   FiPhone,
   FiSave,
-  FiTrash2,
   FiX,
 } from 'react-icons/fi'
-import {
-  useGetMySponsorProfileQuery,
-  useUpdateSponsorProfileMutation,
-  useGetSponsorCategoriesQuery,
-  SponsorTier,
-} from '@/src/generated/graphql'
-import { DANCE_STYLES, EVENT_TYPES } from '@/src/constants/eventConstants'
 
 const TIER_CONFIG: Record<string, { color: string; bg: string; border: string; min: number }> = {
-  BRONZE: { color: 'text-amber-600', bg: 'bg-amber-500/10', border: 'border-amber-500/30', min: 50 },
+  BRONZE: {
+    color: 'text-amber-600',
+    bg: 'bg-amber-500/10',
+    border: 'border-amber-500/30',
+    min: 50,
+  },
   SILVER: { color: 'text-gray-400', bg: 'bg-gray-400/10', border: 'border-gray-400/30', min: 500 },
-  GOLD: { color: 'text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', min: 1000 },
-  PLATINUM: { color: 'text-cyan-400', bg: 'bg-cyan-400/10', border: 'border-cyan-400/30', min: 5000 },
-  DIAMOND: { color: 'text-purple-400', bg: 'bg-purple-400/10', border: 'border-purple-400/30', min: 10000 },
+  GOLD: {
+    color: 'text-yellow-500',
+    bg: 'bg-yellow-500/10',
+    border: 'border-yellow-500/30',
+    min: 1000,
+  },
+  PLATINUM: {
+    color: 'text-cyan-400',
+    bg: 'bg-cyan-400/10',
+    border: 'border-cyan-400/30',
+    min: 5000,
+  },
+  DIAMOND: {
+    color: 'text-purple-400',
+    bg: 'bg-purple-400/10',
+    border: 'border-purple-400/30',
+    min: 10000,
+  },
 }
 
 export default function SponsorSettingsPage() {
   const { authenticated, ready } = usePrivy()
   const router = useRouter()
 
-  const { data: profileData, loading: profileLoading, refetch } = useGetMySponsorProfileQuery({
+  const {
+    data: profileData,
+    loading: profileLoading,
+    refetch,
+  } = useGetMySponsorProfileQuery({
     skip: !authenticated || !ready,
   })
 
@@ -72,8 +94,12 @@ export default function SponsorSettingsPage() {
       setContactPhone(sponsor.contactPhone || '')
       setSelectedCategories((sponsor.categories || []).filter((c): c is string => c !== null))
       setPreferredRegions((sponsor.preferredRegions || []).filter((r): r is string => r !== null))
-      setPreferredEventTypes((sponsor.preferredEventTypes || []).filter((t): t is string => t !== null))
-      setPreferredDanceStyles((sponsor.preferredDanceStyles || []).filter((s): s is string => s !== null))
+      setPreferredEventTypes(
+        (sponsor.preferredEventTypes || []).filter((t): t is string => t !== null),
+      )
+      setPreferredDanceStyles(
+        (sponsor.preferredDanceStyles || []).filter((s): s is string => s !== null),
+      )
     }
   }, [profileData])
 
@@ -85,19 +111,19 @@ export default function SponsorSettingsPage() {
 
   const toggleCategory = (slug: string) => {
     setSelectedCategories(prev =>
-      prev.includes(slug) ? prev.filter(c => c !== slug) : [...prev, slug]
+      prev.includes(slug) ? prev.filter(c => c !== slug) : [...prev, slug],
     )
   }
 
   const toggleEventType = (type: string) => {
     setPreferredEventTypes(prev =>
-      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type],
     )
   }
 
   const toggleDanceStyle = (style: string) => {
     setPreferredDanceStyles(prev =>
-      prev.includes(style) ? prev.filter(s => s !== style) : [...prev, style]
+      prev.includes(style) ? prev.filter(s => s !== style) : [...prev, style],
     )
   }
 
@@ -205,7 +231,10 @@ export default function SponsorSettingsPage() {
               <span className={`font-bold ${tierConfig.color}`}>{sponsor.tier}</span>
             </div>
             <div className="text-text-muted text-sm">
-              Total contributed: <span className="text-green-400 font-medium">${sponsor.totalFlowContributed.toLocaleString()}</span>
+              Total contributed:{' '}
+              <span className="text-green-400 font-medium">
+                ${sponsor.totalFlowContributed.toLocaleString()}
+              </span>
             </div>
           </div>
           <p className="mt-3 text-sm text-text-muted">
@@ -232,7 +261,7 @@ export default function SponsorSettingsPage() {
                 <input
                   type="url"
                   value={logoUrl}
-                  onChange={(e) => setLogoUrl(e.target.value)}
+                  onChange={e => setLogoUrl(e.target.value)}
                   placeholder="https://example.com/logo.png"
                   className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-text-primary placeholder:text-text-muted focus:border-neon-purple/50 focus:outline-none"
                 />
@@ -247,17 +276,19 @@ export default function SponsorSettingsPage() {
               <input
                 type="text"
                 value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
+                onChange={e => setCompanyName(e.target.value)}
                 className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-text-primary placeholder:text-text-muted focus:border-neon-purple/50 focus:outline-none"
               />
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-text-primary mb-2">Description</label>
+              <label className="block text-sm font-medium text-text-primary mb-2">
+                Description
+              </label>
               <textarea
                 value={companyDescription}
-                onChange={(e) => setCompanyDescription(e.target.value)}
+                onChange={e => setCompanyDescription(e.target.value)}
                 rows={3}
                 className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-text-primary placeholder:text-text-muted focus:border-neon-purple/50 focus:outline-none resize-none"
               />
@@ -272,7 +303,7 @@ export default function SponsorSettingsPage() {
               <input
                 type="url"
                 value={websiteUrl}
-                onChange={(e) => setWebsiteUrl(e.target.value)}
+                onChange={e => setWebsiteUrl(e.target.value)}
                 placeholder="https://yourcompany.com"
                 className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-text-primary placeholder:text-text-muted focus:border-neon-purple/50 focus:outline-none"
               />
@@ -288,7 +319,7 @@ export default function SponsorSettingsPage() {
                 <input
                   type="email"
                   value={contactEmail}
-                  onChange={(e) => setContactEmail(e.target.value)}
+                  onChange={e => setContactEmail(e.target.value)}
                   className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-text-primary placeholder:text-text-muted focus:border-neon-purple/50 focus:outline-none"
                 />
               </div>
@@ -300,7 +331,7 @@ export default function SponsorSettingsPage() {
                 <input
                   type="tel"
                   value={contactPhone}
-                  onChange={(e) => setContactPhone(e.target.value)}
+                  onChange={e => setContactPhone(e.target.value)}
                   className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-text-primary placeholder:text-text-muted focus:border-neon-purple/50 focus:outline-none"
                 />
               </div>
@@ -316,7 +347,7 @@ export default function SponsorSettingsPage() {
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-            {categories.map((category) => (
+            {categories.map(category => (
               <button
                 key={category.slug}
                 onClick={() => toggleCategory(category.slug)}
@@ -343,8 +374,8 @@ export default function SponsorSettingsPage() {
             <input
               type="text"
               value={newRegion}
-              onChange={(e) => setNewRegion(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && addRegion()}
+              onChange={e => setNewRegion(e.target.value)}
+              onKeyPress={e => e.key === 'Enter' && addRegion()}
               placeholder="e.g., New York, Los Angeles"
               className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-text-primary placeholder:text-text-muted focus:border-neon-purple/50 focus:outline-none"
             />
@@ -357,7 +388,7 @@ export default function SponsorSettingsPage() {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {preferredRegions.map((region) => (
+            {preferredRegions.map(region => (
               <span
                 key={region}
                 className="flex items-center gap-2 px-3 py-1.5 bg-neon-purple/10 border border-neon-purple/30 rounded-full text-neon-purple text-sm"
@@ -386,7 +417,7 @@ export default function SponsorSettingsPage() {
           </p>
 
           <div className="flex flex-wrap gap-2">
-            {EVENT_TYPES.map((type) => (
+            {EVENT_TYPES.map(type => (
               <button
                 key={type.value}
                 onClick={() => toggleEventType(type.value)}
@@ -410,7 +441,7 @@ export default function SponsorSettingsPage() {
           </p>
 
           <div className="flex flex-wrap gap-2">
-            {DANCE_STYLES.map((style) => (
+            {DANCE_STYLES.map(style => (
               <button
                 key={style.value}
                 onClick={() => toggleDanceStyle(style.value)}

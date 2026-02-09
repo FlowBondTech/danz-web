@@ -1,13 +1,6 @@
 'use client'
 
-import {
-  type ReactNode,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import { type ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react'
 
 interface ExperimentalContextType {
   experimentalEnabled: boolean

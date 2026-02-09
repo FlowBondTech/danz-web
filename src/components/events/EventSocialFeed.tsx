@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import { FiCheck, FiHelpCircle, FiHeart, FiClock, FiUser, FiActivity } from 'react-icons/fi'
-import { useQuery, gql } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { formatDistanceToNow } from 'date-fns'
+import { AnimatePresence, motion } from 'motion/react'
+import { useEffect, useState } from 'react'
+import { FiActivity, FiCheck, FiClock, FiHeart, FiHelpCircle, FiUser } from 'react-icons/fi'
 
 const GET_EVENT_ACTIVITY = gql`
   query GetEventActivity($eventId: ID!, $limit: Int) {
@@ -48,9 +48,7 @@ function ActivityAvatar({ avatarUrl, name }: { avatarUrl?: string | null; name: 
   if (!avatarUrl || imgError) {
     return (
       <div className="w-8 h-8 rounded-full bg-neon-purple/20 flex items-center justify-center flex-shrink-0">
-        <span className="text-neon-purple text-sm font-bold">
-          {name[0]?.toUpperCase() || '?'}
-        </span>
+        <span className="text-neon-purple text-sm font-bold">{name[0]?.toUpperCase() || '?'}</span>
       </div>
     )
   }
@@ -179,7 +177,7 @@ export default function EventSocialFeed({
           </div>
         )}
         <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3].map(i => (
             <div key={i} className="animate-pulse flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-white/10" />
               <div className="flex-1">
@@ -235,11 +233,10 @@ export default function EventSocialFeed({
                 className="flex items-start gap-3"
               >
                 <div className="relative">
-                  <ActivityAvatar
-                    avatarUrl={activity.user.avatar_url}
-                    name={userName}
-                  />
-                  <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full ${config.bgColor} flex items-center justify-center`}>
+                  <ActivityAvatar avatarUrl={activity.user.avatar_url} name={userName} />
+                  <div
+                    className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full ${config.bgColor} flex items-center justify-center`}
+                  >
                     <Icon className={`w-2.5 h-2.5 ${config.color}`} />
                   </div>
                 </div>
@@ -262,9 +259,7 @@ export default function EventSocialFeed({
       </div>
 
       {useMockData && (
-        <p className="text-xs text-text-secondary/50 text-center mt-4">
-          Sample activity shown
-        </p>
+        <p className="text-xs text-text-secondary/50 text-center mt-4">Sample activity shown</p>
       )}
     </div>
   )

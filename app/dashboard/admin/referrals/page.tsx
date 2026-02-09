@@ -3,10 +3,10 @@
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import { useGetMyProfileQuery } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { FiAward, FiUsers, FiTrendingUp, FiArrowLeft } from 'react-icons/fi'
-import Link from 'next/link'
+import { FiArrowLeft, FiAward, FiTrendingUp, FiUsers } from 'react-icons/fi'
 
 export default function AdminReferralsPage() {
   const { authenticated, ready } = usePrivy()
@@ -62,9 +62,7 @@ export default function AdminReferralsPage() {
 
         <div className="flex items-center justify-between mb-6 sm:mb-8">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">
-              Referral Tracking
-            </h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">Referral Tracking</h1>
             <p className="text-text-secondary mt-1">
               Monitor referral performance and bonus rewards across all users
             </p>
@@ -76,9 +74,7 @@ export default function AdminReferralsPage() {
           <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
             <div className="flex items-center justify-between mb-4">
               <FiUsers className="text-neon-purple" size={24} />
-              <span className="text-xs text-text-secondary uppercase tracking-wider">
-                Total
-              </span>
+              <span className="text-xs text-text-secondary uppercase tracking-wider">Total</span>
             </div>
             <p className="text-2xl font-bold text-text-primary">0</p>
             <p className="text-sm text-text-secondary mt-1">Referrals</p>
@@ -98,9 +94,7 @@ export default function AdminReferralsPage() {
           <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-4 sm:p-6">
             <div className="flex items-center justify-between mb-4">
               <FiAward className="text-yellow-400" size={24} />
-              <span className="text-xs text-text-secondary uppercase tracking-wider">
-                Points
-              </span>
+              <span className="text-xs text-text-secondary uppercase tracking-wider">Points</span>
             </div>
             <p className="text-2xl font-bold text-text-primary">0</p>
             <p className="text-sm text-text-secondary mt-1">Total Awarded</p>

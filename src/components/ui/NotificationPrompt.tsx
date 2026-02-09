@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
 import { Bell, BellOff, X } from 'lucide-react'
+import { useState } from 'react'
 
 interface NotificationPromptProps {
   onEnable: () => Promise<void>
@@ -14,7 +14,7 @@ export function NotificationPrompt({
   onEnable,
   onSkip,
   onClose,
-  isLoading = false
+  isLoading = false,
 }: NotificationPromptProps) {
   const [isEnabling, setIsEnabling] = useState(false)
 
@@ -48,20 +48,22 @@ export function NotificationPrompt({
         <div className="relative mx-auto w-24 h-24 mb-6">
           <div className="absolute inset-0 bg-gradient-to-br from-neon-pink/30 to-neon-purple/30 rounded-full animate-pulse" />
           <div className="absolute inset-2 bg-bg-primary rounded-full flex items-center justify-center">
-            <Bell className="w-10 h-10 text-neon-pink animate-bounce" style={{ animationDuration: '2s' }} />
+            <Bell
+              className="w-10 h-10 text-neon-pink animate-bounce"
+              style={{ animationDuration: '2s' }}
+            />
           </div>
           {/* Notification dot */}
           <div className="absolute top-2 right-2 w-4 h-4 bg-red-500 rounded-full border-2 border-bg-primary animate-pulse" />
         </div>
 
         {/* Title */}
-        <h2 className="text-2xl font-bold text-white mb-3">
-          Stay in the Loop
-        </h2>
+        <h2 className="text-2xl font-bold text-white mb-3">Stay in the Loop</h2>
 
         {/* Description */}
         <p className="text-white/60 mb-8 leading-relaxed">
-          Get notified about streak reminders, friend activity, party updates, and exclusive rewards.
+          Get notified about streak reminders, friend activity, party updates, and exclusive
+          rewards.
         </p>
 
         {/* Benefits list */}
@@ -71,10 +73,7 @@ export function NotificationPrompt({
             { icon: '🎉', text: 'Party invites from friends' },
             { icon: '🎁', text: 'Special rewards and drops' },
           ].map((benefit, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-3 text-sm text-white/70"
-            >
+            <div key={index} className="flex items-center gap-3 text-sm text-white/70">
               <span className="text-lg">{benefit.icon}</span>
               <span>{benefit.text}</span>
             </div>
@@ -112,9 +111,7 @@ export function NotificationPrompt({
         </div>
 
         {/* Fine print */}
-        <p className="mt-6 text-xs text-white/30">
-          You can change this anytime in settings
-        </p>
+        <p className="mt-6 text-xs text-white/30">You can change this anytime in settings</p>
       </div>
     </div>
   )

@@ -1,24 +1,24 @@
 'use client'
 
-import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import { DailyCheckIn } from '@/src/components/checkin'
-import { SplashScreen, NotificationPrompt } from '@/src/components/ui'
-import { useAppReady } from '@/src/hooks/useAppReady'
-import { useFarcasterFrame } from '@/src/hooks/useFarcasterFrame'
+import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
+import { NotificationPrompt, SplashScreen } from '@/src/components/ui'
 import {
+  useEndQuickSessionMutation,
   useGetCheckinStatusQuery,
   useGetMiniappStreakQuery,
   useStartQuickSessionMutation,
-  useEndQuickSessionMutation,
 } from '@/src/generated/graphql'
+import { useAppReady } from '@/src/hooks/useAppReady'
+import { useFarcasterFrame } from '@/src/hooks/useFarcasterFrame'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 type OnboardingStep = 'splash' | 'notifications' | 'ready'
 
 export default function CheckInPage() {
   const { isReady, showSplash, isAuthenticated } = useAppReady({
-    minSplashDuration: 1200
+    minSplashDuration: 1200,
   })
   const { isInFrame, isFrameAdded, addFrame, ready: farcasterReady } = useFarcasterFrame()
   const router = useRouter()
@@ -40,8 +40,12 @@ export default function CheckInPage() {
   const [endSession] = useEndQuickSessionMutation()
 
   // Derived state from API
-  const currentStreak = streakData?.miniappStreak?.current ?? checkinData?.myFreestyleStats?.current_streak ?? 0
-  const hasCheckedInToday = streakData?.miniappStreak?.streak_maintained_today ?? checkinData?.completedFreestyleToday ?? false
+  const currentStreak =
+    streakData?.miniappStreak?.current ?? checkinData?.myFreestyleStats?.current_streak ?? 0
+  const hasCheckedInToday =
+    streakData?.miniappStreak?.streak_maintained_today ??
+    checkinData?.completedFreestyleToday ??
+    false
 
   // Check if user has already seen notification prompt
   useEffect(() => {
@@ -96,70 +100,73 @@ export default function CheckInPage() {
     farcasterReady()
   }
 
-  const handleCheckIn = useCallback(async (
-    didDance: boolean,
-    reflection?: { feeling?: string; benefits?: string[]; note?: string }
-  ) => {
-    try {
-      if (didDance) {
-        // Start a quick session
-        const startResult = await startSession({
-          variables: {
-            input: {
-              mode: 'daily_checkin',
-              target_duration: 60, // 1 minute minimum for daily check-in
-            }
-          }
-        })
-
-        if (startResult.data?.miniappStartQuickSession?.session_id) {
-          activeSessionId.current = startResult.data.miniappStartQuickSession.session_id
-
-          // End the session immediately with check-in stats
-          const endResult = await endSession({
+  const handleCheckIn = useCallback(
+    async (
+      didDance: boolean,
+      reflection?: { feeling?: string; benefits?: string[]; note?: string },
+    ) => {
+      try {
+        if (didDance) {
+          // Start a quick session
+          const startResult = await startSession({
             variables: {
-              sessionId: activeSessionId.current,
-              stats: {
-                feeling: reflection?.feeling,
-                benefits: reflection?.benefits,
-                note: reflection?.note,
-                completed: true,
-                duration_seconds: 60,
-                movement_score: 0.8,
-              }
-            }
+              input: {
+                mode: 'daily_checkin',
+                target_duration: 60, // 1 minute minimum for daily check-in
+              },
+            },
           })
 
-          if (endResult.data?.miniappEndQuickSession?.success) {
-            // Refetch data to update UI
-            await Promise.all([refetchCheckin(), refetchStreak()])
+          if (startResult.data?.miniappStartQuickSession?.session_id) {
+            activeSessionId.current = startResult.data.miniappStartQuickSession.session_id
 
-            return {
-              success: true,
-              xpEarned: 75,
-              newStreak: currentStreak + 1,
+            // End the session immediately with check-in stats
+            const endResult = await endSession({
+              variables: {
+                sessionId: activeSessionId.current,
+                stats: {
+                  feeling: reflection?.feeling,
+                  benefits: reflection?.benefits,
+                  note: reflection?.note,
+                  completed: true,
+                  duration_seconds: 60,
+                  movement_score: 0.8,
+                },
+              },
+            })
+
+            if (endResult.data?.miniappEndQuickSession?.success) {
+              // Refetch data to update UI
+              await Promise.all([refetchCheckin(), refetchStreak()])
+
+              return {
+                success: true,
+                xpEarned: 75,
+                newStreak: currentStreak + 1,
+              }
             }
           }
-        }
 
-        throw new Error('Failed to record check-in')
-      } else {
-        // User didn't dance - just record no activity
+          throw new Error('Failed to record check-in')
+        } else {
+          // User didn't dance - just record no activity
+          return {
+            success: true,
+            xpEarned: 0,
+            newStreak: 0,
+          }
+        }
+      } catch (error) {
+        console.error('Check-in error:', error)
         return {
-          success: true,
+          success: false,
           xpEarned: 0,
-          newStreak: 0,
+          newStreak: currentStreak,
         }
       }
-    } catch (error) {
-      console.error('Check-in error:', error)
-      return {
-        success: false,
-        xpEarned: 0,
-        newStreak: currentStreak,
-      }
-    }
-  }, [startSession, endSession, refetchCheckin, refetchStreak, currentStreak])
+    },
+    [startSession, endSession, refetchCheckin, refetchStreak, currentStreak],
+  )
 
   // Step 1: Splash
   if (onboardingStep === 'splash') {

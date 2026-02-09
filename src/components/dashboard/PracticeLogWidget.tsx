@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { FiClock, FiPlus, FiMusic, FiCheck } from 'react-icons/fi'
+import { FiCheck, FiClock, FiMusic, FiPlus } from 'react-icons/fi'
 
 interface PracticeSession {
   id: string

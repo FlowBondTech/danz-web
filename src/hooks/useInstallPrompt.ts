@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>
@@ -41,14 +41,16 @@ export function useInstallPrompt(): UseInstallPromptReturn {
     setIsMobile(isMobileDevice)
 
     // Check if already installed (standalone mode)
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
       (window.navigator as any).standalone === true
 
     setIsInstalled(isStandalone)
 
     // Check if banner was recently dismissed
     const dismissedAt = localStorage.getItem(BANNER_DISMISSED_KEY)
-    const wasDismissed = dismissedAt && (Date.now() - parseInt(dismissedAt, 10)) < BANNER_DISMISS_DURATION
+    const wasDismissed =
+      dismissedAt && Date.now() - Number.parseInt(dismissedAt, 10) < BANNER_DISMISS_DURATION
 
     // Show banner for mobile users who haven't installed and haven't dismissed
     if (isMobileDevice && !isStandalone && !wasDismissed) {

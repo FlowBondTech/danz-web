@@ -64,7 +64,8 @@ export const RegisterForm = () => {
         setFormData(prev => ({
           ...prev,
           username: farcasterAccount.username || prev.username,
-          displayName: farcasterAccount.displayName || farcasterAccount.username || prev.displayName,
+          displayName:
+            farcasterAccount.displayName || farcasterAccount.username || prev.displayName,
           bio: farcasterAccount.bio || prev.bio,
           avatarUrl: farcasterAccount.pfpUrl || prev.avatarUrl,
           fid: farcasterAccount.fid || null,

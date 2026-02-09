@@ -1,17 +1,17 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import type { SuggestedBond } from '@/src/types/bonds'
+import { useCallback, useState } from 'react'
 import { CheckInScreen } from './CheckInScreen'
 import { PointsBurst } from './PointsBurst'
 import { ReflectionScreen } from './ReflectionScreen'
 import { RewardsScreen } from './RewardsScreen'
 import {
+  type CheckInRewards,
   type CheckInStep,
   type DanceReflection,
-  type CheckInRewards,
   calculateCheckInRewards,
 } from './types'
-import { SuggestedBond } from '@/src/types/bonds'
 
 // Mock bond suggestions - will be replaced with real API data
 const MOCK_BOND_SUGGESTIONS: SuggestedBond[] = [
@@ -62,11 +62,14 @@ const MOCK_BOND_SUGGESTIONS: SuggestedBond[] = [
 interface DailyCheckInProps {
   currentStreak?: number
   hasCheckedInToday?: boolean
-  onCheckIn?: (didDance: boolean, reflection?: {
-    feeling?: string
-    benefits?: string[]
-    note?: string
-  }) => Promise<{
+  onCheckIn?: (
+    didDance: boolean,
+    reflection?: {
+      feeling?: string
+      benefits?: string[]
+      note?: string
+    },
+  ) => Promise<{
     success: boolean
     xpEarned?: number
     newStreak?: number
@@ -89,72 +92,90 @@ export function DailyCheckIn({
   // New streak after check-in (local estimate, will be updated from API)
   const newStreak = actualNewStreak || (didDance ? currentStreak + 1 : 0)
 
-  const handleCheckIn = useCallback((danced: boolean) => {
-    setDidDance(danced)
+  const handleCheckIn = useCallback(
+    (danced: boolean) => {
+      setDidDance(danced)
 
-    if (danced) {
-      // Show points burst animation
-      setShowBurst(true)
-    } else {
-      // Call API for non-dance check-in
-      if (onCheckIn) {
-        onCheckIn(false).then((result) => {
-          if (result.success && result.newStreak !== undefined) {
-            setActualNewStreak(result.newStreak)
-          }
-        })
+      if (danced) {
+        // Show points burst animation
+        setShowBurst(true)
+      } else {
+        // Call API for non-dance check-in
+        if (onCheckIn) {
+          onCheckIn(false).then(result => {
+            if (result.success && result.newStreak !== undefined) {
+              setActualNewStreak(result.newStreak)
+            }
+          })
+        }
+        // Skip to rewards with streak reset message
+        const calculatedRewards = calculateCheckInRewards(0, false)
+        setRewards(calculatedRewards)
+        setStep('rewards')
       }
-      // Skip to rewards with streak reset message
-      const calculatedRewards = calculateCheckInRewards(0, false)
-      setRewards(calculatedRewards)
-      setStep('rewards')
-    }
-  }, [onCheckIn])
+    },
+    [onCheckIn],
+  )
 
   const handleBurstComplete = useCallback(() => {
     setShowBurst(false)
     setStep('reflection')
   }, [])
 
-  const handleReflectionSubmit = useCallback(async (reflectionData: DanceReflection | null) => {
-    setReflection(reflectionData)
-    const hasReflection = reflectionData !== null &&
-      !!(reflectionData.feeling || (reflectionData.benefits && reflectionData.benefits.length > 0))
+  const handleReflectionSubmit = useCallback(
+    async (reflectionData: DanceReflection | null) => {
+      setReflection(reflectionData)
+      const hasReflection =
+        reflectionData !== null &&
+        !!(
+          reflectionData.feeling ||
+          (reflectionData.benefits && reflectionData.benefits.length > 0)
+        )
 
-    // Call API with reflection data
-    if (onCheckIn) {
-      // Convert DanceReflection to API format (null -> undefined)
-      const apiReflection = reflectionData ? {
-        feeling: reflectionData.feeling ?? undefined,
-        benefits: reflectionData.benefits ?? undefined,
-        note: reflectionData.notes ?? undefined,
-      } : undefined
-      const result = await onCheckIn(true, apiReflection)
-      if (result.success) {
-        if (result.newStreak !== undefined) {
-          setActualNewStreak(result.newStreak)
-        }
-        // Use API-provided XP if available, otherwise calculate locally
-        if (result.xpEarned !== undefined) {
-          const calculatedRewards = calculateCheckInRewards(result.newStreak || newStreak, hasReflection)
-          // Override with actual API values
-          calculatedRewards.totalXp = result.xpEarned
-          setRewards(calculatedRewards)
+      // Call API with reflection data
+      if (onCheckIn) {
+        // Convert DanceReflection to API format (null -> undefined)
+        const apiReflection = reflectionData
+          ? {
+              feeling: reflectionData.feeling ?? undefined,
+              benefits: reflectionData.benefits ?? undefined,
+              note: reflectionData.notes ?? undefined,
+            }
+          : undefined
+        const result = await onCheckIn(true, apiReflection)
+        if (result.success) {
+          if (result.newStreak !== undefined) {
+            setActualNewStreak(result.newStreak)
+          }
+          // Use API-provided XP if available, otherwise calculate locally
+          if (result.xpEarned !== undefined) {
+            const calculatedRewards = calculateCheckInRewards(
+              result.newStreak || newStreak,
+              hasReflection,
+            )
+            // Override with actual API values
+            calculatedRewards.totalXp = result.xpEarned
+            setRewards(calculatedRewards)
+          } else {
+            const calculatedRewards = calculateCheckInRewards(
+              result.newStreak || newStreak,
+              hasReflection,
+            )
+            setRewards(calculatedRewards)
+          }
         } else {
-          const calculatedRewards = calculateCheckInRewards(result.newStreak || newStreak, hasReflection)
+          // Fall back to local calculation on error
+          const calculatedRewards = calculateCheckInRewards(newStreak, hasReflection)
           setRewards(calculatedRewards)
         }
       } else {
-        // Fall back to local calculation on error
         const calculatedRewards = calculateCheckInRewards(newStreak, hasReflection)
         setRewards(calculatedRewards)
       }
-    } else {
-      const calculatedRewards = calculateCheckInRewards(newStreak, hasReflection)
-      setRewards(calculatedRewards)
-    }
-    setStep('rewards')
-  }, [newStreak, onCheckIn])
+      setStep('rewards')
+    },
+    [newStreak, onCheckIn],
+  )
 
   const handleSkipReflection = useCallback(async () => {
     // Call API without reflection
@@ -190,16 +211,10 @@ export function DailyCheckIn({
         <div className="w-20 h-20 rounded-full bg-gradient-to-br from-neon-pink to-neon-purple flex items-center justify-center shadow-glow-pink mb-5">
           <span className="text-4xl">✅</span>
         </div>
-        <h1 className="text-xl font-bold text-text-primary mb-2">
-          You&apos;ve checked in today!
-        </h1>
-        <p className="text-text-muted text-sm mb-4">
-          Come back tomorrow to continue your streak
-        </p>
+        <h1 className="text-xl font-bold text-text-primary mb-2">You&apos;ve checked in today!</h1>
+        <p className="text-text-muted text-sm mb-4">Come back tomorrow to continue your streak</p>
         <div className="px-4 py-2 rounded-full bg-bg-card border border-neon-pink/30">
-          <span className="text-neon-pink text-sm">
-            🔥 {currentStreak} day streak
-          </span>
+          <span className="text-neon-pink text-sm">🔥 {currentStreak} day streak</span>
         </div>
       </div>
     )
@@ -217,18 +232,10 @@ export function DailyCheckIn({
       )}
 
       {/* Main content */}
-      {step === 'checkin' && (
-        <CheckInScreen
-          streak={currentStreak}
-          onCheckIn={handleCheckIn}
-        />
-      )}
+      {step === 'checkin' && <CheckInScreen streak={currentStreak} onCheckIn={handleCheckIn} />}
 
       {step === 'reflection' && (
-        <ReflectionScreen
-          onSubmit={handleReflectionSubmit}
-          onSkip={handleSkipReflection}
-        />
+        <ReflectionScreen onSubmit={handleReflectionSubmit} onSkip={handleSkipReflection} />
       )}
 
       {step === 'rewards' && rewards && (

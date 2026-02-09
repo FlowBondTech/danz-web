@@ -18,7 +18,17 @@ export default function Footer() {
             <p className="text-text-secondary text-sm mb-6">
               The movement tech company rewarding authentic connection and conscious community.
             </p>
-            <p className="text-text-muted text-xs mb-6">Powered by <a href="https://flowbond.tech" target="_blank" rel="noopener noreferrer" className="text-neon-purple hover:text-neon-pink transition-colors">FlowBond.Tech</a></p>
+            <p className="text-text-muted text-xs mb-6">
+              Powered by{' '}
+              <a
+                href="https://flowbond.tech"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-neon-purple hover:text-neon-pink transition-colors"
+              >
+                FlowBond.Tech
+              </a>
+            </p>
 
             {/* Social Icons */}
             <div className="flex gap-3">
@@ -190,7 +200,17 @@ export default function Footer() {
         <div className="pt-8 border-t border-white/5">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-text-muted text-sm mb-4 md:mb-0">
-              <p>© 2024 DANZ NOW. All rights reserved. Powered by <a href="https://flowbond.tech" target="_blank" rel="noopener noreferrer" className="text-neon-purple hover:text-neon-pink transition-colors">FlowBond.Tech</a></p>
+              <p>
+                © 2024 DANZ NOW. All rights reserved. Powered by{' '}
+                <a
+                  href="https://flowbond.tech"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-neon-purple hover:text-neon-pink transition-colors"
+                >
+                  FlowBond.Tech
+                </a>
+              </p>
               <p className="mt-1">Contact: info@danz.now</p>
             </div>
             <div className="flex gap-6 text-sm">

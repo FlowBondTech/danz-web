@@ -47,10 +47,7 @@ export interface CheckInRewards {
   tokensEarned: number
 }
 
-export function calculateCheckInRewards(
-  streakDay: number,
-  hasReflection: boolean
-): CheckInRewards {
+export function calculateCheckInRewards(streakDay: number, hasReflection: boolean): CheckInRewards {
   const baseXp = 50 // Base XP for checking in
   const streakBonus = Math.min(streakDay * 5, 50) // +5 XP per streak day, max 50
   const reflectionBonus = hasReflection ? 25 : 0 // Bonus for reflecting

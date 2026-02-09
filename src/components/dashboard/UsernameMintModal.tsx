@@ -1,16 +1,16 @@
 'use client'
 
+import { usePrivy, useWallets } from '@privy-io/react-auth'
 import { useState } from 'react'
 import {
-  FiX,
   FiAlertTriangle,
   FiCheck,
-  FiLoader,
   FiExternalLink,
+  FiLoader,
   FiLock,
   FiShield,
+  FiX,
 } from 'react-icons/fi'
-import { usePrivy, useWallets } from '@privy-io/react-auth'
 
 interface UsernameMintModalProps {
   isOpen: boolean
@@ -99,7 +99,7 @@ export default function UsernameMintModal({
               },
             },
           }),
-        }
+        },
       )
 
       const { data, errors } = await response.json()
@@ -175,12 +175,11 @@ export default function UsernameMintModal({
                 <div className="flex items-start gap-3">
                   <FiAlertTriangle className="text-amber-500 mt-0.5 flex-shrink-0" size={24} />
                   <div>
-                    <h3 className="font-bold text-amber-500 text-lg">
-                      This Action is PERMANENT
-                    </h3>
+                    <h3 className="font-bold text-amber-500 text-lg">This Action is PERMANENT</h3>
                     <p className="text-text-secondary text-sm mt-2">
-                      Once you mint your username, it <strong className="text-text-primary">cannot be changed</strong>.
-                      Your username will be permanently linked to your wallet address on-chain.
+                      Once you mint your username, it{' '}
+                      <strong className="text-text-primary">cannot be changed</strong>. Your
+                      username will be permanently linked to your wallet address on-chain.
                     </p>
                   </div>
                 </div>
@@ -188,9 +187,7 @@ export default function UsernameMintModal({
 
               <div className="p-4 bg-neon-purple/10 border border-neon-purple/30 rounded-xl">
                 <p className="text-text-secondary text-sm mb-2">Your username will be minted as:</p>
-                <p className="text-2xl font-bold text-neon-purple">
-                  {username}.danz.eth
-                </p>
+                <p className="text-2xl font-bold text-neon-purple">{username}.danz.eth</p>
               </div>
 
               <div className="space-y-2 text-sm text-text-secondary">
@@ -236,11 +233,10 @@ export default function UsernameMintModal({
                 <div className="flex items-start gap-3">
                   <FiAlertTriangle className="text-blue-500 mt-0.5" size={20} />
                   <div>
-                    <h3 className="font-semibold text-blue-500">
-                      Wallet Required
-                    </h3>
+                    <h3 className="font-semibold text-blue-500">Wallet Required</h3>
                     <p className="text-sm text-text-secondary mt-1">
-                      Please connect a wallet to mint your username. Go to your wallet settings to connect.
+                      Please connect a wallet to mint your username. Go to your wallet settings to
+                      connect.
                     </p>
                   </div>
                 </div>
@@ -316,9 +312,7 @@ export default function UsernameMintModal({
             <div className="space-y-6 text-center py-4">
               <FiLoader className="animate-spin text-neon-purple mx-auto" size={48} />
               <div>
-                <h3 className="text-lg font-bold text-text-primary">
-                  Waiting for Signature
-                </h3>
+                <h3 className="text-lg font-bold text-text-primary">Waiting for Signature</h3>
                 <p className="text-text-secondary text-sm mt-2">
                   Please confirm the transaction in your wallet
                 </p>
@@ -331,9 +325,7 @@ export default function UsernameMintModal({
             <div className="space-y-6 text-center py-4">
               <FiLoader className="animate-spin text-neon-purple mx-auto" size={48} />
               <div>
-                <h3 className="text-lg font-bold text-text-primary">
-                  Minting in Progress
-                </h3>
+                <h3 className="text-lg font-bold text-text-primary">Minting in Progress</h3>
                 <p className="text-text-secondary text-sm mt-2">
                   Your username is being minted on-chain. This may take a moment...
                 </p>
@@ -348,12 +340,8 @@ export default function UsernameMintModal({
                 <FiCheck className="text-green-500" size={32} />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-text-primary">
-                  Successfully Minted!
-                </h3>
-                <p className="text-2xl font-bold text-neon-purple mt-2">
-                  {username}.danz.eth
-                </p>
+                <h3 className="text-lg font-bold text-text-primary">Successfully Minted!</h3>
+                <p className="text-2xl font-bold text-neon-purple mt-2">{username}.danz.eth</p>
                 <p className="text-text-secondary text-sm mt-2">
                   Your username has been permanently minted on-chain
                 </p>
@@ -387,9 +375,7 @@ export default function UsernameMintModal({
                 <div className="flex items-start gap-3">
                   <FiAlertTriangle className="text-red-500 mt-0.5" size={20} />
                   <div>
-                    <h3 className="font-semibold text-red-500">
-                      Minting Failed
-                    </h3>
+                    <h3 className="font-semibold text-red-500">Minting Failed</h3>
                     <p className="text-sm text-text-secondary mt-1">
                       {error || 'Something went wrong. Please try again.'}
                     </p>

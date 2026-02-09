@@ -1,6 +1,11 @@
 # Notification Queries
 
-query GetMyNotifications($limit: Int, $offset: Int, $unread_only: Boolean, $type: NotificationType) {
+query GetMyNotifications(
+  $limit: Int
+  $offset: Int
+  $unread_only: Boolean
+  $type: NotificationType
+) {
   myNotifications(limit: $limit, offset: $offset, unread_only: $unread_only, type: $type) {
     notifications {
       id

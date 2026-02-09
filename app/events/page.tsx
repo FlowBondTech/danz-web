@@ -1,21 +1,21 @@
 'use client'
 
-import { useState } from 'react'
+import Navbar from '@/src/components/Navbar'
+import { type EventCategory, useGetPublicEventsQuery } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
 import { motion } from 'motion/react'
-import Link from 'next/link'
 import Image from 'next/image'
-import Navbar from '@/src/components/Navbar'
-import { useGetPublicEventsQuery, EventCategory } from '@/src/generated/graphql'
+import Link from 'next/link'
+import { useState } from 'react'
 import {
-  FiMapPin,
-  FiCalendar,
-  FiUsers,
-  FiDollarSign,
-  FiSearch,
-  FiFilter,
-  FiVideo,
   FiArrowRight,
+  FiCalendar,
+  FiDollarSign,
+  FiFilter,
+  FiMapPin,
+  FiSearch,
+  FiUsers,
+  FiVideo,
 } from 'react-icons/fi'
 
 const CATEGORIES = [
@@ -120,7 +120,7 @@ export default function PublicEventsPage() {
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search events, locations, dance styles..."
               className="w-full bg-bg-card text-text-primary rounded-xl pl-12 pr-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none placeholder-text-muted"
             />
@@ -130,10 +130,10 @@ export default function PublicEventsPage() {
           <div className="flex gap-3">
             <select
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              onChange={e => setSelectedCategory(e.target.value)}
               className="bg-bg-card text-text-primary rounded-xl px-4 py-3 border border-neon-purple/20 focus:border-neon-purple/50 focus:outline-none"
             >
-              {CATEGORIES.map((cat) => (
+              {CATEGORIES.map(cat => (
                 <option key={cat.value} value={cat.value} className="bg-bg-primary">
                   {cat.label}
                 </option>
@@ -227,7 +227,9 @@ export default function PublicEventsPage() {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-transparent to-transparent" />
                         <div className="absolute top-3 right-3">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(event.status)}`}>
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(event.status)}`}
+                          >
                             {event.status}
                           </span>
                         </div>
@@ -236,7 +238,9 @@ export default function PublicEventsPage() {
                       <div className="relative h-48 bg-gradient-to-br from-neon-purple/30 to-neon-pink/30 flex items-center justify-center">
                         <span className="text-6xl">💃</span>
                         <div className="absolute top-3 right-3">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(event.status)}`}>
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(event.status)}`}
+                          >
                             {event.status}
                           </span>
                         </div>
@@ -266,11 +270,17 @@ export default function PublicEventsPage() {
                       <div className="space-y-2 text-sm text-text-secondary mb-4">
                         <div className="flex items-center gap-2">
                           <FiCalendar className="w-4 h-4 text-neon-purple" />
-                          <span>{formatDate(event.start_date_time)} at {formatTime(event.start_date_time)}</span>
+                          <span>
+                            {formatDate(event.start_date_time)} at{' '}
+                            {formatTime(event.start_date_time)}
+                          </span>
                         </div>
                         <div className="flex items-center gap-2">
                           <FiMapPin className="w-4 h-4 text-neon-purple" />
-                          <span>{event.location_name}{event.location_city ? `, ${event.location_city}` : ''}</span>
+                          <span>
+                            {event.location_name}
+                            {event.location_city ? `, ${event.location_city}` : ''}
+                          </span>
                         </div>
                         <div className="flex items-center gap-4">
                           <div className="flex items-center gap-1">
@@ -300,7 +310,9 @@ export default function PublicEventsPage() {
                             />
                           ) : (
                             <div className="w-6 h-6 rounded-full bg-neon-purple/30 flex items-center justify-center text-neon-purple text-xs font-bold">
-                              {(event.facilitator.display_name || event.facilitator.username)?.charAt(0).toUpperCase()}
+                              {(event.facilitator.display_name || event.facilitator.username)
+                                ?.charAt(0)
+                                .toUpperCase()}
                             </div>
                           )}
                           <span className="text-sm text-text-secondary">
@@ -324,7 +336,17 @@ export default function PublicEventsPage() {
       {/* Footer */}
       <footer className="border-t border-neon-purple/10 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-text-muted text-sm">
-          <p>Powered by <a href="https://flowbond.tech" target="_blank" rel="noopener noreferrer" className="text-neon-purple hover:text-neon-pink transition-colors">FlowBond.Tech</a></p>
+          <p>
+            Powered by{' '}
+            <a
+              href="https://flowbond.tech"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-neon-purple hover:text-neon-pink transition-colors"
+            >
+              FlowBond.Tech
+            </a>
+          </p>
         </div>
       </footer>
     </div>

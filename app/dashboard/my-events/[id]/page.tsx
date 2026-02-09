@@ -1,39 +1,39 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { motion, AnimatePresence } from 'motion/react'
-import {
-  FiArrowLeft,
-  FiCalendar,
-  FiMapPin,
-  FiUsers,
-  FiDollarSign,
-  FiClock,
-  FiCheck,
-  FiX,
-  FiShare2,
-  FiExternalLink,
-  FiEdit2,
-  FiHelpCircle,
-  FiCopy,
-  FiTwitter,
-  FiLink,
-  FiMessageCircle,
-  FiHeart,
-} from 'react-icons/fi'
-import { FaFacebookF, FaWhatsapp, FaTelegram } from 'react-icons/fa'
-import { QRCodeSVG } from 'qrcode.react'
-import { useQuery, useMutation, gql } from '@apollo/client'
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import EventCheckinCode from '@/src/components/events/EventCheckinCode'
 import EventCheckinModal from '@/src/components/events/EventCheckinModal'
 import EventSocialFeed from '@/src/components/events/EventSocialFeed'
+import EventSponsorshipSettings from '@/src/components/events/EventSponsorshipSettings'
 import {
+  useCancelEventRegistrationMutation,
   useGetMyProfileQuery,
   useRegisterForEventMutation,
-  useCancelEventRegistrationMutation,
 } from '@/src/generated/graphql'
+import { gql, useQuery } from '@apollo/client'
+import { AnimatePresence, motion } from 'motion/react'
+import { useParams, useRouter } from 'next/navigation'
+import { QRCodeSVG } from 'qrcode.react'
+import { useEffect, useRef, useState } from 'react'
+import { FaFacebookF, FaTelegram, FaWhatsapp } from 'react-icons/fa'
+import {
+  FiArrowLeft,
+  FiCalendar,
+  FiCheck,
+  FiClock,
+  FiCopy,
+  FiDollarSign,
+  FiEdit2,
+  FiExternalLink,
+  FiHeart,
+  FiHelpCircle,
+  FiLink,
+  FiMapPin,
+  FiShare2,
+  FiTwitter,
+  FiUsers,
+  FiX,
+} from 'react-icons/fi'
 
 // Inline query since production schema may not have all fields yet
 const GET_EVENT_DETAIL = gql`
@@ -99,9 +99,7 @@ function OrganizerAvatar({ avatarUrl, name }: { avatarUrl?: string | null; name:
   if (!avatarUrl || imgError) {
     return (
       <div className="w-12 h-12 rounded-full bg-neon-purple/20 flex items-center justify-center flex-shrink-0">
-        <span className="text-neon-purple text-lg font-bold">
-          {name[0].toUpperCase()}
-        </span>
+        <span className="text-neon-purple text-lg font-bold">{name[0].toUpperCase()}</span>
       </div>
     )
   }
@@ -124,11 +122,14 @@ export default function EventDetailPage() {
   const [showCheckinModal, setShowCheckinModal] = useState(false)
   const [showRegistrationModal, setShowRegistrationModal] = useState(false)
   const [registrationNotes, setRegistrationNotes] = useState('')
-  const [selectedRsvpStatus, setSelectedRsvpStatus] = useState<'registered' | 'maybe' | 'interested'>('registered')
+  const [selectedRsvpStatus, setSelectedRsvpStatus] = useState<
+    'registered' | 'maybe' | 'interested'
+  >('registered')
   const [showQRModal, setShowQRModal] = useState(false)
   const [showShareMenu, setShowShareMenu] = useState(false)
   const [copiedLink, setCopiedLink] = useState(false)
   const [showUnregisterModal, setShowUnregisterModal] = useState(false)
+  const [showSponsorshipSettings, setShowSponsorshipSettings] = useState(false)
   const shareMenuRef = useRef<HTMLDivElement>(null)
 
   // Close share menu when clicking outside
@@ -157,16 +158,17 @@ export default function EventDetailPage() {
     skip: !eventId,
   })
 
-  const [registerForEvent, { loading: registering, error: registerError }] = useRegisterForEventMutation({
-    onCompleted: () => {
-      setShowRegistrationModal(false)
-      setRegistrationNotes('')
-      refetch()
-    },
-    onError: (error) => {
-      console.error('Registration failed:', error.message)
-    },
-  })
+  const [registerForEvent, { loading: registering, error: registerError }] =
+    useRegisterForEventMutation({
+      onCompleted: () => {
+        setShowRegistrationModal(false)
+        setRegistrationNotes('')
+        refetch()
+      },
+      onError: error => {
+        console.error('Registration failed:', error.message)
+      },
+    })
 
   const [cancelRegistration, { loading: cancelling }] = useCancelEventRegistrationMutation({
     onCompleted: () => refetch(),
@@ -306,7 +308,9 @@ export default function EventDetailPage() {
           </button>
           <div className="text-center py-12">
             <h2 className="text-xl font-bold text-text-primary mb-2">Event Not Found</h2>
-            <p className="text-text-secondary">This event may have been removed or doesn't exist.</p>
+            <p className="text-text-secondary">
+              This event may have been removed or doesn't exist.
+            </p>
           </div>
         </div>
       </DashboardLayout>
@@ -332,11 +336,7 @@ export default function EventDetailPage() {
         {/* Event Header */}
         <div className="relative rounded-2xl overflow-hidden mb-6">
           {event.image_url ? (
-            <img
-              src={event.image_url}
-              alt={event.title}
-              className="w-full h-64 object-cover"
-            />
+            <img src={event.image_url} alt={event.title} className="w-full h-64 object-cover" />
           ) : (
             <div className="w-full h-64 bg-gradient-to-br from-neon-purple/30 via-neon-pink/20 to-neon-blue/30 flex items-center justify-center">
               <span className="text-8xl">{categoryInfo.emoji}</span>
@@ -481,9 +481,7 @@ export default function EventDetailPage() {
               </h1>
 
               {event.description && (
-                <p className="text-text-secondary whitespace-pre-wrap">
-                  {event.description}
-                </p>
+                <p className="text-text-secondary whitespace-pre-wrap">{event.description}</p>
               )}
 
               {/* Dance Styles */}
@@ -568,9 +566,7 @@ export default function EventDetailPage() {
                 <div className="flex items-start gap-3">
                   <FiDollarSign className="w-5 h-5 text-neon-purple mt-0.5" />
                   <p className="text-text-primary font-medium">
-                    {event.price_usd && event.price_usd > 0
-                      ? `$${event.price_usd}`
-                      : 'Free'}
+                    {event.price_usd && event.price_usd > 0 ? `$${event.price_usd}` : 'Free'}
                   </p>
                 </div>
 
@@ -613,13 +609,15 @@ export default function EventDetailPage() {
             <div className="bg-bg-secondary rounded-2xl border border-white/10 p-6">
               {hasAnyStatus ? (
                 <div className="space-y-4">
-                  <div className={`p-4 rounded-xl ${
-                    isGoing
-                      ? 'bg-green-500/10 border border-green-500/30'
-                      : isMaybe
-                        ? 'bg-yellow-500/10 border border-yellow-500/30'
-                        : 'bg-pink-500/10 border border-pink-500/30'
-                  }`}>
+                  <div
+                    className={`p-4 rounded-xl ${
+                      isGoing
+                        ? 'bg-green-500/10 border border-green-500/30'
+                        : isMaybe
+                          ? 'bg-yellow-500/10 border border-yellow-500/30'
+                          : 'bg-pink-500/10 border border-pink-500/30'
+                    }`}
+                  >
                     <div className="flex items-center gap-2 mb-2">
                       {isGoing ? (
                         <FiCheck className="text-green-400" size={20} />
@@ -628,17 +626,19 @@ export default function EventDetailPage() {
                       ) : (
                         <FiHeart className="text-pink-400" size={20} />
                       )}
-                      <span className={`font-semibold ${
-                        isGoing ? 'text-green-400' : isMaybe ? 'text-yellow-400' : 'text-pink-400'
-                      }`}>
-                        {isGoing ? "You're Going!" : isMaybe ? "Maybe Going" : "Interested"}
+                      <span
+                        className={`font-semibold ${
+                          isGoing ? 'text-green-400' : isMaybe ? 'text-yellow-400' : 'text-pink-400'
+                        }`}
+                      >
+                        {isGoing ? "You're Going!" : isMaybe ? 'Maybe Going' : 'Interested'}
                       </span>
                     </div>
                     <p className="text-text-secondary text-sm">
                       {isGoing
                         ? "We'll see you at the event!"
                         : isMaybe
-                          ? "Update your status when you decide."
+                          ? 'Update your status when you decide.'
                           : "You'll be notified about updates."}
                     </p>
                   </div>
@@ -681,9 +681,7 @@ export default function EventDetailPage() {
                 <div className="space-y-4">
                   <div className="text-center">
                     <p className="text-2xl font-bold text-text-primary mb-1">
-                      {event.price_usd && event.price_usd > 0
-                        ? `$${event.price_usd}`
-                        : 'Free'}
+                      {event.price_usd && event.price_usd > 0 ? `$${event.price_usd}` : 'Free'}
                     </p>
                     {spotsLeft !== null && (
                       <p className="text-text-secondary text-sm">
@@ -708,18 +706,28 @@ export default function EventDetailPage() {
             </div>
 
             {/* Event Social Feed */}
-            <EventSocialFeed
-              eventId={event.id}
-              eventTitle={event.title}
-              limit={5}
-            />
+            <EventSocialFeed eventId={event.id} eventTitle={event.title} limit={5} />
 
             {/* Check-in Code Card (for organizers) */}
             {canManageEvent && checkinCode && (
-              <EventCheckinCode
-                checkinCode={checkinCode}
-                eventTitle={event.title}
-              />
+              <EventCheckinCode checkinCode={checkinCode} eventTitle={event.title} />
+            )}
+
+            {/* Sponsorship Settings (for organizers) */}
+            {canManageEvent && (
+              <div className="bg-bg-secondary rounded-2xl border border-white/10 p-6">
+                <h3 className="text-lg font-semibold text-text-primary mb-3">Sponsorship</h3>
+                <p className="text-sm text-text-muted mb-4">
+                  Configure how sponsors can support your event with $FLOW tokens.
+                </p>
+                <button
+                  onClick={() => setShowSponsorshipSettings(true)}
+                  className="w-full py-3 bg-gradient-to-r from-green-500/20 to-emerald-500/20 hover:from-green-500/30 hover:to-emerald-500/30 border border-green-500/30 text-green-400 rounded-xl font-medium transition-all flex items-center justify-center gap-2"
+                >
+                  <FiDollarSign size={18} />
+                  Sponsorship Settings
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -792,7 +800,7 @@ export default function EventDetailPage() {
                 <label className="block text-text-secondary text-sm mb-2">Notes (Optional)</label>
                 <textarea
                   value={registrationNotes}
-                  onChange={(e) => setRegistrationNotes(e.target.value)}
+                  onChange={e => setRegistrationNotes(e.target.value)}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-neon-purple/50 resize-none"
                   rows={3}
                   placeholder="Any special requirements..."
@@ -852,7 +860,7 @@ export default function EventDetailPage() {
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               className="relative bg-bg-secondary border border-white/10 rounded-2xl p-6 mx-4 max-w-sm w-full"
-              onClick={(e) => e.stopPropagation()}
+              onClick={e => e.stopPropagation()}
             >
               {/* Close Button */}
               <button
@@ -935,7 +943,7 @@ export default function EventDetailPage() {
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               className="relative bg-bg-secondary border border-white/10 rounded-2xl p-6 mx-4 max-w-sm w-full"
-              onClick={(e) => e.stopPropagation()}
+              onClick={e => e.stopPropagation()}
             >
               {/* Close Button */}
               <button
@@ -988,6 +996,14 @@ export default function EventDetailPage() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Sponsorship Settings Modal */}
+      <EventSponsorshipSettings
+        eventId={event?.id || ''}
+        isOpen={showSponsorshipSettings}
+        onClose={() => setShowSponsorshipSettings(false)}
+        onSuccess={() => refetch()}
+      />
     </DashboardLayout>
   )
 }

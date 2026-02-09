@@ -1,7 +1,9 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
-import ProfileEditForm, { type ProfileEditFormRef } from '@/src/components/dashboard/ProfileEditForm'
+import ProfileEditForm, {
+  type ProfileEditFormRef,
+} from '@/src/components/dashboard/ProfileEditForm'
 import ProfileViewCard from '@/src/components/dashboard/ProfileViewCard'
 import { useGetMyProfileQuery } from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
@@ -187,7 +189,12 @@ export default function ProfilePage() {
 
             <div className="pt-12">
               <div className="bg-bg-secondary rounded-xl border border-neon-purple/20 p-6 sm:p-8">
-                <ProfileEditForm ref={formRef} user={profile} onSave={handleSave} onCancel={handleCancel} />
+                <ProfileEditForm
+                  ref={formRef}
+                  user={profile}
+                  onSave={handleSave}
+                  onCancel={handleCancel}
+                />
               </div>
             </div>
           </>

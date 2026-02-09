@@ -1,8 +1,8 @@
 'use client'
 
-import { motion, AnimatePresence } from 'motion/react'
-import { FiBell } from 'react-icons/fi'
 import { useNotifications } from '@/src/contexts/NotificationContext'
+import { AnimatePresence, motion } from 'motion/react'
+import { FiBell } from 'react-icons/fi'
 
 interface NotificationBellProps {
   size?: number
@@ -25,7 +25,11 @@ export default function NotificationBell({ size = 20, collapsed = false }: Notif
       <div className="relative">
         <motion.div
           animate={unreadCount > 0 ? { rotate: [0, -10, 10, -10, 0] } : {}}
-          transition={{ duration: 0.5, repeat: unreadCount > 0 ? Infinity : 0, repeatDelay: 3 }}
+          transition={{
+            duration: 0.5,
+            repeat: unreadCount > 0 ? Number.POSITIVE_INFINITY : 0,
+            repeatDelay: 3,
+          }}
         >
           <FiBell size={size} />
         </motion.div>
@@ -65,15 +69,17 @@ export function NotificationBellCompact({ size = 24 }: { size?: number }) {
     <button
       onClick={togglePanel}
       className={`relative p-2 rounded-lg transition-colors ${
-        isPanelOpen
-          ? 'bg-neon-purple/20 text-neon-purple'
-          : 'text-text-primary hover:bg-white/5'
+        isPanelOpen ? 'bg-neon-purple/20 text-neon-purple' : 'text-text-primary hover:bg-white/5'
       }`}
       aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
     >
       <motion.div
         animate={unreadCount > 0 ? { rotate: [0, -10, 10, -10, 0] } : {}}
-        transition={{ duration: 0.5, repeat: unreadCount > 0 ? Infinity : 0, repeatDelay: 3 }}
+        transition={{
+          duration: 0.5,
+          repeat: unreadCount > 0 ? Number.POSITIVE_INFINITY : 0,
+          repeatDelay: 3,
+        }}
       >
         <FiBell size={size} />
       </motion.div>

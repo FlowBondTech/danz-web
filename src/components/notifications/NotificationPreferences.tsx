@@ -1,24 +1,24 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { motion } from 'motion/react'
-import {
-  FiBell,
-  FiMail,
-  FiSmartphone,
-  FiMoon,
-  FiHeart,
-  FiCalendar,
-  FiAward,
-  FiUsers,
-  FiRadio,
-  FiSave,
-} from 'react-icons/fi'
+import { useNotifications } from '@/src/contexts/NotificationContext'
 import {
   useGetMyNotificationPreferencesQuery,
   useUpdateNotificationPreferencesMutation,
 } from '@/src/generated/graphql'
-import { useNotifications } from '@/src/contexts/NotificationContext'
+import { motion } from 'motion/react'
+import { useEffect, useState } from 'react'
+import {
+  FiAward,
+  FiBell,
+  FiCalendar,
+  FiHeart,
+  FiMail,
+  FiMoon,
+  FiRadio,
+  FiSave,
+  FiSmartphone,
+  FiUsers,
+} from 'react-icons/fi'
 
 interface PreferenceToggleProps {
   icon: React.ReactNode
@@ -121,7 +121,7 @@ export default function NotificationPreferences() {
 
   const updatePreference = <K extends keyof typeof preferences>(
     key: K,
-    value: typeof preferences[K]
+    value: (typeof preferences)[K],
   ) => {
     setPreferences(prev => ({ ...prev, [key]: value }))
     setHasChanges(true)
@@ -354,9 +354,7 @@ export default function NotificationPreferences() {
             </>
           )}
         </motion.button>
-        {hasChanges && (
-          <p className="text-text-muted text-sm mt-2">You have unsaved changes</p>
-        )}
+        {hasChanges && <p className="text-text-muted text-sm mt-2">You have unsaved changes</p>}
       </div>
     </div>
   )

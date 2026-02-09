@@ -75,7 +75,9 @@ export default function TokenIntroduction() {
                     <feature.icon className="w-6 h-6 text-neon-purple" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-text-primary mb-1">{feature.title}</h3>
+                    <h3 className="text-lg font-semibold text-text-primary mb-1">
+                      {feature.title}
+                    </h3>
                     <p className="text-text-secondary">{feature.description}</p>
                   </div>
                 </motion.div>
@@ -164,7 +166,9 @@ export default function TokenIntroduction() {
                     <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
 
                     {/* Token text */}
-                    <div className="text-6xl font-bold text-text-primary transform -rotate-12">$DANZ</div>
+                    <div className="text-6xl font-bold text-text-primary transform -rotate-12">
+                      $DANZ
+                    </div>
 
                     {/* Sparkle effects */}
                     {[0, 1, 2, 3].map(i => (

@@ -6,22 +6,21 @@ import { useReferralData } from '@/src/hooks/useReferralData'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
+import { FaWhatsapp } from 'react-icons/fa'
 import {
-  FiCopy,
-  FiShare2,
-  FiUsers,
-  FiCheck,
-  FiTrendingUp,
-  FiMessageCircle,
   FiAward,
-  FiStar,
+  FiBell,
+  FiCheck,
   FiChevronDown,
   FiChevronUp,
+  FiCopy,
   FiGift,
-  FiBell,
   FiLoader,
+  FiMessageCircle,
+  FiShare2,
+  FiStar,
+  FiUsers,
 } from 'react-icons/fi'
-import { FaWhatsapp } from 'react-icons/fa'
 
 function ReferralsContent() {
   const { authenticated, ready } = usePrivy()
@@ -59,14 +58,14 @@ function ReferralsContent() {
 
   const shareViaWhatsApp = () => {
     const message = encodeURIComponent(
-      `Join me on DANZ! Dance your way to fitness and earn rewards. 🕺💃\n\nUse my referral link: ${shareUrl}`
+      `Join me on DANZ! Dance your way to fitness and earn rewards. 🕺💃\n\nUse my referral link: ${shareUrl}`,
     )
     window.open(`https://wa.me/?text=${message}`, '_blank')
   }
 
   const shareViaSMS = () => {
     const message = encodeURIComponent(
-      `Hey! Join me on DANZ and earn rewards by dancing. Use my link: ${shareUrl}`
+      `Hey! Join me on DANZ and earn rewards by dancing. Use my link: ${shareUrl}`,
     )
     window.location.href = `sms:?&body=${message}`
   }
@@ -87,7 +86,11 @@ function ReferralsContent() {
   if (!ready || dataLoading) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center min-h-[60vh]" role="status" aria-live="polite">
+        <div
+          className="flex items-center justify-center min-h-[60vh]"
+          role="status"
+          aria-live="polite"
+        >
           <div className="text-text-primary text-2xl">Loading...</div>
         </div>
       </DashboardLayout>
@@ -104,10 +107,15 @@ function ReferralsContent() {
             Earn Big Rewards!
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-text-primary mb-3">
-            Get <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">250 Points</span> Per Referral
+            Get{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">
+              250 Points
+            </span>{' '}
+            Per Referral
           </h1>
           <p className="text-text-secondary max-w-md mx-auto">
-            Share your unique link with friends. When they join and complete their first dance session, you both win!
+            Share your unique link with friends. When they join and complete their first dance
+            session, you both win!
           </p>
         </div>
 
@@ -122,7 +130,9 @@ function ReferralsContent() {
             <p className="text-xs text-text-secondary">Completed</p>
           </div>
           <div className="bg-bg-secondary rounded-xl border border-white/10 p-4 text-center">
-            <p className="text-2xl font-bold text-yellow-400">{stats.totalPointsEarned.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-yellow-400">
+              {stats.totalPointsEarned.toLocaleString()}
+            </p>
             <p className="text-xs text-text-secondary">Points Earned</p>
           </div>
           <div className="bg-bg-secondary rounded-xl border border-white/10 p-4 text-center">
@@ -158,9 +168,13 @@ function ReferralsContent() {
                     }`}
                   >
                     {copiedShareUrl ? (
-                      <span className="flex items-center gap-1.5"><FiCheck size={16} /> Copied!</span>
+                      <span className="flex items-center gap-1.5">
+                        <FiCheck size={16} /> Copied!
+                      </span>
                     ) : (
-                      <span className="flex items-center gap-1.5"><FiCopy size={16} /> Copy</span>
+                      <span className="flex items-center gap-1.5">
+                        <FiCopy size={16} /> Copy
+                      </span>
                     )}
                   </button>
                 </div>
@@ -190,24 +204,35 @@ function ReferralsContent() {
               <h2 className="text-lg font-bold text-text-primary mb-4">How It Works</h2>
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1 flex items-start gap-3">
-                  <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white text-sm font-bold">1</div>
+                  <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white text-sm font-bold">
+                    1
+                  </div>
                   <div>
                     <p className="font-medium text-text-primary text-sm">Share Link</p>
                     <p className="text-xs text-text-secondary">Send to friends via any app</p>
                   </div>
                 </div>
                 <div className="flex-1 flex items-start gap-3">
-                  <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white text-sm font-bold">2</div>
+                  <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white text-sm font-bold">
+                    2
+                  </div>
                   <div>
                     <p className="font-medium text-text-primary text-sm">Friend Joins</p>
-                    <p className="text-xs text-text-secondary">You earn <span className="text-yellow-400 font-medium">+20 pts</span> instantly</p>
+                    <p className="text-xs text-text-secondary">
+                      You earn <span className="text-yellow-400 font-medium">+20 pts</span>{' '}
+                      instantly
+                    </p>
                   </div>
                 </div>
                 <div className="flex-1 flex items-start gap-3">
-                  <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white text-sm font-bold">3</div>
+                  <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white text-sm font-bold">
+                    3
+                  </div>
                   <div>
                     <p className="font-medium text-text-primary text-sm">They Dance</p>
-                    <p className="text-xs text-text-secondary">You earn <span className="text-green-400 font-medium">+230 pts</span> more!</p>
+                    <p className="text-xs text-text-secondary">
+                      You earn <span className="text-green-400 font-medium">+230 pts</span> more!
+                    </p>
                   </div>
                 </div>
               </div>
@@ -240,15 +265,22 @@ function ReferralsContent() {
                 <div className="mt-3 pt-3 border-t border-white/10 space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-text-secondary">Total Earned</span>
-                    <span className="text-text-primary">{pointsData?.total_points_earned?.toLocaleString() || 0}</span>
+                    <span className="text-text-primary">
+                      {pointsData?.total_points_earned?.toLocaleString() || 0}
+                    </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-text-secondary">From Referrals</span>
-                    <span className="text-green-400">{pointsData?.referral_points_earned?.toLocaleString() || stats.totalPointsEarned}</span>
+                    <span className="text-green-400">
+                      {pointsData?.referral_points_earned?.toLocaleString() ||
+                        stats.totalPointsEarned}
+                    </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-text-secondary">Spent</span>
-                    <span className="text-red-400">{pointsData?.total_points_spent?.toLocaleString() || 0}</span>
+                    <span className="text-red-400">
+                      {pointsData?.total_points_spent?.toLocaleString() || 0}
+                    </span>
                   </div>
                 </div>
               )}
@@ -298,7 +330,7 @@ function ReferralsContent() {
 
           {referrals.length > 0 ? (
             <div className="space-y-3">
-              {referrals.map((referral) => (
+              {referrals.map(referral => (
                 <div
                   key={referral.privy_id}
                   className="bg-bg-primary rounded-lg p-3 sm:p-4 border border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
@@ -312,7 +344,9 @@ function ReferralsContent() {
                       />
                     ) : (
                       <div className="w-10 h-10 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center text-white font-bold shrink-0">
-                        {referral.display_name?.charAt(0).toUpperCase() || referral.username?.charAt(0).toUpperCase() || '?'}
+                        {referral.display_name?.charAt(0).toUpperCase() ||
+                          referral.username?.charAt(0).toUpperCase() ||
+                          '?'}
                       </div>
                     )}
                     <div className="min-w-0">
@@ -326,7 +360,9 @@ function ReferralsContent() {
                   </div>
                   <div className="flex items-center gap-2 sm:gap-3 justify-end shrink-0">
                     {/* Points earned */}
-                    <span className={`font-bold text-sm ${referral.status === 'completed' ? 'text-green-400' : 'text-yellow-400'}`}>
+                    <span
+                      className={`font-bold text-sm ${referral.status === 'completed' ? 'text-green-400' : 'text-yellow-400'}`}
+                    >
                       +{referral.points_awarded}
                     </span>
 
@@ -339,7 +375,9 @@ function ReferralsContent() {
                       }`}
                     >
                       {referral.status === 'completed' ? (
-                        <span className="flex items-center gap-1"><FiCheck size={12} /> Done</span>
+                        <span className="flex items-center gap-1">
+                          <FiCheck size={12} /> Done
+                        </span>
                       ) : (
                         <span className="hidden sm:inline">Waiting</span>
                       )}
@@ -354,8 +392,8 @@ function ReferralsContent() {
                           nudgeSuccess === referral.privy_id
                             ? 'bg-green-500/20 text-green-400'
                             : nudgingId === referral.privy_id
-                            ? 'bg-neon-purple/10 text-neon-purple/50 cursor-wait'
-                            : 'bg-neon-purple/20 text-neon-purple hover:bg-neon-purple/30'
+                              ? 'bg-neon-purple/10 text-neon-purple/50 cursor-wait'
+                              : 'bg-neon-purple/20 text-neon-purple hover:bg-neon-purple/30'
                         }`}
                         title="Send a friendly reminder"
                       >
@@ -400,7 +438,11 @@ export default function ReferralsPage() {
     <Suspense
       fallback={
         <DashboardLayout>
-          <div className="flex items-center justify-center min-h-[60vh]" role="status" aria-live="polite">
+          <div
+            className="flex items-center justify-center min-h-[60vh]"
+            role="status"
+            aria-live="polite"
+          >
             <div className="text-text-primary text-2xl">Loading...</div>
           </div>
         </DashboardLayout>

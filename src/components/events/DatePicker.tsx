@@ -1,14 +1,8 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import {
-  FiCalendar,
-  FiChevronLeft,
-  FiChevronRight,
-  FiX,
-  FiCheck,
-} from 'react-icons/fi'
+import { AnimatePresence, motion } from 'motion/react'
+import { useEffect, useMemo, useState } from 'react'
+import { FiCalendar, FiCheck, FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi'
 
 interface DatePickerProps {
   value: string
@@ -19,8 +13,18 @@ interface DatePickerProps {
 }
 
 const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ]
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -99,17 +103,21 @@ export default function DatePicker({
 
   const isToday = (date: Date) => {
     const today = new Date()
-    return date.getDate() === today.getDate() &&
-           date.getMonth() === today.getMonth() &&
-           date.getFullYear() === today.getFullYear()
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    )
   }
 
   const isSelected = (date: Date) => {
     if (!tempDate) return false
     const selected = new Date(tempDate)
-    return date.getDate() === selected.getDate() &&
-           date.getMonth() === selected.getMonth() &&
-           date.getFullYear() === selected.getFullYear()
+    return (
+      date.getDate() === selected.getDate() &&
+      date.getMonth() === selected.getMonth() &&
+      date.getFullYear() === selected.getFullYear()
+    )
   }
 
   const formatDisplayValue = () => {
@@ -161,7 +169,9 @@ export default function DatePicker({
               aria-labelledby="datepicker-title"
             >
               <div className="p-4 border-b border-white/10 flex items-center justify-between">
-                <h3 id="datepicker-title" className="text-lg font-bold text-text-primary">{label || 'Select Date'}</h3>
+                <h3 id="datepicker-title" className="text-lg font-bold text-text-primary">
+                  {label || 'Select Date'}
+                </h3>
                 <button
                   onClick={() => setIsOpen(false)}
                   className="p-2 hover:bg-white/10 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple"
@@ -174,7 +184,9 @@ export default function DatePicker({
               <div className="p-4">
                 <div className="flex items-center justify-between mb-4">
                   <button
-                    onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))}
+                    onClick={() =>
+                      setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))
+                    }
                     className="p-2 hover:bg-white/10 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple"
                     aria-label="Previous month"
                   >
@@ -184,7 +196,9 @@ export default function DatePicker({
                     {MONTHS[viewDate.getMonth()]} {viewDate.getFullYear()}
                   </h4>
                   <button
-                    onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))}
+                    onClick={() =>
+                      setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))
+                    }
                     className="p-2 hover:bg-white/10 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple"
                     aria-label="Next month"
                   >
@@ -194,7 +208,12 @@ export default function DatePicker({
 
                 <div className="grid grid-cols-7 gap-1 mb-2" role="row">
                   {DAYS.map(day => (
-                    <div key={day} className="text-center text-xs text-text-secondary py-2 font-medium" role="columnheader" aria-label={day}>
+                    <div
+                      key={day}
+                      className="text-center text-xs text-text-secondary py-2 font-medium"
+                      role="columnheader"
+                      aria-label={day}
+                    >
                       {day}
                     </div>
                   ))}

@@ -1,14 +1,14 @@
 'use client'
 
-import { motion } from 'motion/react'
-import { FiCheck, FiTrash2, FiExternalLink } from 'react-icons/fi'
-import { type Notification, NotificationType } from '@/src/generated/graphql'
 import {
-  useNotifications,
-  getNotificationIcon,
   formatNotificationTime,
+  getNotificationIcon,
+  useNotifications,
 } from '@/src/contexts/NotificationContext'
+import { type Notification, NotificationType } from '@/src/generated/graphql'
+import { motion } from 'motion/react'
 import Link from 'next/link'
+import { FiCheck, FiTrash2 } from 'react-icons/fi'
 
 interface NotificationItemProps {
   notification: Notification
@@ -44,10 +44,14 @@ export default function NotificationItem({ notification, onClose }: Notification
     switch (notification.type) {
       case NotificationType.EventReminder:
       case NotificationType.EventUpdate:
-        return notification.event_id ? `/dashboard/my-events/${notification.event_id}` : '/dashboard/my-events'
+        return notification.event_id
+          ? `/dashboard/my-events/${notification.event_id}`
+          : '/dashboard/my-events'
       case NotificationType.PostLike:
       case NotificationType.PostComment:
-        return notification.post_id ? `/dashboard/feed?post=${notification.post_id}` : '/dashboard/feed'
+        return notification.post_id
+          ? `/dashboard/feed?post=${notification.post_id}`
+          : '/dashboard/feed'
       case NotificationType.Referral:
         return '/dashboard/referrals'
       case NotificationType.Achievement:
@@ -87,13 +91,17 @@ export default function NotificationItem({ notification, onClose }: Notification
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
-            <h4 className={`font-medium text-sm truncate ${notification.read ? 'text-text-secondary' : 'text-text-primary'}`}>
+            <h4
+              className={`font-medium text-sm truncate ${notification.read ? 'text-text-secondary' : 'text-text-primary'}`}
+            >
               {notification.title}
             </h4>
             <span className="text-xs text-text-muted whitespace-nowrap">{timeAgo}</span>
           </div>
 
-          <p className={`text-sm mt-0.5 line-clamp-2 ${notification.read ? 'text-text-muted' : 'text-text-secondary'}`}>
+          <p
+            className={`text-sm mt-0.5 line-clamp-2 ${notification.read ? 'text-text-muted' : 'text-text-secondary'}`}
+          >
             {notification.message}
           </p>
 
@@ -111,9 +119,7 @@ export default function NotificationItem({ notification, onClose }: Notification
                   {notification.sender.username?.charAt(0).toUpperCase() || 'U'}
                 </div>
               )}
-              <span className="text-xs text-text-muted">
-                @{notification.sender.username}
-              </span>
+              <span className="text-xs text-text-muted">@{notification.sender.username}</span>
             </div>
           )}
 

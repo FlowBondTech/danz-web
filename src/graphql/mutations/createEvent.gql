@@ -25,6 +25,10 @@ mutation CreateEvent($input: CreateEventInput!) {
     end_date_time
     created_at
     status
+    is_public
+    slug
+    allow_sponsors
+    sponsor_benefits
   }
 }
 
@@ -49,8 +53,18 @@ mutation CancelEventRegistration($eventId: ID!) {
 
 # Note: This mutation is for admin use - requires userId parameter
 # For user self-update, backend needs to add a new mutation
-mutation UpdateRegistrationStatus($eventId: ID!, $userId: String!, $status: RegistrationStatus!, $adminNotes: String) {
-  updateRegistrationStatus(eventId: $eventId, userId: $userId, status: $status, adminNotes: $adminNotes) {
+mutation UpdateRegistrationStatus(
+  $eventId: ID!
+  $userId: String!
+  $status: RegistrationStatus!
+  $adminNotes: String
+) {
+  updateRegistrationStatus(
+    eventId: $eventId
+    userId: $userId
+    status: $status
+    adminNotes: $adminNotes
+  ) {
     id
     event_id
     user_id

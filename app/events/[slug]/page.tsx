@@ -1,28 +1,28 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { useQuery, useMutation } from '@apollo/client'
+import Navbar from '@/src/components/Navbar'
+import { useMutation, useQuery } from '@apollo/client'
 import { gql } from '@apollo/client'
 import { usePrivy } from '@privy-io/react-auth'
 import { motion } from 'motion/react'
-import {
-  FiMapPin,
-  FiCalendar,
-  FiUsers,
-  FiDollarSign,
-  FiVideo,
-  FiArrowLeft,
-  FiShare2,
-  FiCheck,
-  FiLoader,
-  FiAlertCircle,
-  FiX
-} from 'react-icons/fi'
-import Link from 'next/link'
 import Image from 'next/image'
-import Navbar from '@/src/components/Navbar'
+import Link from 'next/link'
+import { useParams, useRouter } from 'next/navigation'
 import { QRCodeSVG } from 'qrcode.react'
+import { useEffect, useState } from 'react'
+import {
+  FiAlertCircle,
+  FiArrowLeft,
+  FiCalendar,
+  FiCheck,
+  FiDollarSign,
+  FiLoader,
+  FiMapPin,
+  FiShare2,
+  FiUsers,
+  FiVideo,
+  FiX,
+} from 'react-icons/fi'
 
 const GET_PUBLIC_EVENT = gql`
   query GetPublicEvent($slug: String!) {
@@ -104,7 +104,7 @@ export default function PublicEventPage() {
       setRegistrationError(null)
       refetch()
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Registration error:', error)
       const errorCode = error.graphQLErrors?.[0]?.extensions?.code
       if (errorCode === 'PROFILE_REQUIRED') {
@@ -238,7 +238,9 @@ export default function PublicEventPage() {
       <div className="min-h-screen bg-bg-primary flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-text-primary mb-4">Event Not Found</h1>
-          <p className="text-text-secondary mb-6">This event may be private or no longer available.</p>
+          <p className="text-text-secondary mb-6">
+            This event may be private or no longer available.
+          </p>
           <Link
             href="/"
             className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-neon-purple to-neon-pink hover:opacity-90 rounded-lg text-white transition-all"
@@ -276,7 +278,10 @@ export default function PublicEventPage() {
       {/* Breadcrumb and Share */}
       <div className="pt-24 pb-4 border-b border-neon-purple/10 bg-bg-secondary/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <Link href="/events" className="flex items-center gap-2 text-text-secondary hover:text-neon-purple transition-colors">
+          <Link
+            href="/events"
+            className="flex items-center gap-2 text-text-secondary hover:text-neon-purple transition-colors"
+          >
             <FiArrowLeft className="w-4 h-4" />
             <span>Back to Events</span>
           </Link>
@@ -286,13 +291,7 @@ export default function PublicEventPage() {
       {/* Hero Image */}
       {event.image_url && (
         <div className="relative h-64 sm:h-80 lg:h-96 w-full">
-          <Image
-            src={event.image_url}
-            alt={event.title}
-            fill
-            className="object-cover"
-            priority
-          />
+          <Image src={event.image_url} alt={event.title} fill className="object-cover" priority />
           <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/50 to-transparent" />
         </div>
       )}
@@ -309,7 +308,9 @@ export default function PublicEventPage() {
             <div className="flex justify-between items-start gap-4">
               <div className="flex-1">
                 <div className="flex flex-wrap items-center gap-3 mb-4">
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(event.status)}`}>
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(event.status)}`}
+                  >
                     {event.status?.charAt(0).toUpperCase() + event.status?.slice(1)}
                   </span>
                   {event.category && (
@@ -325,7 +326,9 @@ export default function PublicEventPage() {
                   )}
                 </div>
 
-                <h1 className="text-3xl sm:text-4xl font-bold text-text-primary mb-4">{event.title}</h1>
+                <h1 className="text-3xl sm:text-4xl font-bold text-text-primary mb-4">
+                  {event.title}
+                </h1>
               </div>
 
               {/* QR Code & Share - hidden on mobile */}
@@ -336,12 +339,7 @@ export default function PublicEventPage() {
                     className="flex flex-col items-center gap-1 p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                     title="Click to enlarge"
                   >
-                    <QRCodeSVG
-                      value={pageUrl}
-                      size={80}
-                      level="M"
-                      includeMargin={false}
-                    />
+                    <QRCodeSVG value={pageUrl} size={80} level="M" includeMargin={false} />
                     <span className="text-xs text-gray-500">Tap to enlarge</span>
                   </button>
                   <button
@@ -368,7 +366,9 @@ export default function PublicEventPage() {
                   />
                 ) : (
                   <div className="w-10 h-10 rounded-full bg-neon-purple/30 flex items-center justify-center text-neon-purple font-bold">
-                    {(event.facilitator.display_name || event.facilitator.username)?.charAt(0).toUpperCase()}
+                    {(event.facilitator.display_name || event.facilitator.username)
+                      ?.charAt(0)
+                      .toUpperCase()}
                   </div>
                 )}
                 <div>
@@ -385,7 +385,9 @@ export default function PublicEventPage() {
               <div className="flex items-start gap-3 text-text-secondary">
                 <FiCalendar className="w-5 h-5 text-neon-purple mt-0.5" />
                 <div>
-                  <p className="font-medium text-text-primary">{formatDate(event.start_date_time)}</p>
+                  <p className="font-medium text-text-primary">
+                    {formatDate(event.start_date_time)}
+                  </p>
                   <p className="text-sm text-text-muted">
                     {formatTime(event.start_date_time)} - {formatTime(event.end_date_time)}
                   </p>
@@ -428,7 +430,9 @@ export default function PublicEventPage() {
           {event.description && (
             <div className="p-6 sm:p-8 border-b border-neon-purple/10">
               <h2 className="text-xl font-semibold text-text-primary mb-4">About this event</h2>
-              <p className="text-text-secondary whitespace-pre-wrap leading-relaxed">{event.description}</p>
+              <p className="text-text-secondary whitespace-pre-wrap leading-relaxed">
+                {event.description}
+              </p>
             </div>
           )}
 
@@ -471,7 +475,9 @@ export default function PublicEventPage() {
             {event.is_registered ? (
               <div className="flex items-center justify-center gap-3 py-4 px-6 bg-green-500/20 rounded-xl border border-green-500/30">
                 <FiCheck className="w-6 h-6 text-green-400" />
-                <span className="text-lg font-semibold text-green-400">You&apos;re registered!</span>
+                <span className="text-lg font-semibold text-green-400">
+                  You&apos;re registered!
+                </span>
               </div>
             ) : isFull ? (
               <div className="text-center py-4 px-6 bg-bg-hover rounded-xl">
@@ -540,12 +546,7 @@ export default function PublicEventPage() {
               </button>
             </div>
             <div className="flex justify-center mb-4">
-              <QRCodeSVG
-                value={pageUrl}
-                size={200}
-                level="M"
-                includeMargin={true}
-              />
+              <QRCodeSVG value={pageUrl} size={200} level="M" includeMargin={true} />
             </div>
             <p className="text-sm text-gray-500 mb-4">
               Scan this QR code to open this event on your phone
@@ -564,7 +565,17 @@ export default function PublicEventPage() {
       {/* Footer */}
       <footer className="border-t border-neon-purple/10 mt-16 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-text-muted text-sm">
-          <p>Powered by <a href="https://flowbond.tech" target="_blank" rel="noopener noreferrer" className="text-neon-purple hover:text-neon-pink transition-colors">FlowBond.Tech</a></p>
+          <p>
+            Powered by{' '}
+            <a
+              href="https://flowbond.tech"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-neon-purple hover:text-neon-pink transition-colors"
+            >
+              FlowBond.Tech
+            </a>
+          </p>
         </div>
       </footer>
     </div>

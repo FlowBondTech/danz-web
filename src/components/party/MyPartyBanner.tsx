@@ -1,7 +1,7 @@
 'use client'
 
+import { type DanzParty, PARTY_TIER_CONFIG } from '@/src/types/party'
 import { ChevronRight } from 'lucide-react'
-import { DanzParty, PARTY_TIER_CONFIG } from '@/src/types/party'
 
 interface MyPartyBannerProps {
   party: DanzParty | null
@@ -10,12 +10,7 @@ interface MyPartyBannerProps {
   onCreateParty?: () => void
 }
 
-export function MyPartyBanner({
-  party,
-  userRole,
-  onClick,
-  onCreateParty
-}: MyPartyBannerProps) {
+export function MyPartyBanner({ party, userRole, onClick, onCreateParty }: MyPartyBannerProps) {
   // No party state
   if (!party) {
     return (
@@ -30,9 +25,7 @@ export function MyPartyBanner({
             </div>
             <div className="text-left">
               <h3 className="font-bold text-white">Join a Party</h3>
-              <p className="text-sm text-white/50">
-                Earn bonus XP with friends
-              </p>
+              <p className="text-sm text-white/50">Earn bonus XP with friends</p>
             </div>
           </div>
           <ChevronRight className="w-5 h-5 text-white/40 group-hover:text-white/70 transition-colors" />
@@ -62,19 +55,13 @@ export function MyPartyBanner({
           <div className="text-left">
             <div className="flex items-center gap-2">
               <h3 className="font-bold text-white">{party.name}</h3>
-              {userRole === 'leader' && (
-                <span className="text-xs">👑</span>
-              )}
-              {userRole === 'co-leader' && (
-                <span className="text-xs">⭐</span>
-              )}
+              {userRole === 'leader' && <span className="text-xs">👑</span>}
+              {userRole === 'co-leader' && <span className="text-xs">⭐</span>}
             </div>
             <div className="flex items-center gap-2 text-sm">
               <span className={tierConfig.color}>{tierConfig.name}</span>
               <span className="text-white/30">|</span>
-              <span className="text-white/50">
-                {party.members.length} members
-              </span>
+              <span className="text-white/50">{party.members.length} members</span>
             </div>
           </div>
         </div>
@@ -82,9 +69,7 @@ export function MyPartyBanner({
         <div className="flex items-center gap-3">
           {/* Multiplier Badge */}
           <div className="px-2.5 py-1 rounded-lg bg-neon-blue/20 border border-neon-blue/30">
-            <span className="text-neon-blue font-bold text-sm">
-              {party.multiplier}x
-            </span>
+            <span className="text-neon-blue font-bold text-sm">{party.multiplier}x</span>
           </div>
           <ChevronRight className="w-5 h-5 text-white/40 group-hover:text-white/70 transition-colors" />
         </div>
@@ -94,9 +79,7 @@ export function MyPartyBanner({
       <div className="mt-3 pt-3 border-t border-white/10">
         <div className="flex items-center justify-between text-sm mb-1">
           <span className="text-white/50">Weekly XP</span>
-          <span className="text-neon-pink font-medium">
-            {party.weeklyXp.toLocaleString()} XP
-          </span>
+          <span className="text-neon-pink font-medium">{party.weeklyXp.toLocaleString()} XP</span>
         </div>
         <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
           <div

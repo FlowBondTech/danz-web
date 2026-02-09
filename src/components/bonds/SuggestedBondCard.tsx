@@ -1,6 +1,6 @@
 'use client'
 
-import { SuggestedBond, BOND_TYPE_INFO, MATCH_REASON_INFO } from '@/src/types/bonds'
+import { BOND_TYPE_INFO, MATCH_REASON_INFO, type SuggestedBond } from '@/src/types/bonds'
 
 interface SuggestedBondCardProps {
   bond: SuggestedBond
@@ -9,13 +9,16 @@ interface SuggestedBondCardProps {
   isLoading?: boolean
 }
 
-export function SuggestedBondCard({ bond, onAccept, onDecline, isLoading }: SuggestedBondCardProps) {
+export function SuggestedBondCard({
+  bond,
+  onAccept,
+  onDecline,
+  isLoading,
+}: SuggestedBondCardProps) {
   const bondInfo = BOND_TYPE_INFO[bond.bondType]
 
   // Get top 3 match reasons
-  const topReasons = bond.matchReasons
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3)
+  const topReasons = bond.matchReasons.sort((a, b) => b.score - a.score).slice(0, 3)
 
   return (
     <div className="relative overflow-hidden rounded-2xl bg-bg-card/80 backdrop-blur-md border border-white/10 p-4 transition-all duration-300 hover:border-neon-pink/30">
@@ -57,22 +60,16 @@ export function SuggestedBondCard({ bond, onAccept, onDecline, isLoading }: Sugg
           <h3 className="text-text-primary font-semibold truncate">
             {bond.suggestedUser.displayName}
           </h3>
-          <p className="text-text-muted text-sm truncate">
-            @{bond.suggestedUser.username}
-          </p>
+          <p className="text-text-muted text-sm truncate">@{bond.suggestedUser.username}</p>
           <div className="flex items-center gap-1.5 mt-1">
-            <span className="text-xs text-neon-blue font-medium">
-              {bondInfo.label}
-            </span>
+            <span className="text-xs text-neon-blue font-medium">{bondInfo.label}</span>
           </div>
         </div>
       </div>
 
       {/* Bio if available */}
       {bond.suggestedUser.bio && (
-        <p className="text-text-muted text-sm mb-4 line-clamp-2">
-          {bond.suggestedUser.bio}
-        </p>
+        <p className="text-text-muted text-sm mb-4 line-clamp-2">{bond.suggestedUser.bio}</p>
       )}
 
       {/* Match reasons */}
