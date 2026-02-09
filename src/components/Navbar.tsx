@@ -4,7 +4,9 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
+import { FiMoon, FiSun } from 'react-icons/fi'
 import { useAuth } from '../contexts/AuthContext'
+import { useTheme } from '../contexts/ThemeContext'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -15,6 +17,7 @@ export default function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   const { isAuthenticated, user, login, logout, isLoading } = useAuth()
+  const { mode, toggleMode } = useTheme()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -129,6 +132,14 @@ export default function Navbar() {
 
         {/* Desktop Auth Section */}
         <div className="hidden lg:flex items-center gap-4">
+          <button
+            type="button"
+            onClick={toggleMode}
+            className="p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/10 transition-colors"
+            aria-label={`Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`}
+          >
+            {mode === 'dark' ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
+          </button>
           {isLoading ? (
             <div className="flex items-center gap-2 px-3 py-2">
               <div className="w-8 h-8 bg-white/10 animate-pulse rounded-full" />
@@ -252,6 +263,15 @@ export default function Navbar() {
           </button>
 
           <div className="p-8 pt-24">
+            <button
+              type="button"
+              onClick={toggleMode}
+              className="flex items-center gap-3 mb-6 px-4 py-3 rounded-xl border border-white/10 text-text-secondary hover:text-text-primary hover:bg-white/10 transition-colors w-full"
+              aria-label={`Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`}
+            >
+              {mode === 'dark' ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
+              <span>{mode === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+            </button>
             <ul className="flex flex-col gap-6">
               <li>
                 <Link
