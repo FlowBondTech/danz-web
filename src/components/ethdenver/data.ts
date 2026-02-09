@@ -23,6 +23,7 @@ export interface SponsorTier {
   features: string[]
   highlighted: boolean
   cta: string
+  stripeBuyButtonId: string
 }
 
 export interface RewardTier {
@@ -208,6 +209,7 @@ export const sponsorTiers: SponsorTier[] = [
     ],
     highlighted: false,
     cta: 'Get Started',
+    stripeBuyButtonId: 'buy_btn_1SyJ0bBoDen9clTa1k06Kdsi',
   },
   {
     id: 'growth',
@@ -223,6 +225,7 @@ export const sponsorTiers: SponsorTier[] = [
     ],
     highlighted: false,
     cta: 'Choose Growth',
+    stripeBuyButtonId: 'buy_btn_1SyJ1qBoDen9clTamAgMrnIl',
   },
   {
     id: 'headliner',
@@ -239,6 +242,7 @@ export const sponsorTiers: SponsorTier[] = [
     ],
     highlighted: true,
     cta: 'Go Headliner',
+    stripeBuyButtonId: 'buy_btn_1SyJ2aBoDen9clTa45p0KFkt',
   },
   {
     id: 'ecosystem',
@@ -256,6 +260,7 @@ export const sponsorTiers: SponsorTier[] = [
     ],
     highlighted: false,
     cta: 'Partner With Us',
+    stripeBuyButtonId: 'buy_btn_1SyJ3QBoDen9clTaBz7jShIw',
   },
 ]
 

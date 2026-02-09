@@ -28,7 +28,9 @@ export default function CTASection() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <motion.a
-              href="mailto:partnerships@danz.now?subject=ETHDenver%202026%20Sponsor%20Inquiry"
+              href="https://t.me/+gB4tOXiCexI5MGEx"
+              target="_blank"
+              rel="noopener noreferrer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="btn btn-primary text-lg px-10 py-4"
@@ -36,7 +38,9 @@ export default function CTASection() {
               Become a Sponsor
             </motion.a>
             <motion.a
-              href="mailto:partnerships@danz.now?subject=ETHDenver%202026%20Partnership"
+              href="https://t.me/+gB4tOXiCexI5MGEx"
+              target="_blank"
+              rel="noopener noreferrer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="btn btn-secondary text-lg px-10 py-4"
@@ -46,7 +50,14 @@ export default function CTASection() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-text-muted text-sm">
-            <span>partnerships@danz.now</span>
+            <a
+              href="https://t.me/+gB4tOXiCexI5MGEx"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-neon-purple transition-colors"
+            >
+              Join us on Telegram
+            </a>
             <span className="hidden sm:inline">|</span>
             <span>@danz_now on X</span>
             <span className="hidden sm:inline">|</span>
