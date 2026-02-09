@@ -32,8 +32,8 @@ export default function HeroSection() {
             Turn ETHDenver into a dance-to-earn playground.
           </p>
           <p className="text-lg md:text-xl text-text-muted max-w-2xl mx-auto mb-12">
-            Gamified missions for attendees. Measurable engagement for sponsors. Real rewards
-            powered by movement.
+            Gamified missions for attendees. Measurable engagement for sponsors. Rewards
+            powered by movement and the upcoming $DANZ token.
           </p>
         </motion.div>
 

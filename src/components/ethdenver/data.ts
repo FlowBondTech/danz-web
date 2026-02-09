@@ -75,10 +75,10 @@ export const navSections: NavSection[] = [
 // ─── Hero Stats ─────────────────────────────────────────────────────────────
 
 export const heroStats = [
-  { value: '50+', label: 'Missions' },
+  { value: '3', label: 'Mission Types' },
   { value: '7', label: 'Days' },
-  { value: '$50K+', label: 'In Rewards' },
-  { value: '10K+', label: 'Expected Dancers' },
+  { value: '$DANZ', label: 'Token Rewards' },
+  { value: '4', label: 'Sponsor Tiers' },
 ]
 
 // ─── Mission Categories ─────────────────────────────────────────────────────
@@ -87,7 +87,7 @@ export const missionCategories: MissionCategory[] = [
   {
     id: 'dance',
     title: 'Core Dance',
-    subtitle: 'Move to earn $DANZ',
+    subtitle: 'Move to earn rewards',
     gradient: 'from-purple-500 to-pink-500',
     missions: [
       {
@@ -281,8 +281,8 @@ export const rewardTiers: RewardTier[] = [
     gradient: 'from-yellow-400 to-amber-500',
     rewards: [
       'FlowBond device',
-      '$DANZ token airdrop (5,000)',
-      'VIP access to all DANZ events',
+      '$DANZ token rewards (amount TBA)',
+      'Priority access to future DANZ events',
       'Exclusive NFT achievement badge',
     ],
   },
@@ -291,10 +291,10 @@ export const rewardTiers: RewardTier[] = [
     label: 'Champions',
     gradient: 'from-slate-300 to-slate-400',
     rewards: [
-      '$DANZ airdrop (1,000)',
-      'Premium subscription (1 year)',
-      'Event passes for next 3 DANZ events',
+      '$DANZ token rewards (amount TBA)',
+      'Early access to DANZ platform features',
       'Champion NFT badge',
+      'Leaderboard recognition',
     ],
   },
   {
@@ -302,10 +302,9 @@ export const rewardTiers: RewardTier[] = [
     label: 'Movers',
     gradient: 'from-amber-600 to-amber-700',
     rewards: [
-      '$DANZ bonus (250)',
+      '$DANZ token rewards (amount TBA)',
       'Achievement NFT',
       'Community recognition on leaderboard',
-      '3-month premium trial',
     ],
   },
 ]
@@ -340,7 +339,7 @@ export const valueCards: ValueCard[] = [
     headline: 'Earn rewards just by showing up and moving',
     gradient: 'from-blue-500 to-purple-500',
     points: [
-      'Earn $DANZ tokens for completing missions',
+      'Earn $DANZ rewards for completing missions',
       'Discover hidden events and experiences',
       'Compete on the leaderboard for prizes',
       'Connect with the dance community',

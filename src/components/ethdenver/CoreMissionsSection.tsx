@@ -22,7 +22,7 @@ export default function CoreMissionsSection() {
             Mission Categories
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-6">
-            50+ Missions to <span className="gradient-text">Complete</span>
+            Missions to <span className="gradient-text">Complete</span>
           </h2>
           <p className="text-xl text-text-secondary max-w-3xl mx-auto">
             Three mission categories designed to get people moving, exploring, and engaging.

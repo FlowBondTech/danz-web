@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'DANZ Mission Board - ETHDenver 2026',
     description:
-      'Turn ETHDenver into a dance-to-earn playground. 50+ missions, $50K+ in rewards, powered by FlowBond.',
+      'Turn ETHDenver into a dance-to-earn playground. Gamified missions, $DANZ token rewards, powered by FlowBond.',
     url: 'https://danz.now/ethdenver',
     siteName: 'DANZ NOW',
     type: 'website',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'DANZ Mission Board - ETHDenver 2026',
     description:
-      'Turn ETHDenver into a dance-to-earn playground. 50+ missions, $50K+ in rewards, powered by FlowBond.',
+      'Turn ETHDenver into a dance-to-earn playground. Gamified missions, $DANZ token rewards, powered by FlowBond.',
   },
 }
 
