@@ -24,6 +24,7 @@ export interface SponsorTier {
   highlighted: boolean
   cta: string
   stripeBuyButtonId: string
+  checkoutUrl: string
 }
 
 export interface RewardTier {
@@ -194,6 +195,9 @@ export const missionCategories: MissionCategory[] = [
 ]
 
 // ─── Sponsor Tiers ──────────────────────────────────────────────────────────
+// IMPORTANT: The checkoutUrl values below are PLACEHOLDERS. Replace them with
+// your actual Stripe Payment Link URLs from Stripe Dashboard > Payment Links.
+// Each Buy Button (stripeBuyButtonId) has an associated Payment Link URL.
 
 export const sponsorTiers: SponsorTier[] = [
   {
@@ -210,6 +214,7 @@ export const sponsorTiers: SponsorTier[] = [
     highlighted: false,
     cta: 'Get Started',
     stripeBuyButtonId: 'buy_btn_1SyJ0bBoDen9clTa1k06Kdsi',
+    checkoutUrl: 'https://buy.stripe.com/4gw7vJ5kq6Wh1XO3cc',
   },
   {
     id: 'growth',
@@ -226,6 +231,7 @@ export const sponsorTiers: SponsorTier[] = [
     highlighted: false,
     cta: 'Choose Growth',
     stripeBuyButtonId: 'buy_btn_1SyJ1qBoDen9clTamAgMrnIl',
+    checkoutUrl: 'https://buy.stripe.com/5kA9DRgZ83K5dGw5kl',
   },
   {
     id: 'headliner',
@@ -243,6 +249,7 @@ export const sponsorTiers: SponsorTier[] = [
     highlighted: true,
     cta: 'Go Headliner',
     stripeBuyButtonId: 'buy_btn_1SyJ2aBoDen9clTa45p0KFkt',
+    checkoutUrl: 'https://buy.stripe.com/eVa3ft9CI9YtdGw28a',
   },
   {
     id: 'ecosystem',
@@ -261,6 +268,7 @@ export const sponsorTiers: SponsorTier[] = [
     highlighted: false,
     cta: 'Partner With Us',
     stripeBuyButtonId: 'buy_btn_1SyJ3QBoDen9clTaBz7jShIw',
+    checkoutUrl: 'https://buy.stripe.com/bIY17l7sAbYBbyo4gi',
   },
 ]
 

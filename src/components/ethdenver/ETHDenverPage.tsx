@@ -1,5 +1,6 @@
 'use client'
 
+import BackToTop from '@/src/components/ethdenver/BackToTop'
 import CTASection from '@/src/components/ethdenver/CTASection'
 import CommunityMissionsSection from '@/src/components/ethdenver/CommunityMissionsSection'
 import CoreMissionsSection from '@/src/components/ethdenver/CoreMissionsSection'
@@ -24,6 +25,7 @@ export default function ETHDenverPage() {
       <ValuePropositionSection />
       <FlowBondIntegrationSection />
       <CTASection />
+      <BackToTop />
     </>
   )
 }

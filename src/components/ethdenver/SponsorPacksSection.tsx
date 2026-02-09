@@ -76,7 +76,7 @@ export default function SponsorPacksSection() {
                 </ul>
 
                 <motion.a
-                  href="https://t.me/+gB4tOXiCexI5MGEx"
+                  href={tier.checkoutUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.02 }}
