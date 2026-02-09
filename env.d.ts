@@ -5,18 +5,5 @@ declare namespace NodeJS {
     NEXT_PUBLIC_PRIVY_CLIENT_ID?: string
     NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID?: string
     NEXT_PUBLIC_STRIPE_YEARLY_PRICE_ID?: string
-    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?: string
-  }
-}
-
-declare namespace JSX {
-  interface IntrinsicElements {
-    'stripe-buy-button': React.DetailedHTMLProps<
-      React.HTMLAttributes<HTMLElement> & {
-        'buy-button-id'?: string
-        'publishable-key'?: string
-      },
-      HTMLElement
-    >
   }
 }
