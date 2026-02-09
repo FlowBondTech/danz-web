@@ -6,6 +6,8 @@ import { motion } from 'motion/react'
 import { FiCheck } from 'react-icons/fi'
 
 const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
+// Buy Buttons are live mode - only use embedded checkout with a live key
+const useBuyButton = STRIPE_PUBLISHABLE_KEY.startsWith('pk_live_')
 
 export default function SponsorPacksSection() {
   return (
@@ -78,7 +80,7 @@ export default function SponsorPacksSection() {
                   ))}
                 </ul>
 
-                {STRIPE_PUBLISHABLE_KEY ? (
+                {useBuyButton ? (
                   <StripeBuyButton
                     buyButtonId={tier.stripeBuyButtonId}
                     publishableKey={STRIPE_PUBLISHABLE_KEY}
