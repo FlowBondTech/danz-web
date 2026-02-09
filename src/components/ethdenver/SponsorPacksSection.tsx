@@ -1,8 +1,11 @@
 'use client'
 
 import { sponsorTiers } from '@/src/components/ethdenver/data'
+import StripeBuyButton from '@/src/components/ethdenver/StripeBuyButton'
 import { motion } from 'motion/react'
 import { FiCheck } from 'react-icons/fi'
+
+const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
 
 export default function SponsorPacksSection() {
   return (
@@ -75,20 +78,27 @@ export default function SponsorPacksSection() {
                   ))}
                 </ul>
 
-                <motion.a
-                  href={tier.checkoutUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`w-full py-3 px-6 rounded-xl font-medium text-center transition-all block ${
-                    tier.highlighted
-                      ? 'bg-gradient-neon text-white shadow-lg hover:shadow-neon-purple/50'
-                      : 'bg-gradient-to-r from-neon-purple/20 to-neon-pink/20 text-white border border-white/10 hover:border-white/20'
-                  }`}
-                >
-                  {tier.cta}
-                </motion.a>
+                {STRIPE_PUBLISHABLE_KEY ? (
+                  <StripeBuyButton
+                    buyButtonId={tier.stripeBuyButtonId}
+                    publishableKey={STRIPE_PUBLISHABLE_KEY}
+                  />
+                ) : (
+                  <motion.a
+                    href={tier.checkoutUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`w-full py-3 px-6 rounded-xl font-medium text-center transition-all block ${
+                      tier.highlighted
+                        ? 'bg-gradient-neon text-white shadow-lg hover:shadow-neon-purple/50'
+                        : 'bg-gradient-to-r from-neon-purple/20 to-neon-pink/20 text-white border border-white/10 hover:border-white/20'
+                    }`}
+                  >
+                    {tier.cta}
+                  </motion.a>
+                )}
               </div>
             </motion.div>
           ))}
