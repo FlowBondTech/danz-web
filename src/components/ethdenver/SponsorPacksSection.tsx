@@ -1,15 +1,34 @@
 'use client'
 
 import { sponsorTiers } from '@/src/components/ethdenver/data'
-import StripeBuyButton from '@/src/components/ethdenver/StripeBuyButton'
+import { stripeService } from '@/src/services/stripe.service'
+import { usePrivy } from '@privy-io/react-auth'
 import { motion } from 'motion/react'
+import { useState } from 'react'
 import { FiCheck } from 'react-icons/fi'
 
-const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
-// Buy Buttons are live mode - only use embedded checkout with a live key
-const useBuyButton = STRIPE_PUBLISHABLE_KEY.startsWith('pk_live_')
-
 export default function SponsorPacksSection() {
+  const { authenticated, login } = usePrivy()
+  const [loadingTier, setLoadingTier] = useState<string | null>(null)
+
+  const handleSponsorClick = async (tierId: string) => {
+    if (!authenticated) {
+      login()
+      return
+    }
+
+    try {
+      setLoadingTier(tierId)
+      const { url } = await stripeService.createSponsorCheckoutSession(tierId)
+      if (url) {
+        window.location.href = url
+      }
+    } catch (error) {
+      console.error('Failed to create sponsor checkout:', error)
+      setLoadingTier(null)
+    }
+  }
+
   return (
     <section
       id="sponsors"
@@ -80,39 +99,19 @@ export default function SponsorPacksSection() {
                   ))}
                 </ul>
 
-                {useBuyButton ? (
-                  <StripeBuyButton
-                    buyButtonId={tier.stripeBuyButtonId}
-                    publishableKey={STRIPE_PUBLISHABLE_KEY}
-                  >
-                    <motion.span
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className={`w-full py-3 px-6 rounded-xl font-medium text-center transition-all block ${
-                        tier.highlighted
-                          ? 'bg-gradient-neon text-white shadow-lg hover:shadow-neon-purple/50'
-                          : 'bg-gradient-to-r from-neon-purple/20 to-neon-pink/20 text-white border border-white/10 hover:border-white/20'
-                      }`}
-                    >
-                      {tier.cta}
-                    </motion.span>
-                  </StripeBuyButton>
-                ) : (
-                  <motion.a
-                    href={tier.checkoutUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className={`w-full py-3 px-6 rounded-xl font-medium text-center transition-all block ${
-                      tier.highlighted
-                        ? 'bg-gradient-neon text-white shadow-lg hover:shadow-neon-purple/50'
-                        : 'bg-gradient-to-r from-neon-purple/20 to-neon-pink/20 text-white border border-white/10 hover:border-white/20'
-                    }`}
-                  >
-                    {tier.cta}
-                  </motion.a>
-                )}
+                <motion.button
+                  onClick={() => handleSponsorClick(tier.id)}
+                  disabled={loadingTier !== null}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`w-full py-3 px-6 rounded-xl font-medium text-center transition-all block disabled:opacity-60 disabled:cursor-not-allowed ${
+                    tier.highlighted
+                      ? 'bg-gradient-neon text-white shadow-lg hover:shadow-neon-purple/50'
+                      : 'bg-gradient-to-r from-neon-purple/20 to-neon-pink/20 text-white border border-white/10 hover:border-white/20'
+                  }`}
+                >
+                  {loadingTier === tier.id ? 'Redirecting...' : tier.cta}
+                </motion.button>
               </div>
             </motion.div>
           ))}

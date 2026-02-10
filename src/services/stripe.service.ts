@@ -41,6 +41,28 @@ export const stripeService = {
     return response.json()
   },
 
+  async createSponsorCheckoutSession(
+    tierId: string,
+  ): Promise<CheckoutSessionResponse> {
+    const token = await getAccessToken()
+
+    const response = await fetch(`${API_URL}/api/stripe/create-sponsor-checkout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ tierId }),
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || 'Failed to create sponsor checkout session')
+    }
+
+    return response.json()
+  },
+
   async createPortalSession(): Promise<PortalSessionResponse> {
     const token = await getAccessToken()
 
