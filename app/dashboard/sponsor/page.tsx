@@ -97,11 +97,6 @@ function SponsorDashboardContent() {
     skip: !authenticated || !ready || !profileData?.mySponsorProfile,
   })
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/')
-    }
-  }, [ready, authenticated, router])
 
   // Check if user has a sponsor profile
   const hasSponsorProfile = profileData?.mySponsorProfile

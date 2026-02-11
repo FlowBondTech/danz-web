@@ -16,11 +16,6 @@ export default function AdminReferralsPage() {
     skip: !authenticated,
   })
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/')
-    }
-  }, [ready, authenticated, router])
 
   useEffect(() => {
     if (ready && authenticated && !profileLoading && profileData?.me?.role !== 'admin') {

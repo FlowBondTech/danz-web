@@ -181,11 +181,6 @@ export default function MiniAppsPage() {
   const { experimentalEnabled } = useExperimental()
   const router = useRouter()
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/')
-    }
-  }, [ready, authenticated, router])
 
   useEffect(() => {
     if (ready && !experimentalEnabled) {

@@ -63,11 +63,6 @@ export default function SponsorEventsPage() {
     },
   })
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/')
-    }
-  }, [ready, authenticated, router])
 
   const categories = categoriesData?.sponsorCategories || []
   const events = eventsData?.eventsForSponsorship || []

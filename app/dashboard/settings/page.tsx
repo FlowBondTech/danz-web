@@ -180,11 +180,6 @@ export default function SettingsPage() {
     }
   }, [profile])
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/')
-    }
-  }, [ready, authenticated, router])
 
   const presetThemes = mode === 'dark' ? getDarkThemes() : getLightThemes()
   const isPremium = profile?.is_premium === 'active'

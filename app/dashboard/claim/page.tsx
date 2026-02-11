@@ -109,11 +109,6 @@ export default function ClaimPage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [successDetails, setSuccessDetails] = useState<any>(null)
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/')
-    }
-  }, [ready, authenticated, router])
 
   // Get linked wallets
   const linkedWallets =

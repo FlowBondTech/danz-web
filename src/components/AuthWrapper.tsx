@@ -9,57 +9,84 @@ interface AuthWrapperProps {
   children: React.ReactNode
 }
 
+const PUBLIC_PATHS = ['/', '/danz', '/register', '/login', '/ethdenver', '/research-box']
+
+function isPublicPath(pathname: string): boolean {
+  return (
+    PUBLIC_PATHS.includes(pathname) ||
+    pathname.startsWith('/i/') ||
+    pathname.startsWith('/events')
+  )
+}
+
+function AuthLoadingScreen() {
+  return (
+    <div className="min-h-screen bg-bg-primary flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-neon-purple/20 rounded-full" />
+          <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-neon-purple rounded-full animate-spin" />
+        </div>
+        <p className="text-text-secondary animate-pulse">Loading...</p>
+      </div>
+    </div>
+  )
+}
+
 export default function AuthWrapper({ children }: AuthWrapperProps) {
   const { ready, authenticated } = usePrivy()
   const router = useRouter()
   const pathname = usePathname()
 
+  const isPublic = isPublicPath(pathname)
+
   const { data, loading, error } = useGetMyProfileQuery({
     skip: !authenticated || !ready,
-    fetchPolicy: 'network-only', // Always fetch fresh data
-    errorPolicy: 'all', // Continue even if there's an error (like user not found)
+    fetchPolicy: 'network-only',
+    errorPolicy: 'all',
   })
 
+  // Handle redirects for protected routes
   useEffect(() => {
-    // Skip checks for public pages and register page
-    const publicPaths = ['/', '/danz', '/register', '/login', '/ethdenver', '/research-box']
-    const isInvitePage = pathname?.startsWith('/i/')
-    const isPublicEventsPage = pathname?.startsWith('/events')
-    if (publicPaths.includes(pathname) || isInvitePage || isPublicEventsPage) {
-      return
-    }
+    if (isPublic || !ready || loading) return
 
-    // Only proceed with checks if Privy is ready and not loading profile
-    if (!ready || loading) {
-      return
-    }
-
-    // If user is not authenticated and trying to access protected pages
     if (!authenticated) {
-      console.log('User not authenticated, redirecting to login with redirect')
       const redirectTo = encodeURIComponent(pathname)
       router.push(`/login?redirectTo=${redirectTo}`)
       return
     }
 
-    // If user is authenticated, check if they have a profile with username
-    if (authenticated) {
-      // If there's an error (user not found) or no data, redirect to register
-      if (error || !data || !data.me) {
-        console.log('User authenticated but no profile found, redirecting to /register')
-        router.push('/register')
-        return
-      }
-
-      // If user exists but doesn't have a username, redirect to register
-      if (data.me && !data.me.username) {
-        console.log('User exists but no username, redirecting to /register')
-        router.push('/register')
-        return
-      }
+    if (error || !data || !data.me) {
+      router.push('/register')
+      return
     }
-  }, [ready, authenticated, data, loading, error, router, pathname])
 
-  // Don't block rendering with loading state - let Navbar handle it
+    if (data.me && !data.me.username) {
+      router.push('/register')
+      return
+    }
+  }, [ready, authenticated, data, loading, error, router, pathname, isPublic])
+
+  // Public pages render immediately, no auth gate
+  if (isPublic) {
+    return <>{children}</>
+  }
+
+  // Protected pages: block rendering until auth state is fully resolved
+  if (!ready || loading) {
+    return <AuthLoadingScreen />
+  }
+
+  // Redirect in progress — show loading instead of page flash
+  if (!authenticated) {
+    return <AuthLoadingScreen />
+  }
+
+  // Authenticated but missing profile/username — redirect to register in progress
+  if (error || !data || !data.me || !data.me.username) {
+    return <AuthLoadingScreen />
+  }
+
+  // Fully authenticated with complete profile — render the page
   return <>{children}</>
 }

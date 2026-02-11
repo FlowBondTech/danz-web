@@ -39,11 +39,6 @@ function ReferralsContent() {
   const referralCode = user?.username || 'loading...'
   const shareUrl = `https://danz.now/i/${referralCode}`
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/')
-    }
-  }, [ready, authenticated, router])
 
   const copyToClipboard = (text: string, type: 'url' | 'code') => {
     navigator.clipboard.writeText(text)

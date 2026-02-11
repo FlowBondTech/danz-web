@@ -57,11 +57,6 @@ export default function WalletPage() {
   const [isExporting, setIsExporting] = useState(false)
   const [exportWarningWallet, setExportWarningWallet] = useState<WalletInfo | null>(null)
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/')
-    }
-  }, [ready, authenticated, router])
 
   // Get all linked wallets from user object
   const allLinkedWallets: WalletInfo[] =

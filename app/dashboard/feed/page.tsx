@@ -149,11 +149,6 @@ function FeedContent() {
   const [likePost] = useLikePostMutation()
   const [unlikePost] = useUnlikePostMutation()
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/')
-    }
-  }, [ready, authenticated, router])
 
   const handleCreatePost = async () => {
     if (!postContent.trim()) return

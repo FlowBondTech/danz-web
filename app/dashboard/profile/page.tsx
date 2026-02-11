@@ -25,11 +25,6 @@ export default function ProfilePage() {
     skip: !authenticated,
   })
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/')
-    }
-  }, [ready, authenticated, router])
 
   // Sync URL param with state
   useEffect(() => {

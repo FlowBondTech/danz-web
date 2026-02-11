@@ -182,11 +182,6 @@ export default function SponsorOnboardingPage() {
     preferredDanceStyles: [],
   })
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/')
-    }
-  }, [ready, authenticated, router])
 
   useEffect(() => {
     // Redirect if already has profile

@@ -103,11 +103,6 @@ export default function SponsorSettingsPage() {
     }
   }, [profileData])
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/')
-    }
-  }, [ready, authenticated, router])
 
   const toggleCategory = (slug: string) => {
     setSelectedCategories(prev =>

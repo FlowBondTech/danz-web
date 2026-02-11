@@ -27,11 +27,6 @@ export default function AdminDashboardPage() {
     skip: !authenticated || profileData?.me?.role !== 'admin',
   })
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/')
-    }
-  }, [ready, authenticated, router])
 
   useEffect(() => {
     // Redirect non-admins

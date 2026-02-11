@@ -31,11 +31,6 @@ export default function AnalyticsPage() {
     skip: !authenticated || profileData?.me?.role !== 'admin',
   })
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/')
-    }
-  }, [ready, authenticated, router])
 
   useEffect(() => {
     if (ready && authenticated && !profileLoading && profileData?.me?.role !== 'admin') {

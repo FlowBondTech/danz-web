@@ -49,11 +49,6 @@ export default function ExperimentalPage() {
   const { experimentalEnabled } = useExperimental()
   const router = useRouter()
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/')
-    }
-  }, [ready, authenticated, router])
 
   // Redirect if experimental features not enabled
   useEffect(() => {

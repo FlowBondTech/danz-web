@@ -47,12 +47,6 @@ function DashboardContent() {
   })
 
   useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/login?redirectTo=%2Fdashboard')
-    }
-  }, [ready, authenticated, router])
-
-  useEffect(() => {
     if (
       searchParams.get('session_id') ||
       searchParams.get('success') ||

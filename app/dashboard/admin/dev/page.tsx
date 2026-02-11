@@ -322,11 +322,6 @@ export default function DevPanelPage() {
     },
   })
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/')
-    }
-  }, [ready, authenticated, router])
 
   useEffect(() => {
     // Redirect non-dev/admin users

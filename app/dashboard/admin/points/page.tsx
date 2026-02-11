@@ -308,11 +308,6 @@ export default function EnhancedPointsPage() {
     }
   }
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push('/')
-    }
-  }, [ready, authenticated, router])
 
   useEffect(() => {
     if (ready && authenticated && !profileLoading && profileData?.me?.role !== 'admin') {
