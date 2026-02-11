@@ -1,20 +1,22 @@
 'use client'
 
 import { usePrivy } from '@privy-io/react-auth'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense, useEffect } from 'react'
 import { FiLock } from 'react-icons/fi'
 
-export default function LoginPage() {
+function LoginContent() {
   const { login, authenticated, ready } = usePrivy()
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   useEffect(() => {
-    // If already authenticated, redirect to dashboard
+    // If already authenticated, redirect to intended page or dashboard
     if (ready && authenticated) {
-      router.push('/dashboard')
+      const redirectTo = searchParams.get('redirectTo') || '/dashboard'
+      router.push(redirectTo)
     }
-  }, [ready, authenticated, router])
+  }, [ready, authenticated, router, searchParams])
 
   useEffect(() => {
     // Auto-trigger login modal when page loads (if not authenticated)
@@ -80,5 +82,19 @@ export default function LoginPage() {
         </p>
       </footer>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-bg-primary flex items-center justify-center">
+          <div className="text-text-primary text-xl">Loading...</div>
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   )
 }

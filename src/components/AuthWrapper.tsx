@@ -22,7 +22,7 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
 
   useEffect(() => {
     // Skip checks for public pages and register page
-    const publicPaths = ['/', '/danz', '/register', '/login', '/ethdenver', '/box']
+    const publicPaths = ['/', '/danz', '/register', '/login', '/ethdenver', '/research-box']
     const isInvitePage = pathname?.startsWith('/i/')
     const isPublicEventsPage = pathname?.startsWith('/events')
     if (publicPaths.includes(pathname) || isInvitePage || isPublicEventsPage) {
@@ -36,8 +36,9 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
 
     // If user is not authenticated and trying to access protected pages
     if (!authenticated) {
-      console.log('User not authenticated, redirecting to home')
-      router.push('/')
+      console.log('User not authenticated, redirecting to login with redirect')
+      const redirectTo = encodeURIComponent(pathname)
+      router.push(`/login?redirectTo=${redirectTo}`)
       return
     }
 

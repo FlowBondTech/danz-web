@@ -140,7 +140,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             console.log('User needs onboarding, redirecting to /register')
             router.push('/register')
           }
-          // If has username and on login page, redirect to dashboard
+          // If has username and on login page, redirect to intended page or dashboard
           // Don't redirect if on public paths or already on dashboard
           else if (
             data?.me?.username &&
@@ -148,8 +148,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             !isPublicPath &&
             currentPath === '/login'
           ) {
-            console.log('User logged in from login page, redirecting to dashboard')
-            router.push('/dashboard')
+            const params = new URLSearchParams(window.location.search)
+            const redirectTo = params.get('redirectTo') || '/dashboard'
+            console.log('User logged in from login page, redirecting to:', redirectTo)
+            router.push(redirectTo)
           }
         } catch (error) {
           console.error('Error checking profile:', error)

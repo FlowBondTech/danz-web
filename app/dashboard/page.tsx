@@ -48,7 +48,7 @@ function DashboardContent() {
 
   useEffect(() => {
     if (ready && !authenticated) {
-      router.push('/')
+      router.push('/login?redirectTo=%2Fdashboard')
     }
   }, [ready, authenticated, router])
 
