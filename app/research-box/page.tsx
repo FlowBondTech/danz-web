@@ -23,6 +23,12 @@ import {
   FiPlay,
   FiStar,
   FiSpeaker,
+  FiFileText,
+  FiLayers,
+  FiGlobe,
+  FiHeart,
+  FiTrendingUp,
+  FiDatabase,
 } from 'react-icons/fi'
 import type { ReactNode } from 'react'
 
@@ -217,6 +223,131 @@ const ROADMAP = [
   { phase: 'Phase 5', quarter: 'Q2 2027', title: 'Community Handoff', description: 'DAO governance, community grants' },
 ]
 
+type ResearchStatus = 'exploring' | 'prototyping' | 'testing' | 'published'
+
+interface ResearchDoc {
+  icon: ReactNode
+  title: string
+  area: string
+  status: ResearchStatus
+  description: string
+  questions: string[]
+}
+
+const RESEARCH_DOCS: ResearchDoc[] = [
+  {
+    icon: <FiCamera className="w-6 h-6" />,
+    title: 'Volumetric Capture for Live Events',
+    area: 'Gaussian Splatting',
+    status: 'exploring',
+    description:
+      'Investigating real-time 3D reconstruction from consumer-grade depth cameras in dynamic, low-light environments with moving subjects.',
+    questions: [
+      'Can we achieve <100ms latency with 4-6 synced cameras?',
+      'How does crowd density affect reconstruction fidelity?',
+      'What is the minimum viable capture rig for a 200-person venue?',
+    ],
+  },
+  {
+    icon: <FiActivity className="w-6 h-6" />,
+    title: 'Collective Energy as Environmental Input',
+    area: 'Mood Engine',
+    status: 'prototyping',
+    description:
+      'Mapping crowd biometrics and audio energy into DMX lighting, sound, and scent outputs. Exploring feedback loops between environment and collective state.',
+    questions: [
+      'Which signals best represent collective mood — BPM, movement, volume?',
+      'How do we prevent feedback loops from escalating too fast?',
+      'Can scent diffusion meaningfully contribute to mood shifts?',
+    ],
+  },
+  {
+    icon: <FiTrendingUp className="w-6 h-6" />,
+    title: 'Token Economics for Event Participation',
+    area: 'Flow Layer',
+    status: 'exploring',
+    description:
+      'Designing token flows for real-time tipping, quest rewards, and NFT moment minting. Studying how economic incentives shape event behavior.',
+    questions: [
+      'What token velocity is healthy for a 4-hour event?',
+      'How should quest difficulty scale with crowd size?',
+      'Stablecoin rails vs native token — what do participants prefer?',
+    ],
+  },
+  {
+    icon: <FiShield className="w-6 h-6" />,
+    title: 'Zero-Knowledge Identity at Events',
+    area: 'ZK Proofs',
+    status: 'exploring',
+    description:
+      'Applying ZK circuits to prove presence, age, and reputation without revealing identity. Researching proof generation on edge hardware.',
+    questions: [
+      'Can ZK proofs generate fast enough on Jetson Orin for real-time use?',
+      'What is the minimal trusted setup for event-scoped proofs?',
+      'How do we handle proof revocation if a device is compromised?',
+    ],
+  },
+  {
+    icon: <FiCpu className="w-6 h-6" />,
+    title: 'Edge Computing for Autonomous Events',
+    area: 'Hardware',
+    status: 'prototyping',
+    description:
+      'Building a self-contained compute unit that handles capture, processing, and blockchain transactions without cloud dependency.',
+    questions: [
+      'Thermal management in a sealed Pelican case — passive vs active cooling?',
+      'Battery life vs GPU workload tradeoffs for 6-hour events?',
+      'How do we ensure mesh network resilience when nodes move?',
+    ],
+  },
+  {
+    icon: <FiGlobe className="w-6 h-6" />,
+    title: 'Progressive Decentralization Model',
+    area: 'Governance',
+    status: 'exploring',
+    description:
+      'Studying how community-owned event infrastructure transitions from core team to DAO governance without losing operational reliability.',
+    questions: [
+      'At what adoption threshold should governance transfer begin?',
+      'How do we balance speed of decisions with community input?',
+      'What treasury structure prevents capture by large token holders?',
+    ],
+  },
+  {
+    icon: <FiHeart className="w-6 h-6" />,
+    title: 'Consent & Data Ethics in Capture',
+    area: 'Privacy',
+    status: 'exploring',
+    description:
+      'Defining ethical frameworks for volumetric capture in public spaces. How participants opt in, opt out, and control their 3D likeness.',
+    questions: [
+      'What does meaningful consent look like in a crowded venue?',
+      'How do we handle bystanders who did not opt in?',
+      'Should captured data have an automatic expiry?',
+    ],
+  },
+  {
+    icon: <FiDatabase className="w-6 h-6" />,
+    title: '3D Memory Preservation & Access',
+    area: 'Storage',
+    status: 'exploring',
+    description:
+      'Exploring decentralized storage for volumetric event memories. How participants access, share, and own their 3D moments long-term.',
+    questions: [
+      'IPFS vs Arweave for volumetric data — cost and retrieval tradeoffs?',
+      'What compression ratio preserves emotional fidelity of a moment?',
+      'How should access control work for shared group memories?',
+    ],
+  },
+]
+
+const statusConfig: Record<ResearchStatus, { label: string; color: string; bg: string; border: string }> = {
+  exploring: { label: 'Exploring', color: 'text-amber-400', bg: 'bg-amber-400/10', border: 'border-amber-400/20' },
+  prototyping: { label: 'Prototyping', color: 'text-neon-purple', bg: 'bg-neon-purple/10', border: 'border-neon-purple/20' },
+  testing: { label: 'Testing', color: 'text-neon-blue', bg: 'bg-neon-blue/10', border: 'border-neon-blue/20' },
+  published: { label: 'Published', color: 'text-emerald-400', bg: 'bg-emerald-400/10', border: 'border-emerald-400/20' },
+}
+
 // ---------------------------------------------------------------------------
 // Animation helpers
 // ---------------------------------------------------------------------------
@@ -303,9 +434,28 @@ export default function FlowBondBoxPage() {
       </nav>
 
       {/* ----------------------------------------------------------------- */}
+      {/* RESEARCH MODE BANNER */}
+      {/* ----------------------------------------------------------------- */}
+      <div className="fixed top-16 left-0 right-0 z-40 bg-amber-500/10 backdrop-blur-md border-b border-amber-500/20">
+        <div className="container flex items-center justify-center gap-3 py-2.5">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-400" />
+          </span>
+          <span className="text-xs sm:text-sm font-mono font-medium text-amber-300 tracking-wide uppercase">
+            This device is in research mode — everything here is under active discovery
+          </span>
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-400" />
+          </span>
+        </div>
+      </div>
+
+      {/* ----------------------------------------------------------------- */}
       {/* HERO */}
       {/* ----------------------------------------------------------------- */}
-      <section className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center pt-28 overflow-hidden">
         <div className="container relative z-10 text-center py-20 lg:py-32">
           {/* Metadata */}
           <motion.div
@@ -443,6 +593,76 @@ export default function FlowBondBoxPage() {
               <p className="text-text-secondary leading-relaxed">{cap.description}</p>
             </motion.div>
           ))}
+        </div>
+      </Section>
+
+      {/* ----------------------------------------------------------------- */}
+      {/* RESEARCH DOCUMENTS */}
+      {/* ----------------------------------------------------------------- */}
+      <Section className="bg-bg-secondary/50">
+        <SectionTitle sub="Research">
+          Open Questions. <span className="gradient-text">Active Discovery.</span>
+        </SectionTitle>
+        <motion.p variants={fadeUp} transition={{ duration: 0.5 }} className="text-center text-text-secondary max-w-2xl mx-auto mb-12 -mt-8">
+          Nothing here is final. These are the threads we are pulling -- the questions driving every prototype, test, and conversation.
+        </motion.p>
+
+        {/* Status legend */}
+        <motion.div variants={fadeUp} transition={{ duration: 0.4 }} className="flex flex-wrap justify-center gap-4 mb-10">
+          {(Object.entries(statusConfig) as [ResearchStatus, typeof statusConfig[ResearchStatus]][]).map(([key, cfg]) => (
+            <div key={key} className="flex items-center gap-2 text-xs font-mono">
+              <span className={`w-2 h-2 rounded-full ${cfg.bg} ring-1 ${cfg.border}`} />
+              <span className={cfg.color}>{cfg.label}</span>
+            </div>
+          ))}
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6">
+          {RESEARCH_DOCS.map((doc, i) => {
+            const s = statusConfig[doc.status]
+            return (
+              <motion.div
+                key={doc.title}
+                variants={fadeUp}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+                className={`card border ${s.border} group`}
+              >
+                {/* Header */}
+                <div className="flex items-start gap-4 mb-4">
+                  <div className={`flex-shrink-0 w-11 h-11 rounded-xl ${s.bg} flex items-center justify-center ${s.color}`}>
+                    {doc.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${s.bg} ${s.color} uppercase tracking-wider`}>
+                        {s.label}
+                      </span>
+                      <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">
+                        {doc.area}
+                      </span>
+                    </div>
+                    <h3 className="font-display font-bold text-lg leading-tight">{doc.title}</h3>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <p className="text-sm text-text-secondary leading-relaxed mb-4">
+                  {doc.description}
+                </p>
+
+                {/* Open questions */}
+                <div className="space-y-2 pt-3 border-t border-white/5">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted">Open Questions</span>
+                  {doc.questions.map((q) => (
+                    <div key={q} className="flex items-start gap-2 text-sm text-text-muted">
+                      <span className="text-neon-purple mt-1 flex-shrink-0">?</span>
+                      <span>{q}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )
+          })}
         </div>
       </Section>
 

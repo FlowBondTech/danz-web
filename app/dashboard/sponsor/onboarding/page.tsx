@@ -2,6 +2,7 @@
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
 import {
+  GetMySponsorProfileDocument,
   useCreateSponsorProfileMutation,
   useGetMySponsorProfileQuery,
 } from '@/src/generated/graphql'
@@ -265,6 +266,8 @@ export default function SponsorOnboardingPage() {
               formData.preferredDanceStyles.length > 0 ? formData.preferredDanceStyles : null,
           },
         },
+        refetchQueries: [{ query: GetMySponsorProfileDocument }],
+        awaitRefetchQueries: true,
       })
 
       if (result.data?.createSponsorProfile) {
