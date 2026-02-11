@@ -2,24 +2,17 @@
 
 import { sponsorTiers } from '@/src/components/ethdenver/data'
 import { stripeService } from '@/src/services/stripe.service'
-import { usePrivy } from '@privy-io/react-auth'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { FiCheck } from 'react-icons/fi'
 
 export default function SponsorPacksSection() {
-  const { authenticated, login } = usePrivy()
   const [loadingTier, setLoadingTier] = useState<string | null>(null)
 
   const handleSponsorClick = async (tierId: string) => {
-    if (!authenticated) {
-      login()
-      return
-    }
-
     try {
       setLoadingTier(tierId)
-      const { url } = await stripeService.createSponsorCheckoutSession(tierId)
+      const { url } = await stripeService.createGuestSponsorCheckoutSession(tierId)
       if (url) {
         window.location.href = url
       }
