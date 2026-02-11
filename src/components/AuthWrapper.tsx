@@ -9,13 +9,24 @@ interface AuthWrapperProps {
   children: React.ReactNode
 }
 
-const PUBLIC_PATHS = ['/', '/danz', '/register', '/login', '/ethdenver', '/research-box']
+const PUBLIC_PATHS = [
+  '/',
+  '/danz',
+  '/register',
+  '/login',
+  '/research-box',
+  '/depth-anything',
+  '/miniapps',
+  '/link',
+  '/mapp',
+]
 
 function isPublicPath(pathname: string): boolean {
   return (
     PUBLIC_PATHS.includes(pathname) ||
     pathname.startsWith('/i/') ||
-    pathname.startsWith('/events')
+    pathname.startsWith('/events') ||
+    pathname.startsWith('/ethdenver')
   )
 }
 
