@@ -8222,6 +8222,16 @@ export type CancelUsernameChangeRequestMutationVariables = Exact<{
 
 export type CancelUsernameChangeRequestMutation = { __typename?: 'Mutation', cancelUsernameChangeRequest: { __typename?: 'MutationResponse', success: boolean, message?: string | null } };
 
+export type GetMyAchievementsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMyAchievementsQuery = { __typename?: 'Query', myAchievements: Array<{ __typename?: 'AchievementProgress', achievement_type: string, category: AchievementCategory, current_progress: number, danz_reward: number, description: string, icon: string, is_unlocked: boolean, percentage: number, rarity: AchievementRarity, target: number, title: string, unlocked_at?: any | null, xp_reward: number }> };
+
+export type GetMyAchievementStatsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMyAchievementStatsQuery = { __typename?: 'Query', myAchievementStats: { __typename?: 'AchievementStats', total_unlocked: number, total_available: number, total_xp_earned: number, total_danz_earned: number, by_rarity: Array<{ __typename?: 'RarityCount', rarity: AchievementRarity, total: number, unlocked: number }>, by_category: Array<{ __typename?: 'CategoryCount', category: AchievementCategory, total: number, unlocked: number }>, recent_unlocks: Array<{ __typename?: 'AchievementDetails', achievement_type: string, category: AchievementCategory, description?: string | null, icon?: string | null, id: string, is_unlocked: boolean, rarity: AchievementRarity, title: string, unlocked_at?: any | null, xp_reward: number, danz_reward: number }> } };
+
 export type GetActivityFeedQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
@@ -14648,6 +14658,122 @@ export function useCancelUsernameChangeRequestMutation(baseOptions?: Apollo.Muta
 export type CancelUsernameChangeRequestMutationHookResult = ReturnType<typeof useCancelUsernameChangeRequestMutation>;
 export type CancelUsernameChangeRequestMutationResult = Apollo.MutationResult<CancelUsernameChangeRequestMutation>;
 export type CancelUsernameChangeRequestMutationOptions = Apollo.BaseMutationOptions<CancelUsernameChangeRequestMutation, CancelUsernameChangeRequestMutationVariables>;
+export const GetMyAchievementsDocument = gql`
+    query GetMyAchievements {
+  myAchievements {
+    achievement_type
+    category
+    current_progress
+    danz_reward
+    description
+    icon
+    is_unlocked
+    percentage
+    rarity
+    target
+    title
+    unlocked_at
+    xp_reward
+  }
+}
+    `;
+
+/**
+ * __useGetMyAchievementsQuery__
+ *
+ * To run a query within a React component, call `useGetMyAchievementsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyAchievementsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyAchievementsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyAchievementsQuery(baseOptions?: Apollo.QueryHookOptions<GetMyAchievementsQuery, GetMyAchievementsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMyAchievementsQuery, GetMyAchievementsQueryVariables>(GetMyAchievementsDocument, options);
+      }
+export function useGetMyAchievementsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMyAchievementsQuery, GetMyAchievementsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMyAchievementsQuery, GetMyAchievementsQueryVariables>(GetMyAchievementsDocument, options);
+        }
+export function useGetMyAchievementsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetMyAchievementsQuery, GetMyAchievementsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetMyAchievementsQuery, GetMyAchievementsQueryVariables>(GetMyAchievementsDocument, options);
+        }
+export type GetMyAchievementsQueryHookResult = ReturnType<typeof useGetMyAchievementsQuery>;
+export type GetMyAchievementsLazyQueryHookResult = ReturnType<typeof useGetMyAchievementsLazyQuery>;
+export type GetMyAchievementsSuspenseQueryHookResult = ReturnType<typeof useGetMyAchievementsSuspenseQuery>;
+export type GetMyAchievementsQueryResult = Apollo.QueryResult<GetMyAchievementsQuery, GetMyAchievementsQueryVariables>;
+export const GetMyAchievementStatsDocument = gql`
+    query GetMyAchievementStats {
+  myAchievementStats {
+    total_unlocked
+    total_available
+    total_xp_earned
+    total_danz_earned
+    by_rarity {
+      rarity
+      total
+      unlocked
+    }
+    by_category {
+      category
+      total
+      unlocked
+    }
+    recent_unlocks {
+      achievement_type
+      category
+      description
+      icon
+      id
+      is_unlocked
+      rarity
+      title
+      unlocked_at
+      xp_reward
+      danz_reward
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMyAchievementStatsQuery__
+ *
+ * To run a query within a React component, call `useGetMyAchievementStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyAchievementStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyAchievementStatsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyAchievementStatsQuery(baseOptions?: Apollo.QueryHookOptions<GetMyAchievementStatsQuery, GetMyAchievementStatsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMyAchievementStatsQuery, GetMyAchievementStatsQueryVariables>(GetMyAchievementStatsDocument, options);
+      }
+export function useGetMyAchievementStatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMyAchievementStatsQuery, GetMyAchievementStatsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMyAchievementStatsQuery, GetMyAchievementStatsQueryVariables>(GetMyAchievementStatsDocument, options);
+        }
+export function useGetMyAchievementStatsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetMyAchievementStatsQuery, GetMyAchievementStatsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetMyAchievementStatsQuery, GetMyAchievementStatsQueryVariables>(GetMyAchievementStatsDocument, options);
+        }
+export type GetMyAchievementStatsQueryHookResult = ReturnType<typeof useGetMyAchievementStatsQuery>;
+export type GetMyAchievementStatsLazyQueryHookResult = ReturnType<typeof useGetMyAchievementStatsLazyQuery>;
+export type GetMyAchievementStatsSuspenseQueryHookResult = ReturnType<typeof useGetMyAchievementStatsSuspenseQuery>;
+export type GetMyAchievementStatsQueryResult = Apollo.QueryResult<GetMyAchievementStatsQuery, GetMyAchievementStatsQueryVariables>;
 export const GetActivityFeedDocument = gql`
     query GetActivityFeed($limit: Int, $after: String) {
   activityFeed(limit: $limit, after: $after) {
