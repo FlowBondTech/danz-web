@@ -1,12 +1,19 @@
 'use client'
 
 import DashboardLayout from '@/src/components/dashboard/DashboardLayout'
-import { useGetMyProfileQuery } from '@/src/generated/graphql'
+import {
+  LeaderboardMetric,
+  useGetGlobalLeaderboardQuery,
+  useGetMyLeaderboardSummaryQuery,
+  useGetMyProfileQuery,
+  useGetWeeklyLeaderboardQuery,
+} from '@/src/generated/graphql'
 import { usePrivy } from '@privy-io/react-auth'
 import { motion } from 'motion/react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
+  FiAlertCircle,
   FiArrowLeft,
   FiAward,
   FiCalendar,
@@ -17,133 +24,42 @@ import {
   FiZap,
 } from 'react-icons/fi'
 
-// TODO: Fetch from API
-const MOCK_LEADERBOARD = [
-  {
-    id: '1',
-    username: 'dancequeen',
-    display_name: 'Sarah M.',
-    xp: 4250,
-    level: 8,
-    events_created: 12,
-    events_attended: 45,
-    streak: 14,
-  },
-  {
-    id: '2',
-    username: 'groovyking',
-    display_name: 'Marcus J.',
-    xp: 3890,
-    level: 7,
-    events_created: 8,
-    events_attended: 52,
-    streak: 21,
-  },
-  {
-    id: '3',
-    username: 'salsafire',
-    display_name: 'Elena R.',
-    xp: 3450,
-    level: 7,
-    events_created: 15,
-    events_attended: 38,
-    streak: 7,
-  },
-  {
-    id: '4',
-    username: 'hiphopdreams',
-    display_name: 'Tyler W.',
-    xp: 2980,
-    level: 6,
-    events_created: 5,
-    events_attended: 42,
-    streak: 0,
-  },
-  {
-    id: '5',
-    username: 'balletrose',
-    display_name: 'Lily C.',
-    xp: 2650,
-    level: 5,
-    events_created: 3,
-    events_attended: 35,
-    streak: 5,
-  },
-  {
-    id: '6',
-    username: 'jazzyhands',
-    display_name: 'Mike D.',
-    xp: 2340,
-    level: 5,
-    events_created: 7,
-    events_attended: 28,
-    streak: 3,
-  },
-  {
-    id: '7',
-    username: 'breakdancer',
-    display_name: 'Carlos G.',
-    xp: 1980,
-    level: 4,
-    events_created: 2,
-    events_attended: 31,
-    streak: 0,
-  },
-  {
-    id: '8',
-    username: 'tapmaster',
-    display_name: 'Jessica T.',
-    xp: 1750,
-    level: 4,
-    events_created: 4,
-    events_attended: 25,
-    streak: 2,
-  },
-  {
-    id: '9',
-    username: 'swingking',
-    display_name: 'David S.',
-    xp: 1520,
-    level: 3,
-    events_created: 1,
-    events_attended: 22,
-    streak: 0,
-  },
-  {
-    id: '10',
-    username: 'moonwalker',
-    display_name: 'Chris M.',
-    xp: 1280,
-    level: 3,
-    events_created: 0,
-    events_attended: 18,
-    streak: 1,
-  },
-]
+type TimeFilter = 'weekly' | 'monthly' | 'allTime'
+type MetricKey = 'xp' | 'points' | 'events_attended' | 'streak'
 
-const RANK_BADGES: Record<number, { emoji: string; color: string; bg: string; glow: string }> = {
-  1: {
-    emoji: '👑',
-    color: 'text-yellow-400',
-    bg: 'bg-yellow-500/20',
-    glow: 'shadow-yellow-500/30',
-  },
-  2: { emoji: '🥈', color: 'text-gray-300', bg: 'bg-gray-500/20', glow: 'shadow-gray-500/20' },
-  3: {
-    emoji: '🥉',
-    color: 'text-orange-400',
-    bg: 'bg-orange-500/20',
-    glow: 'shadow-orange-500/20',
-  },
+/** Normalized entry shape used across both global and weekly queries */
+interface LeaderboardEntry {
+  rank: number
+  user_id: string
+  username: string
+  display_name: string | null
+  avatar_url: string | null
+  level: number
+  value: number
+  is_current_user: boolean
+  rank_change: number | null
 }
 
-type TimeFilter = 'weekly' | 'monthly' | 'allTime'
-type SortBy = 'xp' | 'events_created' | 'events_attended' | 'streak'
+const metricToEnum: Record<MetricKey, LeaderboardMetric> = {
+  xp: LeaderboardMetric.Xp,
+  points: LeaderboardMetric.Points,
+  events_attended: LeaderboardMetric.EventsAttended,
+  streak: LeaderboardMetric.Streak,
+}
+
+const metricLabels: Record<MetricKey, { short: string; unit: string }> = {
+  xp: { short: 'XP', unit: 'XP' },
+  points: { short: 'Points', unit: 'pts' },
+  events_attended: { short: 'Attended', unit: 'events' },
+  streak: { short: 'Streak', unit: 'days' },
+}
+
+const LEADERBOARD_LIMIT = 20
 
 export default function LeaderboardPage() {
   const { authenticated } = usePrivy()
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('allTime')
-  const [sortBy, setSortBy] = useState<SortBy>('xp')
+  const [metricKey, setMetricKey] = useState<MetricKey>('xp')
 
   const { data: profileData } = useGetMyProfileQuery({
     skip: !authenticated,
@@ -151,26 +67,84 @@ export default function LeaderboardPage() {
 
   const currentUserId = profileData?.me?.privy_id
 
-  // Sort users based on criteria
-  const sortedUsers = [...MOCK_LEADERBOARD].sort((a, b) => {
-    switch (sortBy) {
-      case 'xp':
-        return b.xp - a.xp
-      case 'events_created':
-        return b.events_created - a.events_created
-      case 'events_attended':
-        return b.events_attended - a.events_attended
-      case 'streak':
-        return (b.streak || 0) - (a.streak || 0)
-      default:
-        return b.xp - a.xp
-    }
+  const metric = metricToEnum[metricKey]
+
+  // Fetch global leaderboard (for allTime and monthly)
+  const {
+    data: globalData,
+    loading: globalLoading,
+    error: globalError,
+  } = useGetGlobalLeaderboardQuery({
+    variables: { metric, limit: LEADERBOARD_LIMIT },
+    skip: timeFilter === 'weekly',
   })
 
-  // Find current user's rank
-  const currentUserRank = currentUserId
-    ? sortedUsers.findIndex(u => u.id === currentUserId) + 1
-    : null
+  // Fetch weekly leaderboard
+  const {
+    data: weeklyData,
+    loading: weeklyLoading,
+    error: weeklyError,
+  } = useGetWeeklyLeaderboardQuery({
+    variables: { metric, limit: LEADERBOARD_LIMIT },
+    skip: timeFilter !== 'weekly',
+  })
+
+  // Fetch user's leaderboard summary for rank badge
+  const { data: summaryData } = useGetMyLeaderboardSummaryQuery({
+    skip: !authenticated,
+  })
+
+  // Normalize entries into a common shape
+  const entries: LeaderboardEntry[] = useMemo(() => {
+    if (timeFilter === 'weekly') {
+      return (weeklyData?.weeklyLeaderboard?.entries ?? []).map(e => ({
+        rank: e.rank,
+        user_id: e.user_id,
+        username: e.username,
+        display_name: e.display_name ?? null,
+        avatar_url: e.avatar_url ?? null,
+        level: e.level,
+        value: e.value,
+        is_current_user: e.is_current_user,
+        rank_change: null,
+      }))
+    }
+    return (globalData?.globalLeaderboard?.entries ?? []).map(e => ({
+      rank: e.rank,
+      user_id: e.user_id,
+      username: e.username,
+      display_name: e.display_name ?? null,
+      avatar_url: e.avatar_url ?? null,
+      level: e.level,
+      value: e.value,
+      is_current_user: e.is_current_user,
+      rank_change: e.rank_change ?? null,
+    }))
+  }, [timeFilter, weeklyData, globalData])
+
+  const currentUserEntry = useMemo(() => {
+    if (timeFilter === 'weekly') {
+      return weeklyData?.weeklyLeaderboard?.current_user_entry ?? null
+    }
+    return globalData?.globalLeaderboard?.current_user_entry ?? null
+  }, [timeFilter, weeklyData, globalData])
+
+  const totalParticipants = useMemo(() => {
+    if (timeFilter === 'weekly') {
+      return weeklyData?.weeklyLeaderboard?.total_participants ?? 0
+    }
+    return globalData?.globalLeaderboard?.total_participants ?? 0
+  }, [timeFilter, weeklyData, globalData])
+
+  const loading = timeFilter === 'weekly' ? weeklyLoading : globalLoading
+  const error = timeFilter === 'weekly' ? weeklyError : globalError
+
+  // Current user rank from the leaderboard response or summary
+  const currentUserRank = currentUserEntry?.rank ?? summaryData?.myLeaderboardSummary?.global_rank ?? null
+
+  const formatValue = (value: number) => value.toLocaleString()
+
+  const activeUnit = metricLabels[metricKey].unit
 
   return (
     <DashboardLayout>
@@ -206,11 +180,18 @@ export default function LeaderboardPage() {
               <h1 className="text-3xl md:text-4xl font-display font-bold text-text-primary">
                 Dance Leaderboard
               </h1>
-              <p className="text-text-secondary mt-1">Top dancers in the community</p>
+              <p className="text-text-secondary mt-1">
+                Top dancers in the community
+                {totalParticipants > 0 && (
+                  <span className="ml-2 text-text-secondary/70">
+                    ({totalParticipants.toLocaleString()} participants)
+                  </span>
+                )}
+              </p>
             </div>
           </div>
 
-          {currentUserRank && currentUserRank > 0 && (
+          {currentUserRank != null && currentUserRank > 0 && (
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -221,6 +202,14 @@ export default function LeaderboardPage() {
                 <p className="text-sm text-text-secondary">Your Rank</p>
                 <p className="text-3xl font-bold text-text-primary">#{currentUserRank}</p>
               </div>
+              {currentUserEntry?.value != null && (
+                <div className="ml-2 text-right">
+                  <p className="text-lg font-bold text-yellow-400">
+                    {formatValue(currentUserEntry.value)}
+                  </p>
+                  <p className="text-xs text-text-secondary">{activeUnit}</p>
+                </div>
+              )}
             </motion.div>
           )}
         </div>
@@ -244,21 +233,21 @@ export default function LeaderboardPage() {
             ))}
           </div>
 
-          {/* Sort By */}
+          {/* Metric Selector */}
           <div className="flex items-center gap-1 sm:gap-2 bg-bg-secondary rounded-xl p-1.5 border border-white/10 overflow-x-auto">
             {(
               [
-                { key: 'xp', icon: FiZap, label: 'XP' },
-                { key: 'events_created', icon: FiCalendar, label: 'Created' },
-                { key: 'events_attended', icon: FiUsers, label: 'Attended' },
-                { key: 'streak', icon: FiTrendingUp, label: 'Streak' },
-              ] as { key: SortBy; icon: typeof FiZap; label: string }[]
+                { key: 'xp' as MetricKey, icon: FiZap, label: 'XP' },
+                { key: 'points' as MetricKey, icon: FiStar, label: 'Points' },
+                { key: 'events_attended' as MetricKey, icon: FiUsers, label: 'Attended' },
+                { key: 'streak' as MetricKey, icon: FiTrendingUp, label: 'Streak' },
+              ]
             ).map(({ key, icon: Icon, label }) => (
               <button
                 key={key}
-                onClick={() => setSortBy(key)}
+                onClick={() => setMetricKey(key)}
                 className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                  sortBy === key
+                  metricKey === key
                     ? 'bg-neon-purple text-text-primary shadow-lg shadow-neon-purple/30'
                     : 'text-text-secondary hover:text-text-primary hover:bg-white/5'
                 }`}
@@ -270,173 +259,244 @@ export default function LeaderboardPage() {
           </div>
         </div>
 
-        {/* Top 3 Podium */}
-        <div className="bg-bg-secondary rounded-2xl border border-white/10 p-8 mb-8 overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-b from-neon-purple/10 via-transparent to-transparent" />
+        {/* Loading State */}
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="w-12 h-12 border-4 border-neon-purple/30 border-t-neon-purple rounded-full animate-spin mb-4" />
+            <p className="text-text-secondary text-sm">Loading leaderboard...</p>
+          </div>
+        )}
 
-          <div className="relative flex items-end justify-center gap-4 sm:gap-8">
-            {/* 2nd Place */}
-            {sortedUsers[1] && (
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 }}
-                className="text-center"
-              >
-                <div className="relative">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-gray-400 to-gray-600 mx-auto mb-3 overflow-hidden border-4 border-gray-400 shadow-xl shadow-gray-500/30">
-                    {sortedUsers[1].display_name?.[0] || sortedUsers[1].username[0]}
-                  </div>
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-3xl">🥈</span>
-                </div>
-                <p className="font-bold text-text-primary mt-3 truncate max-w-[120px]">
-                  {sortedUsers[1].display_name || sortedUsers[1].username}
-                </p>
-                <p className="text-lg text-yellow-400 font-medium">
-                  {sortedUsers[1].xp.toLocaleString()} XP
-                </p>
-                <p className="text-sm text-text-secondary">Level {sortedUsers[1].level}</p>
-                <div className="h-24 w-28 bg-gray-500/20 rounded-t-xl mt-4 flex items-center justify-center border-t border-l border-r border-gray-500/30">
-                  <span className="text-4xl font-bold text-gray-400">2</span>
-                </div>
-              </motion.div>
-            )}
+        {/* Error State */}
+        {error && !loading && (
+          <div className="bg-bg-secondary rounded-2xl border border-red-500/20 p-8 text-center">
+            <FiAlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+            <h2 className="text-lg font-bold text-text-primary mb-2">Failed to load leaderboard</h2>
+            <p className="text-text-secondary text-sm mb-4">
+              {error.message || 'Something went wrong. Please try again later.'}
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-neon-purple text-text-primary rounded-lg text-sm font-medium hover:bg-neon-purple/80 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        )}
 
-            {/* 1st Place */}
-            {sortedUsers[0] && (
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-center"
-              >
-                <div className="relative">
+        {/* Empty State */}
+        {!loading && !error && entries.length === 0 && (
+          <div className="bg-bg-secondary rounded-2xl border border-white/10 p-12 text-center">
+            <div className="text-5xl mb-4">🕺</div>
+            <h2 className="text-lg font-bold text-text-primary mb-2">No rankings yet</h2>
+            <p className="text-text-secondary text-sm">
+              Be the first to climb the leaderboard! Start attending events and earning XP.
+            </p>
+          </div>
+        )}
+
+        {/* Content when data is available */}
+        {!loading && !error && entries.length > 0 && (
+          <>
+            {/* Top 3 Podium */}
+            <div className="bg-bg-secondary rounded-2xl border border-white/10 p-8 mb-8 overflow-hidden relative">
+              <div className="absolute inset-0 bg-gradient-to-b from-neon-purple/10 via-transparent to-transparent" />
+
+              <div className="relative flex items-end justify-center gap-4 sm:gap-8">
+                {/* 2nd Place */}
+                {entries[1] && (
                   <motion.div
-                    animate={{ y: [0, -8, 0] }}
-                    transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-                    className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 mx-auto mb-3 overflow-hidden border-4 border-yellow-400 shadow-2xl shadow-yellow-500/40 flex items-center justify-center text-white text-3xl font-bold"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.15 }}
+                    className="text-center"
                   >
-                    {sortedUsers[0].display_name?.[0] || sortedUsers[0].username[0]}
-                  </motion.div>
-                  <motion.span
-                    animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-                    transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-                    className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-4xl"
-                  >
-                    👑
-                  </motion.span>
-                </div>
-                <p className="font-bold text-text-primary text-lg mt-3 truncate max-w-[140px]">
-                  {sortedUsers[0].display_name || sortedUsers[0].username}
-                </p>
-                <p className="text-xl text-yellow-400 font-bold">
-                  {sortedUsers[0].xp.toLocaleString()} XP
-                </p>
-                <p className="text-sm text-text-secondary">Level {sortedUsers[0].level}</p>
-                <div className="h-32 w-32 bg-yellow-500/20 rounded-t-xl mt-4 flex items-center justify-center border-t border-l border-r border-yellow-500/30">
-                  <span className="text-5xl font-bold text-yellow-400">1</span>
-                </div>
-              </motion.div>
-            )}
-
-            {/* 3rd Place */}
-            {sortedUsers[2] && (
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="text-center"
-              >
-                <div className="relative">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 mx-auto mb-3 overflow-hidden border-4 border-orange-400 shadow-xl shadow-orange-500/30 flex items-center justify-center text-white text-xl font-bold">
-                    {sortedUsers[2].display_name?.[0] || sortedUsers[2].username[0]}
-                  </div>
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-3xl">🥉</span>
-                </div>
-                <p className="font-bold text-text-primary mt-3 truncate max-w-[120px]">
-                  {sortedUsers[2].display_name || sortedUsers[2].username}
-                </p>
-                <p className="text-lg text-yellow-400 font-medium">
-                  {sortedUsers[2].xp.toLocaleString()} XP
-                </p>
-                <p className="text-sm text-text-secondary">Level {sortedUsers[2].level}</p>
-                <div className="h-20 w-28 bg-orange-500/20 rounded-t-xl mt-4 flex items-center justify-center border-t border-l border-r border-orange-500/30">
-                  <span className="text-4xl font-bold text-orange-400">3</span>
-                </div>
-              </motion.div>
-            )}
-          </div>
-        </div>
-
-        {/* Full Rankings List */}
-        <div className="bg-bg-secondary rounded-2xl border border-white/10 overflow-hidden">
-          <div className="px-6 py-4 border-b border-white/10">
-            <h2 className="text-lg font-bold text-text-primary flex items-center gap-2">
-              <FiAward className="w-5 h-5 text-neon-purple" />
-              All Rankings
-            </h2>
-          </div>
-
-          <div className="divide-y divide-white/5">
-            {sortedUsers.slice(3).map((user, index) => {
-              const rank = index + 4
-              const isCurrentUser = user.id === currentUserId
-
-              return (
-                <motion.div
-                  key={user.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.03 }}
-                  className={`flex items-center gap-4 p-4 sm:p-5 transition-colors ${
-                    isCurrentUser
-                      ? 'bg-gradient-to-r from-neon-purple/20 to-transparent'
-                      : 'hover:bg-white/5'
-                  }`}
-                >
-                  <div className="w-10 text-center">
-                    <span className="text-lg font-bold text-text-secondary">{rank}</span>
-                  </div>
-
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-neon-purple to-neon-pink overflow-hidden flex items-center justify-center text-white font-bold text-lg">
-                    {user.display_name?.[0] || user.username[0]}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-text-primary truncate">
-                      {user.display_name || user.username}
-                      {isCurrentUser && <span className="text-neon-purple ml-2">(You)</span>}
-                    </p>
-                    <div className="flex flex-wrap items-center gap-3 text-xs text-text-secondary mt-1">
-                      <span className="flex items-center gap-1">
-                        <FiStar className="w-3 h-3 text-yellow-500" />
-                        Level {user.level}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <FiCalendar className="w-3 h-3" />
-                        {user.events_created} created
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <FiUsers className="w-3 h-3" />
-                        {user.events_attended} attended
-                      </span>
-                      {user.streak > 0 && (
-                        <span className="flex items-center gap-1 text-orange-400">
-                          <FiTrendingUp className="w-3 h-3" />
-                          {user.streak} day streak
-                        </span>
-                      )}
+                    <div className="relative">
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-gray-400 to-gray-600 mx-auto mb-3 overflow-hidden border-4 border-gray-400 shadow-xl shadow-gray-500/30 flex items-center justify-center text-white text-xl font-bold">
+                        {entries[1].avatar_url ? (
+                          <img
+                            src={entries[1].avatar_url}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          (entries[1].display_name?.[0] || entries[1].username[0])
+                        )}
+                      </div>
+                      <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-3xl">🥈</span>
                     </div>
-                  </div>
+                    <p className="font-bold text-text-primary mt-3 truncate max-w-[120px]">
+                      {entries[1].is_current_user ? 'You' : (entries[1].display_name || entries[1].username)}
+                    </p>
+                    <p className="text-lg text-yellow-400 font-medium">
+                      {formatValue(entries[1].value)} {activeUnit}
+                    </p>
+                    <p className="text-sm text-text-secondary">Level {entries[1].level}</p>
+                    <div className="h-24 w-28 bg-gray-500/20 rounded-t-xl mt-4 flex items-center justify-center border-t border-l border-r border-gray-500/30">
+                      <span className="text-4xl font-bold text-gray-400">2</span>
+                    </div>
+                  </motion.div>
+                )}
 
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-yellow-400">{user.xp.toLocaleString()}</p>
-                    <p className="text-xs text-text-secondary">XP</p>
-                  </div>
-                </motion.div>
-              )
-            })}
-          </div>
-        </div>
+                {/* 1st Place */}
+                {entries[0] && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center"
+                  >
+                    <div className="relative">
+                      <motion.div
+                        animate={{ y: [0, -8, 0] }}
+                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+                        className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 mx-auto mb-3 overflow-hidden border-4 border-yellow-400 shadow-2xl shadow-yellow-500/40 flex items-center justify-center text-white text-3xl font-bold"
+                      >
+                        {entries[0].avatar_url ? (
+                          <img
+                            src={entries[0].avatar_url}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          (entries[0].display_name?.[0] || entries[0].username[0])
+                        )}
+                      </motion.div>
+                      <motion.span
+                        animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
+                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+                        className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-4xl"
+                      >
+                        👑
+                      </motion.span>
+                    </div>
+                    <p className="font-bold text-text-primary text-lg mt-3 truncate max-w-[140px]">
+                      {entries[0].is_current_user ? 'You' : (entries[0].display_name || entries[0].username)}
+                    </p>
+                    <p className="text-xl text-yellow-400 font-bold">
+                      {formatValue(entries[0].value)} {activeUnit}
+                    </p>
+                    <p className="text-sm text-text-secondary">Level {entries[0].level}</p>
+                    <div className="h-32 w-32 bg-yellow-500/20 rounded-t-xl mt-4 flex items-center justify-center border-t border-l border-r border-yellow-500/30">
+                      <span className="text-5xl font-bold text-yellow-400">1</span>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* 3rd Place */}
+                {entries[2] && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-center"
+                  >
+                    <div className="relative">
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 mx-auto mb-3 overflow-hidden border-4 border-orange-400 shadow-xl shadow-orange-500/30 flex items-center justify-center text-white text-xl font-bold">
+                        {entries[2].avatar_url ? (
+                          <img
+                            src={entries[2].avatar_url}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          (entries[2].display_name?.[0] || entries[2].username[0])
+                        )}
+                      </div>
+                      <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-3xl">🥉</span>
+                    </div>
+                    <p className="font-bold text-text-primary mt-3 truncate max-w-[120px]">
+                      {entries[2].is_current_user ? 'You' : (entries[2].display_name || entries[2].username)}
+                    </p>
+                    <p className="text-lg text-yellow-400 font-medium">
+                      {formatValue(entries[2].value)} {activeUnit}
+                    </p>
+                    <p className="text-sm text-text-secondary">Level {entries[2].level}</p>
+                    <div className="h-20 w-28 bg-orange-500/20 rounded-t-xl mt-4 flex items-center justify-center border-t border-l border-r border-orange-500/30">
+                      <span className="text-4xl font-bold text-orange-400">3</span>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+            </div>
+
+            {/* Full Rankings List */}
+            <div className="bg-bg-secondary rounded-2xl border border-white/10 overflow-hidden">
+              <div className="px-6 py-4 border-b border-white/10">
+                <h2 className="text-lg font-bold text-text-primary flex items-center gap-2">
+                  <FiAward className="w-5 h-5 text-neon-purple" />
+                  All Rankings
+                </h2>
+              </div>
+
+              <div className="divide-y divide-white/5">
+                {entries.slice(3).map((entry, index) => {
+                  const rank = entry.rank
+                  const isCurrentUser = entry.is_current_user
+                  const rankChange = entry.rank_change
+
+                  return (
+                    <motion.div
+                      key={entry.user_id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.03 }}
+                      className={`flex items-center gap-4 p-4 sm:p-5 transition-colors ${
+                        isCurrentUser
+                          ? 'bg-gradient-to-r from-neon-purple/20 to-transparent'
+                          : 'hover:bg-white/5'
+                      }`}
+                    >
+                      <div className="w-10 text-center">
+                        <span className="text-lg font-bold text-text-secondary">{rank}</span>
+                      </div>
+
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-neon-purple to-neon-pink overflow-hidden flex items-center justify-center text-white font-bold text-lg">
+                        {entry.avatar_url ? (
+                          <img
+                            src={entry.avatar_url}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          (entry.display_name?.[0] || entry.username[0])
+                        )}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-text-primary truncate">
+                          {isCurrentUser ? 'You' : (entry.display_name || entry.username)}
+                          {isCurrentUser && <span className="text-neon-purple ml-2">(You)</span>}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-text-secondary mt-1">
+                          <span className="flex items-center gap-1">
+                            <FiStar className="w-3 h-3 text-yellow-500" />
+                            Level {entry.level}
+                          </span>
+                          {entry.username && (
+                            <span className="text-text-secondary/60">
+                              @{entry.username}
+                            </span>
+                          )}
+                          {rankChange != null && rankChange !== 0 && (
+                            <span className={`flex items-center gap-1 ${rankChange > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                              <FiTrendingUp className={`w-3 h-3 ${rankChange < 0 ? 'rotate-180' : ''}`} />
+                              {rankChange > 0 ? '+' : ''}{rankChange}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-yellow-400">{formatValue(entry.value)}</p>
+                        <p className="text-xs text-text-secondary">{activeUnit}</p>
+                      </div>
+                    </motion.div>
+                  )
+                })}
+              </div>
+            </div>
+          </>
+        )}
 
         {/* How to Climb Section */}
         <div className="mt-8 bg-bg-secondary rounded-2xl border border-white/10 p-6">
