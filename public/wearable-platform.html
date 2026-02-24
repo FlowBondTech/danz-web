@@ -458,7 +458,7 @@
                 <span class="topbar-tag">Wearable Platform</span>
             </div>
             <div class="topbar-right">
-                <a href="./" class="topbar-chip">&larr; 3D Bracelet</a>
+                <a href="/wearable" class="topbar-chip">&larr; 3D Bracelet</a>
                 <span class="topbar-chip">nRF5340 &middot; Zephyr RTOS</span>
                 <span class="topbar-ver">PRD v1.0</span>
             </div>
@@ -1051,7 +1051,7 @@
         scene.add(grid);
 
         // Load model
-        new GLTFLoader().load('flowbond-wearable-final.glb',
+        new GLTFLoader().load('/wearable/flowbond-wearable-final.glb',
             gltf => {
                 modelGroup = gltf.scene;
                 const box = new THREE.Box3().setFromObject(modelGroup);
