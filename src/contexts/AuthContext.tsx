@@ -3,7 +3,15 @@
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import type React from 'react'
-import { type ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react'
+import {
+  type ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import type { User } from '../generated/graphql'
 import {
   useGetMyProfileQuery,
@@ -173,7 +181,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     trackAppOpen,
   ])
 
-  const login = async () => {
+  const login = useCallback(async () => {
     try {
       await privyLogin()
       setHasCheckedProfile(false) // Reset check flag for new login
@@ -182,9 +190,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       console.error('Login failed:', error)
       throw error
     }
-  }
+  }, [privyLogin])
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await privyLogout()
       setHasCheckedProfile(false)
@@ -193,24 +201,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } catch (error) {
       console.error('Logout error:', error)
     }
-  }
+  }, [privyLogout, router])
 
-  const updateProfile = async (updates: any) => {
-    if (!user) return
+  const updateProfile = useCallback(
+    async (updates: any) => {
+      if (!user) return
 
-    try {
-      await updateProfileMutation({ variables: { input: updates } })
-      await refetchProfile()
-    } catch (error) {
-      console.error('Error updating profile:', error)
-      throw error
-    }
-  }
+      try {
+        await updateProfileMutation({ variables: { input: updates } })
+        await refetchProfile()
+      } catch (error) {
+        console.error('Error updating profile:', error)
+        throw error
+      }
+    },
+    [user, updateProfileMutation, refetchProfile],
+  )
 
-  const refreshUser = async () => {
+  const refreshUser = useCallback(async () => {
     if (!authenticated) return
     await refetchProfile()
-  }
+  }, [authenticated, refetchProfile])
 
   const contextValue: AuthContextType = {
     user,

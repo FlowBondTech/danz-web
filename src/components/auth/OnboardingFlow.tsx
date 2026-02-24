@@ -109,6 +109,8 @@ type OnboardingStep =
   | 'social'
   | 'organization'
 
+const ONBOARDING_STORAGE_KEY = 'danz-onboarding-progress'
+
 interface OnboardingFlowProps {
   initialStep?: OnboardingStep
 }
@@ -122,36 +124,76 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
   const { data: meData, loading: meLoading } = useQuery(ME_QUERY, {
     skip: !isAuthenticated,
   })
-  const [currentStep, setCurrentStep] = useState<OnboardingStep>(initialStep)
+
+  // Load saved progress from localStorage
+  const loadSavedProgress = () => {
+    if (typeof window === 'undefined') return null
+    try {
+      const saved = localStorage.getItem(ONBOARDING_STORAGE_KEY)
+      if (saved) return JSON.parse(saved)
+    } catch {
+      // Corrupted data, ignore
+    }
+    return null
+  }
+
+  const savedProgress = useRef(loadSavedProgress())
+
+  const [currentStep, setCurrentStep] = useState<OnboardingStep>(() => {
+    const saved = savedProgress.current
+    // Only restore step if user is already authenticated (returning user)
+    // For fresh users, start from welcome
+    if (saved?.currentStep && saved.currentStep !== 'welcome') {
+      return saved.currentStep
+    }
+    return initialStep
+  })
   const [isLoading, setIsLoading] = useState(false)
   const [isCheckingUsername, setIsCheckingUsername] = useState(false)
-  const [completedSteps, setCompletedSteps] = useState<string[]>([])
-  const [userRole, setUserRole] = useState<'attendee' | 'organizer' | null>(null)
-  const [isDancer, setIsDancer] = useState(true) // Everyone is a dancer by default
-  const [isOrganizer, setIsOrganizer] = useState(false)
-  const [agreedToTerms, setAgreedToTerms] = useState(false)
-  const [emailNotifications, setEmailNotifications] = useState(true)
+  const [completedSteps, setCompletedSteps] = useState<string[]>(() => {
+    return savedProgress.current?.completedSteps || []
+  })
+  const [userRole, setUserRole] = useState<'attendee' | 'organizer' | null>(() => {
+    return savedProgress.current?.userRole || null
+  })
+  const [isDancer, setIsDancer] = useState(() => {
+    return savedProgress.current?.isDancer ?? true
+  })
+  const [isOrganizer, setIsOrganizer] = useState(() => {
+    return savedProgress.current?.isOrganizer ?? false
+  })
+  const [agreedToTerms, setAgreedToTerms] = useState(() => {
+    return savedProgress.current?.agreedToTerms ?? false
+  })
+  const [emailNotifications, setEmailNotifications] = useState(() => {
+    return savedProgress.current?.emailNotifications ?? true
+  })
 
-  const [formData, setFormData] = useState({
-    username: '',
-    displayName: '',
-    bio: '',
-    avatarUrl: '',
-    coverUrl: '',
-    location: '',
-    city: '',
-    pronouns: '',
-    danceStyles: [] as string[],
-    skillLevel: 'beginner' as 'beginner' | 'intermediate' | 'advanced',
-    instagram: '',
-    tiktok: '',
-    youtube: '',
-    twitter: '',
-    companyName: '',
-    eventTypes: [] as string[],
-    organizerBio: '',
-    invitedBy: '',
-    websiteUrl: '',
+  const [formData, setFormData] = useState(() => {
+    const defaults = {
+      username: '',
+      displayName: '',
+      bio: '',
+      avatarUrl: '',
+      coverUrl: '',
+      location: '',
+      city: '',
+      pronouns: '',
+      danceStyles: [] as string[],
+      skillLevel: 'beginner' as 'beginner' | 'intermediate' | 'advanced',
+      instagram: '',
+      tiktok: '',
+      youtube: '',
+      twitter: '',
+      companyName: '',
+      eventTypes: [] as string[],
+      organizerBio: '',
+      invitedBy: '',
+      websiteUrl: '',
+    }
+    return savedProgress.current?.formData
+      ? { ...defaults, ...savedProgress.current.formData }
+      : defaults
   })
 
   const [localAvatarFile, setLocalAvatarFile] = useState<File | null>(null)
@@ -172,14 +214,42 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
     skip: true,
   })
 
+  // Save progress to localStorage whenever state changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    // Don't save if we're on welcome step with no progress
+    if (currentStep === 'welcome' && completedSteps.length === 0) return
+
+    const progress = {
+      currentStep,
+      completedSteps,
+      formData,
+      userRole,
+      isDancer,
+      isOrganizer,
+      agreedToTerms,
+      emailNotifications,
+    }
+    localStorage.setItem(ONBOARDING_STORAGE_KEY, JSON.stringify(progress))
+  }, [currentStep, completedSteps, formData, userRole, isDancer, isOrganizer, agreedToTerms, emailNotifications])
+
   useEffect(() => {
     // If user already has a complete profile, redirect to dashboard
     if (meData?.me?.username) {
       console.log('User already has username, redirecting to dashboard')
+      // Clear saved onboarding progress
+      localStorage.removeItem(ONBOARDING_STORAGE_KEY)
       router.push('/dashboard')
       return
     }
   }, [meData, router])
+
+  // If returning authenticated user has saved progress, skip welcome
+  useEffect(() => {
+    if (isAuthenticated && savedProgress.current && currentStep === 'welcome' && savedProgress.current.currentStep !== 'welcome') {
+      setCurrentStep(savedProgress.current.currentStep)
+    }
+  }, [isAuthenticated, currentStep])
 
   // Load referral code from localStorage on mount
   useEffect(() => {
@@ -187,7 +257,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
       const referralCode = localStorage.getItem('referral_code')
       if (referralCode) {
         console.log('Found referral code in localStorage:', referralCode)
-        setFormData(prev => ({ ...prev, invitedBy: referralCode }))
+        setFormData((prev: typeof formData) => ({ ...prev, invitedBy: referralCode }))
       }
     }
   }, [])
@@ -390,7 +460,8 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
         return formData.username && usernameAvailable && !usernameError
 
       case 'about':
-        return formData.displayName && formData.bio && formData.city
+        // About step is now optional - user can skip
+        return true
 
       case 'styles':
         return formData.danceStyles.length > 0 && formData.skillLevel
@@ -558,6 +629,8 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
           }
         }
 
+        // Clear saved onboarding progress on success
+        localStorage.removeItem(ONBOARDING_STORAGE_KEY)
         router.push('/dashboard')
       } catch (error) {
         console.error('Registration failed:', error)
@@ -567,6 +640,46 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
       }
       return
     }
+
+    setCompletedSteps([...completedSteps, currentStep])
+    const nextStep = stepOrder[currentIndex + 1]
+    if (nextStep) {
+      setCurrentStep(nextStep)
+    }
+  }
+
+  const handleSkip = () => {
+    const isFinalStep =
+      (userRole === 'attendee' && currentStep === 'social') ||
+      (userRole === 'organizer' && currentStep === 'organization')
+
+    // If skipping the final step, trigger submission with current data
+    if (isFinalStep) {
+      handleNext()
+      return
+    }
+
+    const attendeeSteps: OnboardingStep[] = [
+      'welcome',
+      'role',
+      'username',
+      'photo',
+      'about',
+      'styles',
+      'social',
+    ]
+    const organizerSteps: OnboardingStep[] = [
+      'welcome',
+      'role',
+      'username',
+      'photo',
+      'about',
+      'styles',
+      'organization',
+    ]
+
+    const stepOrder = userRole === 'organizer' ? organizerSteps : attendeeSteps
+    const currentIndex = stepOrder.indexOf(currentStep)
 
     setCompletedSteps([...completedSteps, currentStep])
     const nextStep = stepOrder[currentIndex + 1]
@@ -865,7 +978,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
 
               <div>
                 <label className="block text-text-primary mb-2 text-sm">
-                  Display Name <span className="text-purple-400">*</span>
+                  Display Name
                 </label>
                 <input
                   type="text"
@@ -949,14 +1062,12 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
               <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
                 Tell us about yourself
               </h2>
-              <p className="text-gray-400 mt-2">Help the community get to know you</p>
+              <p className="text-gray-400 mt-2">You can always update this later in your profile</p>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-text-primary mb-2 text-sm">
-                  Bio <span className="text-purple-400">*</span>
-                </label>
+                <label className="block text-text-primary mb-2 text-sm">Bio</label>
                 <textarea
                   value={formData.bio}
                   onChange={e => setFormData({ ...formData, bio: e.target.value.slice(0, 200) })}
@@ -968,9 +1079,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
               </div>
 
               <div>
-                <label className="block text-text-primary mb-2 text-sm">
-                  Location <span className="text-purple-400">*</span>
-                </label>
+                <label className="block text-text-primary mb-2 text-sm">Location</label>
                 <input
                   type="text"
                   value={formData.city}
@@ -1047,7 +1156,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                         if (formData.danceStyles.includes(style)) {
                           setFormData({
                             ...formData,
-                            danceStyles: formData.danceStyles.filter(s => s !== style),
+                            danceStyles: formData.danceStyles.filter((s: string) => s !== style),
                           })
                         } else {
                           setFormData({
@@ -1205,7 +1314,7 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                         if (formData.eventTypes.includes(type)) {
                           setFormData({
                             ...formData,
-                            eventTypes: formData.eventTypes.filter(t => t !== type),
+                            eventTypes: formData.eventTypes.filter((t: string) => t !== type),
                           })
                         } else {
                           setFormData({
@@ -1394,37 +1503,50 @@ export const OnboardingFlow = ({ initialStep = 'welcome' }: OnboardingFlowProps)
                 </button>
               )}
 
-              <button
-                onClick={handleNext}
-                disabled={
-                  isLoading ||
-                  uploadingAvatar ||
-                  isCheckingUsername ||
-                  (currentStep === 'role' && ((!isDancer && !isOrganizer) || !agreedToTerms)) ||
-                  !validateCurrentStep()
-                }
-                className={`${
-                  currentStep === 'welcome' ? 'w-full' : 'ml-auto'
-                } px-6 sm:px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-xl hover:from-pink-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center space-x-2 text-sm sm:text-base`}
-              >
-                <span>
-                  {isLoading || uploadingAvatar
-                    ? 'Loading...'
-                    : currentStep === 'welcome'
-                      ? isAuthenticated
-                        ? 'Continue'
-                        : 'Get Started'
-                      : (userRole === 'organizer' && currentStep === 'organization') ||
-                          (userRole === 'attendee' && currentStep === 'social')
-                        ? "Let's Dance!"
-                        : currentStep === 'photo'
-                          ? localAvatarFile
-                            ? 'Continue'
-                            : 'Skip for now'
-                          : 'Continue'}
-                </span>
-                {!isLoading && !uploadingAvatar && <FiChevronRight />}
-              </button>
+              <div className={`${currentStep === 'welcome' ? 'w-full' : 'ml-auto'} flex items-center gap-3`}>
+                {/* Skip button for optional steps */}
+                {(currentStep === 'about' || currentStep === 'social') && (
+                  <button
+                    onClick={handleSkip}
+                    disabled={isLoading}
+                    className="px-4 sm:px-6 py-3 text-gray-400 hover:text-purple-300 transition-colors disabled:opacity-50 text-sm sm:text-base"
+                  >
+                    Skip
+                  </button>
+                )}
+
+                <button
+                  onClick={handleNext}
+                  disabled={
+                    isLoading ||
+                    uploadingAvatar ||
+                    isCheckingUsername ||
+                    (currentStep === 'role' && ((!isDancer && !isOrganizer) || !agreedToTerms)) ||
+                    !validateCurrentStep()
+                  }
+                  className={`${
+                    currentStep === 'welcome' ? 'w-full' : ''
+                  } px-6 sm:px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-xl hover:from-pink-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center space-x-2 text-sm sm:text-base`}
+                >
+                  <span>
+                    {isLoading || uploadingAvatar
+                      ? 'Loading...'
+                      : currentStep === 'welcome'
+                        ? isAuthenticated
+                          ? 'Continue'
+                          : 'Get Started'
+                        : (userRole === 'organizer' && currentStep === 'organization') ||
+                            (userRole === 'attendee' && currentStep === 'social')
+                          ? "Let's Dance!"
+                          : currentStep === 'photo'
+                            ? localAvatarFile
+                              ? 'Continue'
+                              : 'Skip for now'
+                            : 'Continue'}
+                  </span>
+                  {!isLoading && !uploadingAvatar && <FiChevronRight />}
+                </button>
+              </div>
             </div>
           </div>
         </motion.div>

@@ -2,13 +2,14 @@
 
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Suspense, useEffect } from 'react'
+import { Suspense, useEffect, useRef } from 'react'
 import { FiLock } from 'react-icons/fi'
 
 function LoginContent() {
   const { login, authenticated, ready } = usePrivy()
   const router = useRouter()
   const searchParams = useSearchParams()
+  const loginTriggered = useRef(false)
 
   useEffect(() => {
     // If already authenticated, redirect to intended page or dashboard
@@ -20,7 +21,9 @@ function LoginContent() {
 
   useEffect(() => {
     // Auto-trigger login modal when page loads (if not authenticated)
-    if (ready && !authenticated) {
+    // Guard prevents re-triggering which would reset the OTP modal
+    if (ready && !authenticated && !loginTriggered.current) {
+      loginTriggered.current = true
       login()
     }
   }, [ready, authenticated, login])
