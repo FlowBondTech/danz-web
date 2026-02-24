@@ -113,7 +113,9 @@
             font-family: var(--mono); font-size: 10px; padding: 5px 12px;
             border-radius: 20px; border: 1px solid rgba(6,182,212,.2);
             color: var(--cyan); background: rgba(6,182,212,.04);
+            text-decoration: none;
         }
+        a.topbar-chip:hover { border-color: rgba(236,72,153,.4); color: var(--pink); background: rgba(236,72,153,.06); }
 
         /* ── 3D Viewport ── */
         .viewport { position: relative; height: 100vh; overflow: hidden; }
@@ -448,8 +450,8 @@
                 <span class="topbar-label">Wearable Bracelet</span>
             </div>
             <div class="topbar-right">
+                <a href="platform.html" class="topbar-chip">Hardware Specs &rarr;</a>
                 <span class="topbar-chip" id="poly-count">-- tris</span>
-                <span class="topbar-chip">v1.0</span>
             </div>
         </nav>
 
